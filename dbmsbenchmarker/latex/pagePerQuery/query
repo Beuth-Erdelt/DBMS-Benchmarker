@@ -1,0 +1,35 @@
+\newpage
+\subsection{{{queryName}}}\label{{benchmark:{code}-Q{queryNumber}}}
+\subsubsection{{Latencies and Throughputs}}
+\begin{{figure}}[h]
+\centering
+\begin{{minipage}}[t]{{0.45\textwidth}}
+\includegraphics[height=0.9\textwidth]{{query_{queryNumber}_tps.png}}\\
+\end{{minipage}}
+\hfill
+\begin{{minipage}}[t]{{0.45\textwidth}}
+\includegraphics[height=0.9\textwidth]{{query_{queryNumber}_lat.png}}\\
+\end{{minipage}}
+
+{{\tiny{{
+\textbf{{Runs}}: {run}, 
+\textbf{{Warmup}}: {warmup}, 
+\textbf{{Cooldown}}: {cooldown}\\
+{benchmarkmetrics}
+}}}}
+\caption{{DBMS: Relative ranking based on latency and throughput}}
+\end{{figure}}
+\subsubsection{{DBMS Settings}}
+{{\tiny{{
+%\textbf{{Start}}: {start}
+%\textbf{{End}}: {end}
+{querysettings}
+}}}}
+\subsubsection{{Query String}}
+{queryString}
+{{\scriptsize{{
+{queryList}
+{errors}
+}}}}
+\hyperref[appendix:{code}-Q{queryNumber}]{{Results}}
+{hardwareMetrics}
