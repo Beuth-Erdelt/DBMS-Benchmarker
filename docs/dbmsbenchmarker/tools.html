@@ -1,0 +1,3027 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.6.3" />
+<title>dbmsbenchmarker.tools API documentation</title>
+<meta name="description" content=":Date: 2018-01-03
+:Version: 0.9
+:Authors: Patrick Erdelt …" />
+<link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
+<link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet">
+<style>.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{font-weight:bold}#index h4 + ul{margin-bottom:.6em}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase;cursor:pointer}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>dbmsbenchmarker.tools</code></h1>
+</header>
+<section id="section-intro">
+<p>:Date: 2018-01-03
+:Version: 0.9
+:Authors: Patrick Erdelt</p>
+<p>Helper classes and functions for benchmarking usage of JDBC.</p>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">&#34;&#34;&#34;
+:Date: 2018-01-03
+:Version: 0.9
+:Authors: Patrick Erdelt
+
+Helper classes and functions for benchmarking usage of JDBC.
+&#34;&#34;&#34;
+from statistics import *
+import numpy as np
+import jaydebeapi
+from timeit import default_timer #as timer
+import pandas as pd
+import logging
+import math
+import re
+
+
+
+class timer():
+        &#34;&#34;&#34;
+        Container for storing benchmarks (times).
+        This is a list (queries) of lists (connections) of lists (runs).
+        Use this by
+        - loop over queries q
+        -- loop over connections c
+        --- startTimer()
+        --- making n benchmarks for q and c
+        ---- startTimerRun() and abortTimerRun() / finishTimerRun()
+        --- abortTimer() or finishTimer()
+        &#34;&#34;&#34;
+        header_stats = [&#34;DBMS [ms]&#34;, &#34;mean&#34;, &#34;stdev&#34;, &#34;cv %&#34;, &#34;qcod %&#34;, &#34;iqr&#34;, &#34;median&#34;, &#34;min&#34;, &#34;max&#34;]
+        def __init__(self, name):
+                &#34;&#34;&#34;
+                Stores name of benchmark container (e.g. execution or data transfer)
+
+                :param name: Name of benchmark times container
+                :return: returns nothing
+                &#34;&#34;&#34;
+                self.name = name
+                self.start = 0
+                self.end = 0
+                self.currentQuery = 0
+                self.clearBenchmarks()
+        def clearBenchmarks(self):
+                &#34;&#34;&#34;
+                Clears all benchmark related data
+
+                :return: returns nothing
+                &#34;&#34;&#34;
+                self.times = []
+                self.stats = []
+        def getStats(self, data):
+                &#34;&#34;&#34;
+                Computes statistics to list of data.
+                This is: mean, median, stdev, cv (coefficient of variation), qcod (Quartile coefficient of dispersion), iqr (Interquartile range), min and max.
+
+                :param data: List of numbers
+                :return: returns 6 statistical numbers as a list
+                &#34;&#34;&#34;
+                result = []
+                t_mean = mean(data)
+                numRun = len(data)
+                #print(&#34;statistics for n runs: &#34;+str(numRun))
+                if numRun &gt; 1:
+                        t_stdev = stdev(data)
+                else:
+                        t_stdev = 0
+                if t_mean &gt; 0 and t_stdev &gt; 0:
+                        t_cv = t_stdev / t_mean * 100.0
+                else:
+                        t_cv = 0
+                t_median = median(data)
+                t_min = min(data)
+                t_max = max(data)
+                Q1 = np.percentile(data,25)
+                Q3 = np.percentile(data,75)
+                if Q3+Q1 &gt; 0:
+                        t_qcod = 100.0*(Q3-Q1)/(Q3+Q1)
+                else:
+                        t_qcod = 0
+                if Q3-Q1 &gt; 0:
+                        t_iqr = (Q3-Q1)
+                else:
+                        t_iqr = 0
+                result = [t_mean, t_stdev, t_cv, t_qcod, t_iqr, t_median, t_min, t_max]
+                return result
+        def startTimer(self, numQuery, query, nameConnection):
+                &#34;&#34;&#34;
+                Stores number of warmup runs and benchmark runs.
+                Also clears data of current query.
+                This is a dict (connections) of lists (benchmark runs)
+                Starts benchmark of one single connection with fixed query.
+                Clears list of numbers of runs of current connection.
+
+                :param query: Query object
+                :param numRun: Number of benchmarking runs
+                :return: returns nothing
+                &#34;&#34;&#34;
+                self.nameConnection = nameConnection
+                self.startTimerQuery(numQuery, query)#numWarmup, numRun)
+                self.startTimerConnection()
+                if len(self.times) &lt;= self.currentQuery:
+                        self.times.append({})
+                        self.stats.append({})
+                if len(self.times) &gt;= self.currentQuery and self.nameConnection in self.times[self.currentQuery]:
+                        logging.debug(&#34;Benchmark &#34;+self.name+&#34; has already been done&#34;)
+        def abortTimer(self):
+                &#34;&#34;&#34;
+                Augments list of benchmarks of current connection by filling missing values with 0.
+
+                :return: returns nothing
+                &#34;&#34;&#34;
+                self.abortTimerConnection()
+        def cancelTimer(self):
+                &#34;&#34;&#34;
+                All benchmarks are set to 0. Timer will be ignored
+
+                :return: returns nothing
+                &#34;&#34;&#34;
+                self.cancelTimerConnection()
+        def finishTimer(self):
+                &#34;&#34;&#34;
+                Appends completed benchmarks to storage.
+                This is a list of benchmarks (runs).
+                Appends completed benchmarks of one single query to storage.
+                This is a dict (connections) of lists (benchmark runs).
+
+                :return: returns nothing
+                &#34;&#34;&#34;
+                self.finishTimerConnection()
+                self.finishTimerQuery()
+                self.times[self.currentQuery][self.nameConnection] = self.time_c
+                self.stats[self.currentQuery][self.nameConnection] = self.stat_c
+                print(&#34;Benchmark &#34;+self.name+&#34; has been stored for &#34;+self.nameConnection+&#34; mean: &#34;+str(self.stats[self.currentQuery][self.nameConnection][0]))
+        def skipTimer(self, numQuery, query, nameConnection):
+                self.nameConnection = nameConnection
+                self.startTimerQuery(numQuery, query)#numWarmup, numRun)
+                if len(self.times) &lt;= self.currentQuery:
+                        self.times.append({})
+                        self.stats.append({})
+                self.finishTimerQuery()
+        def startTimerQuery(self, numQuery, query):# numWarmup, numRun):
+                &#34;&#34;&#34;
+                Stores number of warmup runs and benchmark runs.
+                Also clears data of current query.
+                This is a list (connections) of benchmarks (runs)
+
+                :param numWarmup: Number of warmup runs
+                :param numRun: Number of benchmarking runs
+                :return: returns nothing
+                &#34;&#34;&#34;
+                self.currentQuery = numQuery-1
+                self.query = query
+        def finishTimerQuery(self):
+                &#34;&#34;&#34;
+                Appends completed benchmarks of one single query to storage.
+                This is a list (connections) of benchmarks (runs).
+
+                :return: returns nothing
+                &#34;&#34;&#34;
+                pass
+        def startTimerConnection(self):
+                &#34;&#34;&#34;
+                Starts benchmark of one single connection with fixed query.
+                Clears list of numbers of runs of current connection.
+
+                :return: returns nothing
+                &#34;&#34;&#34;
+                self.time_c = []
+                self.stat_c = []
+        def abortTimerConnection(self):
+                &#34;&#34;&#34;
+                Augments list of benchmarks of current connection by filling missing values with 0.
+
+                :return: returns nothing
+                &#34;&#34;&#34;
+                # fill missing runs with 0
+                #self.time_c.extend([0]*(self.numWarmup+self.numRun-len(self.time_c)))
+                self.time_c.extend([0]*(self.query.numRun-len(self.time_c)))
+        def cancelTimerConnection(self):
+                &#34;&#34;&#34;
+                Augments list of benchmarks of current connection by filling missing values with 0.
+
+                :return: returns nothing
+                &#34;&#34;&#34;
+                # fill missing runs with 0
+                self.time_c = [0]*(self.query.numRun)
+        def finishTimerConnection(self):
+                &#34;&#34;&#34;
+                Appends completed benchmarks to storage.
+                This is a list of benchmarks (runs).
+
+                :return: returns nothing
+                &#34;&#34;&#34;
+                # compute statistics, ignore warmup
+                self.stat_c = self.getStats(self.time_c[self.query.numRunBegin:self.query.numRunEnd])
+        def startTimerRun(self):
+                &#34;&#34;&#34;
+                Starts benchmark of one single run.
+                This starts a timer.
+
+                :return: returns nothing
+                &#34;&#34;&#34;
+                self.start = default_timer()
+        def finishTimerRun(self):
+                &#34;&#34;&#34;
+                Ends benchmark of one single run.
+                Benchmark is set to 0 due to error.
+
+                :return: returns 0
+                &#34;&#34;&#34;
+                self.end = default_timer()
+                duration = self.end - self.start
+                self.time_c.append(1000.0*duration)
+                return self.end - self.start
+        def abortTimerRun(self):
+                &#34;&#34;&#34;
+                Ends benchmark of one single run.
+                Benchmark is stored in list (fixed query, one connection)
+
+                :return: returns duration of current benchmark
+                &#34;&#34;&#34;
+                # same as finishTimerRun(), but time is 0
+                self.end = self.start
+                duration = self.end - self.start
+                self.time_c.append(1000.0*duration)
+                return self.end - self.start
+        def appendTimes(self, times, query):# numWarmup):
+                &#34;&#34;&#34;
+                Appends results of one single query.
+                This is a list (connections) of benchmarks (runs).
+                It also computes statistics and thereby ignores warmup runs.
+
+                :param numWarmup: Number of warmup runs
+                :return: returns nothing
+                &#34;&#34;&#34;
+                if len(times)&gt;0:
+                        stats = {k: self.getStats(v[query.numRunBegin:query.numRunEnd]) for k,v in times.items()}
+                        #stats = {k: self.getStats(v[numWarmup:]) for k,v in times.items()}
+                else:
+                        stats = {}
+                self.times.append(times)
+                self.stats.append(stats)
+        def checkForBenchmarks(self, numQuery, nameConnection = None):
+                &#34;&#34;&#34;
+                Checks if there is a list of benchmark runs for a given query and connection.
+
+                :param numQuery: Number of query
+                :param nameConnection: Name of connection
+                :return: True if benchmark results are present
+                &#34;&#34;&#34;
+                if nameConnection is None:
+                        return (len(self.times) &gt;= numQuery)
+                else:
+                        return (len(self.times) &gt;= numQuery and nameConnection in self.times[numQuery-1])
+        def checkForSuccessfulBenchmarks(self, numQuery, nameConnection = None):
+                &#34;&#34;&#34;
+                Checks if there is a list of benchmark runs for a given query and connection and not all times are zero.
+
+                :param numQuery: Number of query
+                :param nameConnection: Name of connection
+                :return: True if benchmark results are present
+                &#34;&#34;&#34;
+                existing = self.checkForBenchmarks(numQuery, nameConnection)
+                if nameConnection is not None:
+                        return(existing and not all(v == 0 for v in self.times[numQuery-1][nameConnection]))
+                else:
+                        return(existing and not all(v == 0 for k,c in self.times[numQuery-1].items() for v in c))
+        def tolist(self, numQuery):
+                &#34;&#34;&#34;
+                Returns benchmarks of a given query as a list of lists.
+
+                :param numQuery: Number of query
+                :return: List of lists of benchmark times
+                &#34;&#34;&#34;
+                l = [v for k,v in self.times[numQuery-1].items()]
+                return l
+        def toDataFrame(self, numQuery):
+                &#34;&#34;&#34;
+                Returns benchmarks of a given query as a DataFrame (rows=dbms, cols=benchmarks).
+
+                :param numQuery: Number of query
+                :return: DataFrame of benchmark times
+                &#34;&#34;&#34;
+                data =list(zip([[k] for k,v in self.times[numQuery-1].items()],[v for k,v in self.times[numQuery-1].items()]))
+                # correct nesting 
+                data2 = [[item for item in sublist] for sublist in data]
+                l = [[item for sublist2 in sublist for item in sublist2] for sublist in data2]
+                # convert times to DataFrame
+                df = pd.DataFrame.from_records(l)
+                return df
+        def statsToDataFrame(self, numQuery):
+                &#34;&#34;&#34;
+                Returns statistics of a given query as a DataFrame (rows=dbms, cols=statisticd).
+
+                :param numQuery: Number of query
+                :return: DataFrame of benchmark statistics
+                &#34;&#34;&#34;
+                data =list(zip([[k] for k,v in self.stats[numQuery-1].items()],[v for k,v in self.stats[numQuery-1].items()]))
+                # correct nesting 
+                data2 = [[item for item in sublist] for sublist in data]
+                l = [[item for sublist2 in sublist for item in sublist2] for sublist in data2]
+                # convert times to DataFrame
+                df = pd.DataFrame.from_records(l)
+                if df.empty:
+                        logging.debug(&#34;no values&#34;)
+                        return df
+                # format times for output
+                header = timer.header_stats.copy()
+                df.columns = header
+                return df
+
+
+
+
+class query():
+        &#34;&#34;&#34;
+        Container for storing queries.
+        This converts a dict read from json to an object.
+        It also checks values and sets defaults.
+        &#34;&#34;&#34;
+        def __init__(self, query):
+                &#34;&#34;&#34;
+                Converts dict into object.
+
+                :param query: Dict containing query infos - query, numRun, numParallel, withData, warmup, cooldown, title
+                :return: returns nothing
+                &#34;&#34;&#34;
+                self.numRunStd = 5
+                self.query = query[&#39;query&#39;]
+                if &#39;numRun&#39; in query:
+                        self.numRun = int(query[&#39;numRun&#39;])
+                else:
+                        self.numRun = self.numRunStd
+                if &#39;numParallel&#39; in query:
+                        self.numParallel = int(query[&#39;numParallel&#39;])
+                else:
+                        self.numParallel = 1
+                if &#39;active&#39; in query:
+                        self.active = query[&#39;active&#39;]
+                else:
+                        self.active = True
+                if &#39;numWarmup&#39; in query:
+                        self.warmup = int(query[&#39;numWarmup&#39;])
+                else:
+                        self.warmup = 0
+                if &#39;numCooldown&#39; in query:
+                        self.cooldown = int(query[&#39;numCooldown&#39;])
+                else:
+                        self.cooldown = 0
+                if &#39;title&#39; in query:
+                        self.title = query[&#39;title&#39;]
+                else:
+                        self.title = &#39;&#39;
+                if &#39;DBMS&#39; in query:
+                        self.DBMS = query[&#39;DBMS&#39;]
+                else:
+                        self.DBMS = {}
+                if &#39;parameter&#39; in query:
+                        self.parameter = query[&#39;parameter&#39;]
+                else:
+                        self.parameter = {}
+                self.numRunBegin = self.warmup
+                self.numRunEnd = self.numRun-self.cooldown
+                # timerExecution
+                if &#39;timer&#39; in query:
+                        self.timer = query[&#39;timer&#39;]
+                        self.timer[&#39;execution&#39;] = {}
+                        self.timer[&#39;execution&#39;][&#39;active&#39;] = True
+                else:
+                        self.timer = {}
+                # timerTransfer
+                self.withData = False
+                self.result = False
+                self.restrict_precision = None
+                self.sorted = False
+                self.storeResultSet = False
+                self.storeResultSetFormat = []
+                if &#39;datatransfer&#39; in self.timer:
+                        if self.timer[&#39;datatransfer&#39;][&#39;active&#39;]:
+                                self.withData = True
+                        if self.timer[&#39;datatransfer&#39;][&#39;compare&#39;]:
+                                self.result = self.timer[&#39;datatransfer&#39;][&#39;compare&#39;]
+                        if &#39;precision&#39; in self.timer[&#39;datatransfer&#39;]:
+                                self.restrict_precision = self.timer[&#39;datatransfer&#39;][&#39;precision&#39;]
+                        if &#39;sorted&#39; in self.timer[&#39;datatransfer&#39;]:
+                                self.sorted = self.timer[&#39;datatransfer&#39;][&#39;sorted&#39;]
+                        if &#39;store&#39; in self.timer[&#39;datatransfer&#39;]:
+                                self.storeResultSet = True
+                                if isinstance(self.timer[&#39;datatransfer&#39;][&#39;store&#39;], str):
+                                        self.storeResultSetFormat = [self.timer[&#39;datatransfer&#39;][&#39;store&#39;]]
+                                else:
+                                        self.storeResultSetFormat = self.timer[&#39;datatransfer&#39;][&#39;store&#39;]
+                else:
+                        self.timer[&#39;datatransfer&#39;] = {}
+                        self.timer[&#39;datatransfer&#39;][&#39;active&#39;] = False
+                # timerConnect
+                self.withConnect = False
+                if &#39;connection&#39; in self.timer:
+                        if self.timer[&#39;connection&#39;][&#39;active&#39;]:
+                                self.withConnect = True
+                else:
+                        self.timer[&#39;connection&#39;] = {}
+                        self.timer[&#39;connection&#39;][&#39;active&#39;] = False
+                # legacy naming
+                self.timer[&#39;transfer&#39;] = {}
+                self.timer[&#39;transfer&#39;][&#39;active&#39;] = self.timer[&#39;datatransfer&#39;][&#39;active&#39;]#False
+
+
+
+def formatDuration(ms):
+        &#34;&#34;&#34;
+        Formats duration given in ms to HH:ii:ss and using &#34;,&#34; for 1000s
+
+        :param ms: Time given in ms
+        :return: returns formatted string
+        &#34;&#34;&#34;
+        # truncate version
+        #seconds = int((ms/1000)%60)
+        #minutes = int((ms/(1000*60))%60)
+        #hours = int((ms/(1000*60*60))%24)
+        #s = &#34;{:,.2f}ms = {:0&gt;2d}:{:0&gt;2d}:{:0&gt;2d}&#34;.format(ms,hours,minutes,seconds)
+        # ceil() version:
+        seconds = int(math.ceil(ms/1000)%60)
+        minutes = int(math.ceil((ms-1000*seconds)/(1000*60))%60)
+        hours = int(math.ceil((ms-1000*seconds-1000*60*minutes)/(1000*60*60)))#%24)
+        s = &#34;{:,.2f}ms = {:0&gt;2d}:{:0&gt;2d}:{:0&gt;2d}&#34;.format(ms,hours,minutes,seconds)
+        return s
+
+
+
+class dbms():
+        &#34;&#34;&#34;
+        Container for storing queries.
+        This converts a dict read from json to an object.
+        It also checks values and sets defaults.
+        &#34;&#34;&#34;
+        jars = []
+        currentAnonymChar = 65
+        anonymizer = {}
+        deanonymizer = {}
+        def __init__(self, connectiondata, anonymous = False):
+                &#34;&#34;&#34;
+                Converts dict into object.
+                Anonymizes dbms if activated.
+
+                :param query: Dict containing query infos - query, numRun, withData, warmup, title
+                :return: returns nothing
+                &#34;&#34;&#34;
+                self.connectiondata = connectiondata
+                self.connection = None
+                self.cursor = None
+                if not connectiondata[&#39;JDBC&#39;][&#39;jar&#39;] in dbms.jars:
+                        dbms.jars.append(connectiondata[&#39;JDBC&#39;][&#39;jar&#39;])
+                if not &#39;version&#39; in self.connectiondata:
+                        self.connectiondata[&#39;version&#39;] = &#34;-&#34;
+                if not &#39;info&#39; in self.connectiondata:
+                        self.connectiondata[&#39;info&#39;] = &#34;&#34;
+                if not &#39;active&#39; in self.connectiondata:
+                        self.connectiondata[&#39;active&#39;] = True
+                self.anonymous = anonymous
+                # anonymous dbms get ascending char as name
+                if self.anonymous:
+                        if &#39;alias&#39; in self.connectiondata and len(self.connectiondata[&#39;alias&#39;]) &gt; 0:
+                                self.name = self.connectiondata[&#39;alias&#39;]+&#34; &#34;+chr(dbms.currentAnonymChar)
+                                dbms.currentAnonymChar = dbms.currentAnonymChar + 1
+                        else:
+                                self.name = &#34;DBMS &#34;+chr(dbms.currentAnonymChar)
+                                dbms.currentAnonymChar = dbms.currentAnonymChar + 1
+                        print(&#34;Alias for &#34;+self.connectiondata[&#39;name&#39;]+&#34; is &#34;+self.name)
+                else:
+                        self.name = self.connectiondata[&#39;name&#39;]
+                dbms.anonymizer[self.connectiondata[&#39;name&#39;]] = self.name
+                dbms.deanonymizer[self.name] = self.connectiondata[&#39;name&#39;]
+                #print(dbms.anonymizer)
+                # is there a limit for parallel processes?
+                # =1 means: not parallel
+                # =0 means: take global setting
+                if not &#39;numProcesses&#39; in self.connectiondata:
+                        self.connectiondata[&#39;numProcesses&#39;] = 0
+        def connect(self):
+                &#34;&#34;&#34;
+                Connects to one single dbms.
+                Currently only JDBC is supported.
+
+                :return: returns nothing
+                &#34;&#34;&#34;
+                if &#39;JDBC&#39; in self.connectiondata:
+                        self.connection = jaydebeapi.connect(
+                                self.connectiondata[&#39;JDBC&#39;][&#39;driver&#39;],
+                                self.connectiondata[&#39;JDBC&#39;][&#39;url&#39;],
+                                self.connectiondata[&#39;JDBC&#39;][&#39;auth&#39;],
+                                dbms.jars,)
+                else:
+                        raise ValueError(&#39;No connection data for &#39;+self.getName())
+        def openCursor(self):
+                &#34;&#34;&#34;
+                Opens cursor for current connection.
+
+                :return: returns nothing
+                &#34;&#34;&#34;
+                if self.connection is not None:
+                        self.cursor = self.connection.cursor()
+        def closeCursor(self):
+                &#34;&#34;&#34;
+                Closes cursor for current connection.
+
+                :return: returns nothing
+                &#34;&#34;&#34;
+                if self.cursor is not None:
+                        self.cursor.close()
+                        self.cursor = None
+        def executeQuery(self, queryString):
+                &#34;&#34;&#34;
+                Executes a query for current connection and cursor.
+
+                :param queryString: SQL query to be executed
+                :return: returns nothing
+                &#34;&#34;&#34;
+                if self.cursor is not None:
+                        self.cursor.execute(queryString)
+        def fetchResult(self):
+                &#34;&#34;&#34;
+                Fetches result from current cursor.
+
+                :param queryString: SQL query to be executed
+                :return: returns nothing
+                &#34;&#34;&#34;
+                if self.cursor is not None:
+                        return self.cursor.fetchall()
+                else:
+                        return []
+        def disconnect(self):
+                &#34;&#34;&#34;
+                Disconnects from one single dbms.
+
+                :return: returns nothing
+                &#34;&#34;&#34;
+                if self.connection is not None:
+                        self.connection.close()
+                        self.connection = None
+        def getName(self):
+                &#34;&#34;&#34;
+                Returns name of dbms, or alias if anonymous.
+
+                :return: returns nothing
+                &#34;&#34;&#34;
+                return self.name
+        def hasHardwareMetrics(self):
+                # should hardware metrics be fetched from grafana
+                if &#39;monitoring&#39; in self.connectiondata and &#39;grafanatoken&#39; in self.connectiondata[&#39;monitoring&#39;] and &#39;grafanaurl&#39; in self.connectiondata[&#39;monitoring&#39;] and self.connectiondata[&#39;monitoring&#39;][&#39;grafanatoken&#39;] and self.connectiondata[&#39;monitoring&#39;][&#39;grafanaurl&#39;]:
+                        return True
+                else:
+                        return False
+
+
+
+class dataframehelper():
+        &#34;&#34;&#34;
+        Class for some handy DataFrame manipulations
+        &#34;&#34;&#34;
+        @staticmethod
+        def addFactor(dataframe, factor):
+                &#34;&#34;&#34;
+                Adds factor column to DataFrame of benchmark statistics.
+                This is a normalized version of the mean or median column.
+                Also moves first column (dbms) to index.
+
+                :param dataframe: Report data given as a pandas DataFrame
+                :param factor: Column to take as basis for factor
+                :return: returns converted dataframe
+                &#34;&#34;&#34;
+                if dataframe.empty:
+                        return dataframe
+                # select column 0 = connections
+                connections = dataframe.iloc[0:,0].values.tolist()
+                # only consider not 0
+                dataframe_non_zero = dataframe[(dataframe.T[1:] != 0).any()]
+                # select column for factor and find minimum in cleaned dataframe
+                factorlist = dataframe[factor]
+                minimum = dataframe_non_zero[factor].min()
+                # norm list to mean = 1
+                mean_list_normed = [round(float(item/minimum),2) for item in factorlist]
+                # transpose for conversion to dict
+                dft = dataframe.transpose()
+                # set column names
+                dft.columns = dft.iloc[0]
+                # remove first row
+                df_transposed = dft[1:]
+                # transform to dict
+                d = df_transposed.to_dict(orient=&#34;list&#34;)
+                # correct nesting, (format numbers?)
+                stats_output = {k: [sublist for sublist in [stat_q]] for k,stat_q in d.items()}
+                # convert times to DataFrame
+                data = []
+                for c in connections:
+                        if c in stats_output:
+                                l = list([c])
+                                l.extend(*stats_output[c])
+                                data.append(l)
+                dataframe = pd.DataFrame.from_records(data)
+                header = timer.header_stats.copy()
+                dataframe.columns = header
+                # insert factor column
+                dataframe.insert(loc=1, column=&#39;factor&#39;, value=mean_list_normed)
+                # replace float by string
+                dataframe = dataframe.replace(0.00, &#34;0.00&#34;)
+                # drop rows of only 0
+                dataframe = dataframe[(dataframe.T[1:] != &#34;0.00&#34;).any()]
+                # sort by factor
+                dataframe = dataframe.sort_values(dataframe.columns[1], ascending = True)
+                # anonymize dbms
+                dataframe.iloc[0:,0] = dataframe.iloc[0:,0].map(dbms.anonymizer)
+                dataframe = dataframe.set_index(dataframe.columns[0])
+                return dataframe
+        @staticmethod
+        def sumPerTimer(benchmarker, numQuery, timer):
+                &#34;&#34;&#34;
+                Generates a dataframe (for bar charts) of the time series of a benchmarker.
+                Rows=dbms, cols=timer, values=sum of times
+                Anonymizes dbms if activated.
+
+                :param numQuery: Number of query to generate dataframe of (None means all)
+                :param timer: Timer containing benchmark results
+                :return: returns nothing
+                &#34;&#34;&#34;
+                sums = list(range(0,len(timer)))
+                timerNames = [t.name for t in timer]
+                bValuesFound = False
+                numQueriesEvaluated = 0
+                numBenchmarks = 0
+                validQueries = findSuccessfulQueriesAllDBMS(benchmarker, numQuery, timer)
+                for numTimer,t in enumerate(timer):
+                        numFactors = 0
+                        logging.debug(&#34;sumPerTimer: Check timer &#34;+t.name)
+                        sums[numTimer] = {}
+                        # are there benchmarks for this query?
+                        for i,q in enumerate(t.times):
+                                # does this timer contribute?
+                                if not i in validQueries[numTimer]:
+                                        continue
+                                logging.debug(&#34;timer &#34;+str(numTimer)+&#34; is valid for query Q&#34;+str(i+1))
+                                df = benchmarker.statsToDataFrame(i+1, t)
+                                #print(df)
+                                queryObject = query(benchmarker.queries[i])
+                                # no active dbms missing for this timer and query
+                                numQueriesEvaluated = numQueriesEvaluated + 1
+                                if numQuery is None:
+                                        logging.debug(str(numQueriesEvaluated)+&#34;=Q&#34;+str(i+1)+&#34; in total bar chart of timer &#34;+t.name+&#34; - all active dbms contribute&#34;)
+                                bValuesFound = True
+                                numFactors = numFactors + 1
+                                for c,values in q.items():
+                                        if benchmarker.dbms[c].connectiondata[&#39;active&#39;]:
+                                                dbmsname = benchmarker.dbms[c].getName()
+                                                if dbmsname in df.index:
+                                                        value_to_add = float(df.loc[dbmsname].loc[benchmarker.queryconfig[&#39;factor&#39;]])
+                                                        numBenchmarks += len(values[queryObject.numRunBegin:queryObject.numRunEnd])
+                                                        logging.debug(&#34;Added &#34;+dbmsname+&#34;: &#34;+str(value_to_add))
+                                                        if dbmsname in sums[numTimer]:
+                                                                sums[numTimer][dbmsname] = sums[numTimer][dbmsname] + value_to_add
+                                                        else:
+                                                                sums[numTimer][dbmsname] = value_to_add
+                        sums[numTimer] = {c: x/numFactors for c,x in sums[numTimer].items()}
+                if not bValuesFound:
+                        return None, &#39;&#39;
+                df = pd.DataFrame(sums, index=timerNames)
+                df=df.fillna(0.0)
+                # remove zero rows (timer missing)
+                df = df[(df.T[0:] != 0).any()]
+                d = df.transpose()
+                # anonymize dbms
+                #d.index = d.index.map(dbms.anonymizer)
+                # add column total timer
+                d[&#39;total&#39;]=d.sum(axis=1)
+                # remove zero rows (dbms missing)
+                d = d[(d.T[0:] != 0).any()]
+                # remove zero columns (timer missing)
+                d = d.loc[:, (d != 0).any(axis=0)]
+                if d.empty:
+                        logging.debug(&#34;no values&#34;)
+                        return None, &#39;&#39;
+                # sort by total
+                d = d.sort_values(&#39;total&#39;, ascending = True)
+                # drop total
+                d = d.drop(&#39;total&#39;,axis=1)
+                # label chart
+                if benchmarker.queryconfig[&#39;factor&#39;] == &#39;mean&#39;:
+                        chartlabel = &#39;Arithmetic mean of mean times&#39;
+                elif benchmarker.queryconfig[&#39;factor&#39;] == &#39;median&#39;:
+                        chartlabel = &#39;Arithmetic mean of median times&#39;
+                if numQuery is None:
+                        title = chartlabel+&#34; in &#34;+str(numQueriesEvaluated)+&#34; benchmarks (&#34;+str(numBenchmarks)+&#34; runs) [ms]&#34;
+                else:
+                        title = &#34;Q&#34;+str(numQuery)+&#34;: &#34;+chartlabel+&#34; [ms] in &#34;+str(queryObject.numRun-queryObject.warmup-queryObject.cooldown)+&#34; benchmark test runs&#34;
+                return d, title
+        @staticmethod
+        def multiplyPerTimer(benchmarker, numQuery, timer):
+                &#34;&#34;&#34;
+                Generates a dataframe (for bar charts) of the time series of a benchmarker.
+                Rows=dbms, cols=timer, values=sum of times
+                Anonymizes dbms if activated.
+
+                :param numQuery: Number of query to generate dataframe of (None means all)
+                :param timer: Timer containing benchmark results
+                :return: returns nothing
+                &#34;&#34;&#34;
+                sums = list(range(0,len(timer)))
+                timerNames = [t.name for t in timer]
+                bValuesFound = False
+                numQueriesEvaluated = 0
+                numBenchmarks = 0
+                validQueries = findSuccessfulQueriesAllDBMS(benchmarker, numQuery, timer)
+                for numTimer,t in enumerate(timer):
+                        numFactors = 0
+                        logging.debug(&#34;multiplyPerTimer: Check timer &#34;+t.name)
+                        sums[numTimer] = {}
+                        # are there benchmarks for this query?
+                        for i,q in enumerate(t.times):
+                                # does this timer contribute?
+                                if not i in validQueries[numTimer]:
+                                        continue
+                                logging.debug(&#34;timer &#34;+str(numTimer)+&#34; is valid for query Q&#34;+str(i+1))
+                                df = benchmarker.statsToDataFrame(i+1, t)
+                                queryObject = query(benchmarker.queries[i])
+                                # no active dbms missing for this timer and query
+                                numQueriesEvaluated = numQueriesEvaluated + 1
+                                if numQuery is None:
+                                        logging.debug(str(numQueriesEvaluated)+&#34;=Q&#34;+str(i+1)+&#34; in total bar chart of timer &#34;+t.name+&#34; - all active dbms contribute&#34;)
+                                bValuesFound = True
+                                # mean value (i.e. sum of all values)
+                                for c,values in q.items():
+                                        if benchmarker.dbms[c].connectiondata[&#39;active&#39;]:
+                                                dbmsname = benchmarker.dbms[c].getName()
+                                                if dbmsname in df.index:
+                                                        value_to_multiply = float(df.loc[dbmsname].loc[&#39;factor&#39;])
+                                                        numBenchmarks += len(values[queryObject.numRunBegin:queryObject.numRunEnd])
+                                                        numFactors = numFactors + 1
+                                                        logging.debug(&#34;Multiplied &#34;+dbmsname+&#34;: &#34;+str(value_to_multiply))
+                                                        if dbmsname in sums[numTimer]:
+                                                                sums[numTimer][dbmsname] = sums[numTimer][dbmsname] * value_to_multiply
+                                                        else:
+                                                                sums[numTimer][dbmsname] = value_to_multiply
+                        sums[numTimer] = {c: x ** (1/numFactors) for c,x in sums[numTimer].items()}
+                if not bValuesFound:
+                        return None, &#39;&#39;
+                df = pd.DataFrame(sums, index=timerNames)
+                df=df.fillna(0.0)
+                # remove zero rows (timer missing)
+                df = df[(df.T[0:] != 0).any()]
+                d = df.transpose()
+                # anonymize dbms
+                #d.index = d.index.map(dbms.anonymizer)
+                # add column total timer
+                d[&#39;total&#39;]=d.sum(axis=1)
+                # remove zero rows (dbms missing)
+                d = d[(d.T[0:] != 0).any()]
+                # remove zero columns (timer missing)
+                d = d.loc[:, (d != 0).any(axis=0)]
+                if d.empty:
+                        logging.debug(&#34;no values&#34;)
+                        return None, &#39;&#39;
+                # sort by total
+                d = d.sort_values(&#39;total&#39;, ascending = True)
+                # drop total
+                d = d.drop(&#39;total&#39;,axis=1)
+                # label chart
+                if benchmarker.queryconfig[&#39;factor&#39;] == &#39;mean&#39;:
+                        chartlabel = &#39;Geometric mean of factors of mean times&#39;
+                elif benchmarker.queryconfig[&#39;factor&#39;] == &#39;median&#39;:
+                        chartlabel = &#39;Geometric mean of factors of median times&#39;
+                if numQuery is None:
+                        title = chartlabel+&#34; in &#34;+str(numQueriesEvaluated)+&#34; benchmarks (&#34;+str(numBenchmarks)+&#34; runs)&#34;
+                else:
+                        title = &#34;Q&#34;+str(numQuery)+&#34;: &#34;+chartlabel+&#34; in &#34;+str(queryObject.numRun-queryObject.warmup-queryObject.cooldown)+&#34; benchmark test runs&#34;
+                return d, title
+        @staticmethod
+        def totalTimes(benchmarker):
+                # list of active queries for timer #0 = execution
+                qs = findSuccessfulQueriesAllDBMS(benchmarker, None, benchmarker.timers)[0]
+                if len(qs) == 0:
+                        return None, &#34;&#34;
+                # list of active dbms
+                cs = [i for i,q in benchmarker.dbms.items() if q.connectiondata[&#39;active&#39;]]
+                times1 = dict.fromkeys(cs, list())
+                times = {c:[] for c,l in times1.items()}
+                for i in range(len(qs)):
+                        for q,c in enumerate(cs):
+                                if c in benchmarker.protocol[&#39;query&#39;][str(qs[i]+1)][&#39;durations&#39;]:
+                                        times[c].append(benchmarker.protocol[&#39;query&#39;][str(qs[i]+1)][&#39;durations&#39;][c])
+                                else:
+                                        times[c].append(0.0)
+                dataframe = pd.DataFrame.from_records(times)
+                dataframe.index = qs
+                dataframe.index = dataframe.index.map(lambda r: &#34;Q&#34;+str(r+1))
+                dataframe.columns = dataframe.columns.map(dbms.anonymizer)
+                title = &#39;Total times of &#39;+str(len(times[c]))+&#34; queries&#34;
+                return dataframe, title
+
+
+
+def findSuccessfulQueriesAllDBMS(benchmarker, numQuery, timer):
+        &#34;&#34;&#34;
+        Find all queries where all dbms retrieved results successfully for a given list of timers.
+        These may be taken into account for comparisons and a total bar chart.
+        Anonymizes dbms if activated.
+
+        :param numQuery: Number of query to inspect (optional)
+        :param timer: Timer containing benchmark results
+        :return: returns list of successful queries per timer
+        &#34;&#34;&#34;
+        validQueries = list(range(0,len(timer)))
+        for numTimer,t in enumerate(timer):
+                logging.debug(&#34;Bar chart: Check timer &#34;+t.name)
+                validQueries[numTimer] = []
+                # are there benchmarks for this query?
+                if numQuery is not None and not t.checkForBenchmarks(numQuery):
+                        continue
+                for i,q in enumerate(t.times):
+                        # does this timer contribute?
+                        if not t.checkForBenchmarks(i+1):
+                                continue
+                        queryObject = query(benchmarker.queries[i])
+                        # is timer active for this query?
+                        if not queryObject.timer[t.name][&#39;active&#39;]:
+                                continue
+                        bIgnoreQuery = False
+                        if numQuery is None or (numQuery &gt; 0 and numQuery-1 == i):
+                                # use all queries (total) or this query is requested
+                                if numQuery is None:
+                                        for connectionname, c in benchmarker.dbms.items():
+                                                # ignore queries not active
+                                                if not queryObject.active:
+                                                        logging.debug(&#34;Total bar: Ignore query &#34;+str(i+1)+&#34; - query inactive&#34;)
+                                                        bIgnoreQuery = True
+                                                # for total: only consider queries completed by all active dbms
+                                                elif not connectionname in q and c.connectiondata[&#39;active&#39;]:
+                                                        logging.debug(&#34;Total bar: Ignore query &#34;+str(i+1)+&#34; - missing dbms &#34;+connectionname)
+                                                        bIgnoreQuery = True
+                                                # for total: only consider active dbms without error
+                                                elif all(v == 0 for v in q[connectionname]) and c.connectiondata[&#39;active&#39;]:
+                                                        logging.debug(&#34;Total bar: Ignore query &#34;+str(i+1)+&#34; - data 0&#34;)
+                                                        bIgnoreQuery = True
+                                                if bIgnoreQuery:
+                                                        break
+                                if not bIgnoreQuery:
+                                        # no active dbms missing for this timer and query
+                                        validQueries[numTimer].append(i)
+        return validQueries
+
+
+
+import ast
+def convertToFloat(var):
+        &#34;&#34;&#34;
+        Converts variable to float.
+
+        :param var: Some variable
+        :return: returns float converted variable
+        &#34;&#34;&#34;
+        try:
+                return type(ast.literal_eval(var))
+        except Exception:
+                return str
+
+
+
+def sizeof_fmt(num, suffix=&#39;B&#39;):
+        &#34;&#34;&#34;
+        Formats data size into human readable format.
+        https://stackoverflow.com/questions/1094841/reusable-library-to-get-human-readable-version-of-file-size
+
+        :param num: Data size
+        :param suffix: &#39;B&#39;
+        :return: returns human readable data size
+        &#34;&#34;&#34;
+        for unit in [&#39;&#39;,&#39;Ki&#39;,&#39;Mi&#39;,&#39;Gi&#39;,&#39;Ti&#39;,&#39;Pi&#39;,&#39;Ei&#39;,&#39;Zi&#39;]:
+                if abs(num) &lt; 1024.0:
+                        return &#34;%3.1f%s%s&#34; % (num, unit, suffix)
+                num /= 1024.0
+        return &#34;%.1f%s%s&#34; % (num, &#39;Yi&#39;, suffix)
+
+
+
+def tex_escape(text):
+        &#34;&#34;&#34;
+        Escapes string so it&#39;s latex compatible.
+        https://stackoverflow.com/questions/16259923/how-can-i-escape-latex-special-characters-inside-django-templates
+
+        :param text: a plain text message
+        :return: the message escaped to appear correctly in LaTeX
+        &#34;&#34;&#34;
+        conv = {
+                &#39;&amp;&#39;: r&#39;\&amp;&#39;,
+                &#39;%&#39;: r&#39;\%&#39;,
+                &#39;$&#39;: r&#39;\$&#39;,
+                &#39;#&#39;: r&#39;\#&#39;,
+                &#39;_&#39;: r&#39;\_&#39;,
+                &#39;{&#39;: r&#39;\{&#39;,
+                &#39;}&#39;: r&#39;\}&#39;,
+                &#39;~&#39;: r&#39;\textasciitilde{}&#39;,
+                &#39;^&#39;: r&#39;\^{}&#39;,
+                &#39;\\&#39;: r&#39;\textbackslash{}&#39;,
+                &#39;&lt;&#39;: r&#39;\textless{}&#39;,
+                &#39;&gt;&#39;: r&#39;\textgreater{}&#39;,
+        }
+        regex = re.compile(&#39;|&#39;.join(re.escape(str(key)) for key in sorted(conv.keys(), key = lambda item: - len(item))))
+        return regex.sub(lambda match: conv[match.group()], text)</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="dbmsbenchmarker.tools.convertToFloat"><code class="name flex">
+<span>def <span class="ident">convertToFloat</span></span>(<span>var)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Converts variable to float.</p>
+<p>:param var: Some variable
+:return: returns float converted variable</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def convertToFloat(var):
+        &#34;&#34;&#34;
+        Converts variable to float.
+
+        :param var: Some variable
+        :return: returns float converted variable
+        &#34;&#34;&#34;
+        try:
+                return type(ast.literal_eval(var))
+        except Exception:
+                return str</code></pre>
+</details>
+</dd>
+<dt id="dbmsbenchmarker.tools.findSuccessfulQueriesAllDBMS"><code class="name flex">
+<span>def <span class="ident">findSuccessfulQueriesAllDBMS</span></span>(<span>benchmarker, numQuery, timer)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Find all queries where all dbms retrieved results successfully for a given list of timers.
+These may be taken into account for comparisons and a total bar chart.
+Anonymizes dbms if activated.</p>
+<p>:param numQuery: Number of query to inspect (optional)
+:param timer: Timer containing benchmark results
+:return: returns list of successful queries per timer</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def findSuccessfulQueriesAllDBMS(benchmarker, numQuery, timer):
+        &#34;&#34;&#34;
+        Find all queries where all dbms retrieved results successfully for a given list of timers.
+        These may be taken into account for comparisons and a total bar chart.
+        Anonymizes dbms if activated.
+
+        :param numQuery: Number of query to inspect (optional)
+        :param timer: Timer containing benchmark results
+        :return: returns list of successful queries per timer
+        &#34;&#34;&#34;
+        validQueries = list(range(0,len(timer)))
+        for numTimer,t in enumerate(timer):
+                logging.debug(&#34;Bar chart: Check timer &#34;+t.name)
+                validQueries[numTimer] = []
+                # are there benchmarks for this query?
+                if numQuery is not None and not t.checkForBenchmarks(numQuery):
+                        continue
+                for i,q in enumerate(t.times):
+                        # does this timer contribute?
+                        if not t.checkForBenchmarks(i+1):
+                                continue
+                        queryObject = query(benchmarker.queries[i])
+                        # is timer active for this query?
+                        if not queryObject.timer[t.name][&#39;active&#39;]:
+                                continue
+                        bIgnoreQuery = False
+                        if numQuery is None or (numQuery &gt; 0 and numQuery-1 == i):
+                                # use all queries (total) or this query is requested
+                                if numQuery is None:
+                                        for connectionname, c in benchmarker.dbms.items():
+                                                # ignore queries not active
+                                                if not queryObject.active:
+                                                        logging.debug(&#34;Total bar: Ignore query &#34;+str(i+1)+&#34; - query inactive&#34;)
+                                                        bIgnoreQuery = True
+                                                # for total: only consider queries completed by all active dbms
+                                                elif not connectionname in q and c.connectiondata[&#39;active&#39;]:
+                                                        logging.debug(&#34;Total bar: Ignore query &#34;+str(i+1)+&#34; - missing dbms &#34;+connectionname)
+                                                        bIgnoreQuery = True
+                                                # for total: only consider active dbms without error
+                                                elif all(v == 0 for v in q[connectionname]) and c.connectiondata[&#39;active&#39;]:
+                                                        logging.debug(&#34;Total bar: Ignore query &#34;+str(i+1)+&#34; - data 0&#34;)
+                                                        bIgnoreQuery = True
+                                                if bIgnoreQuery:
+                                                        break
+                                if not bIgnoreQuery:
+                                        # no active dbms missing for this timer and query
+                                        validQueries[numTimer].append(i)
+        return validQueries</code></pre>
+</details>
+</dd>
+<dt id="dbmsbenchmarker.tools.formatDuration"><code class="name flex">
+<span>def <span class="ident">formatDuration</span></span>(<span>ms)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Formats duration given in ms to HH:ii:ss and using "," for 1000s</p>
+<p>:param ms: Time given in ms
+:return: returns formatted string</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def formatDuration(ms):
+        &#34;&#34;&#34;
+        Formats duration given in ms to HH:ii:ss and using &#34;,&#34; for 1000s
+
+        :param ms: Time given in ms
+        :return: returns formatted string
+        &#34;&#34;&#34;
+        # truncate version
+        #seconds = int((ms/1000)%60)
+        #minutes = int((ms/(1000*60))%60)
+        #hours = int((ms/(1000*60*60))%24)
+        #s = &#34;{:,.2f}ms = {:0&gt;2d}:{:0&gt;2d}:{:0&gt;2d}&#34;.format(ms,hours,minutes,seconds)
+        # ceil() version:
+        seconds = int(math.ceil(ms/1000)%60)
+        minutes = int(math.ceil((ms-1000*seconds)/(1000*60))%60)
+        hours = int(math.ceil((ms-1000*seconds-1000*60*minutes)/(1000*60*60)))#%24)
+        s = &#34;{:,.2f}ms = {:0&gt;2d}:{:0&gt;2d}:{:0&gt;2d}&#34;.format(ms,hours,minutes,seconds)
+        return s</code></pre>
+</details>
+</dd>
+<dt id="dbmsbenchmarker.tools.sizeof_fmt"><code class="name flex">
+<span>def <span class="ident">sizeof_fmt</span></span>(<span>num, suffix='B')</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Formats data size into human readable format.
+<a href="https://stackoverflow.com/questions/1094841/reusable-library-to-get-human-readable-version-of-file-size">https://stackoverflow.com/questions/1094841/reusable-library-to-get-human-readable-version-of-file-size</a></p>
+<p>:param num: Data size
+:param suffix: 'B'
+:return: returns human readable data size</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def sizeof_fmt(num, suffix=&#39;B&#39;):
+        &#34;&#34;&#34;
+        Formats data size into human readable format.
+        https://stackoverflow.com/questions/1094841/reusable-library-to-get-human-readable-version-of-file-size
+
+        :param num: Data size
+        :param suffix: &#39;B&#39;
+        :return: returns human readable data size
+        &#34;&#34;&#34;
+        for unit in [&#39;&#39;,&#39;Ki&#39;,&#39;Mi&#39;,&#39;Gi&#39;,&#39;Ti&#39;,&#39;Pi&#39;,&#39;Ei&#39;,&#39;Zi&#39;]:
+                if abs(num) &lt; 1024.0:
+                        return &#34;%3.1f%s%s&#34; % (num, unit, suffix)
+                num /= 1024.0
+        return &#34;%.1f%s%s&#34; % (num, &#39;Yi&#39;, suffix)</code></pre>
+</details>
+</dd>
+<dt id="dbmsbenchmarker.tools.tex_escape"><code class="name flex">
+<span>def <span class="ident">tex_escape</span></span>(<span>text)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Escapes string so it's latex compatible.
+<a href="https://stackoverflow.com/questions/16259923/how-can-i-escape-latex-special-characters-inside-django-templates">https://stackoverflow.com/questions/16259923/how-can-i-escape-latex-special-characters-inside-django-templates</a></p>
+<p>:param text: a plain text message
+:return: the message escaped to appear correctly in LaTeX</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def tex_escape(text):
+        &#34;&#34;&#34;
+        Escapes string so it&#39;s latex compatible.
+        https://stackoverflow.com/questions/16259923/how-can-i-escape-latex-special-characters-inside-django-templates
+
+        :param text: a plain text message
+        :return: the message escaped to appear correctly in LaTeX
+        &#34;&#34;&#34;
+        conv = {
+                &#39;&amp;&#39;: r&#39;\&amp;&#39;,
+                &#39;%&#39;: r&#39;\%&#39;,
+                &#39;$&#39;: r&#39;\$&#39;,
+                &#39;#&#39;: r&#39;\#&#39;,
+                &#39;_&#39;: r&#39;\_&#39;,
+                &#39;{&#39;: r&#39;\{&#39;,
+                &#39;}&#39;: r&#39;\}&#39;,
+                &#39;~&#39;: r&#39;\textasciitilde{}&#39;,
+                &#39;^&#39;: r&#39;\^{}&#39;,
+                &#39;\\&#39;: r&#39;\textbackslash{}&#39;,
+                &#39;&lt;&#39;: r&#39;\textless{}&#39;,
+                &#39;&gt;&#39;: r&#39;\textgreater{}&#39;,
+        }
+        regex = re.compile(&#39;|&#39;.join(re.escape(str(key)) for key in sorted(conv.keys(), key = lambda item: - len(item))))
+        return regex.sub(lambda match: conv[match.group()], text)</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="dbmsbenchmarker.tools.dataframehelper"><code class="flex name class">
+<span>class <span class="ident">dataframehelper</span></span>
+<span>(</span><span>*args, **kwargs)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Class for some handy DataFrame manipulations</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">class dataframehelper():
+        &#34;&#34;&#34;
+        Class for some handy DataFrame manipulations
+        &#34;&#34;&#34;
+        @staticmethod
+        def addFactor(dataframe, factor):
+                &#34;&#34;&#34;
+                Adds factor column to DataFrame of benchmark statistics.
+                This is a normalized version of the mean or median column.
+                Also moves first column (dbms) to index.
+
+                :param dataframe: Report data given as a pandas DataFrame
+                :param factor: Column to take as basis for factor
+                :return: returns converted dataframe
+                &#34;&#34;&#34;
+                if dataframe.empty:
+                        return dataframe
+                # select column 0 = connections
+                connections = dataframe.iloc[0:,0].values.tolist()
+                # only consider not 0
+                dataframe_non_zero = dataframe[(dataframe.T[1:] != 0).any()]
+                # select column for factor and find minimum in cleaned dataframe
+                factorlist = dataframe[factor]
+                minimum = dataframe_non_zero[factor].min()
+                # norm list to mean = 1
+                mean_list_normed = [round(float(item/minimum),2) for item in factorlist]
+                # transpose for conversion to dict
+                dft = dataframe.transpose()
+                # set column names
+                dft.columns = dft.iloc[0]
+                # remove first row
+                df_transposed = dft[1:]
+                # transform to dict
+                d = df_transposed.to_dict(orient=&#34;list&#34;)
+                # correct nesting, (format numbers?)
+                stats_output = {k: [sublist for sublist in [stat_q]] for k,stat_q in d.items()}
+                # convert times to DataFrame
+                data = []
+                for c in connections:
+                        if c in stats_output:
+                                l = list([c])
+                                l.extend(*stats_output[c])
+                                data.append(l)
+                dataframe = pd.DataFrame.from_records(data)
+                header = timer.header_stats.copy()
+                dataframe.columns = header
+                # insert factor column
+                dataframe.insert(loc=1, column=&#39;factor&#39;, value=mean_list_normed)
+                # replace float by string
+                dataframe = dataframe.replace(0.00, &#34;0.00&#34;)
+                # drop rows of only 0
+                dataframe = dataframe[(dataframe.T[1:] != &#34;0.00&#34;).any()]
+                # sort by factor
+                dataframe = dataframe.sort_values(dataframe.columns[1], ascending = True)
+                # anonymize dbms
+                dataframe.iloc[0:,0] = dataframe.iloc[0:,0].map(dbms.anonymizer)
+                dataframe = dataframe.set_index(dataframe.columns[0])
+                return dataframe
+        @staticmethod
+        def sumPerTimer(benchmarker, numQuery, timer):
+                &#34;&#34;&#34;
+                Generates a dataframe (for bar charts) of the time series of a benchmarker.
+                Rows=dbms, cols=timer, values=sum of times
+                Anonymizes dbms if activated.
+
+                :param numQuery: Number of query to generate dataframe of (None means all)
+                :param timer: Timer containing benchmark results
+                :return: returns nothing
+                &#34;&#34;&#34;
+                sums = list(range(0,len(timer)))
+                timerNames = [t.name for t in timer]
+                bValuesFound = False
+                numQueriesEvaluated = 0
+                numBenchmarks = 0
+                validQueries = findSuccessfulQueriesAllDBMS(benchmarker, numQuery, timer)
+                for numTimer,t in enumerate(timer):
+                        numFactors = 0
+                        logging.debug(&#34;sumPerTimer: Check timer &#34;+t.name)
+                        sums[numTimer] = {}
+                        # are there benchmarks for this query?
+                        for i,q in enumerate(t.times):
+                                # does this timer contribute?
+                                if not i in validQueries[numTimer]:
+                                        continue
+                                logging.debug(&#34;timer &#34;+str(numTimer)+&#34; is valid for query Q&#34;+str(i+1))
+                                df = benchmarker.statsToDataFrame(i+1, t)
+                                #print(df)
+                                queryObject = query(benchmarker.queries[i])
+                                # no active dbms missing for this timer and query
+                                numQueriesEvaluated = numQueriesEvaluated + 1
+                                if numQuery is None:
+                                        logging.debug(str(numQueriesEvaluated)+&#34;=Q&#34;+str(i+1)+&#34; in total bar chart of timer &#34;+t.name+&#34; - all active dbms contribute&#34;)
+                                bValuesFound = True
+                                numFactors = numFactors + 1
+                                for c,values in q.items():
+                                        if benchmarker.dbms[c].connectiondata[&#39;active&#39;]:
+                                                dbmsname = benchmarker.dbms[c].getName()
+                                                if dbmsname in df.index:
+                                                        value_to_add = float(df.loc[dbmsname].loc[benchmarker.queryconfig[&#39;factor&#39;]])
+                                                        numBenchmarks += len(values[queryObject.numRunBegin:queryObject.numRunEnd])
+                                                        logging.debug(&#34;Added &#34;+dbmsname+&#34;: &#34;+str(value_to_add))
+                                                        if dbmsname in sums[numTimer]:
+                                                                sums[numTimer][dbmsname] = sums[numTimer][dbmsname] + value_to_add
+                                                        else:
+                                                                sums[numTimer][dbmsname] = value_to_add
+                        sums[numTimer] = {c: x/numFactors for c,x in sums[numTimer].items()}
+                if not bValuesFound:
+                        return None, &#39;&#39;
+                df = pd.DataFrame(sums, index=timerNames)
+                df=df.fillna(0.0)
+                # remove zero rows (timer missing)
+                df = df[(df.T[0:] != 0).any()]
+                d = df.transpose()
+                # anonymize dbms
+                #d.index = d.index.map(dbms.anonymizer)
+                # add column total timer
+                d[&#39;total&#39;]=d.sum(axis=1)
+                # remove zero rows (dbms missing)
+                d = d[(d.T[0:] != 0).any()]
+                # remove zero columns (timer missing)
+                d = d.loc[:, (d != 0).any(axis=0)]
+                if d.empty:
+                        logging.debug(&#34;no values&#34;)
+                        return None, &#39;&#39;
+                # sort by total
+                d = d.sort_values(&#39;total&#39;, ascending = True)
+                # drop total
+                d = d.drop(&#39;total&#39;,axis=1)
+                # label chart
+                if benchmarker.queryconfig[&#39;factor&#39;] == &#39;mean&#39;:
+                        chartlabel = &#39;Arithmetic mean of mean times&#39;
+                elif benchmarker.queryconfig[&#39;factor&#39;] == &#39;median&#39;:
+                        chartlabel = &#39;Arithmetic mean of median times&#39;
+                if numQuery is None:
+                        title = chartlabel+&#34; in &#34;+str(numQueriesEvaluated)+&#34; benchmarks (&#34;+str(numBenchmarks)+&#34; runs) [ms]&#34;
+                else:
+                        title = &#34;Q&#34;+str(numQuery)+&#34;: &#34;+chartlabel+&#34; [ms] in &#34;+str(queryObject.numRun-queryObject.warmup-queryObject.cooldown)+&#34; benchmark test runs&#34;
+                return d, title
+        @staticmethod
+        def multiplyPerTimer(benchmarker, numQuery, timer):
+                &#34;&#34;&#34;
+                Generates a dataframe (for bar charts) of the time series of a benchmarker.
+                Rows=dbms, cols=timer, values=sum of times
+                Anonymizes dbms if activated.
+
+                :param numQuery: Number of query to generate dataframe of (None means all)
+                :param timer: Timer containing benchmark results
+                :return: returns nothing
+                &#34;&#34;&#34;
+                sums = list(range(0,len(timer)))
+                timerNames = [t.name for t in timer]
+                bValuesFound = False
+                numQueriesEvaluated = 0
+                numBenchmarks = 0
+                validQueries = findSuccessfulQueriesAllDBMS(benchmarker, numQuery, timer)
+                for numTimer,t in enumerate(timer):
+                        numFactors = 0
+                        logging.debug(&#34;multiplyPerTimer: Check timer &#34;+t.name)
+                        sums[numTimer] = {}
+                        # are there benchmarks for this query?
+                        for i,q in enumerate(t.times):
+                                # does this timer contribute?
+                                if not i in validQueries[numTimer]:
+                                        continue
+                                logging.debug(&#34;timer &#34;+str(numTimer)+&#34; is valid for query Q&#34;+str(i+1))
+                                df = benchmarker.statsToDataFrame(i+1, t)
+                                queryObject = query(benchmarker.queries[i])
+                                # no active dbms missing for this timer and query
+                                numQueriesEvaluated = numQueriesEvaluated + 1
+                                if numQuery is None:
+                                        logging.debug(str(numQueriesEvaluated)+&#34;=Q&#34;+str(i+1)+&#34; in total bar chart of timer &#34;+t.name+&#34; - all active dbms contribute&#34;)
+                                bValuesFound = True
+                                # mean value (i.e. sum of all values)
+                                for c,values in q.items():
+                                        if benchmarker.dbms[c].connectiondata[&#39;active&#39;]:
+                                                dbmsname = benchmarker.dbms[c].getName()
+                                                if dbmsname in df.index:
+                                                        value_to_multiply = float(df.loc[dbmsname].loc[&#39;factor&#39;])
+                                                        numBenchmarks += len(values[queryObject.numRunBegin:queryObject.numRunEnd])
+                                                        numFactors = numFactors + 1
+                                                        logging.debug(&#34;Multiplied &#34;+dbmsname+&#34;: &#34;+str(value_to_multiply))
+                                                        if dbmsname in sums[numTimer]:
+                                                                sums[numTimer][dbmsname] = sums[numTimer][dbmsname] * value_to_multiply
+                                                        else:
+                                                                sums[numTimer][dbmsname] = value_to_multiply
+                        sums[numTimer] = {c: x ** (1/numFactors) for c,x in sums[numTimer].items()}
+                if not bValuesFound:
+                        return None, &#39;&#39;
+                df = pd.DataFrame(sums, index=timerNames)
+                df=df.fillna(0.0)
+                # remove zero rows (timer missing)
+                df = df[(df.T[0:] != 0).any()]
+                d = df.transpose()
+                # anonymize dbms
+                #d.index = d.index.map(dbms.anonymizer)
+                # add column total timer
+                d[&#39;total&#39;]=d.sum(axis=1)
+                # remove zero rows (dbms missing)
+                d = d[(d.T[0:] != 0).any()]
+                # remove zero columns (timer missing)
+                d = d.loc[:, (d != 0).any(axis=0)]
+                if d.empty:
+                        logging.debug(&#34;no values&#34;)
+                        return None, &#39;&#39;
+                # sort by total
+                d = d.sort_values(&#39;total&#39;, ascending = True)
+                # drop total
+                d = d.drop(&#39;total&#39;,axis=1)
+                # label chart
+                if benchmarker.queryconfig[&#39;factor&#39;] == &#39;mean&#39;:
+                        chartlabel = &#39;Geometric mean of factors of mean times&#39;
+                elif benchmarker.queryconfig[&#39;factor&#39;] == &#39;median&#39;:
+                        chartlabel = &#39;Geometric mean of factors of median times&#39;
+                if numQuery is None:
+                        title = chartlabel+&#34; in &#34;+str(numQueriesEvaluated)+&#34; benchmarks (&#34;+str(numBenchmarks)+&#34; runs)&#34;
+                else:
+                        title = &#34;Q&#34;+str(numQuery)+&#34;: &#34;+chartlabel+&#34; in &#34;+str(queryObject.numRun-queryObject.warmup-queryObject.cooldown)+&#34; benchmark test runs&#34;
+                return d, title
+        @staticmethod
+        def totalTimes(benchmarker):
+                # list of active queries for timer #0 = execution
+                qs = findSuccessfulQueriesAllDBMS(benchmarker, None, benchmarker.timers)[0]
+                if len(qs) == 0:
+                        return None, &#34;&#34;
+                # list of active dbms
+                cs = [i for i,q in benchmarker.dbms.items() if q.connectiondata[&#39;active&#39;]]
+                times1 = dict.fromkeys(cs, list())
+                times = {c:[] for c,l in times1.items()}
+                for i in range(len(qs)):
+                        for q,c in enumerate(cs):
+                                if c in benchmarker.protocol[&#39;query&#39;][str(qs[i]+1)][&#39;durations&#39;]:
+                                        times[c].append(benchmarker.protocol[&#39;query&#39;][str(qs[i]+1)][&#39;durations&#39;][c])
+                                else:
+                                        times[c].append(0.0)
+                dataframe = pd.DataFrame.from_records(times)
+                dataframe.index = qs
+                dataframe.index = dataframe.index.map(lambda r: &#34;Q&#34;+str(r+1))
+                dataframe.columns = dataframe.columns.map(dbms.anonymizer)
+                title = &#39;Total times of &#39;+str(len(times[c]))+&#34; queries&#34;
+                return dataframe, title</code></pre>
+</details>
+<h3>Static methods</h3>
+<dl>
+<dt id="dbmsbenchmarker.tools.dataframehelper.addFactor"><code class="name flex">
+<span>def <span class="ident">addFactor</span></span>(<span>dataframe, factor)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Adds factor column to DataFrame of benchmark statistics.
+This is a normalized version of the mean or median column.
+Also moves first column (dbms) to index.</p>
+<p>:param dataframe: Report data given as a pandas DataFrame
+:param factor: Column to take as basis for factor
+:return: returns converted dataframe</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">@staticmethod
+def addFactor(dataframe, factor):
+        &#34;&#34;&#34;
+        Adds factor column to DataFrame of benchmark statistics.
+        This is a normalized version of the mean or median column.
+        Also moves first column (dbms) to index.
+
+        :param dataframe: Report data given as a pandas DataFrame
+        :param factor: Column to take as basis for factor
+        :return: returns converted dataframe
+        &#34;&#34;&#34;
+        if dataframe.empty:
+                return dataframe
+        # select column 0 = connections
+        connections = dataframe.iloc[0:,0].values.tolist()
+        # only consider not 0
+        dataframe_non_zero = dataframe[(dataframe.T[1:] != 0).any()]
+        # select column for factor and find minimum in cleaned dataframe
+        factorlist = dataframe[factor]
+        minimum = dataframe_non_zero[factor].min()
+        # norm list to mean = 1
+        mean_list_normed = [round(float(item/minimum),2) for item in factorlist]
+        # transpose for conversion to dict
+        dft = dataframe.transpose()
+        # set column names
+        dft.columns = dft.iloc[0]
+        # remove first row
+        df_transposed = dft[1:]
+        # transform to dict
+        d = df_transposed.to_dict(orient=&#34;list&#34;)
+        # correct nesting, (format numbers?)
+        stats_output = {k: [sublist for sublist in [stat_q]] for k,stat_q in d.items()}
+        # convert times to DataFrame
+        data = []
+        for c in connections:
+                if c in stats_output:
+                        l = list([c])
+                        l.extend(*stats_output[c])
+                        data.append(l)
+        dataframe = pd.DataFrame.from_records(data)
+        header = timer.header_stats.copy()
+        dataframe.columns = header
+        # insert factor column
+        dataframe.insert(loc=1, column=&#39;factor&#39;, value=mean_list_normed)
+        # replace float by string
+        dataframe = dataframe.replace(0.00, &#34;0.00&#34;)
+        # drop rows of only 0
+        dataframe = dataframe[(dataframe.T[1:] != &#34;0.00&#34;).any()]
+        # sort by factor
+        dataframe = dataframe.sort_values(dataframe.columns[1], ascending = True)
+        # anonymize dbms
+        dataframe.iloc[0:,0] = dataframe.iloc[0:,0].map(dbms.anonymizer)
+        dataframe = dataframe.set_index(dataframe.columns[0])
+        return dataframe</code></pre>
+</details>
+</dd>
+<dt id="dbmsbenchmarker.tools.dataframehelper.multiplyPerTimer"><code class="name flex">
+<span>def <span class="ident">multiplyPerTimer</span></span>(<span>benchmarker, numQuery, timer)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Generates a dataframe (for bar charts) of the time series of a benchmarker.
+Rows=dbms, cols=timer, values=sum of times
+Anonymizes dbms if activated.</p>
+<p>:param numQuery: Number of query to generate dataframe of (None means all)
+:param timer: Timer containing benchmark results
+:return: returns nothing</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">@staticmethod
+def multiplyPerTimer(benchmarker, numQuery, timer):
+        &#34;&#34;&#34;
+        Generates a dataframe (for bar charts) of the time series of a benchmarker.
+        Rows=dbms, cols=timer, values=sum of times
+        Anonymizes dbms if activated.
+
+        :param numQuery: Number of query to generate dataframe of (None means all)
+        :param timer: Timer containing benchmark results
+        :return: returns nothing
+        &#34;&#34;&#34;
+        sums = list(range(0,len(timer)))
+        timerNames = [t.name for t in timer]
+        bValuesFound = False
+        numQueriesEvaluated = 0
+        numBenchmarks = 0
+        validQueries = findSuccessfulQueriesAllDBMS(benchmarker, numQuery, timer)
+        for numTimer,t in enumerate(timer):
+                numFactors = 0
+                logging.debug(&#34;multiplyPerTimer: Check timer &#34;+t.name)
+                sums[numTimer] = {}
+                # are there benchmarks for this query?
+                for i,q in enumerate(t.times):
+                        # does this timer contribute?
+                        if not i in validQueries[numTimer]:
+                                continue
+                        logging.debug(&#34;timer &#34;+str(numTimer)+&#34; is valid for query Q&#34;+str(i+1))
+                        df = benchmarker.statsToDataFrame(i+1, t)
+                        queryObject = query(benchmarker.queries[i])
+                        # no active dbms missing for this timer and query
+                        numQueriesEvaluated = numQueriesEvaluated + 1
+                        if numQuery is None:
+                                logging.debug(str(numQueriesEvaluated)+&#34;=Q&#34;+str(i+1)+&#34; in total bar chart of timer &#34;+t.name+&#34; - all active dbms contribute&#34;)
+                        bValuesFound = True
+                        # mean value (i.e. sum of all values)
+                        for c,values in q.items():
+                                if benchmarker.dbms[c].connectiondata[&#39;active&#39;]:
+                                        dbmsname = benchmarker.dbms[c].getName()
+                                        if dbmsname in df.index:
+                                                value_to_multiply = float(df.loc[dbmsname].loc[&#39;factor&#39;])
+                                                numBenchmarks += len(values[queryObject.numRunBegin:queryObject.numRunEnd])
+                                                numFactors = numFactors + 1
+                                                logging.debug(&#34;Multiplied &#34;+dbmsname+&#34;: &#34;+str(value_to_multiply))
+                                                if dbmsname in sums[numTimer]:
+                                                        sums[numTimer][dbmsname] = sums[numTimer][dbmsname] * value_to_multiply
+                                                else:
+                                                        sums[numTimer][dbmsname] = value_to_multiply
+                sums[numTimer] = {c: x ** (1/numFactors) for c,x in sums[numTimer].items()}
+        if not bValuesFound:
+                return None, &#39;&#39;
+        df = pd.DataFrame(sums, index=timerNames)
+        df=df.fillna(0.0)
+        # remove zero rows (timer missing)
+        df = df[(df.T[0:] != 0).any()]
+        d = df.transpose()
+        # anonymize dbms
+        #d.index = d.index.map(dbms.anonymizer)
+        # add column total timer
+        d[&#39;total&#39;]=d.sum(axis=1)
+        # remove zero rows (dbms missing)
+        d = d[(d.T[0:] != 0).any()]
+        # remove zero columns (timer missing)
+        d = d.loc[:, (d != 0).any(axis=0)]
+        if d.empty:
+                logging.debug(&#34;no values&#34;)
+                return None, &#39;&#39;
+        # sort by total
+        d = d.sort_values(&#39;total&#39;, ascending = True)
+        # drop total
+        d = d.drop(&#39;total&#39;,axis=1)
+        # label chart
+        if benchmarker.queryconfig[&#39;factor&#39;] == &#39;mean&#39;:
+                chartlabel = &#39;Geometric mean of factors of mean times&#39;
+        elif benchmarker.queryconfig[&#39;factor&#39;] == &#39;median&#39;:
+                chartlabel = &#39;Geometric mean of factors of median times&#39;
+        if numQuery is None:
+                title = chartlabel+&#34; in &#34;+str(numQueriesEvaluated)+&#34; benchmarks (&#34;+str(numBenchmarks)+&#34; runs)&#34;
+        else:
+                title = &#34;Q&#34;+str(numQuery)+&#34;: &#34;+chartlabel+&#34; in &#34;+str(queryObject.numRun-queryObject.warmup-queryObject.cooldown)+&#34; benchmark test runs&#34;
+        return d, title</code></pre>
+</details>
+</dd>
+<dt id="dbmsbenchmarker.tools.dataframehelper.sumPerTimer"><code class="name flex">
+<span>def <span class="ident">sumPerTimer</span></span>(<span>benchmarker, numQuery, timer)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Generates a dataframe (for bar charts) of the time series of a benchmarker.
+Rows=dbms, cols=timer, values=sum of times
+Anonymizes dbms if activated.</p>
+<p>:param numQuery: Number of query to generate dataframe of (None means all)
+:param timer: Timer containing benchmark results
+:return: returns nothing</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">@staticmethod
+def sumPerTimer(benchmarker, numQuery, timer):
+        &#34;&#34;&#34;
+        Generates a dataframe (for bar charts) of the time series of a benchmarker.
+        Rows=dbms, cols=timer, values=sum of times
+        Anonymizes dbms if activated.
+
+        :param numQuery: Number of query to generate dataframe of (None means all)
+        :param timer: Timer containing benchmark results
+        :return: returns nothing
+        &#34;&#34;&#34;
+        sums = list(range(0,len(timer)))
+        timerNames = [t.name for t in timer]
+        bValuesFound = False
+        numQueriesEvaluated = 0
+        numBenchmarks = 0
+        validQueries = findSuccessfulQueriesAllDBMS(benchmarker, numQuery, timer)
+        for numTimer,t in enumerate(timer):
+                numFactors = 0
+                logging.debug(&#34;sumPerTimer: Check timer &#34;+t.name)
+                sums[numTimer] = {}
+                # are there benchmarks for this query?
+                for i,q in enumerate(t.times):
+                        # does this timer contribute?
+                        if not i in validQueries[numTimer]:
+                                continue
+                        logging.debug(&#34;timer &#34;+str(numTimer)+&#34; is valid for query Q&#34;+str(i+1))
+                        df = benchmarker.statsToDataFrame(i+1, t)
+                        #print(df)
+                        queryObject = query(benchmarker.queries[i])
+                        # no active dbms missing for this timer and query
+                        numQueriesEvaluated = numQueriesEvaluated + 1
+                        if numQuery is None:
+                                logging.debug(str(numQueriesEvaluated)+&#34;=Q&#34;+str(i+1)+&#34; in total bar chart of timer &#34;+t.name+&#34; - all active dbms contribute&#34;)
+                        bValuesFound = True
+                        numFactors = numFactors + 1
+                        for c,values in q.items():
+                                if benchmarker.dbms[c].connectiondata[&#39;active&#39;]:
+                                        dbmsname = benchmarker.dbms[c].getName()
+                                        if dbmsname in df.index:
+                                                value_to_add = float(df.loc[dbmsname].loc[benchmarker.queryconfig[&#39;factor&#39;]])
+                                                numBenchmarks += len(values[queryObject.numRunBegin:queryObject.numRunEnd])
+                                                logging.debug(&#34;Added &#34;+dbmsname+&#34;: &#34;+str(value_to_add))
+                                                if dbmsname in sums[numTimer]:
+                                                        sums[numTimer][dbmsname] = sums[numTimer][dbmsname] + value_to_add
+                                                else:
+                                                        sums[numTimer][dbmsname] = value_to_add
+                sums[numTimer] = {c: x/numFactors for c,x in sums[numTimer].items()}
+        if not bValuesFound:
+                return None, &#39;&#39;
+        df = pd.DataFrame(sums, index=timerNames)
+        df=df.fillna(0.0)
+        # remove zero rows (timer missing)
+        df = df[(df.T[0:] != 0).any()]
+        d = df.transpose()
+        # anonymize dbms
+        #d.index = d.index.map(dbms.anonymizer)
+        # add column total timer
+        d[&#39;total&#39;]=d.sum(axis=1)
+        # remove zero rows (dbms missing)
+        d = d[(d.T[0:] != 0).any()]
+        # remove zero columns (timer missing)
+        d = d.loc[:, (d != 0).any(axis=0)]
+        if d.empty:
+                logging.debug(&#34;no values&#34;)
+                return None, &#39;&#39;
+        # sort by total
+        d = d.sort_values(&#39;total&#39;, ascending = True)
+        # drop total
+        d = d.drop(&#39;total&#39;,axis=1)
+        # label chart
+        if benchmarker.queryconfig[&#39;factor&#39;] == &#39;mean&#39;:
+                chartlabel = &#39;Arithmetic mean of mean times&#39;
+        elif benchmarker.queryconfig[&#39;factor&#39;] == &#39;median&#39;:
+                chartlabel = &#39;Arithmetic mean of median times&#39;
+        if numQuery is None:
+                title = chartlabel+&#34; in &#34;+str(numQueriesEvaluated)+&#34; benchmarks (&#34;+str(numBenchmarks)+&#34; runs) [ms]&#34;
+        else:
+                title = &#34;Q&#34;+str(numQuery)+&#34;: &#34;+chartlabel+&#34; [ms] in &#34;+str(queryObject.numRun-queryObject.warmup-queryObject.cooldown)+&#34; benchmark test runs&#34;
+        return d, title</code></pre>
+</details>
+</dd>
+<dt id="dbmsbenchmarker.tools.dataframehelper.totalTimes"><code class="name flex">
+<span>def <span class="ident">totalTimes</span></span>(<span>benchmarker)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">@staticmethod
+def totalTimes(benchmarker):
+        # list of active queries for timer #0 = execution
+        qs = findSuccessfulQueriesAllDBMS(benchmarker, None, benchmarker.timers)[0]
+        if len(qs) == 0:
+                return None, &#34;&#34;
+        # list of active dbms
+        cs = [i for i,q in benchmarker.dbms.items() if q.connectiondata[&#39;active&#39;]]
+        times1 = dict.fromkeys(cs, list())
+        times = {c:[] for c,l in times1.items()}
+        for i in range(len(qs)):
+                for q,c in enumerate(cs):
+                        if c in benchmarker.protocol[&#39;query&#39;][str(qs[i]+1)][&#39;durations&#39;]:
+                                times[c].append(benchmarker.protocol[&#39;query&#39;][str(qs[i]+1)][&#39;durations&#39;][c])
+                        else:
+                                times[c].append(0.0)
+        dataframe = pd.DataFrame.from_records(times)
+        dataframe.index = qs
+        dataframe.index = dataframe.index.map(lambda r: &#34;Q&#34;+str(r+1))
+        dataframe.columns = dataframe.columns.map(dbms.anonymizer)
+        title = &#39;Total times of &#39;+str(len(times[c]))+&#34; queries&#34;
+        return dataframe, title</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="dbmsbenchmarker.tools.dbms"><code class="flex name class">
+<span>class <span class="ident">dbms</span></span>
+<span>(</span><span>connectiondata, anonymous=False)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Container for storing queries.
+This converts a dict read from json to an object.
+It also checks values and sets defaults.</p>
+<p>Converts dict into object.
+Anonymizes dbms if activated.</p>
+<p>:param query: Dict containing query infos - query, numRun, withData, warmup, title
+:return: returns nothing</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">class dbms():
+        &#34;&#34;&#34;
+        Container for storing queries.
+        This converts a dict read from json to an object.
+        It also checks values and sets defaults.
+        &#34;&#34;&#34;
+        jars = []
+        currentAnonymChar = 65
+        anonymizer = {}
+        deanonymizer = {}
+        def __init__(self, connectiondata, anonymous = False):
+                &#34;&#34;&#34;
+                Converts dict into object.
+                Anonymizes dbms if activated.
+
+                :param query: Dict containing query infos - query, numRun, withData, warmup, title
+                :return: returns nothing
+                &#34;&#34;&#34;
+                self.connectiondata = connectiondata
+                self.connection = None
+                self.cursor = None
+                if not connectiondata[&#39;JDBC&#39;][&#39;jar&#39;] in dbms.jars:
+                        dbms.jars.append(connectiondata[&#39;JDBC&#39;][&#39;jar&#39;])
+                if not &#39;version&#39; in self.connectiondata:
+                        self.connectiondata[&#39;version&#39;] = &#34;-&#34;
+                if not &#39;info&#39; in self.connectiondata:
+                        self.connectiondata[&#39;info&#39;] = &#34;&#34;
+                if not &#39;active&#39; in self.connectiondata:
+                        self.connectiondata[&#39;active&#39;] = True
+                self.anonymous = anonymous
+                # anonymous dbms get ascending char as name
+                if self.anonymous:
+                        if &#39;alias&#39; in self.connectiondata and len(self.connectiondata[&#39;alias&#39;]) &gt; 0:
+                                self.name = self.connectiondata[&#39;alias&#39;]+&#34; &#34;+chr(dbms.currentAnonymChar)
+                                dbms.currentAnonymChar = dbms.currentAnonymChar + 1
+                        else:
+                                self.name = &#34;DBMS &#34;+chr(dbms.currentAnonymChar)
+                                dbms.currentAnonymChar = dbms.currentAnonymChar + 1
+                        print(&#34;Alias for &#34;+self.connectiondata[&#39;name&#39;]+&#34; is &#34;+self.name)
+                else:
+                        self.name = self.connectiondata[&#39;name&#39;]
+                dbms.anonymizer[self.connectiondata[&#39;name&#39;]] = self.name
+                dbms.deanonymizer[self.name] = self.connectiondata[&#39;name&#39;]
+                #print(dbms.anonymizer)
+                # is there a limit for parallel processes?
+                # =1 means: not parallel
+                # =0 means: take global setting
+                if not &#39;numProcesses&#39; in self.connectiondata:
+                        self.connectiondata[&#39;numProcesses&#39;] = 0
+        def connect(self):
+                &#34;&#34;&#34;
+                Connects to one single dbms.
+                Currently only JDBC is supported.
+
+                :return: returns nothing
+                &#34;&#34;&#34;
+                if &#39;JDBC&#39; in self.connectiondata:
+                        self.connection = jaydebeapi.connect(
+                                self.connectiondata[&#39;JDBC&#39;][&#39;driver&#39;],
+                                self.connectiondata[&#39;JDBC&#39;][&#39;url&#39;],
+                                self.connectiondata[&#39;JDBC&#39;][&#39;auth&#39;],
+                                dbms.jars,)
+                else:
+                        raise ValueError(&#39;No connection data for &#39;+self.getName())
+        def openCursor(self):
+                &#34;&#34;&#34;
+                Opens cursor for current connection.
+
+                :return: returns nothing
+                &#34;&#34;&#34;
+                if self.connection is not None:
+                        self.cursor = self.connection.cursor()
+        def closeCursor(self):
+                &#34;&#34;&#34;
+                Closes cursor for current connection.
+
+                :return: returns nothing
+                &#34;&#34;&#34;
+                if self.cursor is not None:
+                        self.cursor.close()
+                        self.cursor = None
+        def executeQuery(self, queryString):
+                &#34;&#34;&#34;
+                Executes a query for current connection and cursor.
+
+                :param queryString: SQL query to be executed
+                :return: returns nothing
+                &#34;&#34;&#34;
+                if self.cursor is not None:
+                        self.cursor.execute(queryString)
+        def fetchResult(self):
+                &#34;&#34;&#34;
+                Fetches result from current cursor.
+
+                :param queryString: SQL query to be executed
+                :return: returns nothing
+                &#34;&#34;&#34;
+                if self.cursor is not None:
+                        return self.cursor.fetchall()
+                else:
+                        return []
+        def disconnect(self):
+                &#34;&#34;&#34;
+                Disconnects from one single dbms.
+
+                :return: returns nothing
+                &#34;&#34;&#34;
+                if self.connection is not None:
+                        self.connection.close()
+                        self.connection = None
+        def getName(self):
+                &#34;&#34;&#34;
+                Returns name of dbms, or alias if anonymous.
+
+                :return: returns nothing
+                &#34;&#34;&#34;
+                return self.name
+        def hasHardwareMetrics(self):
+                # should hardware metrics be fetched from grafana
+                if &#39;monitoring&#39; in self.connectiondata and &#39;grafanatoken&#39; in self.connectiondata[&#39;monitoring&#39;] and &#39;grafanaurl&#39; in self.connectiondata[&#39;monitoring&#39;] and self.connectiondata[&#39;monitoring&#39;][&#39;grafanatoken&#39;] and self.connectiondata[&#39;monitoring&#39;][&#39;grafanaurl&#39;]:
+                        return True
+                else:
+                        return False</code></pre>
+</details>
+<h3>Class variables</h3>
+<dl>
+<dt id="dbmsbenchmarker.tools.dbms.anonymizer"><code class="name">var <span class="ident">anonymizer</span></code></dt>
+<dd>
+<section class="desc"></section>
+</dd>
+<dt id="dbmsbenchmarker.tools.dbms.currentAnonymChar"><code class="name">var <span class="ident">currentAnonymChar</span></code></dt>
+<dd>
+<section class="desc"></section>
+</dd>
+<dt id="dbmsbenchmarker.tools.dbms.deanonymizer"><code class="name">var <span class="ident">deanonymizer</span></code></dt>
+<dd>
+<section class="desc"></section>
+</dd>
+<dt id="dbmsbenchmarker.tools.dbms.jars"><code class="name">var <span class="ident">jars</span></code></dt>
+<dd>
+<section class="desc"></section>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="dbmsbenchmarker.tools.dbms.closeCursor"><code class="name flex">
+<span>def <span class="ident">closeCursor</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Closes cursor for current connection.</p>
+<p>:return: returns nothing</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def closeCursor(self):
+        &#34;&#34;&#34;
+        Closes cursor for current connection.
+
+        :return: returns nothing
+        &#34;&#34;&#34;
+        if self.cursor is not None:
+                self.cursor.close()
+                self.cursor = None</code></pre>
+</details>
+</dd>
+<dt id="dbmsbenchmarker.tools.dbms.connect"><code class="name flex">
+<span>def <span class="ident">connect</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Connects to one single dbms.
+Currently only JDBC is supported.</p>
+<p>:return: returns nothing</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def connect(self):
+        &#34;&#34;&#34;
+        Connects to one single dbms.
+        Currently only JDBC is supported.
+
+        :return: returns nothing
+        &#34;&#34;&#34;
+        if &#39;JDBC&#39; in self.connectiondata:
+                self.connection = jaydebeapi.connect(
+                        self.connectiondata[&#39;JDBC&#39;][&#39;driver&#39;],
+                        self.connectiondata[&#39;JDBC&#39;][&#39;url&#39;],
+                        self.connectiondata[&#39;JDBC&#39;][&#39;auth&#39;],
+                        dbms.jars,)
+        else:
+                raise ValueError(&#39;No connection data for &#39;+self.getName())</code></pre>
+</details>
+</dd>
+<dt id="dbmsbenchmarker.tools.dbms.disconnect"><code class="name flex">
+<span>def <span class="ident">disconnect</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Disconnects from one single dbms.</p>
+<p>:return: returns nothing</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def disconnect(self):
+        &#34;&#34;&#34;
+        Disconnects from one single dbms.
+
+        :return: returns nothing
+        &#34;&#34;&#34;
+        if self.connection is not None:
+                self.connection.close()
+                self.connection = None</code></pre>
+</details>
+</dd>
+<dt id="dbmsbenchmarker.tools.dbms.executeQuery"><code class="name flex">
+<span>def <span class="ident">executeQuery</span></span>(<span>self, queryString)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Executes a query for current connection and cursor.</p>
+<p>:param queryString: SQL query to be executed
+:return: returns nothing</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def executeQuery(self, queryString):
+        &#34;&#34;&#34;
+        Executes a query for current connection and cursor.
+
+        :param queryString: SQL query to be executed
+        :return: returns nothing
+        &#34;&#34;&#34;
+        if self.cursor is not None:
+                self.cursor.execute(queryString)</code></pre>
+</details>
+</dd>
+<dt id="dbmsbenchmarker.tools.dbms.fetchResult"><code class="name flex">
+<span>def <span class="ident">fetchResult</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Fetches result from current cursor.</p>
+<p>:param queryString: SQL query to be executed
+:return: returns nothing</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def fetchResult(self):
+        &#34;&#34;&#34;
+        Fetches result from current cursor.
+
+        :param queryString: SQL query to be executed
+        :return: returns nothing
+        &#34;&#34;&#34;
+        if self.cursor is not None:
+                return self.cursor.fetchall()
+        else:
+                return []</code></pre>
+</details>
+</dd>
+<dt id="dbmsbenchmarker.tools.dbms.getName"><code class="name flex">
+<span>def <span class="ident">getName</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Returns name of dbms, or alias if anonymous.</p>
+<p>:return: returns nothing</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def getName(self):
+        &#34;&#34;&#34;
+        Returns name of dbms, or alias if anonymous.
+
+        :return: returns nothing
+        &#34;&#34;&#34;
+        return self.name</code></pre>
+</details>
+</dd>
+<dt id="dbmsbenchmarker.tools.dbms.hasHardwareMetrics"><code class="name flex">
+<span>def <span class="ident">hasHardwareMetrics</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def hasHardwareMetrics(self):
+        # should hardware metrics be fetched from grafana
+        if &#39;monitoring&#39; in self.connectiondata and &#39;grafanatoken&#39; in self.connectiondata[&#39;monitoring&#39;] and &#39;grafanaurl&#39; in self.connectiondata[&#39;monitoring&#39;] and self.connectiondata[&#39;monitoring&#39;][&#39;grafanatoken&#39;] and self.connectiondata[&#39;monitoring&#39;][&#39;grafanaurl&#39;]:
+                return True
+        else:
+                return False</code></pre>
+</details>
+</dd>
+<dt id="dbmsbenchmarker.tools.dbms.openCursor"><code class="name flex">
+<span>def <span class="ident">openCursor</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Opens cursor for current connection.</p>
+<p>:return: returns nothing</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def openCursor(self):
+        &#34;&#34;&#34;
+        Opens cursor for current connection.
+
+        :return: returns nothing
+        &#34;&#34;&#34;
+        if self.connection is not None:
+                self.cursor = self.connection.cursor()</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="dbmsbenchmarker.tools.query"><code class="flex name class">
+<span>class <span class="ident">query</span></span>
+<span>(</span><span>query)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Container for storing queries.
+This converts a dict read from json to an object.
+It also checks values and sets defaults.</p>
+<p>Converts dict into object.</p>
+<p>:param query: Dict containing query infos - query, numRun, numParallel, withData, warmup, cooldown, title
+:return: returns nothing</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">class query():
+        &#34;&#34;&#34;
+        Container for storing queries.
+        This converts a dict read from json to an object.
+        It also checks values and sets defaults.
+        &#34;&#34;&#34;
+        def __init__(self, query):
+                &#34;&#34;&#34;
+                Converts dict into object.
+
+                :param query: Dict containing query infos - query, numRun, numParallel, withData, warmup, cooldown, title
+                :return: returns nothing
+                &#34;&#34;&#34;
+                self.numRunStd = 5
+                self.query = query[&#39;query&#39;]
+                if &#39;numRun&#39; in query:
+                        self.numRun = int(query[&#39;numRun&#39;])
+                else:
+                        self.numRun = self.numRunStd
+                if &#39;numParallel&#39; in query:
+                        self.numParallel = int(query[&#39;numParallel&#39;])
+                else:
+                        self.numParallel = 1
+                if &#39;active&#39; in query:
+                        self.active = query[&#39;active&#39;]
+                else:
+                        self.active = True
+                if &#39;numWarmup&#39; in query:
+                        self.warmup = int(query[&#39;numWarmup&#39;])
+                else:
+                        self.warmup = 0
+                if &#39;numCooldown&#39; in query:
+                        self.cooldown = int(query[&#39;numCooldown&#39;])
+                else:
+                        self.cooldown = 0
+                if &#39;title&#39; in query:
+                        self.title = query[&#39;title&#39;]
+                else:
+                        self.title = &#39;&#39;
+                if &#39;DBMS&#39; in query:
+                        self.DBMS = query[&#39;DBMS&#39;]
+                else:
+                        self.DBMS = {}
+                if &#39;parameter&#39; in query:
+                        self.parameter = query[&#39;parameter&#39;]
+                else:
+                        self.parameter = {}
+                self.numRunBegin = self.warmup
+                self.numRunEnd = self.numRun-self.cooldown
+                # timerExecution
+                if &#39;timer&#39; in query:
+                        self.timer = query[&#39;timer&#39;]
+                        self.timer[&#39;execution&#39;] = {}
+                        self.timer[&#39;execution&#39;][&#39;active&#39;] = True
+                else:
+                        self.timer = {}
+                # timerTransfer
+                self.withData = False
+                self.result = False
+                self.restrict_precision = None
+                self.sorted = False
+                self.storeResultSet = False
+                self.storeResultSetFormat = []
+                if &#39;datatransfer&#39; in self.timer:
+                        if self.timer[&#39;datatransfer&#39;][&#39;active&#39;]:
+                                self.withData = True
+                        if self.timer[&#39;datatransfer&#39;][&#39;compare&#39;]:
+                                self.result = self.timer[&#39;datatransfer&#39;][&#39;compare&#39;]
+                        if &#39;precision&#39; in self.timer[&#39;datatransfer&#39;]:
+                                self.restrict_precision = self.timer[&#39;datatransfer&#39;][&#39;precision&#39;]
+                        if &#39;sorted&#39; in self.timer[&#39;datatransfer&#39;]:
+                                self.sorted = self.timer[&#39;datatransfer&#39;][&#39;sorted&#39;]
+                        if &#39;store&#39; in self.timer[&#39;datatransfer&#39;]:
+                                self.storeResultSet = True
+                                if isinstance(self.timer[&#39;datatransfer&#39;][&#39;store&#39;], str):
+                                        self.storeResultSetFormat = [self.timer[&#39;datatransfer&#39;][&#39;store&#39;]]
+                                else:
+                                        self.storeResultSetFormat = self.timer[&#39;datatransfer&#39;][&#39;store&#39;]
+                else:
+                        self.timer[&#39;datatransfer&#39;] = {}
+                        self.timer[&#39;datatransfer&#39;][&#39;active&#39;] = False
+                # timerConnect
+                self.withConnect = False
+                if &#39;connection&#39; in self.timer:
+                        if self.timer[&#39;connection&#39;][&#39;active&#39;]:
+                                self.withConnect = True
+                else:
+                        self.timer[&#39;connection&#39;] = {}
+                        self.timer[&#39;connection&#39;][&#39;active&#39;] = False
+                # legacy naming
+                self.timer[&#39;transfer&#39;] = {}
+                self.timer[&#39;transfer&#39;][&#39;active&#39;] = self.timer[&#39;datatransfer&#39;][&#39;active&#39;]#False</code></pre>
+</details>
+</dd>
+<dt id="dbmsbenchmarker.tools.timer"><code class="flex name class">
+<span>class <span class="ident">timer</span></span>
+<span>(</span><span>name)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Container for storing benchmarks (times).
+This is a list (queries) of lists (connections) of lists (runs).
+Use this by
+- loop over queries q
+&ndash; loop over connections c
+&mdash; startTimer()
+&mdash; making n benchmarks for q and c
+---- startTimerRun() and abortTimerRun() / finishTimerRun()
+&mdash; abortTimer() or finishTimer()</p>
+<p>Stores name of benchmark container (e.g. execution or data transfer)</p>
+<p>:param name: Name of benchmark times container
+:return: returns nothing</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">class timer():
+        &#34;&#34;&#34;
+        Container for storing benchmarks (times).
+        This is a list (queries) of lists (connections) of lists (runs).
+        Use this by
+        - loop over queries q
+        -- loop over connections c
+        --- startTimer()
+        --- making n benchmarks for q and c
+        ---- startTimerRun() and abortTimerRun() / finishTimerRun()
+        --- abortTimer() or finishTimer()
+        &#34;&#34;&#34;
+        header_stats = [&#34;DBMS [ms]&#34;, &#34;mean&#34;, &#34;stdev&#34;, &#34;cv %&#34;, &#34;qcod %&#34;, &#34;iqr&#34;, &#34;median&#34;, &#34;min&#34;, &#34;max&#34;]
+        def __init__(self, name):
+                &#34;&#34;&#34;
+                Stores name of benchmark container (e.g. execution or data transfer)
+
+                :param name: Name of benchmark times container
+                :return: returns nothing
+                &#34;&#34;&#34;
+                self.name = name
+                self.start = 0
+                self.end = 0
+                self.currentQuery = 0
+                self.clearBenchmarks()
+        def clearBenchmarks(self):
+                &#34;&#34;&#34;
+                Clears all benchmark related data
+
+                :return: returns nothing
+                &#34;&#34;&#34;
+                self.times = []
+                self.stats = []
+        def getStats(self, data):
+                &#34;&#34;&#34;
+                Computes statistics to list of data.
+                This is: mean, median, stdev, cv (coefficient of variation), qcod (Quartile coefficient of dispersion), iqr (Interquartile range), min and max.
+
+                :param data: List of numbers
+                :return: returns 6 statistical numbers as a list
+                &#34;&#34;&#34;
+                result = []
+                t_mean = mean(data)
+                numRun = len(data)
+                #print(&#34;statistics for n runs: &#34;+str(numRun))
+                if numRun &gt; 1:
+                        t_stdev = stdev(data)
+                else:
+                        t_stdev = 0
+                if t_mean &gt; 0 and t_stdev &gt; 0:
+                        t_cv = t_stdev / t_mean * 100.0
+                else:
+                        t_cv = 0
+                t_median = median(data)
+                t_min = min(data)
+                t_max = max(data)
+                Q1 = np.percentile(data,25)
+                Q3 = np.percentile(data,75)
+                if Q3+Q1 &gt; 0:
+                        t_qcod = 100.0*(Q3-Q1)/(Q3+Q1)
+                else:
+                        t_qcod = 0
+                if Q3-Q1 &gt; 0:
+                        t_iqr = (Q3-Q1)
+                else:
+                        t_iqr = 0
+                result = [t_mean, t_stdev, t_cv, t_qcod, t_iqr, t_median, t_min, t_max]
+                return result
+        def startTimer(self, numQuery, query, nameConnection):
+                &#34;&#34;&#34;
+                Stores number of warmup runs and benchmark runs.
+                Also clears data of current query.
+                This is a dict (connections) of lists (benchmark runs)
+                Starts benchmark of one single connection with fixed query.
+                Clears list of numbers of runs of current connection.
+
+                :param query: Query object
+                :param numRun: Number of benchmarking runs
+                :return: returns nothing
+                &#34;&#34;&#34;
+                self.nameConnection = nameConnection
+                self.startTimerQuery(numQuery, query)#numWarmup, numRun)
+                self.startTimerConnection()
+                if len(self.times) &lt;= self.currentQuery:
+                        self.times.append({})
+                        self.stats.append({})
+                if len(self.times) &gt;= self.currentQuery and self.nameConnection in self.times[self.currentQuery]:
+                        logging.debug(&#34;Benchmark &#34;+self.name+&#34; has already been done&#34;)
+        def abortTimer(self):
+                &#34;&#34;&#34;
+                Augments list of benchmarks of current connection by filling missing values with 0.
+
+                :return: returns nothing
+                &#34;&#34;&#34;
+                self.abortTimerConnection()
+        def cancelTimer(self):
+                &#34;&#34;&#34;
+                All benchmarks are set to 0. Timer will be ignored
+
+                :return: returns nothing
+                &#34;&#34;&#34;
+                self.cancelTimerConnection()
+        def finishTimer(self):
+                &#34;&#34;&#34;
+                Appends completed benchmarks to storage.
+                This is a list of benchmarks (runs).
+                Appends completed benchmarks of one single query to storage.
+                This is a dict (connections) of lists (benchmark runs).
+
+                :return: returns nothing
+                &#34;&#34;&#34;
+                self.finishTimerConnection()
+                self.finishTimerQuery()
+                self.times[self.currentQuery][self.nameConnection] = self.time_c
+                self.stats[self.currentQuery][self.nameConnection] = self.stat_c
+                print(&#34;Benchmark &#34;+self.name+&#34; has been stored for &#34;+self.nameConnection+&#34; mean: &#34;+str(self.stats[self.currentQuery][self.nameConnection][0]))
+        def skipTimer(self, numQuery, query, nameConnection):
+                self.nameConnection = nameConnection
+                self.startTimerQuery(numQuery, query)#numWarmup, numRun)
+                if len(self.times) &lt;= self.currentQuery:
+                        self.times.append({})
+                        self.stats.append({})
+                self.finishTimerQuery()
+        def startTimerQuery(self, numQuery, query):# numWarmup, numRun):
+                &#34;&#34;&#34;
+                Stores number of warmup runs and benchmark runs.
+                Also clears data of current query.
+                This is a list (connections) of benchmarks (runs)
+
+                :param numWarmup: Number of warmup runs
+                :param numRun: Number of benchmarking runs
+                :return: returns nothing
+                &#34;&#34;&#34;
+                self.currentQuery = numQuery-1
+                self.query = query
+        def finishTimerQuery(self):
+                &#34;&#34;&#34;
+                Appends completed benchmarks of one single query to storage.
+                This is a list (connections) of benchmarks (runs).
+
+                :return: returns nothing
+                &#34;&#34;&#34;
+                pass
+        def startTimerConnection(self):
+                &#34;&#34;&#34;
+                Starts benchmark of one single connection with fixed query.
+                Clears list of numbers of runs of current connection.
+
+                :return: returns nothing
+                &#34;&#34;&#34;
+                self.time_c = []
+                self.stat_c = []
+        def abortTimerConnection(self):
+                &#34;&#34;&#34;
+                Augments list of benchmarks of current connection by filling missing values with 0.
+
+                :return: returns nothing
+                &#34;&#34;&#34;
+                # fill missing runs with 0
+                #self.time_c.extend([0]*(self.numWarmup+self.numRun-len(self.time_c)))
+                self.time_c.extend([0]*(self.query.numRun-len(self.time_c)))
+        def cancelTimerConnection(self):
+                &#34;&#34;&#34;
+                Augments list of benchmarks of current connection by filling missing values with 0.
+
+                :return: returns nothing
+                &#34;&#34;&#34;
+                # fill missing runs with 0
+                self.time_c = [0]*(self.query.numRun)
+        def finishTimerConnection(self):
+                &#34;&#34;&#34;
+                Appends completed benchmarks to storage.
+                This is a list of benchmarks (runs).
+
+                :return: returns nothing
+                &#34;&#34;&#34;
+                # compute statistics, ignore warmup
+                self.stat_c = self.getStats(self.time_c[self.query.numRunBegin:self.query.numRunEnd])
+        def startTimerRun(self):
+                &#34;&#34;&#34;
+                Starts benchmark of one single run.
+                This starts a timer.
+
+                :return: returns nothing
+                &#34;&#34;&#34;
+                self.start = default_timer()
+        def finishTimerRun(self):
+                &#34;&#34;&#34;
+                Ends benchmark of one single run.
+                Benchmark is set to 0 due to error.
+
+                :return: returns 0
+                &#34;&#34;&#34;
+                self.end = default_timer()
+                duration = self.end - self.start
+                self.time_c.append(1000.0*duration)
+                return self.end - self.start
+        def abortTimerRun(self):
+                &#34;&#34;&#34;
+                Ends benchmark of one single run.
+                Benchmark is stored in list (fixed query, one connection)
+
+                :return: returns duration of current benchmark
+                &#34;&#34;&#34;
+                # same as finishTimerRun(), but time is 0
+                self.end = self.start
+                duration = self.end - self.start
+                self.time_c.append(1000.0*duration)
+                return self.end - self.start
+        def appendTimes(self, times, query):# numWarmup):
+                &#34;&#34;&#34;
+                Appends results of one single query.
+                This is a list (connections) of benchmarks (runs).
+                It also computes statistics and thereby ignores warmup runs.
+
+                :param numWarmup: Number of warmup runs
+                :return: returns nothing
+                &#34;&#34;&#34;
+                if len(times)&gt;0:
+                        stats = {k: self.getStats(v[query.numRunBegin:query.numRunEnd]) for k,v in times.items()}
+                        #stats = {k: self.getStats(v[numWarmup:]) for k,v in times.items()}
+                else:
+                        stats = {}
+                self.times.append(times)
+                self.stats.append(stats)
+        def checkForBenchmarks(self, numQuery, nameConnection = None):
+                &#34;&#34;&#34;
+                Checks if there is a list of benchmark runs for a given query and connection.
+
+                :param numQuery: Number of query
+                :param nameConnection: Name of connection
+                :return: True if benchmark results are present
+                &#34;&#34;&#34;
+                if nameConnection is None:
+                        return (len(self.times) &gt;= numQuery)
+                else:
+                        return (len(self.times) &gt;= numQuery and nameConnection in self.times[numQuery-1])
+        def checkForSuccessfulBenchmarks(self, numQuery, nameConnection = None):
+                &#34;&#34;&#34;
+                Checks if there is a list of benchmark runs for a given query and connection and not all times are zero.
+
+                :param numQuery: Number of query
+                :param nameConnection: Name of connection
+                :return: True if benchmark results are present
+                &#34;&#34;&#34;
+                existing = self.checkForBenchmarks(numQuery, nameConnection)
+                if nameConnection is not None:
+                        return(existing and not all(v == 0 for v in self.times[numQuery-1][nameConnection]))
+                else:
+                        return(existing and not all(v == 0 for k,c in self.times[numQuery-1].items() for v in c))
+        def tolist(self, numQuery):
+                &#34;&#34;&#34;
+                Returns benchmarks of a given query as a list of lists.
+
+                :param numQuery: Number of query
+                :return: List of lists of benchmark times
+                &#34;&#34;&#34;
+                l = [v for k,v in self.times[numQuery-1].items()]
+                return l
+        def toDataFrame(self, numQuery):
+                &#34;&#34;&#34;
+                Returns benchmarks of a given query as a DataFrame (rows=dbms, cols=benchmarks).
+
+                :param numQuery: Number of query
+                :return: DataFrame of benchmark times
+                &#34;&#34;&#34;
+                data =list(zip([[k] for k,v in self.times[numQuery-1].items()],[v for k,v in self.times[numQuery-1].items()]))
+                # correct nesting 
+                data2 = [[item for item in sublist] for sublist in data]
+                l = [[item for sublist2 in sublist for item in sublist2] for sublist in data2]
+                # convert times to DataFrame
+                df = pd.DataFrame.from_records(l)
+                return df
+        def statsToDataFrame(self, numQuery):
+                &#34;&#34;&#34;
+                Returns statistics of a given query as a DataFrame (rows=dbms, cols=statisticd).
+
+                :param numQuery: Number of query
+                :return: DataFrame of benchmark statistics
+                &#34;&#34;&#34;
+                data =list(zip([[k] for k,v in self.stats[numQuery-1].items()],[v for k,v in self.stats[numQuery-1].items()]))
+                # correct nesting 
+                data2 = [[item for item in sublist] for sublist in data]
+                l = [[item for sublist2 in sublist for item in sublist2] for sublist in data2]
+                # convert times to DataFrame
+                df = pd.DataFrame.from_records(l)
+                if df.empty:
+                        logging.debug(&#34;no values&#34;)
+                        return df
+                # format times for output
+                header = timer.header_stats.copy()
+                df.columns = header
+                return df</code></pre>
+</details>
+<h3>Class variables</h3>
+<dl>
+<dt id="dbmsbenchmarker.tools.timer.header_stats"><code class="name">var <span class="ident">header_stats</span></code></dt>
+<dd>
+<section class="desc"></section>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="dbmsbenchmarker.tools.timer.abortTimer"><code class="name flex">
+<span>def <span class="ident">abortTimer</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Augments list of benchmarks of current connection by filling missing values with 0.</p>
+<p>:return: returns nothing</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def abortTimer(self):
+        &#34;&#34;&#34;
+        Augments list of benchmarks of current connection by filling missing values with 0.
+
+        :return: returns nothing
+        &#34;&#34;&#34;
+        self.abortTimerConnection()</code></pre>
+</details>
+</dd>
+<dt id="dbmsbenchmarker.tools.timer.abortTimerConnection"><code class="name flex">
+<span>def <span class="ident">abortTimerConnection</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Augments list of benchmarks of current connection by filling missing values with 0.</p>
+<p>:return: returns nothing</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def abortTimerConnection(self):
+        &#34;&#34;&#34;
+        Augments list of benchmarks of current connection by filling missing values with 0.
+
+        :return: returns nothing
+        &#34;&#34;&#34;
+        # fill missing runs with 0
+        #self.time_c.extend([0]*(self.numWarmup+self.numRun-len(self.time_c)))
+        self.time_c.extend([0]*(self.query.numRun-len(self.time_c)))</code></pre>
+</details>
+</dd>
+<dt id="dbmsbenchmarker.tools.timer.abortTimerRun"><code class="name flex">
+<span>def <span class="ident">abortTimerRun</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Ends benchmark of one single run.
+Benchmark is stored in list (fixed query, one connection)</p>
+<p>:return: returns duration of current benchmark</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def abortTimerRun(self):
+        &#34;&#34;&#34;
+        Ends benchmark of one single run.
+        Benchmark is stored in list (fixed query, one connection)
+
+        :return: returns duration of current benchmark
+        &#34;&#34;&#34;
+        # same as finishTimerRun(), but time is 0
+        self.end = self.start
+        duration = self.end - self.start
+        self.time_c.append(1000.0*duration)
+        return self.end - self.start</code></pre>
+</details>
+</dd>
+<dt id="dbmsbenchmarker.tools.timer.appendTimes"><code class="name flex">
+<span>def <span class="ident">appendTimes</span></span>(<span>self, times, query)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Appends results of one single query.
+This is a list (connections) of benchmarks (runs).
+It also computes statistics and thereby ignores warmup runs.</p>
+<p>:param numWarmup: Number of warmup runs
+:return: returns nothing</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def appendTimes(self, times, query):# numWarmup):
+        &#34;&#34;&#34;
+        Appends results of one single query.
+        This is a list (connections) of benchmarks (runs).
+        It also computes statistics and thereby ignores warmup runs.
+
+        :param numWarmup: Number of warmup runs
+        :return: returns nothing
+        &#34;&#34;&#34;
+        if len(times)&gt;0:
+                stats = {k: self.getStats(v[query.numRunBegin:query.numRunEnd]) for k,v in times.items()}
+                #stats = {k: self.getStats(v[numWarmup:]) for k,v in times.items()}
+        else:
+                stats = {}
+        self.times.append(times)
+        self.stats.append(stats)</code></pre>
+</details>
+</dd>
+<dt id="dbmsbenchmarker.tools.timer.cancelTimer"><code class="name flex">
+<span>def <span class="ident">cancelTimer</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>All benchmarks are set to 0. Timer will be ignored</p>
+<p>:return: returns nothing</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def cancelTimer(self):
+        &#34;&#34;&#34;
+        All benchmarks are set to 0. Timer will be ignored
+
+        :return: returns nothing
+        &#34;&#34;&#34;
+        self.cancelTimerConnection()</code></pre>
+</details>
+</dd>
+<dt id="dbmsbenchmarker.tools.timer.cancelTimerConnection"><code class="name flex">
+<span>def <span class="ident">cancelTimerConnection</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Augments list of benchmarks of current connection by filling missing values with 0.</p>
+<p>:return: returns nothing</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def cancelTimerConnection(self):
+        &#34;&#34;&#34;
+        Augments list of benchmarks of current connection by filling missing values with 0.
+
+        :return: returns nothing
+        &#34;&#34;&#34;
+        # fill missing runs with 0
+        self.time_c = [0]*(self.query.numRun)</code></pre>
+</details>
+</dd>
+<dt id="dbmsbenchmarker.tools.timer.checkForBenchmarks"><code class="name flex">
+<span>def <span class="ident">checkForBenchmarks</span></span>(<span>self, numQuery, nameConnection=None)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Checks if there is a list of benchmark runs for a given query and connection.</p>
+<p>:param numQuery: Number of query
+:param nameConnection: Name of connection
+:return: True if benchmark results are present</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def checkForBenchmarks(self, numQuery, nameConnection = None):
+        &#34;&#34;&#34;
+        Checks if there is a list of benchmark runs for a given query and connection.
+
+        :param numQuery: Number of query
+        :param nameConnection: Name of connection
+        :return: True if benchmark results are present
+        &#34;&#34;&#34;
+        if nameConnection is None:
+                return (len(self.times) &gt;= numQuery)
+        else:
+                return (len(self.times) &gt;= numQuery and nameConnection in self.times[numQuery-1])</code></pre>
+</details>
+</dd>
+<dt id="dbmsbenchmarker.tools.timer.checkForSuccessfulBenchmarks"><code class="name flex">
+<span>def <span class="ident">checkForSuccessfulBenchmarks</span></span>(<span>self, numQuery, nameConnection=None)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Checks if there is a list of benchmark runs for a given query and connection and not all times are zero.</p>
+<p>:param numQuery: Number of query
+:param nameConnection: Name of connection
+:return: True if benchmark results are present</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def checkForSuccessfulBenchmarks(self, numQuery, nameConnection = None):
+        &#34;&#34;&#34;
+        Checks if there is a list of benchmark runs for a given query and connection and not all times are zero.
+
+        :param numQuery: Number of query
+        :param nameConnection: Name of connection
+        :return: True if benchmark results are present
+        &#34;&#34;&#34;
+        existing = self.checkForBenchmarks(numQuery, nameConnection)
+        if nameConnection is not None:
+                return(existing and not all(v == 0 for v in self.times[numQuery-1][nameConnection]))
+        else:
+                return(existing and not all(v == 0 for k,c in self.times[numQuery-1].items() for v in c))</code></pre>
+</details>
+</dd>
+<dt id="dbmsbenchmarker.tools.timer.clearBenchmarks"><code class="name flex">
+<span>def <span class="ident">clearBenchmarks</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Clears all benchmark related data</p>
+<p>:return: returns nothing</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def clearBenchmarks(self):
+        &#34;&#34;&#34;
+        Clears all benchmark related data
+
+        :return: returns nothing
+        &#34;&#34;&#34;
+        self.times = []
+        self.stats = []</code></pre>
+</details>
+</dd>
+<dt id="dbmsbenchmarker.tools.timer.finishTimer"><code class="name flex">
+<span>def <span class="ident">finishTimer</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Appends completed benchmarks to storage.
+This is a list of benchmarks (runs).
+Appends completed benchmarks of one single query to storage.
+This is a dict (connections) of lists (benchmark runs).</p>
+<p>:return: returns nothing</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def finishTimer(self):
+        &#34;&#34;&#34;
+        Appends completed benchmarks to storage.
+        This is a list of benchmarks (runs).
+        Appends completed benchmarks of one single query to storage.
+        This is a dict (connections) of lists (benchmark runs).
+
+        :return: returns nothing
+        &#34;&#34;&#34;
+        self.finishTimerConnection()
+        self.finishTimerQuery()
+        self.times[self.currentQuery][self.nameConnection] = self.time_c
+        self.stats[self.currentQuery][self.nameConnection] = self.stat_c
+        print(&#34;Benchmark &#34;+self.name+&#34; has been stored for &#34;+self.nameConnection+&#34; mean: &#34;+str(self.stats[self.currentQuery][self.nameConnection][0]))</code></pre>
+</details>
+</dd>
+<dt id="dbmsbenchmarker.tools.timer.finishTimerConnection"><code class="name flex">
+<span>def <span class="ident">finishTimerConnection</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Appends completed benchmarks to storage.
+This is a list of benchmarks (runs).</p>
+<p>:return: returns nothing</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def finishTimerConnection(self):
+        &#34;&#34;&#34;
+        Appends completed benchmarks to storage.
+        This is a list of benchmarks (runs).
+
+        :return: returns nothing
+        &#34;&#34;&#34;
+        # compute statistics, ignore warmup
+        self.stat_c = self.getStats(self.time_c[self.query.numRunBegin:self.query.numRunEnd])</code></pre>
+</details>
+</dd>
+<dt id="dbmsbenchmarker.tools.timer.finishTimerQuery"><code class="name flex">
+<span>def <span class="ident">finishTimerQuery</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Appends completed benchmarks of one single query to storage.
+This is a list (connections) of benchmarks (runs).</p>
+<p>:return: returns nothing</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def finishTimerQuery(self):
+        &#34;&#34;&#34;
+        Appends completed benchmarks of one single query to storage.
+        This is a list (connections) of benchmarks (runs).
+
+        :return: returns nothing
+        &#34;&#34;&#34;
+        pass</code></pre>
+</details>
+</dd>
+<dt id="dbmsbenchmarker.tools.timer.finishTimerRun"><code class="name flex">
+<span>def <span class="ident">finishTimerRun</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Ends benchmark of one single run.
+Benchmark is set to 0 due to error.</p>
+<p>:return: returns 0</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def finishTimerRun(self):
+        &#34;&#34;&#34;
+        Ends benchmark of one single run.
+        Benchmark is set to 0 due to error.
+
+        :return: returns 0
+        &#34;&#34;&#34;
+        self.end = default_timer()
+        duration = self.end - self.start
+        self.time_c.append(1000.0*duration)
+        return self.end - self.start</code></pre>
+</details>
+</dd>
+<dt id="dbmsbenchmarker.tools.timer.getStats"><code class="name flex">
+<span>def <span class="ident">getStats</span></span>(<span>self, data)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Computes statistics to list of data.
+This is: mean, median, stdev, cv (coefficient of variation), qcod (Quartile coefficient of dispersion), iqr (Interquartile range), min and max.</p>
+<p>:param data: List of numbers
+:return: returns 6 statistical numbers as a list</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def getStats(self, data):
+        &#34;&#34;&#34;
+        Computes statistics to list of data.
+        This is: mean, median, stdev, cv (coefficient of variation), qcod (Quartile coefficient of dispersion), iqr (Interquartile range), min and max.
+
+        :param data: List of numbers
+        :return: returns 6 statistical numbers as a list
+        &#34;&#34;&#34;
+        result = []
+        t_mean = mean(data)
+        numRun = len(data)
+        #print(&#34;statistics for n runs: &#34;+str(numRun))
+        if numRun &gt; 1:
+                t_stdev = stdev(data)
+        else:
+                t_stdev = 0
+        if t_mean &gt; 0 and t_stdev &gt; 0:
+                t_cv = t_stdev / t_mean * 100.0
+        else:
+                t_cv = 0
+        t_median = median(data)
+        t_min = min(data)
+        t_max = max(data)
+        Q1 = np.percentile(data,25)
+        Q3 = np.percentile(data,75)
+        if Q3+Q1 &gt; 0:
+                t_qcod = 100.0*(Q3-Q1)/(Q3+Q1)
+        else:
+                t_qcod = 0
+        if Q3-Q1 &gt; 0:
+                t_iqr = (Q3-Q1)
+        else:
+                t_iqr = 0
+        result = [t_mean, t_stdev, t_cv, t_qcod, t_iqr, t_median, t_min, t_max]
+        return result</code></pre>
+</details>
+</dd>
+<dt id="dbmsbenchmarker.tools.timer.skipTimer"><code class="name flex">
+<span>def <span class="ident">skipTimer</span></span>(<span>self, numQuery, query, nameConnection)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def skipTimer(self, numQuery, query, nameConnection):
+        self.nameConnection = nameConnection
+        self.startTimerQuery(numQuery, query)#numWarmup, numRun)
+        if len(self.times) &lt;= self.currentQuery:
+                self.times.append({})
+                self.stats.append({})
+        self.finishTimerQuery()</code></pre>
+</details>
+</dd>
+<dt id="dbmsbenchmarker.tools.timer.startTimer"><code class="name flex">
+<span>def <span class="ident">startTimer</span></span>(<span>self, numQuery, query, nameConnection)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Stores number of warmup runs and benchmark runs.
+Also clears data of current query.
+This is a dict (connections) of lists (benchmark runs)
+Starts benchmark of one single connection with fixed query.
+Clears list of numbers of runs of current connection.</p>
+<p>:param query: Query object
+:param numRun: Number of benchmarking runs
+:return: returns nothing</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def startTimer(self, numQuery, query, nameConnection):
+        &#34;&#34;&#34;
+        Stores number of warmup runs and benchmark runs.
+        Also clears data of current query.
+        This is a dict (connections) of lists (benchmark runs)
+        Starts benchmark of one single connection with fixed query.
+        Clears list of numbers of runs of current connection.
+
+        :param query: Query object
+        :param numRun: Number of benchmarking runs
+        :return: returns nothing
+        &#34;&#34;&#34;
+        self.nameConnection = nameConnection
+        self.startTimerQuery(numQuery, query)#numWarmup, numRun)
+        self.startTimerConnection()
+        if len(self.times) &lt;= self.currentQuery:
+                self.times.append({})
+                self.stats.append({})
+        if len(self.times) &gt;= self.currentQuery and self.nameConnection in self.times[self.currentQuery]:
+                logging.debug(&#34;Benchmark &#34;+self.name+&#34; has already been done&#34;)</code></pre>
+</details>
+</dd>
+<dt id="dbmsbenchmarker.tools.timer.startTimerConnection"><code class="name flex">
+<span>def <span class="ident">startTimerConnection</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Starts benchmark of one single connection with fixed query.
+Clears list of numbers of runs of current connection.</p>
+<p>:return: returns nothing</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def startTimerConnection(self):
+        &#34;&#34;&#34;
+        Starts benchmark of one single connection with fixed query.
+        Clears list of numbers of runs of current connection.
+
+        :return: returns nothing
+        &#34;&#34;&#34;
+        self.time_c = []
+        self.stat_c = []</code></pre>
+</details>
+</dd>
+<dt id="dbmsbenchmarker.tools.timer.startTimerQuery"><code class="name flex">
+<span>def <span class="ident">startTimerQuery</span></span>(<span>self, numQuery, query)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Stores number of warmup runs and benchmark runs.
+Also clears data of current query.
+This is a list (connections) of benchmarks (runs)</p>
+<p>:param numWarmup: Number of warmup runs
+:param numRun: Number of benchmarking runs
+:return: returns nothing</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def startTimerQuery(self, numQuery, query):# numWarmup, numRun):
+        &#34;&#34;&#34;
+        Stores number of warmup runs and benchmark runs.
+        Also clears data of current query.
+        This is a list (connections) of benchmarks (runs)
+
+        :param numWarmup: Number of warmup runs
+        :param numRun: Number of benchmarking runs
+        :return: returns nothing
+        &#34;&#34;&#34;
+        self.currentQuery = numQuery-1
+        self.query = query</code></pre>
+</details>
+</dd>
+<dt id="dbmsbenchmarker.tools.timer.startTimerRun"><code class="name flex">
+<span>def <span class="ident">startTimerRun</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Starts benchmark of one single run.
+This starts a timer.</p>
+<p>:return: returns nothing</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def startTimerRun(self):
+        &#34;&#34;&#34;
+        Starts benchmark of one single run.
+        This starts a timer.
+
+        :return: returns nothing
+        &#34;&#34;&#34;
+        self.start = default_timer()</code></pre>
+</details>
+</dd>
+<dt id="dbmsbenchmarker.tools.timer.statsToDataFrame"><code class="name flex">
+<span>def <span class="ident">statsToDataFrame</span></span>(<span>self, numQuery)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Returns statistics of a given query as a DataFrame (rows=dbms, cols=statisticd).</p>
+<p>:param numQuery: Number of query
+:return: DataFrame of benchmark statistics</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def statsToDataFrame(self, numQuery):
+        &#34;&#34;&#34;
+        Returns statistics of a given query as a DataFrame (rows=dbms, cols=statisticd).
+
+        :param numQuery: Number of query
+        :return: DataFrame of benchmark statistics
+        &#34;&#34;&#34;
+        data =list(zip([[k] for k,v in self.stats[numQuery-1].items()],[v for k,v in self.stats[numQuery-1].items()]))
+        # correct nesting 
+        data2 = [[item for item in sublist] for sublist in data]
+        l = [[item for sublist2 in sublist for item in sublist2] for sublist in data2]
+        # convert times to DataFrame
+        df = pd.DataFrame.from_records(l)
+        if df.empty:
+                logging.debug(&#34;no values&#34;)
+                return df
+        # format times for output
+        header = timer.header_stats.copy()
+        df.columns = header
+        return df</code></pre>
+</details>
+</dd>
+<dt id="dbmsbenchmarker.tools.timer.toDataFrame"><code class="name flex">
+<span>def <span class="ident">toDataFrame</span></span>(<span>self, numQuery)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Returns benchmarks of a given query as a DataFrame (rows=dbms, cols=benchmarks).</p>
+<p>:param numQuery: Number of query
+:return: DataFrame of benchmark times</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def toDataFrame(self, numQuery):
+        &#34;&#34;&#34;
+        Returns benchmarks of a given query as a DataFrame (rows=dbms, cols=benchmarks).
+
+        :param numQuery: Number of query
+        :return: DataFrame of benchmark times
+        &#34;&#34;&#34;
+        data =list(zip([[k] for k,v in self.times[numQuery-1].items()],[v for k,v in self.times[numQuery-1].items()]))
+        # correct nesting 
+        data2 = [[item for item in sublist] for sublist in data]
+        l = [[item for sublist2 in sublist for item in sublist2] for sublist in data2]
+        # convert times to DataFrame
+        df = pd.DataFrame.from_records(l)
+        return df</code></pre>
+</details>
+</dd>
+<dt id="dbmsbenchmarker.tools.timer.tolist"><code class="name flex">
+<span>def <span class="ident">tolist</span></span>(<span>self, numQuery)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Returns benchmarks of a given query as a list of lists.</p>
+<p>:param numQuery: Number of query
+:return: List of lists of benchmark times</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def tolist(self, numQuery):
+        &#34;&#34;&#34;
+        Returns benchmarks of a given query as a list of lists.
+
+        :param numQuery: Number of query
+        :return: List of lists of benchmark times
+        &#34;&#34;&#34;
+        l = [v for k,v in self.times[numQuery-1].items()]
+        return l</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="dbmsbenchmarker" href="index.html">dbmsbenchmarker</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="dbmsbenchmarker.tools.convertToFloat" href="#dbmsbenchmarker.tools.convertToFloat">convertToFloat</a></code></li>
+<li><code><a title="dbmsbenchmarker.tools.findSuccessfulQueriesAllDBMS" href="#dbmsbenchmarker.tools.findSuccessfulQueriesAllDBMS">findSuccessfulQueriesAllDBMS</a></code></li>
+<li><code><a title="dbmsbenchmarker.tools.formatDuration" href="#dbmsbenchmarker.tools.formatDuration">formatDuration</a></code></li>
+<li><code><a title="dbmsbenchmarker.tools.sizeof_fmt" href="#dbmsbenchmarker.tools.sizeof_fmt">sizeof_fmt</a></code></li>
+<li><code><a title="dbmsbenchmarker.tools.tex_escape" href="#dbmsbenchmarker.tools.tex_escape">tex_escape</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="dbmsbenchmarker.tools.dataframehelper" href="#dbmsbenchmarker.tools.dataframehelper">dataframehelper</a></code></h4>
+<ul class="">
+<li><code><a title="dbmsbenchmarker.tools.dataframehelper.addFactor" href="#dbmsbenchmarker.tools.dataframehelper.addFactor">addFactor</a></code></li>
+<li><code><a title="dbmsbenchmarker.tools.dataframehelper.multiplyPerTimer" href="#dbmsbenchmarker.tools.dataframehelper.multiplyPerTimer">multiplyPerTimer</a></code></li>
+<li><code><a title="dbmsbenchmarker.tools.dataframehelper.sumPerTimer" href="#dbmsbenchmarker.tools.dataframehelper.sumPerTimer">sumPerTimer</a></code></li>
+<li><code><a title="dbmsbenchmarker.tools.dataframehelper.totalTimes" href="#dbmsbenchmarker.tools.dataframehelper.totalTimes">totalTimes</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="dbmsbenchmarker.tools.dbms" href="#dbmsbenchmarker.tools.dbms">dbms</a></code></h4>
+<ul class="two-column">
+<li><code><a title="dbmsbenchmarker.tools.dbms.anonymizer" href="#dbmsbenchmarker.tools.dbms.anonymizer">anonymizer</a></code></li>
+<li><code><a title="dbmsbenchmarker.tools.dbms.closeCursor" href="#dbmsbenchmarker.tools.dbms.closeCursor">closeCursor</a></code></li>
+<li><code><a title="dbmsbenchmarker.tools.dbms.connect" href="#dbmsbenchmarker.tools.dbms.connect">connect</a></code></li>
+<li><code><a title="dbmsbenchmarker.tools.dbms.currentAnonymChar" href="#dbmsbenchmarker.tools.dbms.currentAnonymChar">currentAnonymChar</a></code></li>
+<li><code><a title="dbmsbenchmarker.tools.dbms.deanonymizer" href="#dbmsbenchmarker.tools.dbms.deanonymizer">deanonymizer</a></code></li>
+<li><code><a title="dbmsbenchmarker.tools.dbms.disconnect" href="#dbmsbenchmarker.tools.dbms.disconnect">disconnect</a></code></li>
+<li><code><a title="dbmsbenchmarker.tools.dbms.executeQuery" href="#dbmsbenchmarker.tools.dbms.executeQuery">executeQuery</a></code></li>
+<li><code><a title="dbmsbenchmarker.tools.dbms.fetchResult" href="#dbmsbenchmarker.tools.dbms.fetchResult">fetchResult</a></code></li>
+<li><code><a title="dbmsbenchmarker.tools.dbms.getName" href="#dbmsbenchmarker.tools.dbms.getName">getName</a></code></li>
+<li><code><a title="dbmsbenchmarker.tools.dbms.hasHardwareMetrics" href="#dbmsbenchmarker.tools.dbms.hasHardwareMetrics">hasHardwareMetrics</a></code></li>
+<li><code><a title="dbmsbenchmarker.tools.dbms.jars" href="#dbmsbenchmarker.tools.dbms.jars">jars</a></code></li>
+<li><code><a title="dbmsbenchmarker.tools.dbms.openCursor" href="#dbmsbenchmarker.tools.dbms.openCursor">openCursor</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="dbmsbenchmarker.tools.query" href="#dbmsbenchmarker.tools.query">query</a></code></h4>
+</li>
+<li>
+<h4><code><a title="dbmsbenchmarker.tools.timer" href="#dbmsbenchmarker.tools.timer">timer</a></code></h4>
+<ul class="">
+<li><code><a title="dbmsbenchmarker.tools.timer.abortTimer" href="#dbmsbenchmarker.tools.timer.abortTimer">abortTimer</a></code></li>
+<li><code><a title="dbmsbenchmarker.tools.timer.abortTimerConnection" href="#dbmsbenchmarker.tools.timer.abortTimerConnection">abortTimerConnection</a></code></li>
+<li><code><a title="dbmsbenchmarker.tools.timer.abortTimerRun" href="#dbmsbenchmarker.tools.timer.abortTimerRun">abortTimerRun</a></code></li>
+<li><code><a title="dbmsbenchmarker.tools.timer.appendTimes" href="#dbmsbenchmarker.tools.timer.appendTimes">appendTimes</a></code></li>
+<li><code><a title="dbmsbenchmarker.tools.timer.cancelTimer" href="#dbmsbenchmarker.tools.timer.cancelTimer">cancelTimer</a></code></li>
+<li><code><a title="dbmsbenchmarker.tools.timer.cancelTimerConnection" href="#dbmsbenchmarker.tools.timer.cancelTimerConnection">cancelTimerConnection</a></code></li>
+<li><code><a title="dbmsbenchmarker.tools.timer.checkForBenchmarks" href="#dbmsbenchmarker.tools.timer.checkForBenchmarks">checkForBenchmarks</a></code></li>
+<li><code><a title="dbmsbenchmarker.tools.timer.checkForSuccessfulBenchmarks" href="#dbmsbenchmarker.tools.timer.checkForSuccessfulBenchmarks">checkForSuccessfulBenchmarks</a></code></li>
+<li><code><a title="dbmsbenchmarker.tools.timer.clearBenchmarks" href="#dbmsbenchmarker.tools.timer.clearBenchmarks">clearBenchmarks</a></code></li>
+<li><code><a title="dbmsbenchmarker.tools.timer.finishTimer" href="#dbmsbenchmarker.tools.timer.finishTimer">finishTimer</a></code></li>
+<li><code><a title="dbmsbenchmarker.tools.timer.finishTimerConnection" href="#dbmsbenchmarker.tools.timer.finishTimerConnection">finishTimerConnection</a></code></li>
+<li><code><a title="dbmsbenchmarker.tools.timer.finishTimerQuery" href="#dbmsbenchmarker.tools.timer.finishTimerQuery">finishTimerQuery</a></code></li>
+<li><code><a title="dbmsbenchmarker.tools.timer.finishTimerRun" href="#dbmsbenchmarker.tools.timer.finishTimerRun">finishTimerRun</a></code></li>
+<li><code><a title="dbmsbenchmarker.tools.timer.getStats" href="#dbmsbenchmarker.tools.timer.getStats">getStats</a></code></li>
+<li><code><a title="dbmsbenchmarker.tools.timer.header_stats" href="#dbmsbenchmarker.tools.timer.header_stats">header_stats</a></code></li>
+<li><code><a title="dbmsbenchmarker.tools.timer.skipTimer" href="#dbmsbenchmarker.tools.timer.skipTimer">skipTimer</a></code></li>
+<li><code><a title="dbmsbenchmarker.tools.timer.startTimer" href="#dbmsbenchmarker.tools.timer.startTimer">startTimer</a></code></li>
+<li><code><a title="dbmsbenchmarker.tools.timer.startTimerConnection" href="#dbmsbenchmarker.tools.timer.startTimerConnection">startTimerConnection</a></code></li>
+<li><code><a title="dbmsbenchmarker.tools.timer.startTimerQuery" href="#dbmsbenchmarker.tools.timer.startTimerQuery">startTimerQuery</a></code></li>
+<li><code><a title="dbmsbenchmarker.tools.timer.startTimerRun" href="#dbmsbenchmarker.tools.timer.startTimerRun">startTimerRun</a></code></li>
+<li><code><a title="dbmsbenchmarker.tools.timer.statsToDataFrame" href="#dbmsbenchmarker.tools.timer.statsToDataFrame">statsToDataFrame</a></code></li>
+<li><code><a title="dbmsbenchmarker.tools.timer.toDataFrame" href="#dbmsbenchmarker.tools.timer.toDataFrame">toDataFrame</a></code></li>
+<li><code><a title="dbmsbenchmarker.tools.timer.tolist" href="#dbmsbenchmarker.tools.timer.tolist">tolist</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.6.3</a>.</p>
+</footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad()</script>
+</body>
+</html>

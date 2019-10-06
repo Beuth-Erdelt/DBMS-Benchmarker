@@ -1,0 +1,191 @@
+\newpage
+{benchmarkName}
+{intro}
+Report generated: {now}\\
+Code: {code}\\
+Connection Timeout (global setting): {timeout}\\
+Number of parallel client processes (global setting): {numProcesses}\\
+Number of runs per client connection (global setting): {runsPerConnection}
+
+\subsection{{Terminology}}
+This report covers results from sending queries to DBMS in several benchmark runs.
+\begin{{itemize}}
+\item \textbf{{Connection}}:\\
+This means a DBMS server in a specific configuration.
+\item \textbf{{Query}}:\\
+This means a single query statement.
+\item \textbf{{Benchmark run}}:\\
+A unit of send query, execute query and receive transfered result set is called a run.
+\item \textbf{{Session}}:\\
+A sequence of runs between establishing and discarding a connection is called a session.
+\item \textbf{{Timer}}:\\
+There are several timers.
+Each one measures the time of a specific part of a benchmark run.
+\begin{{itemize}}
+\item
+\textbf{{timerConnection}}:\\
+This timer gives the time in ms and per run.
+It measures the time it takes to establish a JDBC connection.
+Note that if a run reuses an established connection, this timer will be 0 for that run.
+\item
+\textbf{{timerExecution}}:\\
+This timer gives the time in ms and per run.
+It measures the time between sending a SQL command and receiving a result code via JDBC.
+\item
+\textbf{{timerTransfer}}:\\
+This timer gives the time in ms and per run.
+Note that if a run does not transfer any result set (a writing query or if we suspend the result set), this timer will be 0 for that run.
+\item
+\textbf{{timerRun}}:\\
+This timer gives the time in ms and per run.
+That is the sum of the timers connection, execution and data transfer.
+Note that connection time is 0, if we reuse an established session, and transfer time is 0, if we do not transfer any result set.
+\item
+\textbf{{timerSession}}:\\
+This timer gives the time in ms and per session.
+It aggregates all runs of a session and sums up their timerRuns.
+A session starts with establishing a connection and ends when the connection is disconnected.
+This timer ignores warmup / cooldown phases, since they are only valid for runs.
+\end{{itemize}}
+\item \textbf{{Sum of times}}:\\
+This is based on the sum of times of all single benchmark test runs.
+Measurements start before each benchmark run and stop after the same benchmark run has been finished.
+Parallel benchmark runs should not slow down in an ideal situation.
+\item \textbf{{Total times}}:\\
+This is based on the times each connection is queried in total.
+Measurement starts before first benchmark run and stops after the last benchmark run has been finished.
+Parallel benchmarks should speed up the total time in an ideal situation.
+\end{{itemize}}
+
+\subsection{{Statistics}}
+{{{{\footnotesize
+\begin{{eqnarray*}}
+\textbf{{Mean}}: \mu &:=&\frac{{1}}{{n}}\sum_i x_i\\
+\textbf{{Standard deviation}}: \sigma &:=&\frac{{1}}{{n-1}}\sum_i (x_i-\mu)^2\\
+\textbf{{Coefficient of variation}}: \text{{cv}} &:=&\frac{{\sigma}}{{\mu}}\\
+\textbf{{Quartile coefficient of dispersion}}: \text{{qcod}} &:=&\frac{{Q_3-Q_1}}{{Q_3+Q_1}}\\
+\textbf{{Interquartile range}}: \text{{iqr}} &:=&Q_3-Q_1
+\end{{eqnarray*}}
+
+\begin{{tabular}}{{rl}}
+lat\_r &= Latency of runs (mean time) [ms]\\
+lat\_s &= Latency of session (mean time) [ms]\\
+tps\_r1 &= Throughput of runs (number of runs / total time) [Hz]\\
+tps\_r2 &= Throughput of runs (number of parallel clients / cleaned mean time) [Hz]\\
+tps\_s1 &= Throughput of sessions (number of runs / length of sessions / total time) [Hz]\\
+tps\_s2 &= Throughput of sessions (number of parallel clients / cleaned mean time) [Hz]\\
+\end{{tabular}}
+}}}}
+
+\newpage
+\section{{Database Management Systems}}
+{{{{\footnotesize
+{dbmsinfos}
+}}}}
+
+\newpage
+\section{{Summary}}
+\subsection{{Relative Ranking based on the Sum of Times}}
+For each query, the best DBMS is considered as gold standard = $100$\%.
+Based on their times, the other DBMS obtain a relative ranking factor.
+The next chart shows the geometric mean of factors per DBMS.
+
+\begin{{figure}}[h]
+\centering
+\includegraphics[height=0.45\textwidth]{{total_bar_product.png}}\\
+{{\scriptsize{{{totalProd}}}}}
+\caption{{DBMS: Relative ranking}}
+\end{{figure}}
+
+\newpage
+\subsection{{Relative Ranking based on Latency and Throughput}}
+For each query, we compute latency and throughput per DBMS.
+The next chart shows the geometric mean of these metrics per DBMS.
+
+\begin{{figure}}[h]
+\centering
+\begin{{minipage}}[t]{{0.45\textwidth}}
+\includegraphics[height=0.9\textwidth]{{total_bar_tps.png}}\\
+\end{{minipage}}
+\hfill
+\begin{{minipage}}[t]{{0.45\textwidth}}
+\includegraphics[height=0.9\textwidth]{{total_bar_lat.png}}\\
+\end{{minipage}}
+{{\scriptsize{{{totalLatTPS}}}}}
+\caption{{DBMS: Relative ranking based on latency and throughput}}
+\end{{figure}}
+
+\newpage
+\subsection{{Absolute Time of Ingest}}
+The next chart shows the total time of ingestion per DBMS.
+
+\begin{{figure}}[h]
+\centering
+\includegraphics[height=0.45\textwidth]{{total_barh_ingest.png}}\\
+{{\scriptsize{{{totalIngest}}}}}
+\caption{{DBMS: Ingest}}
+\end{{figure}}
+
+\newpage
+\subsection{{Hardware Metrics}}
+\subsubsection{{Monitoring}}
+The next chart shows the metrics obtained from monitoring.
+
+\begin{{figure}}[h]
+%\centering
+%\includegraphics[height=0.45\textwidth]{{total_barh_ingest.png}}\\
+{{\scriptsize{{{totalHardwareMonitoring}}}}}
+\caption{{DBMS: Hardware metrics - monitoring}}
+\end{{figure}}
+
+\subsubsection{{Host System}}
+The next chart shows the metrics obtained from inside docker containers.
+\begin{{figure}}[h]
+%\centering
+%\includegraphics[height=0.45\textwidth]{{total_barh_ingest.png}}\\
+{{\scriptsize{{{totalHardwareHost}}}}}
+\caption{{DBMS: Hardware metrics - host system}}
+\end{{figure}}
+
+\newpage
+\subsection{{Average ranking based on the sum of times}}
+We compute a ranking of DBMS for each query, from fastest to slowest.
+The next chart shows the average ranking per DBMS. 
+
+\begin{{figure}}[h]
+\centering
+\includegraphics[height=0.45\textwidth]{{total_barh_rank.png}}\\
+{{\scriptsize{{{totalRank}}}}}
+\caption{{DBMS: Average ranking}}
+\end{{figure}}
+
+\newpage
+\subsection{{Mean of Times}}
+The next chart shows the mean of query times per DBMS and per timer.
+
+\begin{{figure}}[h]
+\centering
+\includegraphics[height=0.45\textwidth]{{total_bar_sum.png}}\\
+{{\scriptsize{{{totalSum}}}}}
+\caption{{DBMS: Mean of times}}
+\end{{figure}}
+
+\newpage
+
+\section{{Queries}}
+\subsection{{Total Times}}
+The next chart shows the total query time per DBMS and query.
+
+\begin{{figure}}[h]
+\centering
+\includegraphics[height=0.45\textwidth]{{total_time_area.png}}\\
+{{\scriptsize{{{totalTime}}}}}
+\caption{{DBMS: Total times}}
+\end{{figure}}
+
+\newpage
+\subsection{{Mean of Times per Query}}
+The next charts show the sums of query times per DBMS, timer and query.\\
+
+\noindent
+{summary}
