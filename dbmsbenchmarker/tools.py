@@ -892,9 +892,12 @@ class dataframehelper():
 			df = df.drop(['CUDA'],axis=1)
 		df = df.drop(['host','CPU','GPU','instance'],axis=1)#,'RAM','Cores'
 		df = df.astype(float)
-		df['RAM'] = df['RAM']/1024/1024
-		df['disk'] = df['disk']/1024
-		df['datadisk'] = df['datadisk']/1024
+		if 'RAM' in df:
+			df['RAM'] = df['RAM']/1024/1024
+		if 'disk' in df:
+			df['disk'] = df['disk']/1024
+		if 'datadisk' in df:
+			df['datadisk'] = df['datadisk']/1024
 		stat_mean = df.mean()
 		stat_std = df.std()
 		stat_q1 = df.quantile(0.25)
