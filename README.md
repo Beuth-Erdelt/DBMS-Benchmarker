@@ -1,7 +1,11 @@
 # DBMS-Benchmarker
 
-DBMS-Benchmarker is an application-level blackbox benchmark tool for Database Management Systems (DBMS).
+DBMS-Benchmarker is a Python-based application-level blackbox benchmark tool for Database Management Systems (DBMS).
 It aims at reproducible measuring and easy evaluation of the performance the user receives even in complex benchmark situations.
+It connects to a given list of DBMS (via JDBC) and runs a given list of (SQL) benchmark queries.
+Queries can be parametrized and randomized.
+Results and evaluations are available via a Python interface.
+Optionally some reports are generated.
 
 ## Key Features
 
@@ -239,7 +243,7 @@ This means the first n runs resp. the last n runs are ignored in evaluation.
 Moreover we can **randomize** a query, such that each run will look slightly different.
 This means we exchange a part of the query for a random value.
 
-### Benchmarking
+### Basic Metrics
 
 We have several **timers** to collect timing information:
 
@@ -273,8 +277,8 @@ The columns represent DBMS and each row contains a run.
 We also measure and store the **total time** of the benchmark of the query, since for parallel execution this differs from the **sum of times** based on *timerRun*. Total time means measurement starts before first benchmark run and stops after the last benchmark run has been finished. Thus total time also includes some overhead for example for spawning a pool of processes. Additionally total time always spans all benchmarks. The sum of times on the other hand ignores warmup and cooldown phase.
 
 We think
-* the sum of times is more an indicator for performance of the server system
-* the total time is more an indicator for the performance the client user receives.
+* the sum of times is more of an indicator for performance of the server system
+* the total time is more of an indicator for the performance the client user receives.
 
 We also compute for each query and DBMS
 * **Latency**: Mean time (without warmup / cooldown)

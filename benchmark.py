@@ -42,7 +42,7 @@ if __name__ == '__main__':
 		logging.basicConfig(level=logging.ERROR)
 		bBatch = args.batch
 	# dbmsbenchmarker with reporter
-	dbms = benchmarker.benchmarker(
+	experiments = benchmarker.benchmarker(
 		result_path=args.result_folder,
 		working=args.working,
 		batch=bBatch,
@@ -52,27 +52,27 @@ if __name__ == '__main__':
 		unanonymize=args.unanonymize,
 		numProcesses=args.numProcesses,
 		seed=args.seed)
-	dbms.getConfig(args.config_folder, args.connection_file, args.query_file)
+	experiments.getConfig(args.config_folder, args.connection_file, args.query_file)
 	if args.generate_output == 'yes':
-		dbms.reporter.append(benchmarker.reporter.pickler(dbms))
-		dbms.reporter.append(benchmarker.reporter.dataframer(dbms))
-		dbms.reporter.append(benchmarker.reporter.barer(dbms))
-		dbms.reporter.append(benchmarker.reporter.ploter(dbms))
-		dbms.reporter.append(benchmarker.reporter.boxploter(dbms))
-		dbms.reporter.append(benchmarker.reporter.metricer(dbms))
-		dbms.reporter.append(benchmarker.reporter.latexer(dbms, args.latex_template))
-		dbms.reporter.append(benchmarker.reporter.tps(dbms))
+		experiments.reporter.append(benchmarker.reporter.pickler(experiments))
+		experiments.reporter.append(benchmarker.reporter.dataframer(experiments))
+		experiments.reporter.append(benchmarker.reporter.barer(experiments))
+		experiments.reporter.append(benchmarker.reporter.ploter(experiments))
+		experiments.reporter.append(benchmarker.reporter.boxploter(experiments))
+		experiments.reporter.append(benchmarker.reporter.metricer(experiments))
+		experiments.reporter.append(benchmarker.reporter.latexer(experiments, args.latex_template))
+		experiments.reporter.append(benchmarker.reporter.tps(experiments))
 	# switch for args.mode
 	if args.mode == 'read':
-		dbms.readBenchmarks()
+		experiments.readBenchmarks()
 	elif args.mode == 'run':
-		if dbms.continuing:
-			dbms.continueBenchmarks(overwrite = True)
+		if experiments.continuing:
+			experiments.continueBenchmarks(overwrite = True)
 		else:
-			dbms.runBenchmarks()
+			experiments.runBenchmarks()
 	elif args.mode == 'continue':
-		if dbms.continuing:
-			dbms.continueBenchmarks(overwrite = False)
+		if experiments.continuing:
+			experiments.continueBenchmarks(overwrite = False)
 		else:
 			print("Continue needs result folder")
 
