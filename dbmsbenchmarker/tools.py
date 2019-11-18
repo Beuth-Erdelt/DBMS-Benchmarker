@@ -868,6 +868,7 @@ class dataframehelper():
 	@staticmethod
 	def evaluateMonitoringToDataFrame(evaluation):
 		df = pd.DataFrame.from_dict({c:d['hardwaremetrics'] for c,d in evaluation['dbms'].items()}).transpose()
+		#df = pd.DataFrame.from_dict({c:d['hardwaremetrics'] if 'hardwaremetrics' in d else [] for c,d in evaluation['dbms'].items()}).transpose()
 		df = df.astype(float)
 		stat_mean = df.mean()
 		stat_std = df.std()

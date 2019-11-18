@@ -127,7 +127,8 @@ class evaluator():
 						evaluation['dbms'][c]['connectionmanagement']["timeout"] = connectionmanagement["timeout"]
 					else:
 						evaluation['dbms'][c]['connectionmanagement']["timeout"] = "Unlimited"
-				evaluation['dbms'][c]['hostsystem'] = self.benchmarker.dbms[c].connectiondata["hostsystem"]
+				if "hostsystem" in self.benchmarker.dbms[c].connectiondata:
+					evaluation['dbms'][c]['hostsystem'] = self.benchmarker.dbms[c].connectiondata["hostsystem"]
 				evaluation['dbms'][c]['times'] = {}
 				evaluation['dbms'][c]['prices'] = {}
 				if "timeLoad" in self.benchmarker.dbms[c].connectiondata:
