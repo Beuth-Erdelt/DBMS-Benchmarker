@@ -958,29 +958,34 @@ class latexer(reporter):
 			self.e = evaluator.evaluator(self.benchmarker)
 		evaluation = evaluator.evaluator.evaluation
 		# Monitoring
-		dfTotalHardware = tools.dataframehelper.evaluateMonitoringToDataFrame(evaluation)
-		#dfHardware.index = dfHardware.index.map(tools.dbms.anonymizer)
-		settings_translate = {
-			'total_cpu_memory':'RAM [MiB]',
-			'total_cpu_memory_cached':'Cached [MiB]',
-			'total_cpu_util':'CPU [%]',
-			'total_gpu_util':'GPU [%]',
-			'total_gpu_power':'GPU [W]',
-			'total_gpu_memory':'VRAM [MiB]',
-			'total_gpu_energy':'GPU [Wh]',
-			'RAM':'RAM [MiB]',
-			'disk':'Disk [MiB]',
-			'datadisk':'Data [MiB]',
-			'benchmark_usd':'Cost [$]',
-			'benchmark_time_s':'Benchmark [s]',
-			'total_time_s':'Total [s]'}
-		dfTotalHardware_units = dfTotalHardware.rename(columns = settings_translate)
-		parameter['totalHardwareMonitoring'] = tabulate(dfTotalHardware_units, headers=dfTotalHardware_units.columns, tablefmt="latex", floatfmt=",.2f", stralign="right", showindex=True)
-		# Monitoring
-		dfTotalHardware = tools.dataframehelper.evaluateHostToDataFrame(evaluation)
-		#dfTotalHardware.index = dfTotalHardware.index.map(tools.dbms.anonymizer)
-		dfTotalHardware_units = dfTotalHardware.rename(columns = settings_translate)
-		parameter['totalHardwareHost'] = tabulate(dfTotalHardware_units, headers=dfTotalHardware_units.columns, tablefmt="latex", floatfmt=",.2f", stralign="right", showindex=True)
+		metrics = [True if 'hardwaremetrics' in d else False for c,d in evaluation['dbms'].items()]
+		if True in metrics:
+			dfTotalHardware = tools.dataframehelper.evaluateMonitoringToDataFrame(evaluation)
+			#dfHardware.index = dfHardware.index.map(tools.dbms.anonymizer)
+			settings_translate = {
+				'total_cpu_memory':'RAM [MiB]',
+				'total_cpu_memory_cached':'Cached [MiB]',
+				'total_cpu_util':'CPU [%]',
+				'total_gpu_util':'GPU [%]',
+				'total_gpu_power':'GPU [W]',
+				'total_gpu_memory':'VRAM [MiB]',
+				'total_gpu_energy':'GPU [Wh]',
+				'RAM':'RAM [MiB]',
+				'disk':'Disk [MiB]',
+				'datadisk':'Data [MiB]',
+				'benchmark_usd':'Cost [$]',
+				'benchmark_time_s':'Benchmark [s]',
+				'total_time_s':'Total [s]'}
+			dfTotalHardware_units = dfTotalHardware.rename(columns = settings_translate)
+			parameter['totalHardwareMonitoring'] = tabulate(dfTotalHardware_units, headers=dfTotalHardware_units.columns, tablefmt="latex", floatfmt=",.2f", stralign="right", showindex=True)
+			# Monitoring
+			dfTotalHardware = tools.dataframehelper.evaluateHostToDataFrame(evaluation)
+			#dfTotalHardware.index = dfTotalHardware.index.map(tools.dbms.anonymizer)
+			dfTotalHardware_units = dfTotalHardware.rename(columns = settings_translate)
+			parameter['totalHardwareHost'] = tabulate(dfTotalHardware_units, headers=dfTotalHardware_units.columns, tablefmt="latex", floatfmt=",.2f", stralign="right", showindex=True)
+		else:
+			parameter['totalHardwareMonitoring'] = ""
+			parameter['totalHardwareHost'] = ""
 		# TPS / Latency
 		dfTotalLatTPS = pd.DataFrame.from_dict({c:{m:metric for m,metric in dbms['metrics'].items()} for c,dbms in evaluation['dbms'].items()}).transpose()
 		dfTotalLatTPS = dfTotalLatTPS.drop(columns='totaltime_ms')
@@ -1157,26 +1162,27 @@ class latexer(reporter):
 							dbmsinfos += "\\item \\textbf{Timeout}: "+str(connectionmanagement["timeout"])
 						else:
 							dbmsinfos += "\\item \\textbf{Timeout}: Unlimited"
-				if "CPU" in self.benchmarker.dbms[c].connectiondata["hostsystem"]:
-					dbmsinfos += "\\item \\textbf{CPU}: "+self.benchmarker.dbms[c].connectiondata["hostsystem"]["CPU"]
-				if "Cores" in self.benchmarker.dbms[c].connectiondata["hostsystem"]:
-					dbmsinfos += "\\item \\textbf{Cores}: "+str(self.benchmarker.dbms[c].connectiondata["hostsystem"]["Cores"])
-				if "RAM" in self.benchmarker.dbms[c].connectiondata["hostsystem"]:
-					dbmsinfos += "\\item \\textbf{RAM}: "+tools.sizeof_fmt(self.benchmarker.dbms[c].connectiondata["hostsystem"]["RAM"])
-				if "GPU" in self.benchmarker.dbms[c].connectiondata["hostsystem"] and len(self.benchmarker.dbms[c].connectiondata["hostsystem"]["GPU"]) > 0:
-					dbmsinfos += "\\item \\textbf{GPU}: "+self.benchmarker.dbms[c].connectiondata["hostsystem"]["GPU"]
-				if "CUDA" in self.benchmarker.dbms[c].connectiondata["hostsystem"]:
-					dbmsinfos += "\\item \\textbf{CUDA}: "+self.benchmarker.dbms[c].connectiondata["hostsystem"]["CUDA"]
-				if "host" in self.benchmarker.dbms[c].connectiondata["hostsystem"]:
-					dbmsinfos += "\\item \\textbf{Host}: "+self.benchmarker.dbms[c].connectiondata["hostsystem"]["host"]
-				if "disk" in self.benchmarker.dbms[c].connectiondata["hostsystem"]:
-					dbmsinfos += "\\item \\textbf{Docker Disk Space used}: "+tools.sizeof_fmt(int(self.benchmarker.dbms[c].connectiondata["hostsystem"]["disk"])*1024)
-				if "datadisk" in self.benchmarker.dbms[c].connectiondata["hostsystem"]:
-					dbmsinfos += "\\item \\textbf{Docker Disk Space used for Data}: "+tools.sizeof_fmt(int(self.benchmarker.dbms[c].connectiondata["hostsystem"]["datadisk"])*1024)
-				if "instance" in self.benchmarker.dbms[c].connectiondata["hostsystem"]:
-					dbmsinfos += "\\item \\textbf{Instance}: "+self.benchmarker.dbms[c].connectiondata["hostsystem"]["instance"]
-				if "timeLoad" in self.benchmarker.dbms[c].connectiondata:
-					dbmsinfos += "\\item \\textbf{Time Ingest}: "+tools.formatDuration(self.benchmarker.dbms[c].connectiondata["timeLoad"]*1000.0)
+				if "hostsystem" in self.benchmarker.dbms[c].connectiondata:
+					if "CPU" in self.benchmarker.dbms[c].connectiondata["hostsystem"]:
+						dbmsinfos += "\\item \\textbf{CPU}: "+self.benchmarker.dbms[c].connectiondata["hostsystem"]["CPU"]
+					if "Cores" in self.benchmarker.dbms[c].connectiondata["hostsystem"]:
+						dbmsinfos += "\\item \\textbf{Cores}: "+str(self.benchmarker.dbms[c].connectiondata["hostsystem"]["Cores"])
+					if "RAM" in self.benchmarker.dbms[c].connectiondata["hostsystem"]:
+						dbmsinfos += "\\item \\textbf{RAM}: "+tools.sizeof_fmt(self.benchmarker.dbms[c].connectiondata["hostsystem"]["RAM"])
+					if "GPU" in self.benchmarker.dbms[c].connectiondata["hostsystem"] and len(self.benchmarker.dbms[c].connectiondata["hostsystem"]["GPU"]) > 0:
+						dbmsinfos += "\\item \\textbf{GPU}: "+self.benchmarker.dbms[c].connectiondata["hostsystem"]["GPU"]
+					if "CUDA" in self.benchmarker.dbms[c].connectiondata["hostsystem"]:
+						dbmsinfos += "\\item \\textbf{CUDA}: "+self.benchmarker.dbms[c].connectiondata["hostsystem"]["CUDA"]
+					if "host" in self.benchmarker.dbms[c].connectiondata["hostsystem"]:
+						dbmsinfos += "\\item \\textbf{Host}: "+self.benchmarker.dbms[c].connectiondata["hostsystem"]["host"]
+					if "disk" in self.benchmarker.dbms[c].connectiondata["hostsystem"]:
+						dbmsinfos += "\\item \\textbf{Docker Disk Space used}: "+tools.sizeof_fmt(int(self.benchmarker.dbms[c].connectiondata["hostsystem"]["disk"])*1024)
+					if "datadisk" in self.benchmarker.dbms[c].connectiondata["hostsystem"]:
+						dbmsinfos += "\\item \\textbf{Docker Disk Space used for Data}: "+tools.sizeof_fmt(int(self.benchmarker.dbms[c].connectiondata["hostsystem"]["datadisk"])*1024)
+					if "instance" in self.benchmarker.dbms[c].connectiondata["hostsystem"]:
+						dbmsinfos += "\\item \\textbf{Instance}: "+self.benchmarker.dbms[c].connectiondata["hostsystem"]["instance"]
+					if "timeLoad" in self.benchmarker.dbms[c].connectiondata:
+						dbmsinfos += "\\item \\textbf{Time Ingest}: "+tools.formatDuration(self.benchmarker.dbms[c].connectiondata["timeLoad"]*1000.0)
 				if c in times:
 					dbmsinfos += "\\item \\textbf{Time Benchmarks}: "+tools.formatDuration(times[c])
 					if 'priceperhourdollar' in self.benchmarker.dbms[c].connectiondata:
