@@ -92,7 +92,7 @@ The next chart shows the geometric mean of factors per DBMS.
 
 \begin{{figure}}[h]
 \centering
-\includegraphics[height=0.45\textwidth]{{total_bar_product.png}}\\
+\includegraphics[width=0.95\textwidth]{{total_bar_product.png}}\\
 {{\scriptsize{{{totalProd}}}}}
 \caption{{DBMS: Relative ranking}}
 \end{{figure}}
@@ -165,7 +165,7 @@ The next chart shows the mean of query times per DBMS and per timer.
 
 \begin{{figure}}[h]
 \centering
-\includegraphics[height=0.45\textwidth]{{total_bar_sum.png}}\\
+\includegraphics[width=0.95\textwidth]{{total_bar_sum.png}}\\
 {{\scriptsize{{{totalSum}}}}}
 \caption{{DBMS: Mean of times}}
 \end{{figure}}
@@ -178,7 +178,7 @@ The next chart shows the total query time per DBMS and query.
 
 \begin{{figure}}[h]
 \centering
-\includegraphics[height=0.45\textwidth]{{total_time_area.png}}\\
+\includegraphics[width=0.8\textwidth]{{total_time_area.png}}\\
 {{\scriptsize{{{totalTime}}}}}
 \caption{{DBMS: Total times}}
 \end{{figure}}

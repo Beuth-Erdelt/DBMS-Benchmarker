@@ -344,7 +344,7 @@ class ploter(reporter):
 				plt.axvline(x=query.numRunEnd, linestyle="--", color="black")
 		plt.legend(title="DBMS")
 		plt.savefig(filename, bbox_inches='tight')
-		plt.close()
+		plt.close('all')
 	def generate(self, numQuery, timer):
 		"""
 		Generates a plot of the benchmarks as a time series and saves it to disk.
@@ -487,7 +487,7 @@ class boxploter(reporter):
 		plt.suptitle("")
 		# save
 		plt.savefig(filename, bbox_inches='tight')
-		plt.close()
+		plt.close('all')
 	def generate(self, numQuery, timer):
 		"""
 		Generates a boxplot of the time series and saves it to disk.
@@ -545,7 +545,7 @@ class barer(reporter):
 		:return: returns nothing
 		"""
 		# plot
-		dataframe.plot.bar(stacked=True)
+		dataframe.plot.bar(stacked=True, figsize=(12,8))
 		# rotate labels
 		plt.xticks(rotation=70, fontsize=12)
 		# align box to labels
@@ -554,7 +554,7 @@ class barer(reporter):
 		plt.legend(title=title)
 		# save
 		plt.savefig(filename)
-		plt.close()
+		plt.close('all')
 	def generate(self, numQuery, timer, ensembler='sum'):
 		"""
 		Generates a bar chart of the time series and saves it to disk.
@@ -756,7 +756,7 @@ class arear(reporter):
 			return False
 		# plot
 		#plotdata = df_transposed.plot(title=title)
-		dataframe.plot.area(title=title)#, xticks=list(dataframe.index))
+		dataframe.plot.area(title=title, figsize=(12,8))#, xticks=list(dataframe.index))
 		# rotate labels
 		plt.xticks(range(len(dataframe.index)), dataframe.index)
 		#plt.xticks(rotation=70, fontsize=12)
@@ -766,7 +766,7 @@ class arear(reporter):
 		# plot
 		plt.legend(title="DBMS")
 		plt.savefig(filename, bbox_inches='tight')
-		plt.close()
+		plt.close('all')
 	def generate(self, numQuery, timer):
 		"""
 		Generates a plot of the benchmarks as a time series and saves it to disk.
@@ -939,7 +939,7 @@ class latexer(reporter):
 		plt.legend(title=title)
 		# save
 		plt.savefig(filename)
-		plt.close()
+		plt.close('all')
 		#print(title)
 		#print(tabulate(dfTotalRank,headers=dfTotalRank.columns,tablefmt="grid", floatfmt=".2f"))
 		if dfTotalSum is not None:
@@ -1017,7 +1017,7 @@ class latexer(reporter):
 		plt.legend(title="DBMS")
 		filename = self.benchmarker.path+'/total_bar_tps.png'
 		plt.savefig(filename)
-		plt.close()
+		plt.close('all')
 		plt.figure()
 		df2 = dfTotalLatTPS[['lat_r','lat_s']].transpose()
 		df2.plot.bar(title="Latencies [ms]")
@@ -1028,7 +1028,7 @@ class latexer(reporter):
 		plt.legend(title="DBMS")
 		filename = self.benchmarker.path+'/total_bar_lat.png'
 		plt.savefig(filename)
-		plt.close()
+		plt.close('all')
 		#print(tabulate(dfTotalLatTPS,headers=dfTotalLatTPS.columns,tablefmt="grid", floatfmt=".2f"))
 		parameter['totalLatTPS'] = tabulate(dfTotalLatTPS_units, headers=dfTotalLatTPS_units.columns, tablefmt="latex", floatfmt=",.2f", stralign="right", showindex=True)
 		if dfTotalSum is not None:
@@ -1063,7 +1063,7 @@ class latexer(reporter):
 			plt.legend(title=title)
 			# save
 			plt.savefig(filename)
-			plt.close()
+			plt.close('all')
 			parameter['totalIngest'] = tabulate(dfIngest, headers=dfIngest.columns, tablefmt="latex", floatfmt=",.2f", stralign="right", showindex=True)
 		else:
 			parameter['totalIngest'] = ""
