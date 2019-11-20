@@ -959,33 +959,33 @@ class latexer(reporter):
 		evaluation = evaluator.evaluator.evaluation
 		# Monitoring
 		metrics = [True if 'hardwaremetrics' in d else False for c,d in evaluation['dbms'].items()]
+		settings_translate = {
+			'total_cpu_memory':'RAM [MiB]',
+			'total_cpu_memory_cached':'Cached [MiB]',
+			'total_cpu_util':'CPU [%]',
+			'total_gpu_util':'GPU [%]',
+			'total_gpu_power':'GPU [W]',
+			'total_gpu_memory':'VRAM [MiB]',
+			'total_gpu_energy':'GPU [Wh]',
+			'RAM':'RAM [MiB]',
+			'disk':'Disk [MiB]',
+			'datadisk':'Data [MiB]',
+			'benchmark_usd':'Cost [$]',
+			'benchmark_time_s':'Benchmark [s]',
+			'total_time_s':'Total [s]'}
 		if True in metrics:
 			dfTotalHardware = tools.dataframehelper.evaluateMonitoringToDataFrame(evaluation)
 			#dfHardware.index = dfHardware.index.map(tools.dbms.anonymizer)
-			settings_translate = {
-				'total_cpu_memory':'RAM [MiB]',
-				'total_cpu_memory_cached':'Cached [MiB]',
-				'total_cpu_util':'CPU [%]',
-				'total_gpu_util':'GPU [%]',
-				'total_gpu_power':'GPU [W]',
-				'total_gpu_memory':'VRAM [MiB]',
-				'total_gpu_energy':'GPU [Wh]',
-				'RAM':'RAM [MiB]',
-				'disk':'Disk [MiB]',
-				'datadisk':'Data [MiB]',
-				'benchmark_usd':'Cost [$]',
-				'benchmark_time_s':'Benchmark [s]',
-				'total_time_s':'Total [s]'}
 			dfTotalHardware_units = dfTotalHardware.rename(columns = settings_translate)
 			parameter['totalHardwareMonitoring'] = tabulate(dfTotalHardware_units, headers=dfTotalHardware_units.columns, tablefmt="latex", floatfmt=",.2f", stralign="right", showindex=True)
-			# Monitoring
-			dfTotalHardware = tools.dataframehelper.evaluateHostToDataFrame(evaluation)
-			#dfTotalHardware.index = dfTotalHardware.index.map(tools.dbms.anonymizer)
-			dfTotalHardware_units = dfTotalHardware.rename(columns = settings_translate)
-			parameter['totalHardwareHost'] = tabulate(dfTotalHardware_units, headers=dfTotalHardware_units.columns, tablefmt="latex", floatfmt=",.2f", stralign="right", showindex=True)
 		else:
 			parameter['totalHardwareMonitoring'] = ""
-			parameter['totalHardwareHost'] = ""
+			#parameter['totalHardwareHost'] = ""
+		# Hardware
+		dfTotalHardware = tools.dataframehelper.evaluateHostToDataFrame(evaluation)
+		#dfTotalHardware.index = dfTotalHardware.index.map(tools.dbms.anonymizer)
+		dfTotalHardware_units = dfTotalHardware.rename(columns = settings_translate)
+		parameter['totalHardwareHost'] = tabulate(dfTotalHardware_units, headers=dfTotalHardware_units.columns, tablefmt="latex", floatfmt=",.2f", stralign="right", showindex=True)
 		# TPS / Latency
 		dfTotalLatTPS = pd.DataFrame.from_dict({c:{m:metric for m,metric in dbms['metrics'].items()} for c,dbms in evaluation['dbms'].items()}).transpose()
 		dfTotalLatTPS = dfTotalLatTPS.drop(columns='totaltime_ms')
