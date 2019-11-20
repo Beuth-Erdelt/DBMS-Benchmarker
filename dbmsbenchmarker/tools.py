@@ -890,7 +890,9 @@ class dataframehelper():
 		df = df1.merge(df2,left_index=True,right_index=True)
 		if 'CUDA' in df.columns:
 			df = df.drop(['CUDA'],axis=1)
-		df = df.drop(['host','CPU','GPU','instance'],axis=1)#,'RAM','Cores'
+		if 'instance' in df.columns:
+			df = df.drop(['instance'],axis=1)
+		df = df.drop(['host','CPU','GPU'],axis=1)#,'RAM','Cores'
 		df = df.astype(float)
 		if 'RAM' in df:
 			df['RAM'] = df['RAM']/1024/1024
