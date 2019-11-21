@@ -21,6 +21,7 @@ from tqdm import tqdm
 import pickle
 import sys
 import math
+import pprint
 
 
 class evaluator():
@@ -272,7 +273,10 @@ class evaluator():
 		evaluation['general']['results']['totalProd'] = dfTotalProd.to_dict(orient='index')
 		evaluation['general']['results']['totalTime'] = dfTotalTime.to_dict()
 		evaluation['general']['results']['totalRank'] = dfTotalRank.to_dict(orient='index')
-		#print(result)
+		filename = self.benchmarker.path+'/evaluation.dict'
+		with open(filename, 'w') as f:
+			f.write(str(evaluation))
+			#pprint.pprint(evaluation, f)
 		return evaluation
 	def pretty(self, d="", indent=0):
 		if len(d) == 0:
