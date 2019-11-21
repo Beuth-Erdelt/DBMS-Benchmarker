@@ -178,7 +178,7 @@ The next chart shows the total query time per DBMS and query.
 
 \begin{{figure}}[h]
 \centering
-\includegraphics[width=0.8\textwidth]{{total_time_area.png}}\\
+\includegraphics[width=0.7\textwidth]{{total_time_area.png}}\\
 {{\scriptsize{{{totalTime}}}}}
 \caption{{DBMS: Total times}}
 \end{{figure}}
