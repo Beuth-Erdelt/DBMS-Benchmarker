@@ -184,6 +184,18 @@ The next chart shows the total query time per DBMS and query.
 \end{{figure}}
 
 \newpage
+\subsection{{Normalized Total Times}}
+The next chart shows the total query time per DBMS and query, normalized to 100\% per query.
+The table shows total times per query, normalized to the average total time of that query.
+
+\begin{{figure}}[h]
+\centering
+\includegraphics[width=0.7\textwidth]{{total_time_normarea.png}}\\
+{{\scriptsize{{{totalTimeNormed}}}}}
+\caption{{DBMS: Normalized Total times}}
+\end{{figure}}
+
+\newpage
 \subsection{{Mean of Times per Query}}
 The next charts show the sums of query times per DBMS, timer and query.\\
 

@@ -740,6 +740,7 @@ class arear(reporter):
 	"""
 	def __init__(self, benchmarker):
 		reporter.__init__(self, benchmarker)
+		self.normed = False
 	def save(self, dataframe, title, subtitle, filename):
 		"""
 		Saves report of a given query as plot image per timer.
@@ -777,22 +778,33 @@ class arear(reporter):
 		:return: returns nothing
 		"""
 		dataframe, title = tools.dataframehelper.totalTimes(self.benchmarker)
+		if self.normed:
+			# normalize
+			dataframePlot = dataframe.div(dataframe.sum(axis=1)/100.0, axis=0);
+			dataframe = dataframe.div(dataframe.mean(axis=1)/100.0, axis=0);
+		else:
+			dataframePlot = dataframe
 		if dataframe is None:
 			return dataframe
-		#logging.debug("Plot Q"+str(numQuery)+" for timer "+t.name)
 		if numQuery is None:
-			#title = chartlabel+" in "+str(numQueriesEvaluated)+" benchmarks ("+str(numBenchmarks)+" runs) [ms]"
-			filename = self.benchmarker.path+'/total_time_area.png'
+			if not self.normed:
+				filename = self.benchmarker.path+'/total_time_area.png'
+				title = "Total times [ms]"
+			else:
+				filename = self.benchmarker.path+'/total_time_normarea.png'
+				title = "Total times [%]"
 		else:
-			#title = "Q"+str(numQuery)+": "+chartlabel+" [ms] in "+str(query.numRun-query.warmup)+" benchmark test runs"
 			filename = self.benchmarker.path+'/query_'+str(numQuery)+'_area.png'
 		# save as plot
 		self.save(
-			dataframe = dataframe,
-			title = "Total times [ms]",
+			dataframe = dataframePlot,
+			title = title,
 			subtitle = "",
 			filename = filename)
-		dataframe.loc['Total']= dataframe.sum()
+		if self.normed:
+			dataframe.loc['Mean']= dataframe.mean()
+		else:
+			dataframe.loc['Total']= dataframe.sum()
 		return dataframe
 	def generateAll(self, timer):
 		"""
@@ -806,6 +818,16 @@ class arear(reporter):
 		"""
 		self.generate(numQuery=None, timer=timer)
 
+
+
+class normarear(arear):
+	"""
+	Class for generating reports.
+	Generates a plot of the benchmarks as a time series and saves it to disk.
+	"""
+	def __init__(self, benchmarker):
+		arear.__init__(self, benchmarker)
+		self.normed = True
 
 
 class metricer(reporter):
@@ -926,9 +948,14 @@ class latexer(reporter):
 		if dfTotalTime is not None:
 			print("Total Times")
 			print(tabulate(dfTotalTime,headers=dfTotalTime.columns,tablefmt="grid", floatfmt=".2f"))
+		# generate normed area plot of total time
+		reporterNormArea = normarear(self.benchmarker)
+		dfTotalTimeNorm = reporterNormArea.generate(numQuery=None, timer=self.benchmarker.timers)
+		if dfTotalTimeNorm is not None:
+			print("Total Times normed")
+			print(tabulate(dfTotalTimeNorm,headers=dfTotalTimeNorm.columns,tablefmt="grid", floatfmt=".2f"))
 		# generate barh plot of total ranking
 		dfTotalRank, timers = self.benchmarker.generateSortedTotalRanking()
-		#print(title)
 		filename = self.benchmarker.path+'/total_barh_rank.png'
 		title = 'Ranking of '+str(timers)+' timers'
 		dfTotalRank.plot.barh()
@@ -1048,6 +1075,14 @@ class latexer(reporter):
 			parameter['totalTime'] += "\\\\"+tabulate(dfTotalTimeTranslation, headers=dfTotalTimeTranslation.columns, tablefmt="latex", floatfmt=",.2f", stralign="right", showindex=True)
 		else:
 			parameter['totalTime'] = ""
+		if dfTotalTimeNorm is not None:
+			listofnames = ['DBMS '+str(l+1) for l in range(len(dfTotalTimeNorm.columns))]
+			dfTotalTimeTranslation = pd.DataFrame(dfTotalTimeNorm.columns,index=listofnames,columns=['DBMS Name'])
+			dfTotalTimeNorm.columns = listofnames
+			parameter['totalTimeNormed'] = tabulate(dfTotalTimeNorm, headers=dfTotalTimeNorm.columns, tablefmt="latex", floatfmt=",.2f", stralign="right", showindex=True)
+			parameter['totalTimeNormed'] += "\\\\"+tabulate(dfTotalTimeTranslation, headers=dfTotalTimeTranslation.columns, tablefmt="latex", floatfmt=",.2f", stralign="right", showindex=True)
+		else:
+			parameter['totalTimeNormed'] = ""
 		#print(timesLoad)
 		if len(timesLoad) > 0:
 			dfIngest = pd.DataFrame.from_dict(timesLoad, orient='index')
