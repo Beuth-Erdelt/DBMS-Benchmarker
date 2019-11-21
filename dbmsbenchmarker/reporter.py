@@ -1015,8 +1015,11 @@ class latexer(reporter):
 		parameter['totalHardwareHost'] = tabulate(dfTotalHardware_units, headers=dfTotalHardware_units.columns, tablefmt="latex", floatfmt=",.2f", stralign="right", showindex=True)
 		# TPS / Latency
 		dfTotalLatTPS = pd.DataFrame.from_dict({c:{m:metric for m,metric in dbms['metrics'].items()} for c,dbms in evaluation['dbms'].items()}).transpose()
+		#print(dfTotalLatTPS)
 		dfTotalLatTPS = dfTotalLatTPS.drop(columns='totaltime_ms')
+		#print(dfTotalLatTPS)
 		dfTotalLatTPS.index = dfTotalLatTPS.index.map(tools.dbms.anonymizer)
+		#print(dfTotalLatTPS)
 		settings_translate = {
 			'latency_run_mean_ms':'lat_r [ms]',
 			'latency_session_mean_ms':'lat_s [ms]',
@@ -1034,6 +1037,7 @@ class latexer(reporter):
 			'throughput_session_total_ps':'tps_s1',
 			'throughput_session_mean_ps':'tps_s2'}
 		dfTotalLatTPS = dfTotalLatTPS.rename(columns = settings_translate)
+		#print(dfTotalLatTPS)
 		plt.figure()
 		df1 = dfTotalLatTPS[['tps_r1','tps_r2','tps_s1','tps_s2']].transpose()
 		df1.plot.bar(title="Throughputs [Hz]")
