@@ -687,6 +687,7 @@ class tps(reporter):
 		if dfTotalLatTPS is None or dfTotalLatTPS.empty:
 			return None
 		dfTotalLatTPS.index = dfTotalLatTPS.index.map(tools.dbms.anonymizer)
+		dfTotalLatTPS = tools.dataframehelper.addStatistics(dfTotalLatTPS)
 		if numQuery is None:
 			#title = chartlabel+" in "+str(numQueriesEvaluated)+" benchmarks ("+str(numBenchmarks)+" runs) [ms]"
 			filename_tps = self.benchmarker.path+'/total_bar_tps.png'
@@ -802,9 +803,9 @@ class arear(reporter):
 			subtitle = "",
 			filename = filename)
 		if self.normed:
-			dataframe.loc['Mean']= dataframe.mean()
+			dataframe.loc['Mean [ms]']= dataframe.mean()
 		else:
-			dataframe.loc['Total']= dataframe.sum()
+			dataframe.loc['Total [ms]']= dataframe.sum()
 		return dataframe
 	def generateAll(self, timer):
 		"""
@@ -969,8 +970,8 @@ class latexer(reporter):
 		plt.close('all')
 		#print(title)
 		#print(tabulate(dfTotalRank,headers=dfTotalRank.columns,tablefmt="grid", floatfmt=".2f"))
-		if dfTotalSum is not None:
-			dfTotalSum = dfTotalSum.applymap(lambda x: '{:.{prec}f}'.format(x, prec=2))
+		#if dfTotalSum is not None:
+		#	dfTotalSum = dfTotalSum.applymap(lambda x: '{:.{prec}f}'.format(x, prec=2))
 		if dfTotalProd is not None:
 			dfTotalProd = dfTotalProd.applymap(lambda x: '{:.{prec}f}'.format(x, prec=2))
 		dfTotalRank = dfTotalRank.applymap(lambda x: '{:.{prec}f}'.format(x, prec=2))
@@ -1062,8 +1063,11 @@ class latexer(reporter):
 		plt.savefig(filename)
 		plt.close('all')
 		#print(tabulate(dfTotalLatTPS,headers=dfTotalLatTPS.columns,tablefmt="grid", floatfmt=".2f"))
+		dfTotalLatTPS_units = tools.dataframehelper.addStatistics(dfTotalLatTPS_units)
 		parameter['totalLatTPS'] = tabulate(dfTotalLatTPS_units, headers=dfTotalLatTPS_units.columns, tablefmt="latex", floatfmt=",.2f", stralign="right", showindex=True)
 		if dfTotalSum is not None:
+			dfTotalSum = tools.dataframehelper.addStatistics(dfTotalSum)
+			dfTotalSum = dfTotalSum.applymap(lambda x: '{:.{prec}f}'.format(x, prec=2))
 			parameter['totalSum'] = tabulate(dfTotalSum, headers=dfTotalSum.columns, tablefmt="latex", floatfmt=",.2f", stralign="right", showindex=True)
 		else:
 			parameter['totalSum'] = ""
@@ -1497,17 +1501,7 @@ class latexer(reporter):
 					'throughput_session_mean_ps':'tps_s2 [Hz]',
 					'totaltime_ms':'total [s]'}
 				df=df.rename(columns = settings_translate)
-				stat_mean = df.mean()
-				stat_std = df.std()
-				stat_q1 = df.quantile(0.25)
-				stat_q2 = df.quantile(0.5)
-				stat_q3 = df.quantile(0.75)
-				df.loc['Median']= stat_q2
-				df.loc['Mean']= stat_mean
-				df.loc['Std Dev']= stat_std
-				df.loc['cv']= df.loc['Std Dev']/df.loc['Mean']
-				df.loc['iqr']=stat_q3-stat_q1
-				df.loc['qcod']=(stat_q3-stat_q1)/(stat_q3+stat_q1)
+				df = tools.dataframehelper.addStatistics(df)
 				result["benchmarkmetrics"] = tabulate(df,headers=df.columns, tablefmt="latex", stralign="right", floatfmt=",.2f", showindex=True).replace("\\textbackslash{}", "\\").replace("\\{", "{").replace("\\}","}")
 				df = pd.DataFrame.from_dict(settings).transpose()
 				result["querysettings"] = tabulate(df,headers=df.columns, tablefmt="latex", stralign="right", floatfmt=",.2f", showindex=True).replace("\\textbackslash{}", "\\").replace("\\{", "{").replace("\\}","}")
@@ -1572,17 +1566,7 @@ class latexer(reporter):
 				if dataframe.empty:
 					return {}
 				# add statistics
-				stat_mean = dataframe.mean()
-				stat_std = dataframe.std()
-				stat_q1 = dataframe.quantile(0.25)
-				stat_q2 = dataframe.quantile(0.5)
-				stat_q3 = dataframe.quantile(0.75)
-				dataframe.loc['Median']= stat_q2
-				dataframe.loc['Mean']= stat_mean
-				dataframe.loc['Std Dev']= stat_std
-				dataframe.loc['cv']= dataframe.loc['Std Dev']/dataframe.loc['Mean']
-				dataframe.loc['iqr']=stat_q3-stat_q1
-				dataframe.loc['qcod']=(stat_q3-stat_q1)/(stat_q3+stat_q1)
+				dataframe = tools.dataframehelper.addStatistics(dataframe)
 				# print transfer table in latex
 				table = tabulate(dataframe,headers=header, tablefmt="latex", stralign="right", floatfmt=",.2f", showindex=True)
 				# align dbms name to the left
