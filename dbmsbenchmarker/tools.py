@@ -712,6 +712,8 @@ class dataframehelper():
 		d = d.sort_values('total', ascending = True)
 		# drop total
 		d = d.drop('total',axis=1)
+		# add unit to columns
+		d.columns = d.columns.map(lambda name: name+' [ms]')
 		# label chart
 		if benchmarker.queryconfig['factor'] == 'mean':
 			chartlabel = 'Arithmetic mean of mean times'
@@ -856,21 +858,16 @@ class dataframehelper():
 		#df3=df1.merge(df2,left_index=True,right_index=True).drop(['CUDA','host','CPU','GPU','instance','RAM','Cores'],axis=1)
 		df = df.astype(float)
 		df.index = df.index.map(dbms.anonymizer)
+		df = dataframehelper.addStatistics(df)
+		df = df.applymap(lambda x: x if not np.isnan(x) else 0.0)
+		return df
+	@staticmethod
+	def addStatistics(df):
 		stat_mean = df.mean()
 		stat_std = df.std()
 		stat_q1 = df.quantile(0.25)
 		stat_q2 = df.quantile(0.5)
 		stat_q3 = df.quantile(0.75)
-		df.loc['Median']= stat_q2
-		df.loc['Mean']= stat_mean
-		df.loc['Std Dev']= stat_std
-		df.loc['cv']= df.loc['Std Dev']/df.loc['Mean']
-		df.loc['iqr']=stat_q3-stat_q1
-		df.loc['qcod']=(stat_q3-stat_q1)/(stat_q3+stat_q1)
-		df = df.applymap(lambda x: x if not np.isnan(x) else 0.0)
-		return df
-	@staticmethod
-	def addStatistics(df):
 		df.loc['Median']= stat_q2
 		df.loc['Mean']= stat_mean
 		df.loc['Std Dev']= stat_std
@@ -884,17 +881,7 @@ class dataframehelper():
 		df.index = df.index.map(dbms.anonymizer)
 		#df = pd.DataFrame.from_dict({c:d['hardwaremetrics'] if 'hardwaremetrics' in d else [] for c,d in evaluation['dbms'].items()}).transpose()
 		df = df.astype(float)
-		stat_mean = df.mean()
-		stat_std = df.std()
-		stat_q1 = df.quantile(0.25)
-		stat_q2 = df.quantile(0.5)
-		stat_q3 = df.quantile(0.75)
-		df.loc['Median']= stat_q2
-		df.loc['Mean']= stat_mean
-		df.loc['Std Dev']= stat_std
-		df.loc['cv']= df.loc['Std Dev']/df.loc['Mean']
-		df.loc['iqr']=stat_q3-stat_q1
-		df.loc['qcod']=(stat_q3-stat_q1)/(stat_q3+stat_q1)
+		df = dataframehelper.addStatistics(df)
 		df = df.applymap(lambda x: x if not np.isnan(x) else 0.0)
 		return df
 	def evaluateHostToDataFrame(evaluation):
@@ -915,17 +902,7 @@ class dataframehelper():
 			df['disk'] = df['disk']/1024
 		if 'datadisk' in df:
 			df['datadisk'] = df['datadisk']/1024
-		stat_mean = df.mean()
-		stat_std = df.std()
-		stat_q1 = df.quantile(0.25)
-		stat_q2 = df.quantile(0.5)
-		stat_q3 = df.quantile(0.75)
-		df.loc['Median']= stat_q2
-		df.loc['Mean']= stat_mean
-		df.loc['Std Dev']= stat_std
-		df.loc['cv']= df.loc['Std Dev']/df.loc['Mean']
-		df.loc['iqr']=stat_q3-stat_q1
-		df.loc['qcod']=(stat_q3-stat_q1)/(stat_q3+stat_q1)
+		df = dataframehelper.addStatistics(df)
 		df = df.applymap(lambda x: x if not np.isnan(x) else 0.0)
 		return df
 
