@@ -482,8 +482,11 @@ class dbms():
 		# anonymous dbms get ascending char as name
 		if self.anonymous:
 			if 'alias' in self.connectiondata and len(self.connectiondata['alias']) > 0:
-				self.name = self.connectiondata['alias']+" "+chr(dbms.currentAnonymChar)
-				dbms.currentAnonymChar = dbms.currentAnonymChar + 1
+				if self.connectiondata['alias'] in dbms.anonymizer.values():
+					self.name = self.connectiondata['alias']+" "+chr(dbms.currentAnonymChar)
+					dbms.currentAnonymChar = dbms.currentAnonymChar + 1
+				else:
+					self.name = self.connectiondata['alias']
 			else:
 				self.name = "DBMS "+chr(dbms.currentAnonymChar)
 				dbms.currentAnonymChar = dbms.currentAnonymChar + 1
@@ -852,6 +855,7 @@ class dataframehelper():
 		df = df1.merge(df2,left_index=True,right_index=True).drop(['host','CPU','GPU','instance','RAM','Cores'],axis=1)
 		#df3=df1.merge(df2,left_index=True,right_index=True).drop(['CUDA','host','CPU','GPU','instance','RAM','Cores'],axis=1)
 		df = df.astype(float)
+		df.index = df.index.map(dbms.anonymizer)
 		stat_mean = df.mean()
 		stat_std = df.std()
 		stat_q1 = df.quantile(0.25)
@@ -868,6 +872,7 @@ class dataframehelper():
 	@staticmethod
 	def evaluateMonitoringToDataFrame(evaluation):
 		df = pd.DataFrame.from_dict({c:d['hardwaremetrics'] for c,d in evaluation['dbms'].items()}).transpose()
+		df.index = df.index.map(dbms.anonymizer)
 		#df = pd.DataFrame.from_dict({c:d['hardwaremetrics'] if 'hardwaremetrics' in d else [] for c,d in evaluation['dbms'].items()}).transpose()
 		df = df.astype(float)
 		stat_mean = df.mean()
@@ -888,6 +893,7 @@ class dataframehelper():
 		#print({c:d['prices']['benchmark_usd'] for c,d in evaluation['dbms'].items()})
 		df2 = pd.DataFrame.from_dict({c:{'benchmark_usd':d['prices']['benchmark_usd'],'benchmark_time_s':d['times']['benchmark_ms']/1000.0,'total_time_s':(d['times']['load_ms']+d['times']['benchmark_ms'])/1000.0} for c,d in evaluation['dbms'].items()}).transpose()
 		df = df1.merge(df2,left_index=True,right_index=True)
+		df.index = df.index.map(dbms.anonymizer)
 		if 'CUDA' in df.columns:
 			df = df.drop(['CUDA'],axis=1)
 		if 'instance' in df.columns:
