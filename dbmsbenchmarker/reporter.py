@@ -793,7 +793,7 @@ class arear(reporter):
 				title = "Total times [ms]"
 			else:
 				filename = self.benchmarker.path+'/total_time_normarea.png'
-				title = "Total times [%]"
+				title = "Normalized Total times [%]"
 		else:
 			filename = self.benchmarker.path+'/query_'+str(numQuery)+'_area.png'
 		# save as plot
