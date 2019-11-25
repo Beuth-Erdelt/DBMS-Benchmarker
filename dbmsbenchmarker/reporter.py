@@ -803,7 +803,7 @@ class arear(reporter):
 			subtitle = "",
 			filename = filename)
 		if self.normed:
-			dataframe.loc['Mean [ms]']= dataframe.mean()
+			dataframe.loc['Mean']= dataframe.mean()
 		else:
 			dataframe.loc['Total [ms]']= dataframe.sum()
 		return dataframe
