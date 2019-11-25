@@ -1497,6 +1497,17 @@ class latexer(reporter):
 					'throughput_session_mean_ps':'tps_s2 [Hz]',
 					'totaltime_ms':'total [s]'}
 				df=df.rename(columns = settings_translate)
+				stat_mean = df.mean()
+				stat_std = df.std()
+				stat_q1 = df.quantile(0.25)
+				stat_q2 = df.quantile(0.5)
+				stat_q3 = df.quantile(0.75)
+				df.loc['Median']= stat_q2
+				df.loc['Mean']= stat_mean
+				df.loc['Std Dev']= stat_std
+				df.loc['cv']= df.loc['Std Dev']/df.loc['Mean']
+				df.loc['iqr']=stat_q3-stat_q1
+				df.loc['qcod']=(stat_q3-stat_q1)/(stat_q3+stat_q1)
 				result["benchmarkmetrics"] = tabulate(df,headers=df.columns, tablefmt="latex", stralign="right", floatfmt=",.2f", showindex=True).replace("\\textbackslash{}", "\\").replace("\\{", "{").replace("\\}","}")
 				df = pd.DataFrame.from_dict(settings).transpose()
 				result["querysettings"] = tabulate(df,headers=df.columns, tablefmt="latex", stralign="right", floatfmt=",.2f", showindex=True).replace("\\textbackslash{}", "\\").replace("\\{", "{").replace("\\}","}")
@@ -1560,6 +1571,18 @@ class latexer(reporter):
 				# test if any rows left
 				if dataframe.empty:
 					return {}
+				# add statistics
+				stat_mean = dataframe.mean()
+				stat_std = dataframe.std()
+				stat_q1 = dataframe.quantile(0.25)
+				stat_q2 = dataframe.quantile(0.5)
+				stat_q3 = dataframe.quantile(0.75)
+				dataframe.loc['Median']= stat_q2
+				dataframe.loc['Mean']= stat_mean
+				dataframe.loc['Std Dev']= stat_std
+				dataframe.loc['cv']= dataframe.loc['Std Dev']/dataframe.loc['Mean']
+				dataframe.loc['iqr']=stat_q3-stat_q1
+				dataframe.loc['qcod']=(stat_q3-stat_q1)/(stat_q3+stat_q1)
 				# print transfer table in latex
 				table = tabulate(dataframe,headers=header, tablefmt="latex", stralign="right", floatfmt=",.2f", showindex=True)
 				# align dbms name to the left
