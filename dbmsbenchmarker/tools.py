@@ -713,7 +713,7 @@ class dataframehelper():
 		# drop total
 		d = d.drop('total',axis=1)
 		# add unit to columns
-		d.columns = d.columns.map(lambda name: name+' [ms]')
+		d.columns = d.columns.map(lambda s: s+' [ms]')
 		# label chart
 		if benchmarker.queryconfig['factor'] == 'mean':
 			chartlabel = 'Arithmetic mean of mean times'

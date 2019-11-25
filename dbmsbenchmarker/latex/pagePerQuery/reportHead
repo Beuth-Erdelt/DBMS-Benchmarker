@@ -130,6 +130,7 @@ The next chart shows the total time of ingestion per DBMS.
 \subsection{{Hardware Metrics}}
 \subsubsection{{Monitoring}}
 The next chart shows the metrics obtained from monitoring.
+Values are computed as arithmetic mean across benchmarking time.
 
 \begin{{figure}}[h]
 %\centering
@@ -140,6 +141,7 @@ The next chart shows the metrics obtained from monitoring.
 
 \subsubsection{{Host System}}
 The next chart shows the metrics obtained from inside docker containers.
+Here, cost is based on the total time.
 \begin{{figure}}[h]
 %\centering
 %\includegraphics[height=0.45\textwidth]{{total_barh_ingest.png}}\\
