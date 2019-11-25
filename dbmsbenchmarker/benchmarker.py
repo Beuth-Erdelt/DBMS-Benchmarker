@@ -29,7 +29,7 @@ import multiprocessing as mp
 from timeit import default_timer
 import random
 from operator import add
-from dbmsbenchmarker import tools, reporter, parameter, monitor
+from dbmsbenchmarker import tools, reporter, parameter, monitor, evaluator
 import pprint
 
 
