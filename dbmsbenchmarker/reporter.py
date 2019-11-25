@@ -1002,8 +1002,9 @@ class latexer(reporter):
 			'total_time_s':'Total [s]'}
 		if True in metrics:
 			dfTotalHardware = tools.dataframehelper.evaluateMonitoringToDataFrame(evaluation)
-			#dfHardware.index = dfHardware.index.map(tools.dbms.anonymizer)
+			#dfTotalHardware.index = dfTotalHardware.index.map(tools.dbms.anonymizer)
 			dfTotalHardware_units = dfTotalHardware.rename(columns = settings_translate)
+			#print(dfTotalHardware_units)
 			parameter['totalHardwareMonitoring'] = tabulate(dfTotalHardware_units, headers=dfTotalHardware_units.columns, tablefmt="latex", floatfmt=",.2f", stralign="right", showindex=True)
 		else:
 			parameter['totalHardwareMonitoring'] = ""
@@ -1486,6 +1487,7 @@ class latexer(reporter):
 				if c in self.benchmarker.protocol['query'][str(numQuery)]['durations']:
 					settings[dbmsname]['Total Time'] = tools.formatDuration(self.benchmarker.protocol['query'][str(numQuery)]['durations'][c])
 				df = pd.DataFrame.from_dict({c:d['metrics'] for c,d in evaluation['query'][numQuery]['dbms'].items() if 'metrics' in d}).transpose()
+				df.index = df.index.map(tools.dbms.anonymizer)
 				settings_translate = {
 					'latency_run_mean_ms':'lat_r [ms]',
 					'latency_session_mean_ms':'lat_s [ms]',
