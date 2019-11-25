@@ -1102,6 +1102,8 @@ class benchmarker():
 
 		:return: returns nothing
 		"""
+		# clean evaluation dict
+		evaluator.evaluator.evaluation = {}
 		if self.working == 'query':
 			self.runBenchmarksQuery()
 		else:
