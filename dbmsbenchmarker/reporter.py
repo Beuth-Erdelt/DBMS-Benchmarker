@@ -687,7 +687,6 @@ class tps(reporter):
 		if dfTotalLatTPS is None or dfTotalLatTPS.empty:
 			return None
 		dfTotalLatTPS.index = dfTotalLatTPS.index.map(tools.dbms.anonymizer)
-		dfTotalLatTPS = tools.dataframehelper.addStatistics(dfTotalLatTPS)
 		if numQuery is None:
 			#title = chartlabel+" in "+str(numQueriesEvaluated)+" benchmarks ("+str(numBenchmarks)+" runs) [ms]"
 			filename_tps = self.benchmarker.path+'/total_bar_tps.png'
@@ -703,6 +702,7 @@ class tps(reporter):
 			dataframe = dfTotalLatTPS,
 			filename_lat = filename_lat,
 			filename_tps = filename_tps)
+		dfTotalLatTPS = tools.dataframehelper.addStatistics(dfTotalLatTPS)
 		return dfTotalLatTPS
 	def generateAll(self, timer):
 		"""
