@@ -866,8 +866,17 @@ class dataframehelper():
 		df.loc['Std Dev']= stat_std
 		df.loc['cv']= df.loc['Std Dev']/df.loc['Mean']
 		df.loc['iqr']=stat_q3-stat_q1
-		df.loc['iqr']=(stat_q3-stat_q1)/(stat_q3+stat_q1)
+		df.loc['qcod']=(stat_q3-stat_q1)/(stat_q3+stat_q1)
 		df = df.applymap(lambda x: x if not np.isnan(x) else 0.0)
+		return df
+	@staticmethod
+	def addStatistics(df):
+		df.loc['Median']= stat_q2
+		df.loc['Mean']= stat_mean
+		df.loc['Std Dev']= stat_std
+		df.loc['cv']= df.loc['Std Dev']/df.loc['Mean']
+		df.loc['iqr']=stat_q3-stat_q1
+		df.loc['qcod']=(stat_q3-stat_q1)/(stat_q3+stat_q1)
 		return df
 	@staticmethod
 	def evaluateMonitoringToDataFrame(evaluation):
@@ -885,7 +894,7 @@ class dataframehelper():
 		df.loc['Std Dev']= stat_std
 		df.loc['cv']= df.loc['Std Dev']/df.loc['Mean']
 		df.loc['iqr']=stat_q3-stat_q1
-		df.loc['iqr']=(stat_q3-stat_q1)/(stat_q3+stat_q1)
+		df.loc['qcod']=(stat_q3-stat_q1)/(stat_q3+stat_q1)
 		df = df.applymap(lambda x: x if not np.isnan(x) else 0.0)
 		return df
 	def evaluateHostToDataFrame(evaluation):
@@ -916,7 +925,7 @@ class dataframehelper():
 		df.loc['Std Dev']= stat_std
 		df.loc['cv']= df.loc['Std Dev']/df.loc['Mean']
 		df.loc['iqr']=stat_q3-stat_q1
-		df.loc['iqr']=(stat_q3-stat_q1)/(stat_q3+stat_q1)
+		df.loc['qcod']=(stat_q3-stat_q1)/(stat_q3+stat_q1)
 		df = df.applymap(lambda x: x if not np.isnan(x) else 0.0)
 		return df
 
