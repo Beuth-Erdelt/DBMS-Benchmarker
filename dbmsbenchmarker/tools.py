@@ -387,7 +387,7 @@ class query():
 		if 'numCooldown' in query:
 			self.cooldown = int(query['numCooldown'])
 		if 'delay' in query:
-			self.delay_run = int(query['delay'])
+			self.delay_run = float(query['delay'])
 		if 'title' in query:
 			self.title = query['title']
 		if 'DBMS' in query:
@@ -426,8 +426,8 @@ class query():
 		if 'connection' in self.timer:
 			if self.timer['connection']['active']:
 				self.withConnect = True
-			if self.timer['connection']['delay']:
-				self.delay_connect = int(self.timer['connection']['delay'])
+			if 'delay' in self.timer['connection']:
+				self.delay_connect = float(self.timer['connection']['delay'])
 		# we do not have a query string, but a list of (other) queries
 		if 'queryList' in query:
 			self.queryList = query['queryList']
