@@ -371,6 +371,8 @@ class query():
 		self.numRunEnd = self.numRun-self.cooldown
 		self.timer['run'] = {'active': True}
 		self.timer['session'] = {'active': True}
+		self.delay_connect = 0
+		self.delay_run = 0
 	def dictToObject(self, query):
 		if 'query' in query:
 			self.query = query['query']
@@ -384,6 +386,8 @@ class query():
 			self.warmup = int(query['numWarmup'])
 		if 'numCooldown' in query:
 			self.cooldown = int(query['numCooldown'])
+		if 'delay' in query:
+			self.delay_run = int(query['delay'])
 		if 'title' in query:
 			self.title = query['title']
 		if 'DBMS' in query:
@@ -422,6 +426,8 @@ class query():
 		if 'connection' in self.timer:
 			if self.timer['connection']['active']:
 				self.withConnect = True
+			if self.timer['connection']['delay']:
+				self.delay_connect = int(self.timer['connection']['delay'])
 		# we do not have a query string, but a list of (other) queries
 		if 'queryList' in query:
 			self.queryList = query['queryList']
@@ -483,6 +489,15 @@ class dbms():
 		if self.anonymous:
 			if 'alias' in self.connectiondata and len(self.connectiondata['alias']) > 0:
 				if self.connectiondata['alias'] in dbms.anonymizer.values():
+					# rename first occurance of alias
+					old_origin = dbms.deanonymizer[self.connectiondata['alias']]
+					old_alias = self.connectiondata['alias']+" "+chr(dbms.currentAnonymChar)
+					dbms.currentAnonymChar = dbms.currentAnonymChar + 1
+					dbms.anonymizer[old_origin] = old_alias
+					dbms.deanonymizer[old_alias] = old_origin
+					print("Alias for "+old_origin+" became "+old_alias)
+				if self.connectiondata['alias'] in dbms.anonymizer.values() or self.connectiondata['alias']+" A" in dbms.anonymizer.values():
+					# rename this occurance
 					self.name = self.connectiondata['alias']+" "+chr(dbms.currentAnonymChar)
 					dbms.currentAnonymChar = dbms.currentAnonymChar + 1
 				else:
@@ -871,7 +886,7 @@ class dataframehelper():
 		df.loc['Median']= stat_q2
 		df.loc['Mean']= stat_mean
 		df.loc['Std Dev']= stat_std
-		df.loc['cv']= df.loc['Std Dev']/df.loc['Mean']
+		df.loc['cv [%]']= df.loc['Std Dev']/df.loc['Mean']*100.0
 		df.loc['iqr']=stat_q3-stat_q1
 		df.loc['qcod']=(stat_q3-stat_q1)/(stat_q3+stat_q1)
 		return df
