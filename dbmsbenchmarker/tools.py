@@ -359,6 +359,8 @@ class query():
 		self.timer['connection']['active'] = False
 		self.timer['datatransfer'] = {}
 		self.timer['datatransfer']['active'] = False
+		self.delay_connect = 0
+		self.delay_run = 0
 		# legacy naming
 		#self.timer['transfer'] = {}
 		#self.timer['transfer']['active'] = self.timer['datatransfer']['active']#False
@@ -371,8 +373,6 @@ class query():
 		self.numRunEnd = self.numRun-self.cooldown
 		self.timer['run'] = {'active': True}
 		self.timer['session'] = {'active': True}
-		self.delay_connect = 0
-		self.delay_run = 0
 	def dictToObject(self, query):
 		if 'query' in query:
 			self.query = query['query']
