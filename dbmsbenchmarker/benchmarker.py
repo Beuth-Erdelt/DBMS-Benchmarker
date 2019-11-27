@@ -70,6 +70,11 @@ def singleRun(connectiondata, inputConfig, numRuns, connectionname, numQuery, pa
 	logger.setLevel(logging.ERROR)
 	# init list of results
 	results = []
+	# look at first run to determine of there should be sleeping
+	query = tools.query(inputConfig[numRuns[0]].queryConfig)
+	if query.delay_connect > 0:
+		print("Delay Connection by "+str(query.delay_connect)+" seconds")
+		time.sleep(query.delay_connect)
 	# connect to dbms
 	connection = tools.dbms(connectiondata)
 	start = default_timer()
@@ -84,6 +89,9 @@ def singleRun(connectiondata, inputConfig, numRuns, connectionname, numQuery, pa
 		queryString = inputConfig[numRun].queryString
 		print(workername+queryString)
 		query = tools.query(inputConfig[numRun].queryConfig)
+		if query.delay_run > 0:
+			print(workername+"Delay Run by "+str(query.delay_run)+" seconds")
+			time.sleep(query.delay_run)
 		error = ""
 		try:
 			connection.openCursor()
