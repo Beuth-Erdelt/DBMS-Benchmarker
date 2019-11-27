@@ -1542,6 +1542,8 @@ class latexer(reporter):
 			result['queryNotes'] = queryNotes
 			result['warmup']=str(query.warmup)
 			result['cooldown']=str(query.cooldown)
+			result['delay_run']=str(query.delay_run)
+			result['delay_connect']=str(query.delay_connect)
 			result['run']=str(query.numRun)
 			result['start']=self.benchmarker.protocol['query'][str(numQuery)]['start']
 			result['end']=self.benchmarker.protocol['query'][str(numQuery)]['end']

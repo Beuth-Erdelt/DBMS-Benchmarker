@@ -14,7 +14,9 @@
 {{\tiny{{
 \textbf{{Runs}}: {run}, 
 \textbf{{Warmup}}: {warmup}, 
-\textbf{{Cooldown}}: {cooldown}\\
+\textbf{{Cooldown}}: {cooldown}, 
+\textbf{{Delay Run}}: {delay_run} s, 
+\textbf{{Delay Connect}}: {delay_connect} s\\
 {benchmarkmetrics}
 }}}}
 \caption{{DBMS: Relative ranking based on latency and throughput}}

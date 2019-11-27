@@ -164,6 +164,7 @@ The next chart shows the average ranking per DBMS.
 \newpage
 \subsection{{Mean of Times}}
 The next chart shows the mean of query times per DBMS and per timer.
+Values are computed per run.
 
 \begin{{figure}}[h]
 \centering
