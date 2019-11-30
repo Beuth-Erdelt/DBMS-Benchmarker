@@ -781,12 +781,23 @@ class arear(reporter):
 		dataframe, title = tools.dataframehelper.totalTimes(self.benchmarker)
 		if self.normed:
 			# normalize
-			dataframePlot = dataframe.div(dataframe.sum(axis=1)/100.0, axis=0);
-			dataframe = dataframe.div(dataframe.mean(axis=1)/100.0, axis=0);
+			dataframePlot = dataframe.div(dataframe.sum(axis=1)/100.0, axis=0)
+			dataframe = dataframe.div(dataframe.mean(axis=1)/100.0, axis=0)
+			#dataframePlot.index.name = '[%]'
+			#dataframe.columns.name = '[%]'
+			dataframe.index.name = '[%]'
+			#dataframePlot = dataframePlot.reset_index(drop=True)
+			#dataframe = dataframe.reset_index(drop=True)
 		else:
 			dataframePlot = dataframe
+			#dataframePlot.index.name = '[ms]'
+			#dataframe.columns.name = '[ms]'
+			dataframe.index.name = '[ms]'
+			#dataframePlot = dataframePlot.reset_index(drop=True)
+			#dataframe = dataframe.reset_index(drop=True)
 		if dataframe is None:
 			return dataframe
+		#print(dataframe)
 		if numQuery is None:
 			if not self.normed:
 				filename = self.benchmarker.path+'/total_time_area.png'
@@ -805,7 +816,7 @@ class arear(reporter):
 		if self.normed:
 			dataframe.loc['Mean']= dataframe.mean()
 		else:
-			dataframe.loc['Total [ms]']= dataframe.sum()
+			dataframe.loc['Total']= dataframe.sum()
 		return dataframe
 	def generateAll(self, timer):
 		"""
@@ -948,13 +959,17 @@ class latexer(reporter):
 		dfTotalTime = reporterArea.generate(numQuery=None, timer=self.benchmarker.timers)
 		if dfTotalTime is not None:
 			print("Total Times")
-			print(tabulate(dfTotalTime,headers=dfTotalTime.columns,tablefmt="grid", floatfmt=".2f"))
+			cols = ['ms']
+			cols.extend(dfTotalTime.columns)
+			print(tabulate(dfTotalTime,headers=cols,tablefmt="grid", floatfmt=".2f", showindex=True))
 		# generate normed area plot of total time
 		reporterNormArea = normarear(self.benchmarker)
 		dfTotalTimeNorm = reporterNormArea.generate(numQuery=None, timer=self.benchmarker.timers)
 		if dfTotalTimeNorm is not None:
 			print("Total Times normed")
-			print(tabulate(dfTotalTimeNorm,headers=dfTotalTimeNorm.columns,tablefmt="grid", floatfmt=".2f"))
+			cols = ['%']
+			cols.extend(dfTotalTimeNorm.columns)
+			print(tabulate(dfTotalTimeNorm,headers=cols,tablefmt="grid", floatfmt=".2f", showindex=True))
 		# generate barh plot of total ranking
 		dfTotalRank, timers = self.benchmarker.generateSortedTotalRanking()
 		filename = self.benchmarker.path+'/total_barh_rank.png'
@@ -1080,7 +1095,9 @@ class latexer(reporter):
 			listofnames = ['DBMS '+str(l+1) for l in range(len(dfTotalTime.columns))]
 			dfTotalTimeTranslation = pd.DataFrame(dfTotalTime.columns,index=listofnames,columns=['DBMS Name'])
 			dfTotalTime.columns = listofnames
-			parameter['totalTime'] = tabulate(dfTotalTime, headers=dfTotalTime.columns, tablefmt="latex", floatfmt=",.2f", stralign="right", showindex=True)
+			cols = ['[ms]']
+			cols.extend(dfTotalTime.columns)
+			parameter['totalTime'] = tabulate(dfTotalTime, headers=cols, tablefmt="latex", floatfmt=",.2f", stralign="right", showindex=True)
 			parameter['totalTime'] += "\\\\"+tabulate(dfTotalTimeTranslation, headers=dfTotalTimeTranslation.columns, tablefmt="latex", floatfmt=",.2f", stralign="right", showindex=True)
 		else:
 			parameter['totalTime'] = ""
@@ -1088,7 +1105,9 @@ class latexer(reporter):
 			listofnames = ['DBMS '+str(l+1) for l in range(len(dfTotalTimeNorm.columns))]
 			dfTotalTimeTranslation = pd.DataFrame(dfTotalTimeNorm.columns,index=listofnames,columns=['DBMS Name'])
 			dfTotalTimeNorm.columns = listofnames
-			parameter['totalTimeNormed'] = tabulate(dfTotalTimeNorm, headers=dfTotalTimeNorm.columns, tablefmt="latex", floatfmt=",.2f", stralign="right", showindex=True)
+			cols = ['[%]']
+			cols.extend(dfTotalTimeNorm.columns)
+			parameter['totalTimeNormed'] = tabulate(dfTotalTimeNorm, headers=cols, tablefmt="latex", floatfmt=",.2f", stralign="right", showindex=True)
 			parameter['totalTimeNormed'] += "\\\\"+tabulate(dfTotalTimeTranslation, headers=dfTotalTimeTranslation.columns, tablefmt="latex", floatfmt=",.2f", stralign="right", showindex=True)
 		else:
 			parameter['totalTimeNormed'] = ""
