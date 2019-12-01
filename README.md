@@ -682,19 +682,20 @@ Contains the queries to benchmark.
 Example for `QUERY_FILE`:
 ```
 {
-	'name': 'Some simple queries',
-	'intro': 'Some describing text about this benchmark test setup',
-	'factor': 'mean',
-	'queries':
-	[
-		{
-			'title': "Count all rows in test",
-			'query': "SELECT COUNT(*) FROM test",
-			'numWarmup': 5,
-			'numCooldown': 2,
-			'numRun': 10,
-		},
-	]
+  'name': 'Some simple queries',
+  'intro': 'Some describing text about this benchmark test setup',
+  'factor': 'mean',
+  'queries':
+  [
+    {
+      'title': "Count all rows in test",
+      'query': "SELECT COUNT(*) FROM test",
+      'numWarmup': 5,
+      'numCooldown': 2,
+      'delay': 0,
+      'numRun': 10,
+    },
+  ]
 }
 ```
 
@@ -704,8 +705,9 @@ Example for `QUERY_FILE`:
 * `query`: SQL query string
 * `title`: Title of the query
 * `numRun`: Number of runs of this query for benchmarking
-* `numWarmup`: Number of runs of this query for warmup (first `n` queries not counting into statistics), between 0 and `numRun`
-* `numCooldown`: Number of runs of this query for cooldown (last `n` queries not counting into statistics), between 0 and `numRun`
+* `numWarmup`: Number of runs of this query for warmup (first `n` queries not counting into statistics), between 0 and `numRun`. This makes sure data is hot and caching is in effect.
+* `numCooldown`: Number of runs of this query for cooldown (last `n` queries not counting into statistics), between 0 and `numRun`. This helps sorting out faster executions when the number of parallel clients decreases near the end of a batch.
+* `delay`: Number of seconds to wait before each execution statement. This is for throtteling. Default is 0.
 
 Such a query will be executed 10 times, the time of execution will be measured each time, and statistics will be computed for the runs 6,7 and 8.
 
@@ -715,6 +717,8 @@ Extended example for `QUERY_FILE`:
 ```
 {
   'name': 'Some simple queries',
+  'intro': 'This is an example workload',
+  'info': 'It runs on a P100 GPU',
   'reporting':
   {
     'resultsetPerQuery': 10,
@@ -731,8 +735,13 @@ Extended example for `QUERY_FILE`:
   [
     {
       'title': "Count all rows in test",
-      'query': "SELECT COUNT(*) FROM test",
+      'query': "SELECT COUNT(*) c FROM test",
+      'DBMS': {
+        'MySQL': "SELECT COUNT(*) AS c FROM test"
+      }
       'numWarmup': 5,
+      'numCooldown': 0,
+      'delay': 1,
       'numRun': 10,
       'connectionmanagement': {
         'timeout': 100,
@@ -752,6 +761,7 @@ Extended example for `QUERY_FILE`:
         'connection':
         {
           'active': True,
+          'delay': 0
         }
       }
     },
@@ -777,8 +787,13 @@ Note that comparing result sets necessarily means they have to be stored, so `re
 Setting `store` can also yield the result sets to be stored in extra files. Possible values are: `'store': ['dataframe', 'csv']`
 
 The `connection` timer will also measure the time for establishing a connection.
+It is possible to force sleeping before each establishment by using `delay` (in seconds).
+
+The `DBMS` key allows to specify SQL dialects. All connections starting with the key in this dict with use the specified alternative query. In the example above, for instance a connection 'MySQL-InnoDB' will use the alternative.
 
 Some options are used to configure reporting:
+* `intro`: Intro text for report
+* `info`: Short info about the current experiment
 * `reporting`: Optional settings for latex report
   * `resultsetPerQuery`: Show result sets for each query (and run, in case of randomized)  
   `None`: Don't show
@@ -832,6 +847,7 @@ A `parameter` contain of a name `NAME`, a `range` (list), a `size`(optional, def
 * `date`: 2 dates in format 'YYYY-mm-dd' - random date in between
 * `firstofmonth`: 2 dates in format 'YYYY-mm-dd' - first of random month in between
 * `year`: 2 years as integers - random year in between
+* `hexcode`: 2 integers - random value in between as hexcode
 
 For each benchmark run, `{NAME}` is replaced by a (uniformly) randomly chosen value in the range and type given above.
 By `size` we can specify the size of the sample (without replacement).
