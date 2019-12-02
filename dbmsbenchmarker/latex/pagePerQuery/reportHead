@@ -1,6 +1,7 @@
 \newpage
 {benchmarkName}
 {intro}
+{info}
 Report generated: {now}\\
 Code: {code}\\
 Connection Timeout (global setting): {timeout}\\
