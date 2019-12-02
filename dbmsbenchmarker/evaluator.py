@@ -68,6 +68,8 @@ class evaluator():
 		evaluation['general']['name'] = benchmarkName
 		if len(self.benchmarker.queryconfig["intro"]) > 0:
 			evaluation['general']['intro'] = self.benchmarker.queryconfig["intro"]
+		if len(self.benchmarker.queryconfig["info"]) > 0:
+			evaluation['general']['info'] = self.benchmarker.queryconfig["info"]
 		# general connectionmanagement
 		evaluation['general']['connectionmanagement'] = {}
 		if self.benchmarker.connectionmanagement['timeout'] is None:

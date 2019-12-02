@@ -1156,8 +1156,12 @@ class latexer(reporter):
 		result['timeout'] = evaluation['general']['connectionmanagement']['timeout']
 		result['numProcesses'] = evaluation['general']['connectionmanagement']['numProcesses']
 		result['runsPerConnection'] = evaluation['general']['connectionmanagement']['numProcesses']
+		result['intro'] = ''
+		result['info'] = ''
 		if len(evaluation['general']['intro']) > 0:
 			result['intro'] = evaluation['general']['intro'] + "\\\\"
+		if len(evaluation['general']['info']) > 0:
+			result['info'] = evaluation['general']['info'] + "\\\\"
 		def findTimesOfSuccessfulQueries():
 			# find position of execution timer
 			e = [i for i,t in enumerate(self.benchmarker.timers) if t.name=="execution"]
