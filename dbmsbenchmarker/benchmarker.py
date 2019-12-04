@@ -523,6 +523,8 @@ class benchmarker():
 		:return: DataFrame of benchmark times
 		"""
 		dataframe = timer.toDataFrame(numQuery)
+		if dataframe.empty:
+			return dataframe
 		# remove inactive connections
 		dataframe = self.removeInactiveConnectionsFromDataframe(dataframe)
 		# drop rows of only 0
