@@ -396,7 +396,7 @@ class query():
 			self.parameter = query['parameter']
 		# timerExecution
 		if 'timer' in query:
-			self.timer = query['timer']
+			self.timer = joinDicts(self.timer, query['timer'])
 			self.timer['execution'] = {}
 			self.timer['execution']['active'] = True
 		# timerTransfer
@@ -1031,3 +1031,13 @@ def tex_escape(text):
 	}
 	regex = re.compile('|'.join(re.escape(str(key)) for key in sorted(conv.keys(), key = lambda item: - len(item))))
 	return regex.sub(lambda match: conv[match.group()], text)
+
+
+def joinDicts(d1, d2):
+	result = d1.copy()
+	for k, v in d2.items():
+		if (k in d1 and isinstance(d1[k], dict)):
+			result[k] = joinDicts(d1[k], d2[k])
+		else:
+			result[k] = d2[k]
+	return result
