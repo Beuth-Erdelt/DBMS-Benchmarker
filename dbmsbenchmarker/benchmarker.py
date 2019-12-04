@@ -102,6 +102,7 @@ def singleRun(connectiondata, inputConfig, numRuns, connectionname, numQuery, pa
 			print(workername+"execution [ms]: "+str(durationExecute))
 			# transfer
 			data = []
+			columnnames = []
 			size = 0
 			durationTransfer = 0
 			if query.withData:
