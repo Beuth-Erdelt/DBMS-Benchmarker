@@ -1091,25 +1091,26 @@ class latexer(reporter):
 		else:
 			parameter['totalProd'] = ""
 		parameter['totalRank'] = tabulate(dfTotalRank, headers=dfTotalRank.columns, tablefmt="latex", floatfmt=",.2f", stralign="right", showindex=True)
-		maxRows = 30
+		parameter['totalTime'] = ""
 		if dfTotalTime is not None:
 			listofnames = ['DBMS '+str(l+1) for l in range(len(dfTotalTime.columns))]
+			maxRows = 25-len(listofnames)
 			dfTotalTimeTranslation = pd.DataFrame(dfTotalTime.columns,index=listofnames,columns=['DBMS Name'])
 			dfTotalTime.columns = listofnames
 			cols = ['[ms]']
 			cols.extend(dfTotalTime.columns)
 			if len(dfTotalTime.index) > maxRows:
 				# more than max rows, too long for reporting
-				#dfTotalTimeShorter = dfTotalTime.copy()
 				dfTotalTime = dfTotalTime.iloc[len(dfTotalTime.index)-maxRows:]
 				dfTotalTime = dfTotalTime.applymap(lambda s: f'{s:,.2f}')
 				dfTotalTime.iloc[0]=['...']*len(dfTotalTime.columns)
-			parameter['totalTime'] = tabulate(dfTotalTime, headers=cols, tablefmt="latex", floatfmt=",.2f", stralign="right", showindex=True)
+				#parameter['totalTime'] += "\\newpage"
+			parameter['totalTime'] += tabulate(dfTotalTime, headers=cols, tablefmt="latex", floatfmt=",.2f", stralign="right", showindex=True)
 			parameter['totalTime'] += "\\\\"+tabulate(dfTotalTimeTranslation, headers=dfTotalTimeTranslation.columns, tablefmt="latex", floatfmt=",.2f", stralign="right", showindex=True)
-		else:
-			parameter['totalTime'] = ""
+		parameter['totalTimeNormed'] = ""
 		if dfTotalTimeNorm is not None:
 			listofnames = ['DBMS '+str(l+1) for l in range(len(dfTotalTimeNorm.columns))]
+			maxRows = 25-len(listofnames)
 			dfTotalTimeTranslation = pd.DataFrame(dfTotalTimeNorm.columns,index=listofnames,columns=['DBMS Name'])
 			dfTotalTimeNorm.columns = listofnames
 			cols = ['[%]']
@@ -1119,10 +1120,9 @@ class latexer(reporter):
 				dfTotalTimeNorm = dfTotalTimeNorm.iloc[len(dfTotalTimeNorm.index)-maxRows:]
 				dfTotalTimeNorm = dfTotalTimeNorm.applymap(lambda s: f'{s:,.2f}')
 				dfTotalTimeNorm.iloc[0]=['...']*len(dfTotalTimeNorm.columns)
-			parameter['totalTimeNormed'] = tabulate(dfTotalTimeNorm, headers=cols, tablefmt="latex", floatfmt=",.2f", stralign="right", showindex=True)
+				#parameter['totalTimeNormed'] += "\\newpage"
+			parameter['totalTimeNormed'] += tabulate(dfTotalTimeNorm, headers=cols, tablefmt="latex", floatfmt=",.2f", stralign="right", showindex=True)
 			parameter['totalTimeNormed'] += "\\\\"+tabulate(dfTotalTimeTranslation, headers=dfTotalTimeTranslation.columns, tablefmt="latex", floatfmt=",.2f", stralign="right", showindex=True)
-		else:
-			parameter['totalTimeNormed'] = ""
 		#print(timesLoad)
 		if len(timesLoad) > 0:
 			dfIngest = pd.DataFrame.from_dict(timesLoad, orient='index')
