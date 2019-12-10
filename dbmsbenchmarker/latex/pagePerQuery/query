@@ -19,7 +19,7 @@
 \textbf{{Delay Connect}}: {delay_connect} s\\
 {benchmarkmetrics}
 }}}}
-\caption{{DBMS: Relative ranking based on latency and throughput}}
+\caption{{Query {queryNumber}: Latency and Throughput}}
 \end{{figure}}
 \subsubsection{{DBMS Settings}}
 {{\tiny{{
