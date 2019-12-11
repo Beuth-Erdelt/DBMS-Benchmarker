@@ -889,7 +889,7 @@ class dataframehelper():
 		df.loc['Std Dev'] = df.loc['Std Dev'].map(lambda x: x if not np.isnan(x) else 0.0)
 		df.loc['cv [%]']= df.loc['Std Dev']/df.loc['Mean']*100.0
 		df.loc['iqr']=stat_q3-stat_q1
-		df.loc['qcod']=(stat_q3-stat_q1)/(stat_q3+stat_q1)
+		df.loc['qcod [%]']=(stat_q3-stat_q1)/(stat_q3+stat_q1)*100.0
 		return df
 	@staticmethod
 	def evaluateMonitoringToDataFrame(evaluation):
