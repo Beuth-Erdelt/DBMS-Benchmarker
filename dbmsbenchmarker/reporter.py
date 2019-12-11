@@ -1101,12 +1101,14 @@ class latexer(reporter):
 			cols.extend(dfTotalTime.columns)
 			if len(dfTotalTime.index) > maxRows:
 				# more than max rows, too long for reporting
-				dfTotalTime = dfTotalTime.iloc[len(dfTotalTime.index)-maxRows:]
-				dfTotalTime = dfTotalTime.applymap(lambda s: f'{s:,.2f}')
-				dfTotalTime.iloc[0]=['...']*len(dfTotalTime.columns)
-				#parameter['totalTime'] += "\\newpage"
+				#dfTotalTime = dfTotalTime.iloc[len(dfTotalTime.index)-maxRows:]
+				#dfTotalTime = dfTotalTime.applymap(lambda s: f'{s:,.2f}')
+				#dfTotalTime.iloc[0]=['...']*len(dfTotalTime.columns)
+				parameter['totalTime'] += "\\caption{DBMS: Total times}\\end{figure}\\newpage\\begin{figure}[!htbp]\\centering"
+			parameter['totalTime'] += "{\\scriptsize{"
 			parameter['totalTime'] += tabulate(dfTotalTime, headers=cols, tablefmt="latex", floatfmt=",.2f", stralign="right", showindex=True)
 			parameter['totalTime'] += "\\\\"+tabulate(dfTotalTimeTranslation, headers=dfTotalTimeTranslation.columns, tablefmt="latex", floatfmt=",.2f", stralign="right", showindex=True)
+			parameter['totalTime'] += "}}"
 		parameter['totalTimeNormed'] = ""
 		if dfTotalTimeNorm is not None:
 			listofnames = ['DBMS '+str(l+1) for l in range(len(dfTotalTimeNorm.columns))]
@@ -1117,12 +1119,14 @@ class latexer(reporter):
 			cols.extend(dfTotalTimeNorm.columns)
 			if len(dfTotalTimeNorm.index) > maxRows:
 				# more than max rows, too long for reporting
-				dfTotalTimeNorm = dfTotalTimeNorm.iloc[len(dfTotalTimeNorm.index)-maxRows:]
-				dfTotalTimeNorm = dfTotalTimeNorm.applymap(lambda s: f'{s:,.2f}')
-				dfTotalTimeNorm.iloc[0]=['...']*len(dfTotalTimeNorm.columns)
-				#parameter['totalTimeNormed'] += "\\newpage"
+				#dfTotalTimeNorm = dfTotalTimeNorm.iloc[len(dfTotalTimeNorm.index)-maxRows:]
+				#dfTotalTimeNorm = dfTotalTimeNorm.applymap(lambda s: f'{s:,.2f}')
+				#dfTotalTimeNorm.iloc[0]=['...']*len(dfTotalTimeNorm.columns)
+				parameter['totalTimeNormed'] += "\\caption{DBMS: Total times normalized}\\end{figure}\\newpage\\begin{figure}[!htbp]\\centering"
+			parameter['totalTimeNormed'] += "{\\scriptsize{"
 			parameter['totalTimeNormed'] += tabulate(dfTotalTimeNorm, headers=cols, tablefmt="latex", floatfmt=",.2f", stralign="right", showindex=True)
 			parameter['totalTimeNormed'] += "\\\\"+tabulate(dfTotalTimeTranslation, headers=dfTotalTimeTranslation.columns, tablefmt="latex", floatfmt=",.2f", stralign="right", showindex=True)
+			parameter['totalTimeNormed'] += "}}"
 		#print(timesLoad)
 		if len(timesLoad) > 0:
 			dfIngest = pd.DataFrame.from_dict(timesLoad, orient='index')
