@@ -235,12 +235,13 @@ class printer(reporter):
 		print(tabulate(data,headers=header, tablefmt="grid", floatfmt=".2f"))
 		# print errors
 		for key, value in self.benchmarker.protocol['query'][str(numQuery)]['errors'].items():
-			if len(value) > 0:
-				firstpos = value.find(': ')
-				if firstpos > 0:
-					print(key + ': ' + value[firstpos:])
-				else:
-					print(key + ': ' + value)
+			if key in self.benchmarker.dbms and self.benchmarker.dbms[key].connectiondata['active']:
+				if len(value) > 0:
+					firstpos = value.find(': ')
+					if firstpos > 0:
+						print(key + ': ' + value[firstpos:])
+					else:
+						print(key + ': ' + value)
 		return data
 
 
