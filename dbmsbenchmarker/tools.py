@@ -13,6 +13,8 @@ import pandas as pd
 import logging
 import math
 import re
+import ast
+from os import path
 
 
 
@@ -921,7 +923,44 @@ class dataframehelper():
 		df = dataframehelper.addStatistics(df)
 		df = df.applymap(lambda x: x if not np.isnan(x) else 0.0)
 		return df
-
+	@staticmethod
+	def getWorkflow(benchmarker):
+		print("getWorkflow")
+		filename = benchmarker.path+'/experiments.config'
+		if path.isfile(filename):
+			print("config found")
+			with open(filename, 'r') as f:
+				d = ast.literal_eval(f.read())
+			workflow = {}
+			instance = ''
+			volume = ''
+			docker = ''
+			script = ''
+			for i,step in enumerate(d):
+				if 'connection' in step:
+					connection = step['connection']
+				else:
+					connection = ''
+				if 'delay' in step:
+					delay = step['delay']
+				else:
+					delay = ''
+				if 'instance' in step:
+					instance = step['instance']
+				if 'docker' in step:
+					dbms = [k for k,d in step['docker'].items()]
+					docker = dbms[0]
+				if 'initscript' in step:
+					scripts = [k for k,s in step['initscript'].items()]
+					script = scripts[0]
+				if 'volume' in step:
+					volume = step['volume']
+				workflow[i] = [step['step'], instance, volume, docker, script, connection, delay]
+			df = pd.DataFrame.from_dict(workflow, orient='index', columns=['step', 'instance', 'volume', 'dbms', 'script', 'connection', 'delay'])
+			#print(df)
+			return df
+		else:
+			return None
 
 
 def findSuccessfulQueriesAllDBMS(benchmarker, numQuery, timer):

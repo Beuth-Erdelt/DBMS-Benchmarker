@@ -1677,6 +1677,14 @@ class latexer(reporter):
 			latex_file = open(self.benchmarker.path+"/benchmarks.tex", "a+")
 			latex_file.write(latex_output)
 			latex_file.close()
+		# add workflow of bexhoma
+		parameterGeneral['workflow'] = ""
+		if not self.benchmarker.anonymize:
+			dfWorkflow = tools.dataframehelper.getWorkflow(self.benchmarker)
+			if not dfWorkflow is None and not dfWorkflow.empty:
+				parameterGeneral['workflow'] = "\\subsection{Workflow}\\label{workflow}\n\\Rotatebox{90}{{\\scriptsize{"
+				parameterGeneral['workflow'] += tabulate(dfWorkflow, headers=dfWorkflow.columns, tablefmt="latex", stralign="right", showindex=True)
+				parameterGeneral['workflow'] += "}}}"
 		# generate foot of report
 		latex_output = self.useTemplate('reportFoot', parameterGeneral)
 		# save latex in file, append to existing
