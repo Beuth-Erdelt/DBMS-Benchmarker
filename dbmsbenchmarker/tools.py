@@ -871,7 +871,10 @@ class dataframehelper():
 		df2=pd.DataFrame.from_dict({c:d['hostsystem'] for c,d in evaluation['dbms'].items()}).transpose()
 		if 'CUDA' in df2.columns:
 			df2 = df2.drop(['CUDA'],axis=1)
+		if 'node' in df2.columns:
+			df1 = df1.drop(['node'],axis=1)
 		df = df1.merge(df2,left_index=True,right_index=True).drop(['host','CPU','GPU','instance','RAM','Cores'],axis=1)
+		print(df)
 		#df3=df1.merge(df2,left_index=True,right_index=True).drop(['CUDA','host','CPU','GPU','instance','RAM','Cores'],axis=1)
 		df = df.astype(float)
 		df.index = df.index.map(dbms.anonymizer)
