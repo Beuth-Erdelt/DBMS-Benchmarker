@@ -103,8 +103,8 @@ class metrics():
                 if self.benchmarker.dbms[c].connectiondata['active'] and self.token and self.url:
                     logging.debug("Connection "+c)
                     if 'metrics' in self.benchmarker.dbms[c].connectiondata['monitoring'] and m in self.benchmarker.dbms[c].connectiondata['monitoring']['metrics']:
-                        metric = self.benchmarker.dbms[c].connectiondata['monitoring']['metric'][m].copy()
-                    #print(metric)
+                        metric = self.benchmarker.dbms[c].connectiondata['monitoring']['metrics'][m].copy()
+                    print(metric)
                     # this yields seconds
                     time_start = int(datetime.timestamp(datetime.strptime(times["starts"][c],'%Y-%m-%d %H:%M:%S.%f')))
                     time_end = int(datetime.timestamp(datetime.strptime(times["ends"][c],'%Y-%m-%d %H:%M:%S.%f')))
