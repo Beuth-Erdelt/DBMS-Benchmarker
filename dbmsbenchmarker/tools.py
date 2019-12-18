@@ -872,9 +872,8 @@ class dataframehelper():
 		if 'CUDA' in df2.columns:
 			df2 = df2.drop(['CUDA'],axis=1)
 		if 'node' in df2.columns:
-			df1 = df1.drop(['node'],axis=1)
+			df2 = df2.drop(['node'],axis=1)
 		df = df1.merge(df2,left_index=True,right_index=True).drop(['host','CPU','GPU','instance','RAM','Cores'],axis=1)
-		print(df)
 		#df3=df1.merge(df2,left_index=True,right_index=True).drop(['CUDA','host','CPU','GPU','instance','RAM','Cores'],axis=1)
 		df = df.astype(float)
 		df.index = df.index.map(dbms.anonymizer)
@@ -913,9 +912,11 @@ class dataframehelper():
 		df.index = df.index.map(dbms.anonymizer)
 		if 'CUDA' in df.columns:
 			df = df.drop(['CUDA'],axis=1)
+		if 'node' in df.columns:
+			df = df.drop(['node'],axis=1)
 		if 'instance' in df.columns:
 			df = df.drop(['instance'],axis=1)
-		df = df.drop(['host','CPU','GPU'],axis=1)#,'RAM','Cores'
+		df = df.drop(['host','CPU','GPU','GPUIDs'],axis=1)#,'RAM','Cores'
 		df = df.astype(float)
 		if 'RAM' in df:
 			df['RAM'] = df['RAM']/1024/1024

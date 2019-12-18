@@ -1259,6 +1259,8 @@ class latexer(reporter):
 						dbmsinfos += "\\item \\textbf{CUDA}: "+self.benchmarker.dbms[c].connectiondata["hostsystem"]["CUDA"]
 					if "host" in self.benchmarker.dbms[c].connectiondata["hostsystem"]:
 						dbmsinfos += "\\item \\textbf{Host}: "+self.benchmarker.dbms[c].connectiondata["hostsystem"]["host"]
+					if "node" in self.benchmarker.dbms[c].connectiondata["hostsystem"]:
+						dbmsinfos += "\\item \\textbf{Node}: "+self.benchmarker.dbms[c].connectiondata["hostsystem"]["node"]
 					if "disk" in self.benchmarker.dbms[c].connectiondata["hostsystem"]:
 						dbmsinfos += "\\item \\textbf{Docker Disk Space used}: "+tools.sizeof_fmt(int(self.benchmarker.dbms[c].connectiondata["hostsystem"]["disk"])*1024)
 					if "datadisk" in self.benchmarker.dbms[c].connectiondata["hostsystem"]:
