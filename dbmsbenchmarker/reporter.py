@@ -545,6 +545,16 @@ class barer(reporter):
 		:param filename: Name of the file the report will be saved to
 		:return: returns nothing
 		"""
+		# leave out not stackable
+		# TODO: read from object
+		for i,t in enumerate(self.benchmarker.timers):
+			if not t.stackable:
+				if t.name in dataframe.columns:
+					dataframe = dataframe.drop([t.name],axis=1)
+		#if 'session' in dataframe.columns:
+		#	dataframe = dataframe.drop(['session'],axis=1)
+		#if 'run' in dataframe.columns:
+		#	dataframe = dataframe.drop(['run'],axis=1)
 		# plot
 		dataframe.plot.bar(stacked=True, figsize=(12,8))
 		# rotate labels

@@ -759,9 +759,14 @@ class dataframehelper():
 		numBenchmarks = 0
 		validQueries = findSuccessfulQueriesAllDBMS(benchmarker, numQuery, timer)
 		for numTimer,t in enumerate(timer):
-			numFactors = 0
+			# factors per dbms
+			numFactors = {}
 			logging.debug("multiplyPerTimer: Check timer "+t.name)
 			sums[numTimer] = {}
+			# we want to keep not stackable for table chart
+			#if not t.stackable:
+			#	logging.debug(t.name+" is not stackable")
+			#	continue
 			# are there benchmarks for this query?
 			for i,q in enumerate(t.times):
 				# does this timer contribute?
@@ -786,13 +791,16 @@ class dataframehelper():
 								continue
 							if t.perRun:
 								numBenchmarks += len(values[queryObject.numRunBegin:queryObject.numRunEnd])
-							numFactors = numFactors + 1
+							if not dbmsname in numFactors:
+								numFactors[dbmsname] = 0
+							numFactors[dbmsname] = numFactors[dbmsname] + 1
 							logging.debug("Multiplied "+dbmsname+": "+str(value_to_multiply))
 							if dbmsname in sums[numTimer]:
 								sums[numTimer][dbmsname] = sums[numTimer][dbmsname] * value_to_multiply
 							else:
 								sums[numTimer][dbmsname] = value_to_multiply
-			sums[numTimer] = {c: x ** (1/numFactors) for c,x in sums[numTimer].items()}
+			#logging.debug(str(numFactors[dbmsname])+" factors")
+			sums[numTimer] = {c: x ** (1/numFactors[c]) for c,x in sums[numTimer].items()}
 		if not bValuesFound:
 			return None, ''
 		df = pd.DataFrame(sums, index=timerNames)
