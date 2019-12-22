@@ -43,13 +43,18 @@ class metrics():
     def getMetrics(self, metric,time_start, time_end, step=1):
         query = 'query_range?query='+metric['query']+'&start='+str(time_start)+'&end='+str(time_end)+'&step='+str(self.step)
         headers = {'Authorization': self.token}
+        l = [(time_start,0)]
+        #return l
         #print(self.url+query)
-        r = requests.post(self.url+query, headers=headers)
-        #print(r.json)
-        if len(r.json()['data']['result']) > 0:
-            l = r.json()['data']['result'][0]['values']
-        else:
-            l = [(time_start,0)]
+        try:
+            r = requests.post(self.url+query, headers=headers)
+            #print(r.json)
+            if len(r.json()['data']['result']) > 0:
+                l = r.json()['data']['result'][0]['values']
+            else:
+                l = [(time_start,0)]
+        except Exception as e:
+            logging.exception('Caught an error: %s' % str(e))
         return l
     def metricsToDataframe(self, metric, values):
         df = pd.DataFrame.from_records(values)
@@ -81,7 +86,7 @@ class metrics():
             plotfile = self.benchmarker.path+'/query_'+str(query)+'_metric_'+str(m)+'.png'
             if os.path.isfile(plotfile):
                 latex += """    \\begin{{minipage}}[t]{{0.45\\textwidth}}
-        \\includegraphics[height=0.9\\textwidth]{{query_{queryNumber}_metric_"""+m+""".png}}
+        \\includegraphics[height=0.8\\textwidth]{{query_{queryNumber}_metric_"""+m+""".png}}
     \\end{{minipage}}\n"""
                 if not numPlots % 2:
                     latex += "\\hfill\n"
