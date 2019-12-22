@@ -481,7 +481,7 @@ class boxploter(reporter):
 		# plot
 		boxplot = df_unpivot.boxplot(by='DBMS', grid=False)
 		# rotate labels
-		plt.xticks(rotation=70)
+		#plt.xticks(rotation=70)
 		# align box to labels
 		plt.tight_layout()
 		# set title and no subtitle
@@ -557,9 +557,9 @@ class barer(reporter):
 		#if 'run' in dataframe.columns:
 		#	dataframe = dataframe.drop(['run'],axis=1)
 		# plot
-		dataframe.plot.bar(stacked=True, figsize=(12,8))
+		dataframe.plot.bar(stacked=True, figsize=(12,12))
 		# rotate labels
-		plt.xticks(rotation=70, fontsize=12)
+		#plt.xticks(rotation=70, fontsize=12)
 		# align box to labels
 		plt.tight_layout()
 		# set title
@@ -1349,9 +1349,9 @@ class latexer(reporter):
 					#print("skip")
 					continue
 				numShownPlots = numShownPlots + 1
-				summary += """\\begin{{minipage}}[t]{{0.45\\textwidth}}
+				summary += """\\begin{{minipage}}[ht]{{0.45\\textwidth}}
 \\hyperref[benchmark:{code}-Q{queryNumber}]{{\\textbf{{Q{queryNumber}: {queryTitle}}}}}\\\\
-\\includegraphics[height=0.75\\textwidth]{{query_{queryNumber}_bar.png}}
+\\includegraphics[width=0.9\\textwidth]{{query_{queryNumber}_bar.png}}
 \\end{{minipage}}\n""".format(code=self.benchmarker.code, path=self.benchmarker.path, queryNumber=i+1, queryTitle=query.title)
 				if i+1 < len(self.benchmarker.queries) and (numShownPlots)%2:
 					summary += "\\hfill"

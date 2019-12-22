@@ -1,15 +1,11 @@
+\clearpage
 \newpage
 \subsection{{{queryName}}}\label{{benchmark:{code}-Q{queryNumber}}}
 \subsubsection{{Latencies and Throughputs}}
-\begin{{figure}}[h]
+\begin{{figure}}[ht]
 \centering
-\begin{{minipage}}[t]{{0.45\textwidth}}
-\includegraphics[height=0.8\textwidth]{{query_{queryNumber}_tps.png}}\\
-\end{{minipage}}
-\hfill
-\begin{{minipage}}[t]{{0.45\textwidth}}
-\includegraphics[height=0.8\textwidth]{{query_{queryNumber}_lat.png}}\\
-\end{{minipage}}
+\hfill\subfloat{{\includegraphics[height=0.33\textwidth]{{query_{queryNumber}_tps.png}}}}
+\hfill\subfloat{{\includegraphics[height=0.33\textwidth]{{query_{queryNumber}_lat.png}}}}\\
 
 {{\tiny{{
 \textbf{{Runs}}: {run}, 
