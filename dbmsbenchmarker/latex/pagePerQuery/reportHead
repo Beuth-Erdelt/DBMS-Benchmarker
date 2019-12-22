@@ -84,6 +84,7 @@ tps\_s2 &= Throughput of sessions (number of parallel clients / cleaned mean tim
 {dbmsinfos}
 }}}}
 
+\clearpage
 \newpage
 \section{{Summary}}
 \subsection{{Relative Ranking based on the Sum of Times}}
@@ -91,51 +92,46 @@ For each query, the best DBMS is considered as gold standard = $100$\%.
 Based on their times, the other DBMS obtain a relative ranking factor.
 The next chart shows the geometric mean of factors per DBMS.
 
-\begin{{figure}}[h]
+\begin{{figure}}[ht]
 \centering
-\includegraphics[width=0.95\textwidth]{{total_bar_product.png}}\\
+\includegraphics[width=0.8\textwidth]{{total_bar_product.png}}\\
 {{\scriptsize{{{totalProd}}}}}
 \caption{{DBMS: Relative ranking}}
 \end{{figure}}
 
+\clearpage
 \newpage
 \subsection{{Relative Ranking based on Latency and Throughput}}
 For each query, we compute latency and throughput per DBMS.
 The next chart shows the geometric mean of these metrics per DBMS.
 
-\begin{{figure}}[h]
-\centering
-\begin{{minipage}}[t]{{0.45\textwidth}}
-\includegraphics[height=0.8\textwidth]{{total_bar_tps.png}}\\
-\end{{minipage}}
-\hfill
-\begin{{minipage}}[t]{{0.45\textwidth}}
-\includegraphics[height=0.8\textwidth]{{total_bar_lat.png}}\\
-\end{{minipage}}
+\begin{{figure}}[ht]
+\hfill\subfloat{{\includegraphics[width=0.45\textwidth]{{total_bar_tps.png}}}}
+\hfill\subfloat{{\includegraphics[width=0.45\textwidth]{{total_bar_lat.png}}}}\\
 {{\scriptsize{{{totalLatTPS}}}}}
 \caption{{DBMS: Relative ranking based on latency and throughput}}
 \end{{figure}}
 
+\clearpage
 \newpage
 \subsection{{Absolute Time of Ingest}}
 The next chart shows the total time of ingestion per DBMS.
 
-\begin{{figure}}[h]
+\begin{{figure}}[ht]
 \centering
-\includegraphics[height=0.45\textwidth]{{total_barh_ingest.png}}\\
+\includegraphics[width=0.7\textwidth]{{total_barh_ingest.png}}\\
 {{\scriptsize{{{totalIngest}}}}}
 \caption{{DBMS: Ingest}}
 \end{{figure}}
 
+\clearpage
 \newpage
 \subsection{{Hardware Metrics}}
 \subsubsection{{Monitoring}}
 The next chart shows the metrics obtained from monitoring.
 Values are computed as arithmetic mean across benchmarking time.
 
-\begin{{figure}}[h]
-%\centering
-%\includegraphics[height=0.45\textwidth]{{total_barh_ingest.png}}\\
+\begin{{figure}}[ht]
 {{\scriptsize{{{totalHardwareMonitoring}}}}}
 \caption{{DBMS: Hardware metrics - monitoring}}
 \end{{figure}}
@@ -144,36 +140,37 @@ Values are computed as arithmetic mean across benchmarking time.
 The next chart shows the metrics obtained from inside docker containers.
 Here, cost is based on the total time.
 \begin{{figure}}[h]
-%\centering
-%\includegraphics[height=0.45\textwidth]{{total_barh_ingest.png}}\\
 {{\scriptsize{{{totalHardwareHost}}}}}
 \caption{{DBMS: Hardware metrics - host system}}
 \end{{figure}}
 
+\clearpage
 \newpage
 \subsection{{Average ranking based on the sum of times}}
 We compute a ranking of DBMS for each query, from fastest to slowest.
 The next chart shows the average ranking per DBMS. 
 
-\begin{{figure}}[h]
+\begin{{figure}}[ht]
 \centering
-\includegraphics[height=0.45\textwidth]{{total_barh_rank.png}}\\
+\includegraphics[width=0.7\textwidth]{{total_barh_rank.png}}\\
 {{\scriptsize{{{totalRank}}}}}
 \caption{{DBMS: Average ranking}}
 \end{{figure}}
 
+\clearpage
 \newpage
 \subsection{{Mean of Times}}
 The next chart shows the mean of query times per DBMS and per timer.
 Values are computed per run.
 
-\begin{{figure}}[h]
+\begin{{figure}}[ht]
 \centering
-\includegraphics[width=0.95\textwidth]{{total_bar_sum.png}}\\
+\includegraphics[width=0.8\textwidth]{{total_bar_sum.png}}\\
 {{\scriptsize{{{totalSum}}}}}
 \caption{{DBMS: Mean of times}}
 \end{{figure}}
 
+\clearpage
 \newpage
 
 \section{{Queries}}
@@ -182,11 +179,12 @@ The next chart shows the total query time per DBMS and query.
 
 \begin{{figure}}[!htbp]
 \centering
-\includegraphics[width=0.7\textwidth]{{total_time_area.png}}\\
+\includegraphics[width=0.8\textwidth]{{total_time_area.png}}\\
 {totalTime}
 \caption{{DBMS: Total times}}
 \end{{figure}}
 
+\clearpage
 \newpage
 \subsection{{Normalized Total Times}}
 The next chart shows the total query time per DBMS and query, normalized to 100\% per query.
@@ -194,14 +192,16 @@ The table shows total times per query, normalized to the average total time of t
 
 \begin{{figure}}[!htbp]
 \centering
-\includegraphics[width=0.7\textwidth]{{total_time_normarea.png}}\\
+\includegraphics[width=0.8\textwidth]{{total_time_normarea.png}}\\
 {totalTimeNormed}
 \caption{{DBMS: Normalized Total times}}
 \end{{figure}}
 
+\clearpage
 \newpage
 \subsection{{Mean of Times per Query}}
 The next charts show the sums of query times per DBMS, timer and query.\\
 
 \noindent
 {summary}
+\clearpage

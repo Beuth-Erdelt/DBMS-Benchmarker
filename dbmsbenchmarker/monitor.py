@@ -79,17 +79,15 @@ class metrics():
             print("Hardware metrics for Q"+str(q))
             self.generatePlotForQuery(q)
     def generateLatexForQuery(self, parameter):
-        latex = "\\newpage\\subsubsection{{Hardware Metrics}}\n\\begin{{figure}}[h]\n\\centering\n"
+        latex = "\\newpage\\subsubsection{{Hardware Metrics}}\n\\begin{{figure}}[ht]\n\\centering\n"
         query = parameter['queryNumber']
         numPlots = 0
         for m, metric in metrics.metrics.items():
             plotfile = self.benchmarker.path+'/query_'+str(query)+'_metric_'+str(m)+'.png'
             if os.path.isfile(plotfile):
-                latex += """    \\begin{{minipage}}[t]{{0.45\\textwidth}}
-        \\includegraphics[height=0.8\\textwidth]{{query_{queryNumber}_metric_"""+m+""".png}}
-    \\end{{minipage}}\n"""
-                if not numPlots % 2:
-                    latex += "\\hfill\n"
+                latex += "    \\hfill\\subfloat{{\\includegraphics[height=0.33\\textwidth]{{query_{queryNumber}_metric_"+m+".png}}}}"
+                if numPlots % 2:
+                    latex += "\\\\\n"
                 numPlots = numPlots + 1
         if numPlots > 0:
             latex += "\\caption{{Query {queryNumber}: Server Hardware Metrics}}\\end{{figure}}"
