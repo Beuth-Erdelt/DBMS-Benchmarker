@@ -106,11 +106,11 @@ The next chart shows the geometric mean of these metrics per DBMS.
 \begin{{figure}}[h]
 \centering
 \begin{{minipage}}[t]{{0.45\textwidth}}
-\includegraphics[height=0.9\textwidth]{{total_bar_tps.png}}\\
+\includegraphics[height=0.8\textwidth]{{total_bar_tps.png}}\\
 \end{{minipage}}
 \hfill
 \begin{{minipage}}[t]{{0.45\textwidth}}
-\includegraphics[height=0.9\textwidth]{{total_bar_lat.png}}\\
+\includegraphics[height=0.8\textwidth]{{total_bar_lat.png}}\\
 \end{{minipage}}
 {{\scriptsize{{{totalLatTPS}}}}}
 \caption{{DBMS: Relative ranking based on latency and throughput}}
