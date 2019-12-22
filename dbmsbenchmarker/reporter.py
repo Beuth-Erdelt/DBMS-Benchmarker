@@ -378,7 +378,8 @@ class ploter(reporter):
 			self.save(
 				dataframe = df,
 				query = query,
-				title = "Q"+str(numQuery)+": Time "+t.name+" [ms]",
+				#title = "Q"+str(numQuery)+": Time "+t.name+" [ms]",
+				title = "Q"+str(numQuery)+": Time "+t.name+" [ms] in "+str(len(df.columns))+" observation",
 				subtitle = subtitle,
 				filename = self.benchmarker.path+'/query_'+str(numQuery)+'_'+t.name+'_plot.png',
 				timer=t)
