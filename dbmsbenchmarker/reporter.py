@@ -1350,7 +1350,7 @@ class latexer(reporter):
 				numShownPlots = numShownPlots + 1
 				summary += """\\begin{{minipage}}[t]{{0.45\\textwidth}}
 \\hyperref[benchmark:{code}-Q{queryNumber}]{{\\textbf{{Q{queryNumber}: {queryTitle}}}}}\\\\
-\\includegraphics[height=0.8\\textwidth]{{query_{queryNumber}_bar.png}}
+\\includegraphics[height=0.75\\textwidth]{{query_{queryNumber}_bar.png}}
 \\end{{minipage}}\n""".format(code=self.benchmarker.code, path=self.benchmarker.path, queryNumber=i+1, queryTitle=query.title)
 				if i+1 < len(self.benchmarker.queries) and (numShownPlots)%2:
 					summary += "\\hfill"
