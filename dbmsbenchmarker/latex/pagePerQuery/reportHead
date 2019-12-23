@@ -106,9 +106,10 @@ For each query, we compute latency and throughput per DBMS.
 The next chart shows the geometric mean of these metrics per DBMS.
 
 \begin{{figure}}[ht]
-\hfill\subfloat{{\includegraphics[width=0.45\textwidth]{{total_bar_tps.png}}}}
-\hfill\subfloat{{\includegraphics[width=0.45\textwidth]{{total_bar_lat.png}}}}\\
-{{\scriptsize{{{totalLatTPS}}}}}
+\centering
+\hfill\subfloat[Throughputs per run and session]{{\includegraphics[width=0.45\textwidth]{{total_bar_tps.png}}}}
+\hfill\subfloat[Latencies per run and session]{{\includegraphics[width=0.45\textwidth]{{total_bar_lat.png}}}}\\
+\subfloat[Statistics]{{\scriptsize{{{totalLatTPS}}}}}\\
 \caption{{DBMS: Relative ranking based on latency and throughput}}
 \end{{figure}}
 
@@ -132,6 +133,7 @@ The next chart shows the metrics obtained from monitoring.
 Values are computed as arithmetic mean across benchmarking time.
 
 \begin{{figure}}[ht]
+\centering
 {{\scriptsize{{{totalHardwareMonitoring}}}}}
 \caption{{DBMS: Hardware metrics - monitoring}}
 \end{{figure}}
@@ -140,6 +142,7 @@ Values are computed as arithmetic mean across benchmarking time.
 The next chart shows the metrics obtained from inside docker containers.
 Here, cost is based on the total time.
 \begin{{figure}}[h]
+\centering
 {{\scriptsize{{{totalHardwareHost}}}}}
 \caption{{DBMS: Hardware metrics - host system}}
 \end{{figure}}
