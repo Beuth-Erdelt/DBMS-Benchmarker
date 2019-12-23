@@ -481,7 +481,7 @@ class boxploter(reporter):
 		# plot
 		boxplot = df_unpivot.boxplot(by='DBMS', grid=False)
 		# rotate labels
-		#plt.xticks(rotation=70)
+		plt.xticks(rotation=90)
 		# align box to labels
 		plt.tight_layout()
 		# set title and no subtitle
