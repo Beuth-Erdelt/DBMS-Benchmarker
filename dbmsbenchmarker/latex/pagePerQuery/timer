@@ -8,7 +8,7 @@
 	{table}
 	}}}}
         \centering
-        \subfloat{{\includegraphics[width=0.50\textwidth]{{query_{queryNumber}_{timerName}_plot.png}}}}\\
-		\subfloat{{\includegraphics[width=0.50\textwidth]{{query_{queryNumber}_{timerName}_boxplot.png}}}}
+        \subfloat[Plot of times per run]{{\includegraphics[width=0.50\textwidth]{{query_{queryNumber}_{timerName}_plot.png}}}}\\
+		\subfloat[Boxplot of times]{{\includegraphics[width=0.50\textwidth]{{query_{queryNumber}_{timerName}_boxplot.png}}}}
   \caption{{Query {queryNumber}: Time {timerName}}}
 \end{{figure}}
