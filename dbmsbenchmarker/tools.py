@@ -924,7 +924,9 @@ class dataframehelper():
 			df = df.drop(['node'],axis=1)
 		if 'instance' in df.columns:
 			df = df.drop(['instance'],axis=1)
-		df = df.drop(['host','CPU','GPU','GPUIDs'],axis=1)#,'RAM','Cores'
+		if 'GPUIDs' in df.columns:
+			df = df.drop(['GPUIDs'],axis=1)
+		df = df.drop(['host','CPU','GPU'],axis=1)#,'RAM','Cores'
 		df = df.astype(float)
 		if 'RAM' in df:
 			df['RAM'] = df['RAM']/1024/1024
