@@ -646,12 +646,12 @@ class dataframehelper():
 		dataframe.columns = header
 		# insert factor column
 		dataframe.insert(loc=1, column='factor', value=mean_list_normed)
+		# sort by factor
+		dataframe = dataframe.sort_values(dataframe.columns[1], ascending = True)
 		# replace float by string
 		dataframe = dataframe.replace(0.00, "0.00")
 		# drop rows of only 0 (starting after factor and n)
 		dataframe = dataframe[(dataframe.T[3:] != "0.00").any()]
-		# sort by factor
-		dataframe = dataframe.sort_values(dataframe.columns[1], ascending = True)
 		# anonymize dbms
 		dataframe.iloc[0:,0] = dataframe.iloc[0:,0].map(dbms.anonymizer)
 		dataframe = dataframe.set_index(dataframe.columns[0])
