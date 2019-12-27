@@ -1,6 +1,7 @@
 \clearpage
 \newpage
 \subsection{{{queryName}}}\label{{benchmark:{code}-Q{queryNumber}}}
+\hyperref[appendix:{code}-Q{queryNumber}]{{Results}}
 \subsubsection{{Latencies and Throughputs}}
 \begin{{figure}}[ht]
 \centering
@@ -36,5 +37,4 @@
 {queryList}
 {errors}
 }}}}
-\hyperref[appendix:{code}-Q{queryNumber}]{{Results}}
 {hardwareMetrics}
