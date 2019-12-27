@@ -27,7 +27,11 @@
 \caption{{Query {queryNumber}: DBMS Settings}}
 \end{{figure}}
 \subsubsection{{Query String}}
+\begin{{figure}}[ht]
 {queryString}
+\caption{{Query {queryNumber}: SQL Query}}
+\end{{figure}}
+
 {{\scriptsize{{
 {queryList}
 {errors}
