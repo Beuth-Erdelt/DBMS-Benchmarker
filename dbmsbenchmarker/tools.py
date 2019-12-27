@@ -950,6 +950,8 @@ class dataframehelper():
 			volume = ''
 			docker = ''
 			script = ''
+			clients = ''
+			rpc = ''
 			for i,step in enumerate(d):
 				if 'connection' in step:
 					connection = step['connection']
@@ -969,8 +971,13 @@ class dataframehelper():
 					script = scripts[0]
 				if 'volume' in step:
 					volume = step['volume']
-				workflow[i] = [step['step'], instance, volume, docker, script, connection, delay]
-			df = pd.DataFrame.from_dict(workflow, orient='index', columns=['step', 'instance', 'volume', 'dbms', 'script', 'connection', 'delay'])
+				if 'connectionmanagement' in step:
+					if 'numProcesses' in step['connectionmanagement']:
+						clients = step['connectionmanagement']['numProcesses']
+					if 'runsPerConnection' in step['connectionmanagement']:
+						rpc = step['connectionmanagement']['runsPerConnection']
+				workflow[i] = [step['step'], instance, volume, docker, script, connection, delay, clients, rpc]
+			df = pd.DataFrame.from_dict(workflow, orient='index', columns=['step', 'instance', 'volume', 'dbms', 'script', 'connection', 'delay', 'clients', 'rpc'])
 			#print(df)
 			return df
 		else:
