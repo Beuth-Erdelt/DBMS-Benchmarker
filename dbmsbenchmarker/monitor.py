@@ -85,7 +85,7 @@ class metrics():
         for m, metric in metrics.metrics.items():
             plotfile = self.benchmarker.path+'/query_'+str(query)+'_metric_'+str(m)+'.png'
             if os.path.isfile(plotfile):
-                latex += "    \\hfill\\subfloat["+tools.tex_escape(metric['title']).replace('[','(').replace(']',')')+"]{{\\includegraphics[width=0.45\\textwidth,height=0.2\\textheight]{{query_{queryNumber}_metric_"+m+".png}}}}"
+                latex += "    \\hfill\\subfloat["+tools.tex_escape(metric['title']).replace('[','{{[}}').replace(']','{{]}}')+"]{{\\includegraphics[width=0.45\\textwidth,height=0.2\\textheight]{{query_{queryNumber}_metric_"+m+".png}}}}"
                 if numPlots % 2:
                     latex += "\\\\\n"
                 numPlots = numPlots + 1

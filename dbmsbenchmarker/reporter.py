@@ -651,7 +651,13 @@ class tps(reporter):
 			'throughput_run_total_ps':'tps_r1',
 			'throughput_run_mean_ps':'tps_r2',
 			'throughput_session_total_ps':'tps_s1',
-			'throughput_session_mean_ps':'tps_s2'}
+			'throughput_session_mean_ps':'tps_s2',
+			'throughput_run_total_ph':'tph_r1',
+			'throughput_run_mean_ph':'tph_r2',
+			'throughput_session_total_ph':'tph_s1',
+			'throughput_session_mean_ph':'tph_s2'
+		}
+		dataframe = dataframe.reindex(['throughput_run_total_ps','throughput_run_mean_ps','throughput_session_total_ps','throughput_session_mean_ps','latency_run_mean_ms','latency_session_mean_ms','throughput_run_mean_ph'], axis=1)
 		dataframe = dataframe.rename(columns = settings_translate)
 		#print(dataframe)
 		plt.figure()
@@ -1045,7 +1051,10 @@ class latexer(reporter):
 		# TPS / Latency
 		dfTotalLatTPS = pd.DataFrame.from_dict({c:{m:metric for m,metric in dbms['metrics'].items()} for c,dbms in evaluation['dbms'].items()}).transpose()
 		#print(dfTotalLatTPS)
-		dfTotalLatTPS = dfTotalLatTPS.drop(columns='totaltime_ms')
+		dfTotalLatTPS = dfTotalLatTPS.drop(columns=['totaltime_ms','throughput_run_total_ph','throughput_session_total_ph','throughput_session_mean_ph'])
+		#print(dfTotalLatTPS)
+		#dfTotalLatTPS = dfTotalLatTPS.reindex(sorted(dfTotalLatTPS.columns), axis=1)
+		dfTotalLatTPS = dfTotalLatTPS.reindex(['throughput_run_total_ps','throughput_run_mean_ps','throughput_session_total_ps','throughput_session_mean_ps','latency_run_mean_ms','latency_session_mean_ms','throughput_run_mean_ph'], axis=1)
 		#print(dfTotalLatTPS)
 		dfTotalLatTPS.index = dfTotalLatTPS.index.map(tools.dbms.anonymizer)
 		#print(dfTotalLatTPS)
@@ -1056,7 +1065,12 @@ class latexer(reporter):
 			'throughput_run_mean_ps':'tps_r2 [Hz]',
 			'throughput_session_total_ps':'tps_s1 [Hz]',
 			'throughput_session_mean_ps':'tps_s2 [Hz]',
-			'totaltime_ms':'total [s]'}
+			'throughput_run_total_ph':'tph_r1 [ph]',
+			'throughput_run_mean_ph':'tph_r2 [ph]',
+			'throughput_session_total_ph':'tph_s1 [ph]',
+			'throughput_session_mean_ph':'tph_s2 [ph]',
+			'totaltime_ms':'total [s]',
+		}
 		dfTotalLatTPS_units = dfTotalLatTPS.rename(columns = settings_translate)
 		settings_translate = {
 			'latency_run_mean_ms':'lat_r',
@@ -1064,7 +1078,12 @@ class latexer(reporter):
 			'throughput_run_total_ps':'tps_r1',
 			'throughput_run_mean_ps':'tps_r2',
 			'throughput_session_total_ps':'tps_s1',
-			'throughput_session_mean_ps':'tps_s2'}
+			'throughput_session_mean_ps':'tps_s2',
+			'throughput_run_total_ph':'tph_r1',
+			'throughput_run_mean_ph':'tph_r2',
+			'throughput_session_total_ph':'tph_s1',
+			'throughput_session_mean_ph':'tph_s2',
+		}
 		dfTotalLatTPS = dfTotalLatTPS.rename(columns = settings_translate)
 		#print(dfTotalLatTPS)
 		plt.figure()
@@ -1552,7 +1571,13 @@ class latexer(reporter):
 					'throughput_run_mean_ps':'tps_r2 [Hz]',
 					'throughput_session_total_ps':'tps_s1 [Hz]',
 					'throughput_session_mean_ps':'tps_s2 [Hz]',
-					'totaltime_ms':'total [s]'}
+					'throughput_run_total_ph':'tph_r1 [ph]',
+					'throughput_run_mean_ph':'tph_r2 [ph]',
+					'throughput_session_total_ph':'tph_s1 [ph]',
+					'throughput_session_mean_ph':'tph_s2 [ph]',
+					'totaltime_ms':'total [s]'
+				}
+				df = df.reindex(['throughput_run_total_ps','throughput_run_mean_ps','throughput_session_total_ps','throughput_session_mean_ps','latency_run_mean_ms','latency_session_mean_ms','throughput_run_mean_ph'], axis=1)
 				df=df.rename(columns = settings_translate)
 				df = tools.dataframehelper.addStatistics(df)
 				result["benchmarkmetrics"] = tabulate(df,headers=df.columns, tablefmt="latex", stralign="right", floatfmt=",.2f", showindex=True).replace("\\textbackslash{}", "\\").replace("\\{", "{").replace("\\}","}")
