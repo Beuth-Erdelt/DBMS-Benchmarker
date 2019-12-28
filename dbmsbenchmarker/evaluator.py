@@ -208,8 +208,10 @@ class evaluator():
 						if totaltime_s > 0:
 							tps = query.numRun/totaltime_s
 							evaluation['query'][i]['dbms'][c]['metrics']['throughput_run_total_ps'] = tps
+							evaluation['query'][i]['dbms'][c]['metrics']['throughput_run_total_ph'] = tps*3600.0
 							tps = query.numRun/cm['runsPerConnection']/totaltime_s
 							evaluation['query'][i]['dbms'][c]['metrics']['throughput_session_total_ps'] = tps
+							evaluation['query'][i]['dbms'][c]['metrics']['throughput_session_total_ph'] = tps*3600.0
 						if c in self.benchmarker.timerRun.stats[numQuery-1]:
 							meantime_run_s = self.benchmarker.timerRun.stats[numQuery-1][c][1]/1000.0
 							#print(self.benchmarker.timerRun.stats[numQuery-1][c][1])
@@ -217,6 +219,7 @@ class evaluator():
 								tps = cm['numProcesses']/meantime_run_s
 								evaluation['query'][i]['dbms'][c]['metrics']['throughput_run_mean_ps'] = tps
 								evaluation['query'][i]['dbms'][c]['metrics']['latency_run_mean_ms'] = meantime_run_s*1000.0
+								evaluation['query'][i]['dbms'][c]['metrics']['throughput_run_mean_ph'] = tps*3600.0
 						else:
 							print(c+" missing in timerRun statistics for query Q"+str(numQuery))
 						if c in self.benchmarker.timerSession.stats[numQuery-1]:
@@ -225,6 +228,7 @@ class evaluator():
 								tps = cm['numProcesses']/meantime_session_s
 								evaluation['query'][i]['dbms'][c]['metrics']['throughput_session_mean_ps'] = tps
 								evaluation['query'][i]['dbms'][c]['metrics']['latency_session_mean_ms'] = meantime_session_s*1000.0
+								evaluation['query'][i]['dbms'][c]['metrics']['throughput_session_mean_ph'] = tps*3600.0
 						else:
 							print(c+" missing in timerSession statistics for query Q"+str(numQuery))
 				evaluation['query'][i]['start'] = self.benchmarker.protocol['query'][str(numQuery)]['start']
@@ -262,8 +266,10 @@ class evaluator():
 				continue
 			evaluation['dbms'][c]['metrics'] = {}
 			for m, v in t.items():
-				tps[c][m] = math.pow(tps[c][m], 1 / num[c][m])
+				tps[c][m] = math.pow(tps[c][m], 1.0 / num[c][m])
 				evaluation['dbms'][c]['metrics'][m] = tps[c][m]
+				if '_ps' in m:
+					evaluation['dbms'][c]['metrics'][m.replace('_ps', '_ph')] = tps[c][m]*3600.0
 		reporterBar = reporter.barer(self.benchmarker)
 		dfTotalSum = reporterBar.generate(numQuery=None, timer=self.benchmarker.timers, ensembler='sum')
 		dfTotalProd = reporterBar.generate(numQuery=None, timer=self.benchmarker.timers, ensembler='product')
