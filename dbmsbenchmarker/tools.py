@@ -592,7 +592,8 @@ class dbms():
 			return True
 		else:
 			return False
-
+	def isActive(self):
+		return self.connection is not None and self.cursor is not None
 
 
 class dataframehelper():
