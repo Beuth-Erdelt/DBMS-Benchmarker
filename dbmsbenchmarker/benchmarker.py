@@ -33,6 +33,7 @@ from dbmsbenchmarker import tools, reporter, parameter, monitor, evaluator
 import pprint
 
 
+
 class singleRunInput:
 	"""
 	Class for collecting info about a benchmark run
@@ -53,7 +54,7 @@ class singleRunOutput:
 
 
 
-def singleRun(connectiondata, inputConfig, numRuns, connectionname, numQuery, path=None):
+def singleRun(connectiondata, inputConfig, numRuns, connectionname, numQuery, path=None, activeConnections = []):
 	"""
 	Function for running an actual benchmark run
 
@@ -70,17 +71,25 @@ def singleRun(connectiondata, inputConfig, numRuns, connectionname, numQuery, pa
 	logger.setLevel(logging.ERROR)
 	# init list of results
 	results = []
-	# look at first run to determine of there should be sleeping
-	query = tools.query(inputConfig[numRuns[0]].queryConfig)
-	if query.delay_connect > 0:
-		print("Delay Connection by "+str(query.delay_connect)+" seconds")
-		time.sleep(query.delay_connect)
-	# connect to dbms
-	connection = tools.dbms(connectiondata)
-	start = default_timer()
-	connection.connect()
-	end = default_timer()
-	durationConnect = 1000.0*(end - start)
+	# compute number of (parallel) connection
+	# example: 5/6/7/8 yields number 1 (i.e. the second one)
+	numActiveConnection = math.floor(numRuns[0]/len(NumRuns))
+	if len(activeConnections) > numActiveConnection:
+		print("Found active connection #"+str(numActiveConnection))
+		connection = activeConnections[numActiveConnection]
+		durationConnect = 0.0
+	else:
+		# look at first run to determine of there should be sleeping
+		query = tools.query(inputConfig[numRuns[0]].queryConfig)
+		if query.delay_connect > 0:
+			print("Delay Connection by "+str(query.delay_connect)+" seconds")
+			time.sleep(query.delay_connect)
+		# connect to dbms
+		connection = tools.dbms(connectiondata)
+		start = default_timer()
+		connection.connect()
+		end = default_timer()
+		durationConnect = 1000.0*(end - start)
 	print(("singleRun batch size %i: " % len(numRuns)))
 	print(("numRun %s: " % ("/".join([str(i+1) for i in numRuns])))+"connection [ms]: "+str(durationConnect))
 	# perform runs for this connection
@@ -147,7 +156,8 @@ def singleRun(connectiondata, inputConfig, numRuns, connectionname, numQuery, pa
 		result.columnnames = columnnames
 		#result.size = size
 		results.append(result)
-	connection.disconnect()
+	if not len(activeConnections) > numActiveConnection:
+		connection.disconnect()
 	return results
 
 
@@ -280,13 +290,15 @@ class benchmarker():
 		if seed is not None:
 			random.seed(seed)
 		## connection management:
-		self.connectionmanagement = {'numProcesses': numProcesses, 'runsPerConnection': None, 'timeout': None}
+		self.connectionmanagement = {'numProcesses': numProcesses, 'runsPerConnection': None, 'timeout': None, 'singleConnection': False}
 		# set number of parallel client processes
 		#self.connectionmanagement['numProcesses'] = numProcesses
 		if self.connectionmanagement['numProcesses'] is None:
 			self.connectionmanagement['numProcesses'] = 1#math.ceil(mp.cpu_count()/2) #If None, half of all available processes is taken
 		else:
 			self.connectionmanagement['numProcesses'] = int(self.numProcesses)
+		# for connections staying active for all benchmarks
+		self.activeConnections = []
 		#self.runsPerConnection = 4
 		#self.timeout = 600
 		# there is no general pool
@@ -643,6 +655,7 @@ class benchmarker():
 		numProcesses = self.connectionmanagement['numProcesses']#self.numProcesses
 		batchsize = self.connectionmanagement['runsPerConnection']#self.runsPerConnection
 		timeout = self.connectionmanagement['timeout']#self.timeout
+		singleConnection = self.connectionmanagement['singleConnection']#self.timeout
 		# overwrite by benchmark (query file)
 		if 'connectionmanagement' in self.queryconfig:
 			connectionmanagement = self.queryconfig['connectionmanagement']
@@ -654,6 +667,8 @@ class benchmarker():
 			if('timeout' in connectionmanagement):# and connectionmanagement['timeout'] != 0):
 				# 0=unlimited
 				timeout = connectionmanagement['timeout']
+			if('singleConnection' in connectionmanagement):# and connectionmanagement['timeout'] != 0):
+				singleConnection = connectionmanagement['singleConnection']
 		# overwrite by connection
 		if 'connectionmanagement' in self.dbms[connectionname].connectiondata:
 			connectionmanagement = self.dbms[connectionname].connectiondata['connectionmanagement']
@@ -665,6 +680,8 @@ class benchmarker():
 			if('timeout' in connectionmanagement):# and connectionmanagement['timeout'] != 0):
 				# 0=unlimited
 				timeout = connectionmanagement['timeout']
+			if('singleConnection' in connectionmanagement):# and connectionmanagement['timeout'] != 0):
+				singleConnection = connectionmanagement['singleConnection']
 		# overwrite by query
 		if 'connectionmanagement' in q:
 			connectionmanagement = q['connectionmanagement']
@@ -790,6 +807,12 @@ class benchmarker():
 		numProcesses = connectionmanagement['numProcesses']#self.numProcesses
 		batchsize = connectionmanagement['runsPerConnection']#self.runsPerConnection
 		timeout = connectionmanagement['timeout']#self.timeout
+		singleConnection = connectionmanagement['singleConnection']
+		if singleConnection and len(activeConnections) < numProcesses:
+			for i in range(len(self.activeConnections),numProcesses):
+				self.activeConnections[i] = tools.dbms(connectiondata)
+				print("Establish global connection #"+str(i))
+				self.activeConnections[i].connect()
 		# overwrite by connection
 		#if 'connectionmanagement' in self.dbms[c].connectiondata:
 		#	connectionmanagement = self.dbms[c].connectiondata['connectionmanagement']
@@ -813,6 +836,7 @@ class benchmarker():
 		print("runsPerConnection: "+str(batchsize))
 		print("numProcesses: "+str(numProcesses))
 		print("timeout: "+str(timeout))
+		print("singleConnection: "+str(singleConnection))
 		# prepare protocol for result data
 		if c not in self.protocol['query'][str(numQuery)]['resultSets']:
 			self.protocol['query'][str(numQuery)]['resultSets'][c] = []
@@ -894,12 +918,12 @@ class benchmarker():
 			self.protocol['query'][str(numQuery)]['starts'][c] = str(datetime.datetime.now())
 			# pooling
 			if self.pool is not None:
-				multiple_results = [self.pool.apply_async(singleRun, (self.dbms[c].connectiondata, inputConfig, runs[i*batchsize:(i+1)*batchsize], connectionname, numQuery, self.path)) for i in range(numBatches)]
+				multiple_results = [self.pool.apply_async(singleRun, (self.dbms[c].connectiondata, inputConfig, runs[i*batchsize:(i+1)*batchsize], connectionname, numQuery, self.path, self.activeConnections)) for i in range(numBatches)]
 				lists = [res.get(timeout=timeout) for res in multiple_results]
 				lists = [i for j in lists for i in j]
 			else:
 				with mp.Pool(processes=numProcesses) as pool:
-					multiple_results = [pool.apply_async(singleRun, (self.dbms[c].connectiondata, inputConfig, runs[i*batchsize:(i+1)*batchsize], connectionname, numQuery, self.path)) for i in range(numBatches)]
+					multiple_results = [pool.apply_async(singleRun, (self.dbms[c].connectiondata, inputConfig, runs[i*batchsize:(i+1)*batchsize], connectionname, numQuery, self.path, self.activeConnections)) for i in range(numBatches)]
 					lists = [res.get(timeout=timeout) for res in multiple_results]
 					lists = [i for j in lists for i in j]
 			# store end time for query / connection
