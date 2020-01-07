@@ -31,8 +31,10 @@ import random
 from operator import add
 from dbmsbenchmarker import tools, reporter, parameter, monitor, evaluator
 import pprint
+import dill
+from jpype.pickle import JPickler, JUnpickler
 
-
+#activeConnections = []
 
 class singleRunInput:
 	"""
@@ -66,6 +68,7 @@ def singleRun(connectiondata, inputConfig, numRuns, connectionname, numQuery, pa
 	:param path: Result path, for optional storing received data
 	:return: returns object of class singleRunOutput
 	"""
+	#global activeConnections
 	import logging
 	logger = logging.getLogger()
 	logger.setLevel(logging.ERROR)
@@ -73,7 +76,10 @@ def singleRun(connectiondata, inputConfig, numRuns, connectionname, numQuery, pa
 	results = []
 	# compute number of (parallel) connection
 	# example: 5/6/7/8 yields number 1 (i.e. the second one)
-	numActiveConnection = math.floor(numRuns[0]/len(NumRuns))
+	numActiveConnection = math.floor(numRuns[0]/len(numRuns))
+	activeConnections = JUnpickler.loads(activeConnections)
+	#print(numActiveConnection)
+	#print(len(activeConnections))
 	if len(activeConnections) > numActiveConnection:
 		print("Found active connection #"+str(numActiveConnection))
 		connection = activeConnections[numActiveConnection]
@@ -421,7 +427,8 @@ class benchmarker():
 			if not "factor" in self.queryconfig:
 				self.queryconfig["factor"] = "total"
 			if "connectionmanagement" in self.queryconfig:
-				self.connectionmanagement = self.queryconfig["connectionmanagement"].copy()
+				#self.connectionmanagement = self.queryconfig["connectionmanagement"].copy()
+				self.connectionmanagement = tools.joinDicts(self.connectionmanagement, self.queryconfig["connectionmanagement"])
 			#	if "timeout" in self.queryconfig["connectionmanagement"]:
 			#		self.timeout = self.queryconfig["connectionmanagement"]["timeout"]
 			#	if "numProcesses" in self.queryconfig["connectionmanagement"]:
@@ -652,6 +659,7 @@ class benchmarker():
 		q = self.queries[numQuery-1]
 		# prepare query object
 		query = tools.query(q)
+		#print(self.connectionmanagement)
 		numProcesses = self.connectionmanagement['numProcesses']#self.numProcesses
 		batchsize = self.connectionmanagement['runsPerConnection']#self.runsPerConnection
 		timeout = self.connectionmanagement['timeout']#self.timeout
@@ -699,7 +707,10 @@ class benchmarker():
 			timeout = None
 		if batchsize == 0 or batchsize is None:
 			batchsize = math.ceil(query.numRun/numProcesses)
-		return {'numProcesses': numProcesses, 'runsPerConnection': batchsize, 'timeout': timeout}
+		# unless pickling of java objects is possible
+		# we cannot have global connections
+		singleConnection = False
+		return {'numProcesses': numProcesses, 'runsPerConnection': batchsize, 'timeout': timeout, 'singleConnection': singleConnection}
 	def runSingleBenchmarkRun(self, numQuery, connectionname, numRun=0):
 		"""
 		Runs a single benchmark run.
@@ -774,6 +785,7 @@ class benchmarker():
 		:param connectionname: Name of connection to benchmark
 		:return: True if benchmark has been done, False if skipped
 		"""
+		#global activeConnections
 		# check if benchmark should be done
 		if self.timerExecution.checkForSuccessfulBenchmarks(numQuery, connectionname):
 			# benchmark already done
@@ -808,9 +820,10 @@ class benchmarker():
 		batchsize = connectionmanagement['runsPerConnection']#self.runsPerConnection
 		timeout = connectionmanagement['timeout']#self.timeout
 		singleConnection = connectionmanagement['singleConnection']
-		if singleConnection and len(activeConnections) < numProcesses:
-			for i in range(len(self.activeConnections),numProcesses):
-				self.activeConnections[i] = tools.dbms(connectiondata)
+		if singleConnection and len(self.activeConnections) < numProcesses:
+			print("More active connections from {} to {}".format(len(self.activeConnections), numProcesses))
+			for i in range(len(self.activeConnections), numProcesses):
+				self.activeConnections.append(tools.dbms(self.dbms[connectionname].connectiondata))
 				print("Establish global connection #"+str(i))
 				self.activeConnections[i].connect()
 		# overwrite by connection
@@ -918,12 +931,12 @@ class benchmarker():
 			self.protocol['query'][str(numQuery)]['starts'][c] = str(datetime.datetime.now())
 			# pooling
 			if self.pool is not None:
-				multiple_results = [self.pool.apply_async(singleRun, (self.dbms[c].connectiondata, inputConfig, runs[i*batchsize:(i+1)*batchsize], connectionname, numQuery, self.path, self.activeConnections)) for i in range(numBatches)]
+				multiple_results = [self.pool.apply_async(singleRun, (self.dbms[c].connectiondata, inputConfig, runs[i*batchsize:(i+1)*batchsize], connectionname, numQuery, self.path, JPickler.dumps(self.activeConnections))) for i in range(numBatches)]
 				lists = [res.get(timeout=timeout) for res in multiple_results]
 				lists = [i for j in lists for i in j]
 			else:
 				with mp.Pool(processes=numProcesses) as pool:
-					multiple_results = [pool.apply_async(singleRun, (self.dbms[c].connectiondata, inputConfig, runs[i*batchsize:(i+1)*batchsize], connectionname, numQuery, self.path, self.activeConnections)) for i in range(numBatches)]
+					multiple_results = [pool.apply_async(singleRun, (self.dbms[c].connectiondata, inputConfig, runs[i*batchsize:(i+1)*batchsize], connectionname, numQuery, self.path, JPickler.dumps(self.activeConnections))) for i in range(numBatches)]
 					lists = [res.get(timeout=timeout) for res in multiple_results]
 					lists = [i for j in lists for i in j]
 			# store end time for query / connection
