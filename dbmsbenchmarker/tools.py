@@ -939,6 +939,26 @@ class dataframehelper():
 		df = df.applymap(lambda x: x if not np.isnan(x) else 0.0)
 		return df
 	@staticmethod
+	def evaluateTimerfactorsToDataFrame(evaluation, timer):
+		#l=e.evaluation['query'][1]['benchmarks']['execution']['statistics']
+		factors = {}
+		for i,q in evaluation['query'].items():
+			l = q['benchmarks'][timer.name]['statistics']
+			for c,d in l.items():
+				if not c in factors:
+					factors[c] = []
+				factors[c].append(d['factor'])
+				#print(c)
+				#print(d['factor'])
+		#print(factors)
+		df = pd.DataFrame(factors)
+		df = df.reindex(sorted(df.columns), axis=1)
+		df.columns = df.columns.map(dbms.anonymizer)
+		df.index = df.index.map(lambda x: 'Q'+str(x+1))
+		#print(timer.name)
+		#print(df)
+		return df
+	@staticmethod
 	def getWorkflow(benchmarker):
 		print("getWorkflow")
 		filename = benchmarker.path+'/experiments.config'

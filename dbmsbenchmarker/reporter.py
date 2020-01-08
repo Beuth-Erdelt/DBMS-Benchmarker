@@ -20,6 +20,7 @@ import datetime
 from tqdm import tqdm
 import pickle
 import sys
+import numpy as np
 
 
 
@@ -1018,6 +1019,40 @@ class latexer(reporter):
 		if len(evaluator.evaluator.evaluation) == 0:
 			self.e = evaluator.evaluator(self.benchmarker)
 		evaluation = evaluator.evaluator.evaluation
+		# Heatmaps of timers
+		for i, t in enumerate(self.benchmarker.timers):
+			filename = self.benchmarker.path+'/total_heatmap_timer_'+t.name+'.png'
+			title = 'Heatmap of factors of timer '+t.name
+			df = tools.dataframehelper.evaluateTimerfactorsToDataFrame(evaluation, t)
+			fig = plt.figure(figsize = (10,12))
+			#fig, ax = subplots(figsize=(18, 2))
+			plt.imshow(df, cmap="Reds", aspect='auto')
+			#plt.imshow(df, cmap="YlOrRd", aspect='auto')
+			#plt.imshow(df, cmap="Greys", aspect='auto')
+			plt.colorbar()
+			plt.xticks(range(len(df.columns)),df.columns, rotation=90)
+			plt.yticks(range(len(df)),df.index)
+			ax = plt.gca()
+			#for edge, spine in ax.spines.items():
+			#	spine.set_visible(False)
+			data = df.values
+			for y in range(data.shape[0]):
+				for x in range(data.shape[1]):
+					plt.text(x, y, '%.2f' % data[y, x],
+						horizontalalignment='center',
+						verticalalignment='center',
+						color='black', fontsize=8)
+			ax.set_xticks(np.arange(len(df.columns)+1)-.5, minor=True)
+			ax.set_yticks(np.arange(len(df.index)+1)-.5, minor=True)
+			ax.grid(which="minor", color="black", linestyle='-', linewidth=1)
+			ax.tick_params(which="minor", bottom=False, left=False)
+			plt.tight_layout()
+			#plt.show()
+			# set title
+			plt.title(title)
+			# save
+			plt.savefig(filename)
+			plt.close('all')
 		# Monitoring
 		metrics = [True if 'hardwaremetrics' in d else False for c,d in evaluation['dbms'].items()]
 		settings_translate = {
