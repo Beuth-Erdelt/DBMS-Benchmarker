@@ -77,7 +77,7 @@ def singleRun(connectiondata, inputConfig, numRuns, connectionname, numQuery, pa
 	# compute number of (parallel) connection
 	# example: 5/6/7/8 yields number 1 (i.e. the second one)
 	numActiveConnection = math.floor(numRuns[0]/len(numRuns))
-	activeConnections = JUnpickler.loads(activeConnections)
+	#activeConnections = JUnpickler.loads(activeConnections)
 	#print(numActiveConnection)
 	#print(len(activeConnections))
 	if len(activeConnections) > numActiveConnection:
