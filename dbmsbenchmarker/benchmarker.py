@@ -31,8 +31,8 @@ import random
 from operator import add
 from dbmsbenchmarker import tools, reporter, parameter, monitor, evaluator
 import pprint
-import dill
-from jpype.pickle import JPickler, JUnpickler
+#import dill
+#from jpype.pickle import JPickler, JUnpickler
 
 #activeConnections = []
 
