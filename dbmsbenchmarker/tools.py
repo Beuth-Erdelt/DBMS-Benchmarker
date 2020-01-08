@@ -959,6 +959,40 @@ class dataframehelper():
 		#print(df)
 		return df
 	@staticmethod
+	def evaluateTPSToDataFrame(evaluation):
+		factors = {}
+		for i,q in evaluation['query'].items():
+			for c,d in q['dbms'].items():
+				if not c in factors:
+					factors[c] = []
+				factors[c].append(d['metrics']['throughput_run_total_ps'])
+				#print(c)
+				#print(d['factor'])
+		#print(factors)
+		df = pd.DataFrame(factors)
+		df = df.reindex(sorted(df.columns), axis=1)
+		df.columns = df.columns.map(dbms.anonymizer)
+		df.index = df.index.map(lambda x: 'Q'+str(x+1))
+		#print(df)
+		return df
+	@staticmethod
+	def evaluateLatToDataFrame(evaluation):
+		factors = {}
+		for i,q in evaluation['query'].items():
+			for c,d in q['dbms'].items():
+				if not c in factors:
+					factors[c] = []
+				factors[c].append(d['metrics']['latency_run_mean_ms']/1000.0)
+				#print(c)
+				#print(d['factor'])
+		#print(factors)
+		df = pd.DataFrame(factors)
+		df = df.reindex(sorted(df.columns), axis=1)
+		df.columns = df.columns.map(dbms.anonymizer)
+		df.index = df.index.map(lambda x: 'Q'+str(x+1))
+		#print(df)
+		return df
+	@staticmethod
 	def getWorkflow(benchmarker):
 		print("getWorkflow")
 		filename = benchmarker.path+'/experiments.config'

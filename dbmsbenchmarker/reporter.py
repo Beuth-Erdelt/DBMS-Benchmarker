@@ -1014,6 +1014,39 @@ class latexer(reporter):
 		for c,cd in self.benchmarker.dbms.items():
 			if cd.connectiondata['active'] and 'timeLoad' in cd.connectiondata: 
 				timesLoad[self.benchmarker.dbms[c].getName()] = cd.connectiondata['timeLoad']
+		# Heatmap of normalized total times
+		filename = self.benchmarker.path+'/total_heatmap_normalized.png'
+		title = 'Heatmap of Normalized Total Times [%]'
+		df = dfTotalTimeNorm
+		fig = plt.figure(figsize = (10,12))
+		plt.imshow(df, cmap="Reds", aspect='auto')
+		#plt.imshow(df, cmap="YlOrRd", aspect='auto')
+		#plt.imshow(df, cmap="Greys", aspect='auto')
+		plt.colorbar()
+		plt.xticks(range(len(df.columns)),df.columns, rotation=90)
+		plt.yticks(range(len(df)),df.index)
+		ax = plt.gca()
+		ax.set_title(title)
+		data = df.values
+		max_cell = df.values.max()
+		min_cell = df.values.min()
+		for y in range(data.shape[0]):
+			for x in range(data.shape[1]):
+				color_cell = 'white' if data[y, x] > (min_cell+max_cell)/2 else 'black'
+				plt.text(x, y, '%.2f' % data[y, x],
+					horizontalalignment='center',
+					verticalalignment='center',
+					color=color_cell, fontsize=8)
+		ax.set_xticks(np.arange(len(df.columns)+1)-.5, minor=True)
+		ax.set_yticks(np.arange(len(df.index)+1)-.5, minor=True)
+		ax.grid(which="minor", color="black", linestyle='-', linewidth=1)
+		ax.tick_params(which="minor", bottom=False, left=False)
+		plt.tight_layout()
+		# set title
+		plt.title(title)
+		# save
+		plt.savefig(filename, bbox_inches='tight')
+		plt.close('all')
 		# store in parameter array for replacement in templates
 		parameter = self.prepare(0, 0)
 		if len(evaluator.evaluator.evaluation) == 0:
@@ -1024,24 +1057,29 @@ class latexer(reporter):
 			filename = self.benchmarker.path+'/total_heatmap_timer_'+t.name+'.png'
 			title = 'Heatmap of factors of timer '+t.name
 			df = tools.dataframehelper.evaluateTimerfactorsToDataFrame(evaluation, t)
+			#print(t.name)
+			#print(df)
+			df = df[(df.T != "0.00").any()]
+			#print(df)
+			#df = df[(df.T[0:] != 0).any()]
+			if df.empty:
+				continue
 			fig = plt.figure(figsize = (10,12))
-			#fig, ax = subplots(figsize=(18, 2))
 			plt.imshow(df, cmap="Reds", aspect='auto')
-			#plt.imshow(df, cmap="YlOrRd", aspect='auto')
-			#plt.imshow(df, cmap="Greys", aspect='auto')
 			plt.colorbar()
 			plt.xticks(range(len(df.columns)),df.columns, rotation=90)
 			plt.yticks(range(len(df)),df.index)
 			ax = plt.gca()
-			#for edge, spine in ax.spines.items():
-			#	spine.set_visible(False)
 			data = df.values
+			max_cell = df.values.max()
+			min_cell = df.values.min()
 			for y in range(data.shape[0]):
 				for x in range(data.shape[1]):
+					color_cell = 'white' if data[y, x] > (min_cell+max_cell)/2 else 'black'
 					plt.text(x, y, '%.2f' % data[y, x],
 						horizontalalignment='center',
 						verticalalignment='center',
-						color='black', fontsize=8)
+						color=color_cell, fontsize=8)
 			ax.set_xticks(np.arange(len(df.columns)+1)-.5, minor=True)
 			ax.set_yticks(np.arange(len(df.index)+1)-.5, minor=True)
 			ax.grid(which="minor", color="black", linestyle='-', linewidth=1)
@@ -1051,8 +1089,68 @@ class latexer(reporter):
 			# set title
 			plt.title(title)
 			# save
-			plt.savefig(filename)
+			plt.savefig(filename, bbox_inches='tight')
 			plt.close('all')
+		# Heatmaps of tps
+		filename = self.benchmarker.path+'/total_heatmap_tps.png'
+		title = 'Heatmap of Throughputs [Hz]'
+		df = tools.dataframehelper.evaluateTPSToDataFrame(evaluation)
+		fig = plt.figure(figsize = (10,12))
+		plt.imshow(df, cmap="Reds_r", aspect='auto')
+		plt.colorbar()
+		plt.xticks(range(len(df.columns)),df.columns, rotation=90)
+		plt.yticks(range(len(df)),df.index)
+		ax = plt.gca()
+		data = df.values
+		max_cell = df.values.max()
+		min_cell = df.values.min()
+		for y in range(data.shape[0]):
+			for x in range(data.shape[1]):
+				color_cell = 'black' if data[y, x] > (min_cell+max_cell)/2 else 'white'
+				plt.text(x, y, '%.2f' % data[y, x],
+					horizontalalignment='center',
+					verticalalignment='center',
+					color=color_cell, fontsize=8)
+		ax.set_xticks(np.arange(len(df.columns)+1)-.5, minor=True)
+		ax.set_yticks(np.arange(len(df.index)+1)-.5, minor=True)
+		ax.grid(which="minor", color="black", linestyle='-', linewidth=1)
+		ax.tick_params(which="minor", bottom=False, left=False)
+		plt.tight_layout()
+		# set title
+		plt.title(title)
+		# save
+		plt.savefig(filename, bbox_inches='tight')
+		plt.close('all')
+		# Heatmaps of latency
+		filename = self.benchmarker.path+'/total_heatmap_lat.png'
+		title = 'Heatmap of Latencies [s]'
+		df = tools.dataframehelper.evaluateLatToDataFrame(evaluation)
+		fig = plt.figure(figsize = (10,12))
+		plt.imshow(df, cmap="Reds", aspect='auto')
+		plt.colorbar()
+		plt.xticks(range(len(df.columns)),df.columns, rotation=90)
+		plt.yticks(range(len(df)),df.index)
+		ax = plt.gca()
+		data = df.values
+		max_cell = df.values.max()
+		min_cell = df.values.min()
+		for y in range(data.shape[0]):
+			for x in range(data.shape[1]):
+				color_cell = 'white' if data[y, x] > (min_cell+max_cell)/2 else 'black'
+				plt.text(x, y, '%.2f' % data[y, x],
+					horizontalalignment='center',
+					verticalalignment='center',
+					color=color_cell, fontsize=8)
+		ax.set_xticks(np.arange(len(df.columns)+1)-.5, minor=True)
+		ax.set_yticks(np.arange(len(df.index)+1)-.5, minor=True)
+		ax.grid(which="minor", color="black", linestyle='-', linewidth=1)
+		ax.tick_params(which="minor", bottom=False, left=False)
+		plt.tight_layout()
+		# set title
+		plt.title(title)
+		# save
+		plt.savefig(filename, bbox_inches='tight')
+		plt.close('all')
 		# Monitoring
 		metrics = [True if 'hardwaremetrics' in d else False for c,d in evaluation['dbms'].items()]
 		settings_translate = {

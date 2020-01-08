@@ -87,7 +87,7 @@ tps\_s2 &= Throughput of sessions (number of parallel clients / cleaned mean tim
 \clearpage
 \newpage
 \section{{Summary}}
-\subsection{{Relative Ranking based on the Sum of Times}}
+\subsection{{Relative Ranking based on Timers}}
 For each query, the best DBMS is considered as gold standard = $100$\%.
 Based on their times, the other DBMS obtain a relative ranking factor.
 The next chart shows the geometric mean of factors per DBMS.
@@ -97,6 +97,57 @@ The next chart shows the geometric mean of factors per DBMS.
 \includegraphics[width=0.8\textwidth]{{total_bar_product.png}}\\
 {{\scriptsize{{{totalProd}}}}}
 \caption{{DBMS: Relative ranking}}
+\end{{figure}}
+
+\clearpage
+\newpage
+%\subsection{{Heatmaps of Timers}}
+\subsubsection{{Time session}}
+
+\begin{{figure}}[!htbp]
+\centering
+\includegraphics[width=0.8\textwidth]{{total_heatmap_timer_session.png}}
+\caption{{DBMS: Heatmap of Timer session}}
+\end{{figure}}
+
+\clearpage
+\newpage
+\subsubsection{{Time run}}
+
+\begin{{figure}}[!htbp]
+\centering
+\includegraphics[width=0.8\textwidth]{{total_heatmap_timer_run.png}}
+\caption{{DBMS: Heatmap of Timer run}}
+\end{{figure}}
+
+\clearpage
+\newpage
+\subsubsection{{Time execution}}
+
+\begin{{figure}}[!htbp]
+\centering
+\includegraphics[width=0.8\textwidth]{{total_heatmap_timer_execution.png}}
+\caption{{DBMS: Heatmap of Timer execution}}
+\end{{figure}}
+
+\clearpage
+\newpage
+\subsubsection{{Time datatransfer}}
+
+\begin{{figure}}[!htbp]
+\centering
+\includegraphics[width=0.8\textwidth]{{total_heatmap_timer_datatransfer.png}}
+\caption{{DBMS: Heatmap of Timer datatransfer}}
+\end{{figure}}
+
+\clearpage
+\newpage
+\subsubsection{{Time connection}}
+
+\begin{{figure}}[!htbp]
+\centering
+\includegraphics[width=0.8\textwidth]{{total_heatmap_timer_connection.png}}
+\caption{{DBMS: Heatmap of Timer connection}}
 \end{{figure}}
 
 \clearpage
@@ -111,6 +162,26 @@ The next chart shows the geometric mean of these metrics per DBMS.
 \hfill\subfloat[Latencies per run and session]{{\includegraphics[width=0.45\textwidth]{{total_bar_lat.png}}}}\\
 \subfloat[Statistics]{{\scriptsize{{{totalLatTPS}}}}}\\
 \caption{{DBMS: Relative ranking based on latency and throughput}}
+\end{{figure}}
+
+\clearpage
+\newpage
+\subsubsection{{Heatmap of Throughputs}}
+
+\begin{{figure}}[!htbp]
+\centering
+\includegraphics[width=0.8\textwidth]{{total_heatmap_tps.png}}
+\caption{{DBMS: Heatmap of Throughputs}}
+\end{{figure}}
+
+\clearpage
+\newpage
+\subsubsection{{Heatmap of Latencies}}
+
+\begin{{figure}}[!htbp]
+\centering
+\includegraphics[width=0.8\textwidth]{{total_heatmap_lat.png}}
+\caption{{DBMS: Heatmap of Latencies}}
 \end{{figure}}
 
 \clearpage
@@ -175,8 +246,6 @@ Values are computed per run.
 
 \clearpage
 \newpage
-
-\section{{Queries}}
 \subsection{{Total Times}}
 The next chart shows the total query time per DBMS and query.
 
@@ -202,57 +271,16 @@ The table shows total times per query, normalized to the average total time of t
 
 \clearpage
 \newpage
-\subsection{{Heatmaps of Timers}}
-\subsubsection{{Time session}}
-
+\subsubsection{{Heatmap}}
 \begin{{figure}}[!htbp]
 \centering
-\includegraphics[width=0.8\textwidth]{{total_heatmap_timer_session.png}}\\
-\caption{{DBMS: Heatmap of Timer session}}
+\includegraphics[width=0.8\textwidth]{{total_heatmap_normalized.png}}
+\caption{{DBMS: Heatmap of Normalized Total times}}
 \end{{figure}}
 
 \clearpage
 \newpage
-\subsubsection{{Time run}}
-
-\begin{{figure}}[!htbp]
-\centering
-\includegraphics[width=0.8\textwidth]{{total_heatmap_timer_run.png}}\\
-\caption{{DBMS: Heatmap of Timer run}}
-\end{{figure}}
-
-\clearpage
-\newpage
-\subsubsection{{Time execution}}
-
-\begin{{figure}}[!htbp]
-\centering
-\includegraphics[width=0.8\textwidth]{{total_heatmap_timer_execution.png}}\\
-\caption{{DBMS: Heatmap of Timer execution}}
-\end{{figure}}
-
-\clearpage
-\newpage
-\subsubsection{{Time datatransfer}}
-
-\begin{{figure}}[!htbp]
-\centering
-\includegraphics[width=0.8\textwidth]{{total_heatmap_timer_datatransfer.png}}\\
-\caption{{DBMS: Heatmap of Timer datatransfer}}
-\end{{figure}}
-
-\clearpage
-\newpage
-\subsubsection{{Time connection}}
-
-\begin{{figure}}[!htbp]
-\centering
-\includegraphics[width=0.8\textwidth]{{total_heatmap_timer_connection.png}}\\
-\caption{{DBMS: Heatmap of Timer connection}}
-\end{{figure}}
-
-\clearpage
-\newpage
+\section{{Queries}}
 \subsection{{Mean of Times per Query}}
 The next charts show the sums of query times per DBMS, timer and query.\\
 
