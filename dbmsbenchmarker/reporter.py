@@ -1685,6 +1685,8 @@ class latexer(reporter):
 			for c, dbms in self.benchmarker.dbms.items():
 				if not dbms.connectiondata['active']:
 					continue
+				#print(c)
+				#print("-----------")
 				dbmsname = self.benchmarker.dbms[c].getName()
 				settings[dbmsname] = {}
 				cm = self.benchmarker.getConnectionManager(numQuery, c)
@@ -1697,27 +1699,27 @@ class latexer(reporter):
 					settings[dbmsname]['Timeout'] = str(cm['timeout'])
 				if c in self.benchmarker.protocol['query'][str(numQuery)]['durations']:
 					settings[dbmsname]['Total Time'] = tools.formatDuration(self.benchmarker.protocol['query'][str(numQuery)]['durations'][c])
-				df = pd.DataFrame.from_dict({c:d['metrics'] for c,d in evaluation['query'][numQuery]['dbms'].items() if 'metrics' in d}).transpose()
-				df.index = df.index.map(tools.dbms.anonymizer)
-				settings_translate = {
-					'latency_run_mean_ms':'lat_r [ms]',
-					'latency_session_mean_ms':'lat_s [ms]',
-					'throughput_run_total_ps':'tps_r1 [Hz]',
-					'throughput_run_mean_ps':'tps_r2 [Hz]',
-					'throughput_session_total_ps':'tps_s1 [Hz]',
-					'throughput_session_mean_ps':'tps_s2 [Hz]',
-					'throughput_run_total_ph':'tph_r1 [ph]',
-					'throughput_run_mean_ph':'tph_r2 [ph]',
-					'throughput_session_total_ph':'tph_s1 [ph]',
-					'throughput_session_mean_ph':'tph_s2 [ph]',
-					'totaltime_ms':'total [s]'
-				}
-				df = df.reindex(['throughput_run_total_ps','throughput_run_mean_ps','throughput_session_total_ps','throughput_session_mean_ps','latency_run_mean_ms','latency_session_mean_ms','throughput_run_mean_ph'], axis=1)
-				df=df.rename(columns = settings_translate)
-				df = tools.dataframehelper.addStatistics(df)
-				result["benchmarkmetrics"] = tabulate(df,headers=df.columns, tablefmt="latex", stralign="right", floatfmt=",.2f", showindex=True).replace("\\textbackslash{}", "\\").replace("\\{", "{").replace("\\}","}")
-				df = pd.DataFrame.from_dict(settings).transpose()
-				result["querysettings"] = tabulate(df,headers=df.columns, tablefmt="latex", stralign="right", floatfmt=",.2f", showindex=True).replace("\\textbackslash{}", "\\").replace("\\{", "{").replace("\\}","}")
+			df = pd.DataFrame.from_dict({c:d['metrics'] for c,d in evaluation['query'][numQuery]['dbms'].items() if 'metrics' in d}).transpose()
+			df.index = df.index.map(tools.dbms.anonymizer)
+			settings_translate = {
+				'latency_run_mean_ms':'lat_r [ms]',
+				'latency_session_mean_ms':'lat_s [ms]',
+				'throughput_run_total_ps':'tps_r1 [Hz]',
+				'throughput_run_mean_ps':'tps_r2 [Hz]',
+				'throughput_session_total_ps':'tps_s1 [Hz]',
+				'throughput_session_mean_ps':'tps_s2 [Hz]',
+				'throughput_run_total_ph':'tph_r1 [ph]',
+				'throughput_run_mean_ph':'tph_r2 [ph]',
+				'throughput_session_total_ph':'tph_s1 [ph]',
+				'throughput_session_mean_ph':'tph_s2 [ph]',
+				'totaltime_ms':'total [s]'
+			}
+			df = df.reindex(['throughput_run_total_ps','throughput_run_mean_ps','throughput_session_total_ps','throughput_session_mean_ps','latency_run_mean_ms','latency_session_mean_ms','throughput_run_mean_ph'], axis=1)
+			df=df.rename(columns = settings_translate)
+			df = tools.dataframehelper.addStatistics(df)
+			result["benchmarkmetrics"] = tabulate(df,headers=df.columns, tablefmt="latex", stralign="right", floatfmt=",.2f", showindex=True).replace("\\textbackslash{}", "\\").replace("\\{", "{").replace("\\}","}")
+			df = pd.DataFrame.from_dict(settings).transpose()
+			result["querysettings"] = tabulate(df,headers=df.columns, tablefmt="latex", stralign="right", floatfmt=",.2f", showindex=True).replace("\\textbackslash{}", "\\").replace("\\{", "{").replace("\\}","}")
 			# dbms metrics
 			# query list
 			result["queryList"] = ""
@@ -1782,8 +1784,12 @@ class latexer(reporter):
 					return {}
 				# add statistics
 				dataframe = tools.dataframehelper.addStatistics(dataframe)
+				#if dataframe.isnull().values.any():
+				#	print(numQuery)
+				#	print(timer.name)
+				#	print(dataframe)
 				# print transfer table in latex
-				table = tabulate(dataframe,headers=header, tablefmt="latex", stralign="right", floatfmt=",.2f", showindex=True)
+				table = tabulate(dataframe, headers=header, tablefmt="latex", stralign="right", floatfmt=",.2f", showindex=True)
 				# align dbms name to the left
 				table = table.replace('\\begin{tabular}{r', '\\begin{tabular}{l')
 				result['table'] = table
