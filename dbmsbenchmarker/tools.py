@@ -615,8 +615,8 @@ class dataframehelper():
 			return dataframe
 		# select column 0 = connections
 		connections = dataframe.iloc[0:,0].values.tolist()
-		# only consider not 0
-		dataframe_non_zero = dataframe[(dataframe.T[1:] != 0).any()]
+		# only consider not 0, starting after dbms and n
+		dataframe_non_zero = dataframe[(dataframe.T[3:] != 0).any()]
 		# select column for factor and find minimum in cleaned dataframe
 		factorlist = dataframe[factor]
 		minimum = dataframe_non_zero[factor].min()
@@ -624,6 +624,7 @@ class dataframehelper():
 		if minimum > 0:
 			mean_list_normed = [round(float(item/minimum),2) for item in factorlist]
 		else:
+			#print(dataframe_non_zero)
 			mean_list_normed = [round(float(item),2) for item in factorlist]
 		# transpose for conversion to dict
 		dft = dataframe.transpose()
@@ -891,6 +892,9 @@ class dataframehelper():
 		return df
 	@staticmethod
 	def addStatistics(df):
+		#print(df)
+		df = df.dropna(axis=0, how='any')
+		#print(df)
 		stat_mean = df.mean()
 		stat_std = df.std()
 		stat_q1 = df.quantile(0.25)
@@ -942,54 +946,88 @@ class dataframehelper():
 	def evaluateTimerfactorsToDataFrame(evaluation, timer):
 		#l=e.evaluation['query'][1]['benchmarks']['execution']['statistics']
 		factors = {}
+		rows = []
 		for i,q in evaluation['query'].items():
-			l = q['benchmarks'][timer.name]['statistics']
-			for c,d in l.items():
-				if not c in factors:
-					factors[c] = []
-				factors[c].append(d['factor'])
-				#print(c)
-				#print(d['factor'])
+			#print(timer.name)
+			#print(i)
+			#print(q)
+			if q['config']['active']:
+				if 'benchmarks' in q and 'statistics' in q['benchmarks'][timer.name]:
+					l = q['benchmarks'][timer.name]['statistics']
+					#print(len(l))
+					#if len(l) < len(factors):
+					#	continue
+					rows.append('Q'+str(i))
+					for c,d in l.items():
+						if not c in factors:
+							factors[c] = []
+						factors[c].append(d['factor'])
+						#print(c)
+						#print(d['factor'])
+					if len(l) < len(factors):					
+						for c, d in factors.items():
+							if not c in l:
+								factors[c].append(None)
 		#print(factors)
 		df = pd.DataFrame(factors)
 		df = df.reindex(sorted(df.columns), axis=1)
 		df.columns = df.columns.map(dbms.anonymizer)
-		df.index = df.index.map(lambda x: 'Q'+str(x+1))
+		df.index = rows
+		#df.index = df.index.map(lambda x: 'Q'+str(x+1))
 		#print(timer.name)
 		#print(df)
 		return df
 	@staticmethod
 	def evaluateTPSToDataFrame(evaluation):
 		factors = {}
+		rows = []
 		for i,q in evaluation['query'].items():
-			for c,d in q['dbms'].items():
-				if not c in factors:
-					factors[c] = []
-				factors[c].append(d['metrics']['throughput_run_total_ps'])
-				#print(c)
-				#print(d['factor'])
+			if q['config']['active']:
+				rows.append('Q'+str(i))
+				for c,d in q['dbms'].items():
+					if not c in factors:
+						factors[c] = []
+					if 'throughput_run_mean_ps' in d['metrics']:
+						factors[c].append(d['metrics']['throughput_run_mean_ps'])
+					else:
+						factors[c].append(None)
+					#print(c)
+					#print(d['factor'])
 		#print(factors)
 		df = pd.DataFrame(factors)
 		df = df.reindex(sorted(df.columns), axis=1)
 		df.columns = df.columns.map(dbms.anonymizer)
-		df.index = df.index.map(lambda x: 'Q'+str(x+1))
+		#df.index = df.index.map(lambda x: 'Q'+str(x+1))
+		df.index = rows
 		#print(df)
 		return df
 	@staticmethod
 	def evaluateLatToDataFrame(evaluation):
 		factors = {}
+		rows = []
 		for i,q in evaluation['query'].items():
-			for c,d in q['dbms'].items():
-				if not c in factors:
-					factors[c] = []
-				factors[c].append(d['metrics']['latency_run_mean_ms']/1000.0)
-				#print(c)
-				#print(d['factor'])
+			if q['config']['active']:
+				#print(q)
+				rows.append('Q'+str(i))
+				for c,d in q['dbms'].items():
+					if 'metrics' in d and 'latency_run_mean_ms' in d['metrics']:
+						if not c in factors:
+							factors[c] = []
+						factors[c].append(d['metrics']['latency_run_mean_ms']/1000.0)
+						#print(c)
+						#print(d['factor'])
+					else:
+						if not c in factors:
+							factors[c] = []
+						factors[c].append(None)
+						#print(i)
+						#print(c)
 		#print(factors)
 		df = pd.DataFrame(factors)
 		df = df.reindex(sorted(df.columns), axis=1)
 		df.columns = df.columns.map(dbms.anonymizer)
-		df.index = df.index.map(lambda x: 'Q'+str(x+1))
+		#df.index = df.index.map(lambda x: 'Q'+str(x+1))
+		df.index = rows
 		#print(df)
 		return df
 	@staticmethod

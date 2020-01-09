@@ -21,7 +21,7 @@ from tqdm import tqdm
 import pickle
 import sys
 import numpy as np
-
+#import math
 
 
 class reporter():
@@ -1028,8 +1028,8 @@ class latexer(reporter):
 		ax = plt.gca()
 		ax.set_title(title)
 		data = df.values
-		max_cell = df.values.max()
-		min_cell = df.values.min()
+		max_cell = np.nanmax(df.values)
+		min_cell = np.nanmin(df.values)
 		for y in range(data.shape[0]):
 			for x in range(data.shape[1]):
 				color_cell = 'white' if data[y, x] > (min_cell+max_cell)/2 else 'black'
@@ -1071,8 +1071,8 @@ class latexer(reporter):
 			plt.yticks(range(len(df)),df.index)
 			ax = plt.gca()
 			data = df.values
-			max_cell = df.values.max()
-			min_cell = df.values.min()
+			max_cell = np.nanmax(df.values)
+			min_cell = np.nanmin(df.values)
 			for y in range(data.shape[0]):
 				for x in range(data.shape[1]):
 					color_cell = 'white' if data[y, x] > (min_cell+max_cell)/2 else 'black'
@@ -1102,11 +1102,13 @@ class latexer(reporter):
 		plt.yticks(range(len(df)),df.index)
 		ax = plt.gca()
 		data = df.values
-		max_cell = df.values.max()
-		min_cell = df.values.min()
+		max_cell = np.nanmax(df.values)
+		min_cell = np.nanmin(df.values)
 		for y in range(data.shape[0]):
 			for x in range(data.shape[1]):
 				color_cell = 'black' if data[y, x] > (min_cell+max_cell)/2 else 'white'
+				if np.isnan(data[y, x]):
+					color_cell = 'black'
 				plt.text(x, y, '%.2f' % data[y, x],
 					horizontalalignment='center',
 					verticalalignment='center',
@@ -1132,8 +1134,8 @@ class latexer(reporter):
 		plt.yticks(range(len(df)),df.index)
 		ax = plt.gca()
 		data = df.values
-		max_cell = df.values.max()
-		min_cell = df.values.min()
+		max_cell = np.nanmax(df.values)
+		min_cell = np.nanmin(df.values)
 		for y in range(data.shape[0]):
 			for x in range(data.shape[1]):
 				color_cell = 'white' if data[y, x] > (min_cell+max_cell)/2 else 'black'
