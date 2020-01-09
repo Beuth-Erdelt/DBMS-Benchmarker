@@ -654,6 +654,8 @@ class dataframehelper():
 		dataframe = dataframe.replace(0.00, "0.00")
 		# drop rows of only 0 (starting after factor and n)
 		dataframe = dataframe[(dataframe.T[3:] != "0.00").any()]
+		# replace string by float
+		dataframe = dataframe.replace("0.00", 0.00)
 		# anonymize dbms
 		dataframe.iloc[0:,0] = dataframe.iloc[0:,0].map(dbms.anonymizer)
 		dataframe = dataframe.set_index(dataframe.columns[0])
@@ -893,9 +895,14 @@ class dataframehelper():
 	@staticmethod
 	def addStatistics(df):
 		#print(df)
-		df = df.dropna(axis=0, how='any')
+		#with_nan = False
 		#print(df)
+		if df.isnull().any().any():
+			#print("Missing!")
+			with_nan = True
+			df = df.dropna()
 		stat_mean = df.mean()
+		#print(stat_mean)
 		stat_std = df.std()
 		stat_q1 = df.quantile(0.25)
 		stat_q2 = df.quantile(0.5)
@@ -903,10 +910,12 @@ class dataframehelper():
 		df.loc['Median']= stat_q2
 		df.loc['Mean']= stat_mean
 		df.loc['Std Dev']= stat_std
-		df.loc['Std Dev'] = df.loc['Std Dev'].map(lambda x: x if not np.isnan(x) else 0.0)
+		df.loc['Std Dev'] = stat_std.map(lambda x: x if not np.isnan(x) else 0.0)
 		df.loc['cv [%]']= df.loc['Std Dev']/df.loc['Mean']*100.0
 		df.loc['iqr']=stat_q3-stat_q1
 		df.loc['qcod [%]']=(stat_q3-stat_q1)/(stat_q3+stat_q1)*100.0
+		#if with_nan:
+		#	print(df)
 		return df
 	@staticmethod
 	def evaluateMonitoringToDataFrame(evaluation):
