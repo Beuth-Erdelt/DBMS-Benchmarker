@@ -1006,7 +1006,7 @@ class dataframehelper():
 				for c,d in q['dbms'].items():
 					if not c in factors:
 						factors[c] = []
-					if 'throughput_run_mean_ps' in d['metrics']:
+					if 'metrics' in d and 'throughput_run_mean_ps' in d['metrics']:
 						factors[c].append(d['metrics']['throughput_run_mean_ps'])
 					else:
 						factors[c].append(None)
