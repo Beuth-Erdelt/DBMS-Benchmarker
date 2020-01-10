@@ -99,7 +99,7 @@ This is inspired by [TPC-H](http://www.tpc.org/tpch/) and [TPC-DS](http://www.tp
 
 Benchmarks can be [evaluated](#evaluation) in
 * [tables](#run-benchmarks) of measured times - csv or pickled pandas dataframes
-* [statistics](#example-statistics-table-per-query)
+* [statistics](#example-statistics-table-per-query) - measures of tendency and dispersion, sensitive and insensitive to outliers
 * [plots](#example-plot-per-query) of times
 * [box plots](#example-boxplot-per-query) of times
 * [bar plots](#example-bar-chart-per-query) of times
@@ -371,7 +371,7 @@ These plots are available as png files.
 </p>
 
 These plots show the variation of benchmarking time during the various runs per DBMS as a boxplot.
-Warmup and cooldown are not included.
+Warmup, cooldown and zero (missing) values are not included.
 This is for inspection of variation and outliers.
 
 #### Example Bar Chart per Query
@@ -788,6 +788,7 @@ Setting `store` can also yield the result sets to be stored in extra files. Poss
 
 The `connection` timer will also measure the time for establishing a connection.
 It is possible to force sleeping before each establishment by using `delay` (in seconds).
+Default is 0.
 
 The `DBMS` key allows to specify SQL dialects. All connections starting with the key in this dict with use the specified alternative query. In the example above, for instance a connection 'MySQL-InnoDB' will use the alternative.
 
@@ -996,11 +997,14 @@ This should guarantee reproducible results for randomized queries.
 ### Statistics
 
 Currently the following statistics are computed:
-* Mean
-* Standard deviation
-* Coefficient of variation
-* Quartile coefficient of dispersion
-* Interquartile range
+* Sensitive to outliers
+  * Mean
+  * Standard deviation
+  * Coefficient of variation
+* Insensitive to outliers
+  * Mean
+  * Interquartile range
+  * Quartile coefficient of dispersion
 
 ## Usage
 
