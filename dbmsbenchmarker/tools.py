@@ -962,11 +962,12 @@ class dataframehelper():
 		#l=e.evaluation['query'][1]['benchmarks']['execution']['statistics']
 		factors = {}
 		rows = []
+		#print(timer.name)
+		connections = [c for c, v in evaluation['dbms'].items()]
 		for i,q in evaluation['query'].items():
-			#print(timer.name)
-			#print(i)
 			#print(q)
 			if q['config']['active']:
+				#print(i)
 				if 'benchmarks' in q and 'statistics' in q['benchmarks'][timer.name]:
 					l = q['benchmarks'][timer.name]['statistics']
 					#print(len(l))
@@ -979,11 +980,13 @@ class dataframehelper():
 						factors[c].append(d['factor'])
 						#print(c)
 						#print(d['factor'])
-					if len(l) < len(factors):					
-						for c, d in factors.items():
+					if len(l) < len(connections):
+						for i, c in enumerate(connections):
 							if not c in l:
+								if not c in factors:
+									factors[c] = []
 								factors[c].append(None)
-		#print(factors)
+		l={c:len(k) for c,k in factors.items()}
 		df = pd.DataFrame(factors)
 		df = df.reindex(sorted(df.columns), axis=1)
 		df.columns = df.columns.map(dbms.anonymizer)
