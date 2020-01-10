@@ -62,16 +62,17 @@ class timer():
 		:param data: List of numbers
 		:return: returns 6 statistical numbers as a list
 		"""
+		# remove zeros for some statistics
 		data_no_zeros = list(filter((0).__ne__, data))
-		#if len(data_no_zeros) != len(data):
-		#	print(data)
-		#	print(data_no_zeros)
+		if len(data_no_zeros) == 0:
+			# we do not want to have an empty list
+			data_no_zeros = data
 		result = []
-		t_mean = mean(data_no_zeros)
+		t_mean = mean(data)
 		numRun = len(data)
 		#print("statistics for n runs: "+str(numRun))
 		if numRun > 1:
-			t_stdev = stdev(data_no_zeros)
+			t_stdev = stdev(data)
 		else:
 			t_stdev = 0
 		if t_mean > 0 and t_stdev > 0:
@@ -80,7 +81,7 @@ class timer():
 			t_cv = 0
 		t_median = median(data_no_zeros)
 		t_min = min(data_no_zeros)
-		t_max = max(data)
+		t_max = max(data_no_zeros)
 		Q1 = np.percentile(data_no_zeros,25)
 		Q3 = np.percentile(data_no_zeros,75)
 		if Q3+Q1 > 0:
