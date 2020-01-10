@@ -63,7 +63,7 @@ class timer():
 		:return: returns 6 statistical numbers as a list
 		"""
 		# remove zeros for some statistics
-		data_no_zeros = list(filter((0).__ne__, data))
+		data_no_zeros = list(filter((0.0).__ne__, data))
 		if len(data_no_zeros) == 0:
 			# we do not want to have an empty list
 			data_no_zeros = data
