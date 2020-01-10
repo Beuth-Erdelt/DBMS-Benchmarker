@@ -62,23 +62,27 @@ class timer():
 		:param data: List of numbers
 		:return: returns 6 statistical numbers as a list
 		"""
+		data_no_zeros = list(filter((0).__ne__, data))
+		#if len(data_no_zeros) != len(data):
+		#	print(data)
+		#	print(data_no_zeros)
 		result = []
-		t_mean = mean(data)
+		t_mean = mean(data_no_zeros)
 		numRun = len(data)
 		#print("statistics for n runs: "+str(numRun))
 		if numRun > 1:
-			t_stdev = stdev(data)
+			t_stdev = stdev(data_no_zeros)
 		else:
 			t_stdev = 0
 		if t_mean > 0 and t_stdev > 0:
 			t_cv = t_stdev / t_mean * 100.0
 		else:
 			t_cv = 0
-		t_median = median(data)
-		t_min = min(data)
+		t_median = median(data_no_zeros)
+		t_min = min(data_no_zeros)
 		t_max = max(data)
-		Q1 = np.percentile(data,25)
-		Q3 = np.percentile(data,75)
+		Q1 = np.percentile(data_no_zeros,25)
+		Q3 = np.percentile(data_no_zeros,75)
 		if Q3+Q1 > 0:
 			t_qcod = 100.0*(Q3-Q1)/(Q3+Q1)
 		else:
@@ -907,11 +911,13 @@ class dataframehelper():
 		stat_q1 = df.quantile(0.25)
 		stat_q2 = df.quantile(0.5)
 		stat_q3 = df.quantile(0.75)
-		df.loc['Median']= stat_q2
+		#print(stat_q1)
+		#print(stat_q3)
 		df.loc['Mean']= stat_mean
 		df.loc['Std Dev']= stat_std
 		df.loc['Std Dev'] = stat_std.map(lambda x: x if not np.isnan(x) else 0.0)
 		df.loc['cv [%]']= df.loc['Std Dev']/df.loc['Mean']*100.0
+		df.loc['Median']= stat_q2
 		df.loc['iqr']=stat_q3-stat_q1
 		df.loc['qcod [%]']=(stat_q3-stat_q1)/(stat_q3+stat_q1)*100.0
 		#if with_nan:
