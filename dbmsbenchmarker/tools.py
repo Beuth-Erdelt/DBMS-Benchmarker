@@ -965,29 +965,31 @@ class dataframehelper():
 		rows = []
 		#print(timer.name)
 		connections = [c for c, v in evaluation['dbms'].items()]
+		#print(connections)
 		for i,q in evaluation['query'].items():
 			#print(q)
 			if q['config']['active']:
 				#print(i)
 				if 'benchmarks' in q and 'statistics' in q['benchmarks'][timer.name]:
-					l = q['benchmarks'][timer.name]['statistics']
-					#print(len(l))
-					#if len(l) < len(factors):
-					#	continue
 					rows.append('Q'+str(i))
-					for c,d in l.items():
+					stats = q['benchmarks'][timer.name]['statistics']
+					#print(stats)
+					for j, c in enumerate(connections):
+						#print(c)
+						#if c in dbms.anonymizer:
+						#	print(dbms.anonymizer[c])
+						#print(c)
+						#print(dbms.anonymizer)
 						if not c in factors:
 							factors[c] = []
-						factors[c].append(d['factor'])
-						#print(c)
-						#print(d['factor'])
-					if len(l) < len(connections):
-						for i, c in enumerate(connections):
-							if not c in l:
-								if not c in factors:
-									factors[c] = []
-								factors[c].append(None)
+						if c in stats:
+							factors[c].append(stats[c]['factor'])
+						elif c in dbms.anonymizer and dbms.anonymizer[c] in stats:
+							factors[c].append(stats[dbms.anonymizer[c]]['factor'])
+						else:
+							factors[c].append(None)
 		l={c:len(k) for c,k in factors.items()}
+		#print(l)
 		df = pd.DataFrame(factors)
 		df = df.reindex(sorted(df.columns), axis=1)
 		df.columns = df.columns.map(dbms.anonymizer)
