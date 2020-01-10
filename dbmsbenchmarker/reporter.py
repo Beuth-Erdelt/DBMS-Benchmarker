@@ -522,6 +522,7 @@ class boxploter(reporter):
 				# leave out warumup/cooldown
 				df = df.drop(range(1,query.warmup+1),axis=1)
 				df = df.drop(range(query.numRunEnd+1, query.numRun+1),axis=1)
+			df = df.loc[:, (df != 0).any(axis=0)]
 			# save as boxplot
 			self.save(
 				dataframe = df,
