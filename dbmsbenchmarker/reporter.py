@@ -336,7 +336,7 @@ class ploter(reporter):
 		# add index name
 		df_transposed.index.name = subtitle
 		# plot
-		plotdata = df_transposed.plot(title=title)
+		plotdata = df_transposed.plot(title=title, figsize=(12,8))
 		# scale y-axis: 0 to max plus 10%
 		plotdata.set_ylim(0, df_transposed.max().max()*1.10,0)
 		if timer.perRun:
@@ -380,7 +380,7 @@ class ploter(reporter):
 				dataframe = df,
 				query = query,
 				#title = "Q"+str(numQuery)+": Time "+t.name+" [ms]",
-				title = "Q"+str(numQuery)+": Time "+t.name+" [ms] in "+str(len(df.columns))+" observation",
+				title = "Q"+str(numQuery)+": Time "+t.name+" [ms] in "+str(len(df.columns))+" observations",
 				subtitle = subtitle,
 				filename = self.benchmarker.path+'/query_'+str(numQuery)+'_'+t.name+'_plot.png',
 				timer=t)
@@ -480,7 +480,7 @@ class boxploter(reporter):
 		# anonymize dbms already done
 		#df_unpivot['DBMS'] = df_unpivot['DBMS'].map(tools.dbms.anonymizer)
 		# plot
-		boxplot = df_unpivot.boxplot(by='DBMS', grid=False)
+		boxplot = df_unpivot.boxplot(by='DBMS', grid=False, figsize=(12,10))
 		# rotate labels
 		plt.xticks(rotation=90)
 		# align box to labels
@@ -526,7 +526,7 @@ class boxploter(reporter):
 			# save as boxplot
 			self.save(
 				dataframe = df,
-				title = "Q"+str(numQuery)+": Time "+t.name+" [ms] in "+str(len(df.columns))+" observation",
+				title = "Q"+str(numQuery)+": Time "+t.name+" [ms] in "+str(len(df.columns))+" observations",
 				filename = self.benchmarker.path+'/query_'+str(numQuery)+'_'+t.name+'_boxplot.png')
 
 
@@ -1066,6 +1066,7 @@ class latexer(reporter):
 			if df.empty:
 				continue
 			fig = plt.figure(figsize = (10,12))
+			#print(df)
 			plt.imshow(df, cmap="Reds", aspect='auto')
 			plt.colorbar()
 			plt.xticks(range(len(df.columns)),df.columns, rotation=90)
