@@ -75,6 +75,7 @@ tps\_r1 &= Throughput of runs (number of runs / total time) [Hz]\\
 tps\_r2 &= Throughput of runs (number of parallel clients / cleaned mean time) [Hz]\\
 tps\_s1 &= Throughput of sessions (number of runs / length of sessions / total time) [Hz]\\
 tps\_s2 &= Throughput of sessions (number of parallel clients / cleaned mean time) [Hz]\\
+tph\_r2 &= Throughput of runs (number of parallel clients / cleaned mean time) [h^{{-1}}]
 \end{{tabular}}
 }}}}
 
@@ -103,6 +104,7 @@ The next chart shows the geometric mean of factors per DBMS.
 \newpage
 %\subsection{{Heatmaps of Timers}}
 \subsubsection{{Time session}}
+The next chart shows the factor of timerSession per query and DBMS.
 
 \begin{{figure}}[!htbp]
 \centering
@@ -113,6 +115,7 @@ The next chart shows the geometric mean of factors per DBMS.
 \clearpage
 \newpage
 \subsubsection{{Time run}}
+The next chart shows the factor of timerRun per query and DBMS.
 
 \begin{{figure}}[!htbp]
 \centering
@@ -123,6 +126,7 @@ The next chart shows the geometric mean of factors per DBMS.
 \clearpage
 \newpage
 \subsubsection{{Time execution}}
+The next chart shows the factor of timerExecution per query and DBMS.
 
 \begin{{figure}}[!htbp]
 \centering
@@ -133,6 +137,7 @@ The next chart shows the geometric mean of factors per DBMS.
 \clearpage
 \newpage
 \subsubsection{{Time datatransfer}}
+The next chart shows the factor of timerTransfer per query and DBMS.
 
 \begin{{figure}}[!htbp]
 \centering
@@ -143,6 +148,7 @@ The next chart shows the geometric mean of factors per DBMS.
 \clearpage
 \newpage
 \subsubsection{{Time connection}}
+The next chart shows the factor of timerConnection per query and DBMS.
 
 \begin{{figure}}[!htbp]
 \centering
@@ -167,6 +173,7 @@ The next chart shows the geometric mean of these metrics per DBMS.
 \clearpage
 \newpage
 \subsubsection{{Heatmap of Throughputs}}
+The next chart shows tps\_r2 per query and DBMS.
 
 \begin{{figure}}[!htbp]
 \centering
@@ -177,6 +184,7 @@ The next chart shows the geometric mean of these metrics per DBMS.
 \clearpage
 \newpage
 \subsubsection{{Heatmap of Latencies}}
+The next chart shows lat\_r per query and DBMS.
 
 \begin{{figure}}[!htbp]
 \centering
@@ -272,6 +280,8 @@ The table shows total times per query, normalized to the average total time of t
 \clearpage
 \newpage
 \subsubsection{{Heatmap}}
+The next chart shows total times per query, normalized to the average total time of that query.
+
 \begin{{figure}}[!htbp]
 \centering
 \includegraphics[width=0.8\textwidth]{{total_heatmap_normalized.png}}
