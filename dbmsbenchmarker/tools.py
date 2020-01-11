@@ -970,16 +970,11 @@ class dataframehelper():
 			#print(q)
 			if q['config']['active']:
 				#print(i)
+				rows.append('Q'+str(i))
 				if 'benchmarks' in q and 'statistics' in q['benchmarks'][timer.name]:
-					rows.append('Q'+str(i))
+					# there are (some) results for this query
 					stats = q['benchmarks'][timer.name]['statistics']
-					#print(stats)
 					for j, c in enumerate(connections):
-						#print(c)
-						#if c in dbms.anonymizer:
-						#	print(dbms.anonymizer[c])
-						#print(c)
-						#print(dbms.anonymizer)
 						if not c in factors:
 							factors[c] = []
 						if c in stats:
@@ -988,14 +983,19 @@ class dataframehelper():
 							factors[c].append(stats[dbms.anonymizer[c]]['factor'])
 						else:
 							factors[c].append(None)
-		l={c:len(k) for c,k in factors.items()}
+				else:
+					# there are no results for this (active) query
+					for j, c in enumerate(connections):
+						if not c in factors:
+							factors[c] = []
+						else:
+							factors[c].append(None)
+		#l={c:len(k) for c,k in factors.items()}
 		#print(l)
 		df = pd.DataFrame(factors)
 		df = df.reindex(sorted(df.columns), axis=1)
 		df.columns = df.columns.map(dbms.anonymizer)
 		df.index = rows
-		#df.index = df.index.map(lambda x: 'Q'+str(x+1))
-		#print(timer.name)
 		#print(df)
 		return df
 	@staticmethod

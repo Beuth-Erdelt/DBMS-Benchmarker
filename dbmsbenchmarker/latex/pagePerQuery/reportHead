@@ -255,7 +255,7 @@ Values are computed per run.
 \clearpage
 \newpage
 \subsection{{Total Times}}
-The next chart shows the total query time per DBMS and query.
+The next chart shows the total query time per DBMS and query, and only includes queries, which all DBMS could handle successfully
 
 \begin{{figure}}[!htbp]
 \centering
@@ -268,7 +268,7 @@ The next chart shows the total query time per DBMS and query.
 \newpage
 \subsection{{Normalized Total Times}}
 The next chart shows the total query time per DBMS and query, normalized to 100\% per query.
-The table shows total times per query, normalized to the average total time of that query.
+The table shows total times per query, normalized to the average total time of that query, and only includes queries, which all DBMS could handle successfully.
 
 \begin{{figure}}[!htbp]
 \centering
