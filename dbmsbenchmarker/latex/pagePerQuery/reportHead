@@ -106,6 +106,7 @@ Only successful queries and DBMS not producing any error are considered.
 %\subsection{{Heatmaps of Timers}}
 \subsubsection{{Time session}}
 The next chart shows the factor of timerSession per query and DBMS.
+All active queries and DBMS are considered.
 
 \begin{{figure}}[!htbp]
 \centering
@@ -117,6 +118,7 @@ The next chart shows the factor of timerSession per query and DBMS.
 \newpage
 \subsubsection{{Time run}}
 The next chart shows the factor of timerRun per query and DBMS.
+All active queries and DBMS are considered.
 
 \begin{{figure}}[!htbp]
 \centering
@@ -128,6 +130,7 @@ The next chart shows the factor of timerRun per query and DBMS.
 \newpage
 \subsubsection{{Time execution}}
 The next chart shows the factor of timerExecution per query and DBMS.
+All active queries and DBMS are considered.
 
 \begin{{figure}}[!htbp]
 \centering
@@ -139,6 +142,7 @@ The next chart shows the factor of timerExecution per query and DBMS.
 \newpage
 \subsubsection{{Time datatransfer}}
 The next chart shows the factor of timerTransfer per query and DBMS.
+All active queries and DBMS are considered.
 
 \begin{{figure}}[!htbp]
 \centering
@@ -150,6 +154,7 @@ The next chart shows the factor of timerTransfer per query and DBMS.
 \newpage
 \subsubsection{{Time connection}}
 The next chart shows the factor of timerConnection per query and DBMS.
+All active queries and DBMS are considered.
 
 \begin{{figure}}[!htbp]
 \centering
@@ -162,6 +167,7 @@ The next chart shows the factor of timerConnection per query and DBMS.
 \subsection{{Relative Ranking based on Latency and Throughput}}
 For each query, we compute latency and throughput per DBMS.
 The next chart shows the geometric mean of these metrics per DBMS.
+Only successful queries and DBMS not producing any error are considered.
 
 \begin{{figure}}[ht]
 \centering
@@ -175,6 +181,7 @@ The next chart shows the geometric mean of these metrics per DBMS.
 \newpage
 \subsubsection{{Heatmap of Throughputs}}
 The next chart shows tps\_r2 per query and DBMS.
+All active queries and DBMS are considered.
 
 \begin{{figure}}[!htbp]
 \centering
@@ -186,6 +193,7 @@ The next chart shows tps\_r2 per query and DBMS.
 \newpage
 \subsubsection{{Heatmap of Latencies}}
 The next chart shows lat\_r per query and DBMS.
+All active queries and DBMS are considered.
 
 \begin{{figure}}[!htbp]
 \centering
@@ -211,6 +219,7 @@ The next chart shows the total time of ingestion per DBMS.
 \subsubsection{{Monitoring}}
 The next chart shows the metrics obtained from monitoring.
 Values are computed as arithmetic mean across benchmarking time.
+Only successful queries and DBMS not producing any error are considered.
 
 \begin{{figure}}[ht]
 \centering
@@ -232,6 +241,7 @@ Here, cost is based on the total time.
 \subsection{{Average ranking based on the sum of times}}
 We compute a ranking of DBMS for each query, from fastest to slowest.
 The next chart shows the average ranking per DBMS. 
+All active queries and DBMS are considered.
 
 \begin{{figure}}[ht]
 \centering
@@ -242,9 +252,35 @@ The next chart shows the average ranking per DBMS.
 
 \clearpage
 \newpage
+\subsection{{Mean of Sizes of Resultsets}}
+The next chart shows the size of resultsets per DBMS and per timer.
+Sizes are normalized to minimum per query.
+All active queries and DBMS are considered.
+
+\begin{{figure}}[ht]
+\centering
+\includegraphics[width=0.8\textwidth]{{total_heatmap_resultsize.png}}\\
+\caption{{DBMS: Sizes of Resultsets}}
+\end{{figure}}
+
+\clearpage
+\newpage
+\subsection{{Occurrences of Errors}}
+The next chart shows per DBMS and per timer, if an error occured.
+All active queries and DBMS are considered.
+
+\begin{{figure}}[ht]
+\centering
+\includegraphics[width=0.8\textwidth]{{total_heatmap_errors.png}}\\
+\caption{{DBMS: Errors occurrences}}
+\end{{figure}}
+
+\clearpage
+\newpage
 \subsection{{Mean of Times}}
 The next chart shows the mean of query times per DBMS and per timer.
 Values are computed per run.
+Only successful queries and DBMS not producing any error are considered.
 
 \begin{{figure}}[ht]
 \centering
@@ -256,7 +292,8 @@ Values are computed per run.
 \clearpage
 \newpage
 \subsection{{Total Times}}
-The next chart shows the total query time per DBMS and query, and only includes queries, which all DBMS could handle successfully
+The next chart shows the total query time per DBMS and query.
+Only successful queries and DBMS not producing any error are considered.
 
 \begin{{figure}}[!htbp]
 \centering
@@ -269,7 +306,8 @@ The next chart shows the total query time per DBMS and query, and only includes 
 \newpage
 \subsection{{Normalized Total Times}}
 The next chart shows the total query time per DBMS and query, normalized to 100\% per query.
-The table shows total times per query, normalized to the average total time of that query, and only includes queries, which all DBMS could handle successfully.
+The table shows total times per query, normalized to the average total time of that query.
+Only successful queries and DBMS not producing any error are considered.
 
 \begin{{figure}}[!htbp]
 \centering
@@ -280,8 +318,9 @@ The table shows total times per query, normalized to the average total time of t
 
 \clearpage
 \newpage
-\subsubsection{{Heatmap}}
+\subsubsection{{Heatmap of Total Times}}
 The next chart shows total times per query, normalized to the average total time of that query.
+Only successful queries and DBMS not producing any error are considered.
 
 \begin{{figure}}[!htbp]
 \centering
