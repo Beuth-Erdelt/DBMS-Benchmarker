@@ -169,6 +169,7 @@ class metrics():
         e = [i for i,t in enumerate(self.benchmarker.timers) if t.name=="execution"]
         # list of active queries for timer e[0] = execution
         qs = tools.findSuccessfulQueriesAllDBMS(self.benchmarker, None, self.benchmarker.timers)[e[0]]
+        numContribute = 0
         #print(qs)
         for query, protocol in self.benchmarker.protocol['query'].items():
             if int(query)-1 in qs:
@@ -176,6 +177,7 @@ class metrics():
                     self.token = self.benchmarker.dbms[c].connectiondata['monitoring']['grafanatoken']
                     self.url = self.benchmarker.dbms[c].connectiondata['monitoring']['grafanaurl']
                     if self.benchmarker.dbms[c].connectiondata['active'] and self.token and self.url:
+                        numContribute = numContribute + 1
                         if not c in m_n:
                             m_n[c] = {}
                             m_sum[c] = {}
@@ -199,4 +201,5 @@ class metrics():
         #print(m_n)
         #print(m_sum)
         #print(metrics.m_avg)
+        #print(numContribute)
         return metrics.m_avg

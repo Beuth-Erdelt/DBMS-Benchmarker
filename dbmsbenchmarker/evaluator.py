@@ -261,6 +261,8 @@ class evaluator():
 								num[c][m] = 0
 							tps[c][m] *= metric
 							num[c][m] += 1
+		#print(tps)
+		#print(num)
 		for c, t in tps.items():
 			if not c in evaluation['dbms']:
 				continue

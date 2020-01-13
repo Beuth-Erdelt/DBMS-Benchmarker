@@ -784,26 +784,35 @@ class dataframehelper():
 				logging.debug("timer "+str(numTimer)+" is valid for query Q"+str(i+1))
 				df = benchmarker.statsToDataFrame(i+1, t)
 				queryObject = query(benchmarker.queries[i])
+				# at least one DBMS does not contribute (because of zero value)
+				bMissingFound = False
+				# mean value (i.e. sum of all values)
+				for c,values in q.items():
+					#print(values)
+					if benchmarker.dbms[c].connectiondata['active']:
+						dbmsname = benchmarker.dbms[c].getName()
+						if dbmsname in df.index:
+							#print(df.loc[dbmsname].loc['factor'])
+							#print(df)
+							value_to_multiply = float(df.loc[dbmsname].loc['factor'])
+							#print(value_to_multiply)
+							if value_to_multiply == 0:
+								# we have some values, but none counting because of warmup
+								#print("Remove")
+								#print(dbmsname)
+								bMissingFound = True
+								break
+				#print(t.name)
+				#print(str(i+1))
+				if bMissingFound or df.empty:
+					#numQueriesEvaluated = numQueriesEvaluated - 1
+					continue
+				#print("OK")
 				# no active dbms missing for this timer and query
 				numQueriesEvaluated = numQueriesEvaluated + 1
 				if numQuery is None:
 					logging.debug(str(numQueriesEvaluated)+"=Q"+str(i+1)+" in total bar chart of timer "+t.name+" - all active dbms contribute")
 				bValuesFound = True
-				# at least one DBMS does not contribute (because of zero value)
-				bMissingFound = False
-				# mean value (i.e. sum of all values)
-				for c,values in q.items():
-					if benchmarker.dbms[c].connectiondata['active']:
-						dbmsname = benchmarker.dbms[c].getName()
-						if dbmsname in df.index:
-							value_to_multiply = float(df.loc[dbmsname].loc['factor'])
-							if value_to_multiply == 0:
-								# we have some values, but none counting because of warmup
-								bMissingFound = True
-								break
-				if bMissingFound:
-					numQueriesEvaluated = numQueriesEvaluated - 1
-					continue
 				for c,values in q.items():
 					if benchmarker.dbms[c].connectiondata['active']:
 						dbmsname = benchmarker.dbms[c].getName()
