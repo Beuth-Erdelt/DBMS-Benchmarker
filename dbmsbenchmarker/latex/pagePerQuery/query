@@ -27,6 +27,13 @@
 }}}}
 \caption{{Query {queryNumber}: DBMS Settings}}
 \end{{figure}}
+
+{{\scriptsize{{
+{errors}
+}}}}
+
+\clearpage
+\newpage
 \subsubsection{{Query String}}
 \begin{{figure}}[ht]
 {queryString}
@@ -35,6 +42,18 @@
 
 {{\scriptsize{{
 {queryList}
-{errors}
 }}}}
+
+\clearpage
+\newpage
 {hardwareMetrics}
+
+\clearpage
+\newpage
+\subsubsection{{Timers}}
+\begin{{figure}}[ht]
+\centering
+\includegraphics[width=0.9\textwidth]{{query_{queryNumber}_bar.png}}
+\caption{{Query {queryNumber}: Timers}}
+\end{{figure}}
+

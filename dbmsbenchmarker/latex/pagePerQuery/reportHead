@@ -252,7 +252,7 @@ All active queries and DBMS are considered.
 
 \clearpage
 \newpage
-\subsection{{Mean of Sizes of Resultsets}}
+\subsection{{Normalized Sizes of Resultsets}}
 The next chart shows the size of resultsets per DBMS and per timer.
 Sizes are normalized to minimum per query.
 All active queries and DBMS are considered.
@@ -331,9 +331,11 @@ Only successful queries and DBMS not producing any error are considered.
 \clearpage
 \newpage
 \section{{Queries}}
+\begin{{comment}}
 \subsection{{Mean of Times per Query}}
 The next charts show the sums of query times per DBMS, timer and query.\\
 
 \noindent
 {summary}
+\end{{comment}}
 \clearpage
