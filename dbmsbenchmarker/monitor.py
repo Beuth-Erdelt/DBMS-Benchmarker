@@ -79,7 +79,7 @@ class metrics():
             print("Hardware metrics for Q"+str(q))
             self.generatePlotForQuery(q)
     def generateLatexForQuery(self, parameter):
-        latex = "\\newpage\\subsubsection{{Hardware Metrics}}\n\\begin{{figure}}[ht]\n\\centering\n"
+        latex = "\\subsubsection{{Hardware Metrics}}\n\\begin{{figure}}[ht]\n\\centering\n"
         query = parameter['queryNumber']
         numPlots = 0
         for m, metric in metrics.metrics.items():
