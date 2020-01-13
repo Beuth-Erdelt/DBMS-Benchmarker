@@ -1077,6 +1077,39 @@ class dataframehelper():
 		#print(df)
 		return df
 	@staticmethod
+	def evaluateResultsizeToDataFrame(evaluation):
+		# heatmap of resultsize
+		l = {i: {c: d['received_size_byte'] if 'received_size_byte' in d else 0 for c,d in q['dbms'].items()} for i,q in evaluation['query'].items()}
+		df = pd.DataFrame(l)
+		d = df.replace(0, np.nan).min()
+		df = df.T
+		df.index = ['Q'+str(i+1) for i,j in enumerate(df.index)]
+		df.columns = list(l[1].keys())
+		df.columns = df.columns.map(dbms.anonymizer)
+		return df
+	@staticmethod
+	def evaluateNormalizedResultsizeToDataFrame(evaluation):
+		# heatmap of (normalized) resultsize
+		l = {i: {c: d['received_size_byte'] if 'received_size_byte' in d else 0 for c,d in q['dbms'].items()} for i,q in evaluation['query'].items()}
+		df = pd.DataFrame(l)
+		d = df.replace(0, np.nan).min()
+		# normalization
+		df = df.div(d).replace(0,np.nan)
+		df = df.T
+		df.index = ['Q'+str(i+1) for i,j in enumerate(df.index)]
+		df.columns = list(l[1].keys())
+		df.columns = df.columns.map(dbms.anonymizer)
+		return df
+	def evaluateErrorsToDataFrame(evaluation):
+		# heatmap of errors
+		l = {i: {c: True if 'error' in d else False for c,d in q['dbms'].items()} for i,q in evaluation['query'].items()}
+		df = pd.DataFrame(l)
+		df = df.T
+		df.index = ['Q'+str(i+1) for i,j in enumerate(df.index)]
+		df.columns = list(l[1].keys())
+		df.columns = df.columns.map(dbms.anonymizer)
+		return df
+	@staticmethod
 	def getWorkflow(benchmarker):
 		print("getWorkflow")
 		filename = benchmarker.path+'/experiments.config'
