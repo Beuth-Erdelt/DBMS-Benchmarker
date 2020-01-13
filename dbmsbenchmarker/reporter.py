@@ -479,6 +479,9 @@ class boxploter(reporter):
 		df_unpivot.columns = ['DBMS', 'time [ms]']
 		# anonymize dbms already done
 		#df_unpivot['DBMS'] = df_unpivot['DBMS'].map(tools.dbms.anonymizer)
+		# no results left
+		if df_unpivot.empty:
+			return
 		# plot
 		boxplot = df_unpivot.boxplot(by='DBMS', grid=False, figsize=(12,10))
 		# rotate labels
@@ -1061,6 +1064,7 @@ class latexer(reporter):
 			#print(t.name)
 			#print(df)
 			df = df[(df.T != "0.00").any()]
+			df.fillna(value=pd.np.nan, inplace=True)
 			#print(df)
 			#df = df[(df.T[0:] != 0).any()]
 			if df.empty:
