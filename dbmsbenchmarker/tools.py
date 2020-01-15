@@ -1123,6 +1123,16 @@ class dataframehelper():
 		df.columns = df.columns.map(dbms.anonymizer)
 		df = df.reindex(sorted(df.columns), axis=1)
 		return df
+	def evaluateWarningsToDataFrame(evaluation):
+		# heatmap of errors
+		l = {i: {c: True if 'warning' in d else False for c,d in q['dbms'].items() if c in evaluation['dbms']} for i,q in evaluation['query'].items()}
+		df = pd.DataFrame(l)
+		df = df.T
+		df.index = ['Q'+str(i+1) for i,j in enumerate(df.index)]
+		df.columns = list(l[1].keys())
+		df.columns = df.columns.map(dbms.anonymizer)
+		df = df.reindex(sorted(df.columns), axis=1)
+		return df
 	@staticmethod
 	def getWorkflow(benchmarker):
 		print("getWorkflow")
