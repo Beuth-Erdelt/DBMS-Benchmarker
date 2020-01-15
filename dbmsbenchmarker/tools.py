@@ -761,6 +761,7 @@ class dataframehelper():
 		:param timer: Timer containing benchmark results
 		:return: returns nothing
 		"""
+		#logging.basicConfig(level=logging.DEBUG)
 		sums = list(range(0,len(timer)))
 		timerNames = [t.name for t in timer]
 		bValuesFound = False
@@ -866,6 +867,7 @@ class dataframehelper():
 			title = chartlabel+" in "+str(numQueriesEvaluated)+" benchmarks"# ("+str(numBenchmarks)+" runs)"
 		else:
 			title = "Q"+str(numQuery)+": "+chartlabel+" in "+str(queryObject.numRun-queryObject.warmup-queryObject.cooldown)+" benchmark test runs"
+		#logging.basicConfig(level=logging.ERROR)
 		return d, title
 	@staticmethod
 	def totalTimes(benchmarker):
@@ -1018,8 +1020,8 @@ class dataframehelper():
 		#l={c:len(k) for c,k in factors.items()}
 		#print(l)
 		df = pd.DataFrame(factors)
-		df = df.reindex(sorted(df.columns), axis=1)
 		df.columns = df.columns.map(dbms.anonymizer)
+		df = df.reindex(sorted(df.columns), axis=1)
 		df.index = rows
 		#print(df)
 		return df
@@ -1043,8 +1045,8 @@ class dataframehelper():
 						#print(d['factor'])
 		#print(factors)
 		df = pd.DataFrame(factors)
-		df = df.reindex(sorted(df.columns), axis=1)
 		df.columns = df.columns.map(dbms.anonymizer)
+		df = df.reindex(sorted(df.columns), axis=1)
 		#df.index = df.index.map(lambda x: 'Q'+str(x+1))
 		df.index = rows
 		#print(df)
@@ -1073,8 +1075,8 @@ class dataframehelper():
 							#print(c)
 		#print(factors)
 		df = pd.DataFrame(factors)
-		df = df.reindex(sorted(df.columns), axis=1)
 		df.columns = df.columns.map(dbms.anonymizer)
+		df = df.reindex(sorted(df.columns), axis=1)
 		#df.index = df.index.map(lambda x: 'Q'+str(x+1))
 		df.index = rows
 		#print(df)
@@ -1089,6 +1091,7 @@ class dataframehelper():
 		df.index = ['Q'+str(i+1) for i,j in enumerate(df.index)]
 		df.columns = list(l[1].keys())
 		df.columns = df.columns.map(dbms.anonymizer)
+		df = df.reindex(sorted(df.columns), axis=1)
 		return df
 	@staticmethod
 	def evaluateNormalizedResultsizeToDataFrame(evaluation):
@@ -1102,6 +1105,7 @@ class dataframehelper():
 		df.index = ['Q'+str(i+1) for i,j in enumerate(df.index)]
 		df.columns = list(l[1].keys())
 		df.columns = df.columns.map(dbms.anonymizer)
+		df = df.reindex(sorted(df.columns), axis=1)
 		return df
 	def evaluateErrorsToDataFrame(evaluation):
 		# heatmap of errors
@@ -1111,6 +1115,7 @@ class dataframehelper():
 		df.index = ['Q'+str(i+1) for i,j in enumerate(df.index)]
 		df.columns = list(l[1].keys())
 		df.columns = df.columns.map(dbms.anonymizer)
+		df = df.reindex(sorted(df.columns), axis=1)
 		return df
 	@staticmethod
 	def getWorkflow(benchmarker):
