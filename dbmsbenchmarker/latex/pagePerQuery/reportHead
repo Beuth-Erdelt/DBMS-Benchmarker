@@ -93,6 +93,7 @@ For each query, the best DBMS is considered as gold standard = $100$\%.
 Based on their times, the other DBMS obtain a relative ranking factor.
 The next chart shows the geometric mean of factors per DBMS.
 Only successful queries and DBMS not producing any error are considered.
+The chart shows the geometric mean of factors per DBMS.
 
 \begin{{figure}}[ht]
 \centering

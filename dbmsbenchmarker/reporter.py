@@ -706,7 +706,7 @@ class tps(reporter):
 				return None
 			dfTotalLatTPS = dfTotalLatTPS.drop(columns='totaltime_ms')
 		else:
-			dfTotalLatTPS = pd.DataFrame.from_dict({c:d['metrics'] for c,d in evaluation['query'][numQuery]['dbms'].items() if 'metrics' in d}).transpose()
+			dfTotalLatTPS = pd.DataFrame.from_dict({c:d['metrics'] for c,d in evaluation['query'][numQuery]['dbms'].items() if 'metrics' in d and c in evaluation['dbms'] and not 'error' in d}).transpose()
 		if dfTotalLatTPS is None or dfTotalLatTPS.empty:
 			return None
 		dfTotalLatTPS.index = dfTotalLatTPS.index.map(tools.dbms.anonymizer)
@@ -1258,6 +1258,7 @@ class latexer(reporter):
 		dfTotalLatTPS = dfTotalLatTPS.reindex(['throughput_run_total_ps','throughput_run_mean_ps','throughput_session_total_ps','throughput_session_mean_ps','latency_run_mean_ms','latency_session_mean_ms','throughput_run_mean_ph'], axis=1)
 		#print(dfTotalLatTPS)
 		dfTotalLatTPS.index = dfTotalLatTPS.index.map(tools.dbms.anonymizer)
+		dfTotalLatTPS = dfTotalLatTPS.reindex(sorted(dfTotalLatTPS.index), axis=0)
 		#print(dfTotalLatTPS)
 		settings_translate = {
 			'latency_run_mean_ms':'lat_r [ms]',
@@ -1765,7 +1766,8 @@ class latexer(reporter):
 					settings[dbmsname]['Timeout'] = str(cm['timeout'])
 				if c in self.benchmarker.protocol['query'][str(numQuery)]['durations']:
 					settings[dbmsname]['Total Time'] = tools.formatDuration(self.benchmarker.protocol['query'][str(numQuery)]['durations'][c])
-			df = pd.DataFrame.from_dict({c:d['metrics'] for c,d in evaluation['query'][numQuery]['dbms'].items() if 'metrics' in d}).transpose()
+			# Lat and Tps
+			df = pd.DataFrame.from_dict({c:d['metrics'] for c,d in evaluation['query'][numQuery]['dbms'].items() if 'metrics' in d and c in evaluation['dbms'] and not 'error' in d}).transpose()
 			df.index = df.index.map(tools.dbms.anonymizer)
 			settings_translate = {
 				'latency_run_mean_ms':'lat_r [ms]',
