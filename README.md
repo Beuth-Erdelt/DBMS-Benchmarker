@@ -683,6 +683,14 @@ The errors that may have occured are saved for each DBMS and per query.
 The error messages are fetched from Python exceptions thrown during a benchmark run.
 This is for inspection of problems.
 
+#### Initialization Scripts
+
+If the result folder contains init scripts, they will be included in the latex report.
+
+#### Bexhoma Workflow
+
+If the result folder contains the configuration of a [bexhoma](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager) workflow, it will be included in the latex report.
+
 ## Command Line Options and Configuration
 
 How to configure the benchmarker can be illustrated best by looking at the source code of the [command line tool](benchmark.py), which will be described in the following.
@@ -818,7 +826,8 @@ Example for `CONNECTION_FILE`:
   * `timeout`: Maximum lifespan of a connection. Default is None, i.e. no limit.
   * `numProcesses`: Number of parallel client processes. Default is 1.
   * `runsPerConnection`: Number of runs performed before connection is closed. Default is None, i.e. no limit.
-* `hostsystem`: Describing information for report in particular about the host system
+* `hostsystem`: Describing information for report in particular about the host system.
+  This can be written automatically by https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager
 
 #### Query File
 
