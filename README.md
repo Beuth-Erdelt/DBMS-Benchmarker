@@ -336,58 +336,158 @@ After an experiment has finished, the results can be evaluated
 
 There is an *evaluator class*, which collects most of the (numerical) evaluations and provides them as an **evaluation dict**.
 
-#### Example Statistics Table per Query
-These tables are available as dataframes and in the evaluation dict.
+## Statistics and Metrics
+
+### Statistical Measures
+
+Currently the following statistics are computed:
+* Sensitive to outliers
+  * Mean
+  * Standard deviation
+  * Coefficient of variation
+* Insensitive to outliers
+  * Median
+  * Interquartile range
+  * Quartile coefficient of dispersion
+
+### Informations about DBMS
+This evaluation is available in the evaluation dict and in the latex reports.
 
 <p align="center">
-<img src="docs/table.png" width="640">
+<img src="docs/dbms.png" width="480">
 </p>
 
-These tables show [statistics](#statistics) about benchmarking time during the various runs per DBMS as a table.
-Warmup and cooldown are not included.
-This is for inspection of stability.
-A factor column is included.
-This is computed as the multiple of the minimum of the mean of benchmark times per DBMS.
-The DBMS are ordered ascending by factor.
+The user has to provide in a [config file](#connection-file)
+* a unique name (**connectionname**)
+* JDBC connection information
 
-#### Example Plot per Query
-These plots are available as png files.
+If a monitoring interface is provided, [hardware metrics](#hardware-metrics) are collected and aggregated.
+We may further provide describing information for reporting.
+
+### Global Metrics
+
+#### Average Ranking
+This evaluation is available as dataframes, in the evaluation dict and as png files.
 
 <p align="center">
-<img src="docs/plot.png" width="320">
+<img src="docs/ranking.png" width="320">
 </p>
 
-These plots show the variation of benchmarking time during the various runs per DBMS as a plot.
-Warmup and cooldown are included and marked as such.
-This is for inspection of time dependence.
+We compute a ranking of DBMS for each query based on the sum of times, from fastest to slowest.
+Unsuccessful DBMS are considered last place.
+The chart shows the average ranking per DBMS.
 
-**Note** this is only reliable for non-parallel runs.
-
-#### Example Boxplot per Query
-These plots are available as png files.
+#### Time of Ingest per DBMS
+This evaluation is available as dataframes, in the evaluation dict and as png files.
 
 <p align="center">
-<img src="docs/boxplot.png" width="320">
+<img src="docs/total_barh_ingest.png" width="320">
 </p>
 
-These plots show the variation of benchmarking time during the various runs per DBMS as a boxplot.
-Warmup, cooldown and zero (missing) values are not included.
-This is for inspection of variation and outliers.
+This is part of the informations provided by the user.
+The tool does not measure time of ingest explicitly.
 
-#### Example Bar Chart per Query
-These plots are available as png files.
+#### Hardware Metrics
+
+#### Host Metrics
+
+
+### Drill-Down Timers
+
+#### Relative Ranking based on Times
+This evaluation is available as dataframes, in the evaluation dict and as png files.
 
 <p align="center">
-<img src="docs/bar.png" width="320">
+<img src="docs/relative.png" width="320">
 </p>
 
-This is based on the sum of times of all single benchmark test runs.
-These charts show the average of times per DBMS based on mean value.
-Warmup and cooldown are not included.
-If data transfer or connection time is also benchmarked, the chart is stacked.
-The bars are ordered ascending.
+For each query, the best DBMS is considered as gold standard = 100%. Based on their times, the other DBMS obtain a relative ranking factor.
+Only successful queries and DBMS not producing any error are considered.
+The chart shows the geometric mean of factors per DBMS.
 
-#### Hardware Metrics per Query
+#### Average Times
+This evaluation is available as dataframes, in the evaluation dict and as png files.
+
+<p align="center">
+<img src="docs/sum_of_times.png" width="320">
+</p>
+
+This is based on the mean times of all benchmark test runs.
+Measurements start before each benchmark run and stop after the same benchmark run has been finished. The average value is computed per query.
+Parallel benchmark runs should not slow down in an ideal situation.
+Only successful queries and DBMS not producing any error are considered.
+The chart shows the average of query times based on mean values per DBMS and per timer.
+
+**Note** that the mean of mean values (here) is in general not the same as mean of all runs (different queries may have different number of runs).
+
+### Slice Timers
+
+#### Heatmap of Factors
+This evaluation is available as dataframes, in the evaluation dict and as png files.
+
+<p align="center">
+<img src="docs/heatmap-timers.png" width="320">
+</p>
+
+The relative ranking can be refined to see the contribution of each query.
+The chart shows the factor of the corresponding timer per query and DBMS.
+All active queries and DBMS are considered.
+
+
+### Drill-Down Queries
+
+#### Total Times
+This evaluation is available as dataframes, in the evaluation dict and as png files.
+
+<p align="center">
+<img src="docs/total_times.png" width="320">
+</p>
+
+This is based on the times each DBMS is queried in total. Measurement starts before first benchmark run and stops after the last benchmark run has been finished. Parallel benchmarks should speed up the total time in an ideal situation.
+Only successful queries and DBMS not producing any error are considered.
+Note this also includes the time needed for sorting and storing result sets etc.
+The chart shows the total query time per DBMS and query.
+
+#### Normalized Total Times
+This evaluation is available as dataframes, in the evaluation dict and as png files.
+
+<p align="center">
+<img src="docs/total_times.png" width="320">
+</p>
+
+The chart shows total times per query, normalized to the average total time of that query.
+Only successful queries and DBMS not producing any error are considered.
+
+#### Result Sets
+
+#### Errors
+
+### Slice Queries
+
+#### Latency and Throughput
+This evaluation is available as dataframes, in the evaluation dict and as png files.
+
+<p align="center">
+<img src="docs/relative-tps-lat.png" width="640">
+</p>
+
+For each query, latency and throughput is computed per DBMS.
+This is available as dataframes, in the evaluation dict and as png files per query.
+This evaluation also is available as the geometric mean over all queries and per DBMS.
+Only successful queries and DBMS not producing any error are considered there.
+
+The abbreviations mean
+```
+lat_r = Latency of runs (mean time) [ms]
+lat_s = Latency of session (mean time) [ms]
+tps_r1 = Throughput of runs (number of runs / total time) [Hz]
+tps_r2 = Throughput of runs (number of parallel clients / cleaned mean time) [Hz]
+tps_s1 = Throughput of sessions (number of runs / length of sessions / total time) [Hz]
+tps_s2 = Throughput of sessions (number of parallel clients / cleaned mean time) [Hz]
+tph_r2 = Throughput of runs (number of parallel clients / cleaned mean time) [pH]
+```
+
+#### Hardware Metrics
 These metrics are available as png files and csv files.
 
 <p align="center">
@@ -396,7 +496,8 @@ These metrics are available as png files and csv files.
 
 These metrics are collected from a Prometheus / Grafana stack.
 This expects time-synchronized servers.
-**Note** this has limited validity, since metrics are typically scraped only on a basis of several seconds.
+
+**Note** this has limited validity, since metrics are typically scraped only on a basis of several seconds. GPU Isolations works very well, but CPU isolation cannot be measured.
 
 To make this metrics available, we must [provide](#connection-file) an API URL and an API Access Token for a Grafana Server.
 The tool collects metrics from the Grafana server with a step size of 1 second.
@@ -425,99 +526,60 @@ Currently the following metrics are collected:
 'query': 'sum(dcgm_fb_used)'
 ```
 
-#### Relative Ranking based on the Sum of Times
-This evaluation is available as dataframes, in the evaluation dict and as png files.
+#### Timers Per Query
+These plots are available as png files.
 
 <p align="center">
-<img src="docs/relative.png" width="320">
+<img src="docs/bar.png" width="320">
 </p>
 
-For each query, the best DBMS is considered as gold standard = 100%. Based on their times, the other DBMS obtain a relative ranking factor.
-Only successful queries and DBMS not producing any error are considered.
-The chart shows the geometric mean of factors per DBMS.
+This is based on the sum of times of all single benchmark test runs.
+These charts show the average of times per DBMS based on mean value.
+Warmup and cooldown are not included.
+If data transfer or connection time is also benchmarked, the chart is stacked.
+The bars are ordered ascending.
 
-#### Relative Ranking based on Latency and Throughput
-This evaluation is available as dataframes, in the evaluation dict and as png files.
+### Slice Query and Timer
+
+#### Statistics Table
+These tables are available as dataframes and in the evaluation dict.
 
 <p align="center">
-<img src="docs/relative-tps-lat.png" width="640">
+<img src="docs/table.png" width="640">
 </p>
 
-For each query, latency and throughput is computed per DBMS.
-This is available as dataframes, in the evaluation dict and as png files per query.
-This evaluation also is available as the geometric mean over all queries and per DBMS.
-Only successful queries and DBMS not producing any error are considered.
+These tables show [statistics](#statistics) about benchmarking time during the various runs per DBMS as a table.
+Warmup and cooldown are not included.
+This is for inspection of stability.
+A factor column is included.
+This is computed as the multiple of the minimum of the mean of benchmark times per DBMS.
+The DBMS are ordered ascending by factor.
 
-The abbreviations mean
-```
-lat_r = Latency of runs (mean time) [ms]
-lat_s = Latency of session (mean time) [ms]
-tps_r1 = Throughput of runs (number of runs / total time) [Hz]
-tps_r2 = Throughput of runs (number of parallel clients / cleaned mean time) [Hz]
-tps_s1 = Throughput of sessions (number of runs / length of sessions / total time) [Hz]
-tps_s2 = Throughput of sessions (number of parallel clients / cleaned mean time) [Hz]
-```
-
-#### Average Ranking based on the Sum of Times
-This evaluation is available as dataframes, in the evaluation dict and as png files.
+#### Plot of Values
+These plots are available as png files.
 
 <p align="center">
-<img src="docs/ranking.png" width="320">
+<img src="docs/plot.png" width="320">
 </p>
 
-We compute a ranking of DBMS for each query, from fastest to slowest.
-Unsuccessful DBMS are considered last place.
-The chart shows the average ranking per DBMS.
+These plots show the variation of benchmarking time during the various runs per DBMS as a plot.
+Warmup and cooldown are included and marked as such.
+This is for inspection of time dependence.
 
-#### Informations about DBMS
-This evaluation is available in the evaluation dict and in the latex reports.
+**Note** this is only reliable for non-parallel runs.
+
+#### Boxplot of Values
+These plots are available as png files.
 
 <p align="center">
-<img src="docs/dbms.png" width="480">
+<img src="docs/boxplot.png" width="320">
 </p>
 
-The user has to provide in a [config file](#connection-file)
-* a unique name (**connectionname**)
-* JDBC connection information
+These plots show the variation of benchmarking time during the various runs per DBMS as a boxplot.
+Warmup, cooldown and zero (missing) values are not included.
+This is for inspection of variation and outliers.
 
-We may further provide describing information for reporting.
-
-#### Time of Ingest per DBMS
-This evaluation is available as dataframes, in the evaluation dict and as png files.
-
-<p align="center">
-<img src="docs/total_barh_ingest.png" width="320">
-</p>
-
-This is part of the informations provided by the user.
-The tool does not measure time of ingest explicitly.
-
-#### Sum of Times
-This evaluation is available as dataframes, in the evaluation dict and as png files.
-
-<p align="center">
-<img src="docs/sum_of_times.png" width="320">
-</p>
-
-This is based on the mean times of all benchmark test runs.
-Measurements start before each benchmark run and stop after the same benchmark run has been finished. The average value is computed per query.
-Parallel benchmark runs should not slow down in an ideal situation.
-Only successful queries and DBMS not producing any error are considered.
-The chart shows the average of query times based on mean values per DBMS and per timer.
-
-**Note** that the mean of mean values (here) is in general not the same as mean of all runs (different queries may have different number of runs).
-
-#### Total Times
-This evaluation is available as dataframes, in the evaluation dict and as png files.
-
-<p align="center">
-<img src="docs/total_times.png" width="320">
-</p>
-
-This is based on the times each DBMS is queried in total. Measurement starts before first benchmark run and stops after the last benchmark run has been finished. Parallel benchmarks should speed up the total time in an ideal situation.
-Only successful queries and DBMS not producing any error are considered.
-Note this also includes the time needed for sorting and storing result sets etc.
-The chart shows the total query time per DBMS and query.
+### Further Data
 
 #### Result Sets per Query and Run
 This evaluation is available as dataframes and csv files.
@@ -525,7 +587,7 @@ This evaluation is available as dataframes and csv files.
 The result set (sorted values, hashed or pure size) of the first run of each DBMS can be saved per query.
 This is for comparison and inspection. 
 
-#### Benchmark Times per Query
+#### All Benchmark Times per Query
 This evaluation is available as dataframes, in the evaluation dict and as csv files.
 
 The benchmark times of all runs of each DBMS can be saved per query.
@@ -993,18 +1055,6 @@ If nothing is specified, the default value is used, which is half of the number 
 #### Random Seed
 The option `-s` can be used to specify a random seed.
 This should guarantee reproducible results for randomized queries.
-
-### Statistics
-
-Currently the following statistics are computed:
-* Sensitive to outliers
-  * Mean
-  * Standard deviation
-  * Coefficient of variation
-* Insensitive to outliers
-  * Mean
-  * Interquartile range
-  * Quartile coefficient of dispersion
 
 ## Usage
 
