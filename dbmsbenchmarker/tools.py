@@ -1031,14 +1031,16 @@ class dataframehelper():
 			if q['config']['active']:
 				rows.append('Q'+str(i))
 				for c,d in q['dbms'].items():
-					if not c in factors:
-						factors[c] = []
-					if 'metrics' in d and 'throughput_run_mean_ps' in d['metrics']:
-						factors[c].append(d['metrics']['throughput_run_mean_ps'])
-					else:
-						factors[c].append(None)
-					#print(c)
-					#print(d['factor'])
+					if c in evaluation['dbms']:
+						# dbms is active
+						if not c in factors:
+							factors[c] = []
+						if 'metrics' in d and 'throughput_run_mean_ps' in d['metrics']:
+							factors[c].append(d['metrics']['throughput_run_mean_ps'])
+						else:
+							factors[c].append(None)
+						#print(c)
+						#print(d['factor'])
 		#print(factors)
 		df = pd.DataFrame(factors)
 		df = df.reindex(sorted(df.columns), axis=1)
@@ -1056,18 +1058,19 @@ class dataframehelper():
 				#print(q)
 				rows.append('Q'+str(i))
 				for c,d in q['dbms'].items():
-					if 'metrics' in d and 'latency_run_mean_ms' in d['metrics']:
-						if not c in factors:
-							factors[c] = []
-						factors[c].append(d['metrics']['latency_run_mean_ms']/1000.0)
-						#print(c)
-						#print(d['factor'])
-					else:
-						if not c in factors:
-							factors[c] = []
-						factors[c].append(None)
-						#print(i)
-						#print(c)
+					if c in evaluation['dbms']:
+						if 'metrics' in d and 'latency_run_mean_ms' in d['metrics']:
+							if not c in factors:
+								factors[c] = []
+							factors[c].append(d['metrics']['latency_run_mean_ms']/1000.0)
+							#print(c)
+							#print(d['factor'])
+						else:
+							if not c in factors:
+								factors[c] = []
+							factors[c].append(None)
+							#print(i)
+							#print(c)
 		#print(factors)
 		df = pd.DataFrame(factors)
 		df = df.reindex(sorted(df.columns), axis=1)
@@ -1079,7 +1082,7 @@ class dataframehelper():
 	@staticmethod
 	def evaluateResultsizeToDataFrame(evaluation):
 		# heatmap of resultsize
-		l = {i: {c: d['received_size_byte'] if 'received_size_byte' in d else 0 for c,d in q['dbms'].items()} for i,q in evaluation['query'].items()}
+		l = {i: {c: d['received_size_byte'] if 'received_size_byte' in d else 0 for c,d in q['dbms'].items() if c in evaluation['dbms']} for i,q in evaluation['query'].items()}
 		df = pd.DataFrame(l)
 		d = df.replace(0, np.nan).min()
 		df = df.T
@@ -1090,7 +1093,7 @@ class dataframehelper():
 	@staticmethod
 	def evaluateNormalizedResultsizeToDataFrame(evaluation):
 		# heatmap of (normalized) resultsize
-		l = {i: {c: d['received_size_byte'] if 'received_size_byte' in d else 0 for c,d in q['dbms'].items()} for i,q in evaluation['query'].items()}
+		l = {i: {c: d['received_size_byte'] if 'received_size_byte' in d else 0 for c,d in q['dbms'].items() if c in evaluation['dbms']} for i,q in evaluation['query'].items()}
 		df = pd.DataFrame(l)
 		d = df.replace(0, np.nan).min()
 		# normalization
@@ -1102,7 +1105,7 @@ class dataframehelper():
 		return df
 	def evaluateErrorsToDataFrame(evaluation):
 		# heatmap of errors
-		l = {i: {c: True if 'error' in d else False for c,d in q['dbms'].items()} for i,q in evaluation['query'].items()}
+		l = {i: {c: True if 'error' in d else False for c,d in q['dbms'].items() if c in evaluation['dbms']} for i,q in evaluation['query'].items()}
 		df = pd.DataFrame(l)
 		df = df.T
 		df.index = ['Q'+str(i+1) for i,j in enumerate(df.index)]
