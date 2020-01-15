@@ -336,7 +336,8 @@ class ploter(reporter):
 		# add index name
 		df_transposed.index.name = subtitle
 		# plot
-		plotdata = df_transposed.plot(title=title, figsize=(12,8))
+		#print(tools.dbms.dbmscolors)
+		plotdata = df_transposed.plot(title=title, figsize=(12,8), color=[tools.dbms.dbmscolors.get(x, '#333333') for x in df_transposed.columns])
 		# scale y-axis: 0 to max plus 10%
 		plotdata.set_ylim(0, df_transposed.max().max()*1.10,0)
 		if timer.perRun:
@@ -668,7 +669,7 @@ class tps(reporter):
 		#print(dataframe)
 		plt.figure()
 		df1 = dataframe[['tps_r1','tps_r2','tps_s1','tps_s2']].transpose()
-		df1.plot.bar(title="Throughputs [Hz]")
+		df1.plot.bar(title="Throughputs [Hz]", color=[tools.dbms.dbmscolors.get(x, '#333333') for x in df1.columns])
 		# rotate labels
 		plt.xticks(rotation=70, fontsize=12)
 		# align box to labels
@@ -679,7 +680,7 @@ class tps(reporter):
 		plt.close('all')
 		plt.figure()
 		df2 = dataframe[['lat_r','lat_s']].transpose()
-		df2.plot.bar(title="Latencies [ms]")
+		df2.plot.bar(title="Latencies [ms]", color=[tools.dbms.dbmscolors.get(x, '#333333') for x in df2.columns])
 		# rotate labels
 		plt.xticks(rotation=70, fontsize=12)
 		# align box to labels
@@ -782,7 +783,7 @@ class arear(reporter):
 			return False
 		# plot
 		#plotdata = df_transposed.plot(title=title)
-		dataframe.plot.area(title=title, figsize=(12,8))#, xticks=list(dataframe.index))
+		dataframe.plot.area(title=title, figsize=(12,8), color=[tools.dbms.dbmscolors.get(x, '#333333') for x in dataframe.columns])#, xticks=list(dataframe.index))
 		# rotate labels
 		plt.xticks(range(len(dataframe.index)), dataframe.index)
 		#plt.xticks(rotation=70, fontsize=12)
@@ -998,7 +999,7 @@ class latexer(reporter):
 		dfTotalRank, timers = self.benchmarker.generateSortedTotalRanking()
 		filename = self.benchmarker.path+'/total_barh_rank.png'
 		title = 'Ranking of '+str(timers)+' timers'
-		dfTotalRank.plot.barh()
+		dfTotalRank.plot.barh()#color=[tools.dbms.dbmscolors.get(x, '#333333') for x in dfTotalRank.index])
 		plt.xticks(fontsize=14)
 		# align box to labels
 		plt.tight_layout()
@@ -1291,7 +1292,7 @@ class latexer(reporter):
 		#print(dfTotalLatTPS)
 		plt.figure()
 		df1 = dfTotalLatTPS[['tps_r1','tps_r2','tps_s1','tps_s2']].transpose()
-		df1.plot.bar(title="Throughputs [Hz]")
+		df1.plot.bar(title="Throughputs [Hz]", color=[tools.dbms.dbmscolors.get(x, '#333333') for x in df1.columns])
 		# rotate labels
 		plt.xticks(rotation=70, fontsize=12)
 		# align box to labels
@@ -1302,7 +1303,7 @@ class latexer(reporter):
 		plt.close('all')
 		plt.figure()
 		df2 = dfTotalLatTPS[['lat_r','lat_s']].transpose()
-		df2.plot.bar(title="Latencies [ms]")
+		df2.plot.bar(title="Latencies [ms]", color=[tools.dbms.dbmscolors.get(x, '#333333') for x in df2.columns])
 		# rotate labels
 		plt.xticks(rotation=70, fontsize=12)
 		# align box to labels
@@ -1368,7 +1369,7 @@ class latexer(reporter):
 			dfIngest.sort_values(by=['Time of Ingestion [s]'], inplace=True, ascending=False)
 			filename = self.benchmarker.path+'/total_barh_ingest.png'
 			title = 'Ingest into '+str(len(dfIngest.index))+' DBMS'
-			dfIngest.plot.barh()
+			dfIngest.plot.barh()#color=[tools.dbms.dbmscolors.get(x, '#333333') for x in dfIngest.index])
 			plt.xticks(fontsize=14)
 			# align box to labels
 			plt.tight_layout()
