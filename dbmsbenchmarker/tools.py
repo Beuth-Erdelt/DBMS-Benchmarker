@@ -15,6 +15,7 @@ import math
 import re
 import ast
 from os import path
+import matplotlib.pyplot as plt
 
 
 
@@ -472,6 +473,7 @@ class dbms():
 	currentAnonymChar = 65
 	anonymizer = {}
 	deanonymizer = {}
+	dbmscolors = {}
 	def __init__(self, connectiondata, anonymous = False):
 		"""
 		Converts dict into object.
@@ -523,6 +525,10 @@ class dbms():
 		# =0 means: take global setting
 		if not 'numProcesses' in self.connectiondata:
 			self.connectiondata['numProcesses'] = 0
+		# color of dbms
+		colors = plt.rcParams['axes.prop_cycle'].by_key()['color']
+		if self.connectiondata['active']:
+			dbms.dbmscolors[self.name] = colors[len(dbms.dbmscolors)]
 	def connect(self):
 		"""
 		Connects to one single dbms.

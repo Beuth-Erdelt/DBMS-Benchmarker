@@ -145,7 +145,7 @@ class metrics():
                 #print(df_all.index)
             #print(df_all)
             title=metric['title']
-            ax = df_all.plot(title=title)
+            ax = df_all.plot(title=title, color=[tools.dbms.dbmscolors.get(x, '#333333') for x in df_all.columns])
             ax.set_ylim(bottom=0, top=df_all.max().max()*1.10)
             #plt.legend(title="Metric")
             if add_interval > 0:
@@ -154,7 +154,7 @@ class metrics():
                 i = 0
                 for c,end in intervals.items():
                     if self.benchmarker.dbms[c].getName() in df_all.columns:
-                        plt.axvline(x=end, linestyle="--", color=list_of_colors[i])
+                        plt.axvline(x=end, linestyle="--", color=tools.dbms.dbmscolors[self.benchmarker.dbms[c].getName()])#list_of_colors[i])
                         i = i + 1
                 #plt.axvline(x=len(df_all.index)-2*add_interval-1, linestyle="--", color="black")
             plt.ticklabel_format(useOffset=False)
