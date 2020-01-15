@@ -18,7 +18,7 @@ DBMS-Benchmarker
 * allows easy repetition of benchmarks in varying settings - different hardware, DBMS, DBMS configurations, DB settings etc
 * investigates a number of timing aspects - connection, execution, data transfer, in total, per session etc
 * investigates a number of other aspects - received result sets, precision, number of clients, hardware metrics etc
-* helps to [evaluate](#evaluation) results - by providing Python data structures, [statistics](#statistics), plots, Latex reporting and an [inspection tool](#inspector)
+* helps to [evaluate](#evaluation) results - by providing Python data structures, [statistics](#statistical-measures), plots, Latex reporting and an [inspection tool](#inspector)
 
 [Use Cases](#use-cases) may be
 * [Benchmark 1 Query in 1 DBMS](#benchmark-1-query-in-1-dbms)
@@ -75,7 +75,7 @@ This tool can be [used](#usage) to
 * [compare](#extended-query-file) result sets obtained from different runs and dbms
 * add benchmarks for more [queries](#continue-benchmarks-for-more-queries) or for more [DBMS](#continue-benchmarks-for-more-connections)
 * [read](#read-stored-benchmarks) finished benchmarks
-* fetch hardware metrics from a grafana server for monitoring
+* fetch hardware metrics from a [grafana](#monitoring-hardware-metrics) server for monitoring
 * generate reports [during](#run-benchmarks-and-generate-reports) or [after](#generate-reports-of-stored-benchmarks) benchmarking, with real names or [anonymized](#anonymize) DBMS
 * interactively [inspect](#inspector) results
 
@@ -99,17 +99,39 @@ Benchmarks can be [randomized](#randomized-query-file) (optionally with specifie
 This is inspired by [TPC-H](http://www.tpc.org/tpch/) and [TPC-DS](http://www.tpc.org/tpcds/) - Decision Support Benchmarks.
 
 Benchmarks can be [evaluated](#evaluation) in
-* [tables](#run-benchmarks) of measured times - csv or pickled pandas dataframes
-* [statistics](#example-statistics-table-per-query) - measures of tendency and dispersion, sensitive and insensitive to outliers
-* [plots](#example-plot-per-query) of times
-* [box plots](#example-boxplot-per-query) of times
-* [bar plots](#example-bar-chart-per-query) of times
-* [bar plots](#relative-ranking-based-on-latency-and-throughput) of latencies and throughputs
-* times based on successive or parallel benchmarks ([sum of times](#sum-of-times) and [total times](#total-times))
-* rankings of settings (mean times, median times, [relative position](#relative-ranking-based-on-the-sum-of-times), [average position](#average-ranking-based-on-the-sum-of-times), [latency and throughput](#relative-ranking-based-on-latency-and-throughput))
-* precision and identity of [result sets](#comparison)
-* [hardware metrics](#hardware-metrics-per-query)
-* summarizing and exhaustive latex reports
+* [Global Metrics](#global-metrics)
+  * [average position](#average-ranking)
+  * [latency and throughput](#latency-and-throughput)
+  * [ingestion](#time-of-ingest-per-dbms)
+  * [hardware metrics](#hardware-metrics)
+  * [host metrics](#host-metrics)
+* [Drill-Down Timers](#drill-down-timers)
+  * [relative position](#relative-ranking-based-on-times)
+  * [average times](#average-times)
+* [Slices of Timers](#slice-timers)
+  * [heatmap of factors](#heatmap-of-factors)
+* [Drill-Down Queries](#drill-down-queries)
+  * [total times](#total-times)
+  * [normalized total times](#normalized-total-times)
+  * [latencies](#latencies)
+  * [throughputs](#throughputs)
+  * [sizes of result sets](#sizes-of-result-sets)
+  * [errors](#errors)
+* [Slices of Queries](#slice-queries)
+  * [latency and throughput](#latency-and-throughput-per-query)
+  * [hardware metrics](#hardware-metrics-per-query)
+  * [timers](#timers-per-query)
+* [Slices of Queries and Timers](#slice-queries-and-timers)
+  * [statistics](#statistics-table) - measures of tendency and dispersion, sensitive and insensitive to outliers
+  * [plots](#plot-of-values) of times
+  * [box plots](#boxplot-of-values) of times
+  * [bar plots](#bar-chart-per-query) of times
+* summarizing and exhaustive latex reports containing [further data](#further-data) like
+  * precision and identity checks of [result sets](#comparison)
+  * [error messages](#all-errors)
+  * [benchmark times](#all-benchmark-times)
+  * [experiment workflow](#bexhoma-workflow)
+  * [initialization scripts](#initialization-scripts)
 * an interactive [inspection tool](#inspector)
 
 DBMS (in a specific hardware / configuration setup) can be [compared](#informations-about-dbms) by
@@ -366,7 +388,7 @@ The user has to provide in a [config file](#connection-file)
 If a monitoring interface is provided, [hardware metrics](#hardware-metrics) are collected and aggregated.
 We may further provide describing information for reporting.
 
-### Hardware Metrics
+### Monitoring Hardware Metrics
 
 To make these metrics available, we must [provide](#connection-file) an API URL and an API Access Token for a Grafana Server.
 The tool collects metrics from the Grafana server with a step size of 1 second.
@@ -588,7 +610,7 @@ All active queries and DBMS are considered.
 
 ### Slice Queries
 
-#### Latency and Throughput
+#### Latency and Throughput per Query
 This evaluation is available as dataframes, in the evaluation dict and as png files.
 
 <p align="center">
@@ -599,7 +621,7 @@ For each query, latency and throughput is computed per DBMS.
 This is available as dataframes, in the evaluation dict and as png files per query.
 Only successful queries and DBMS not producing any error are considered there.
 
-#### Hardware Metrics
+#### Hardware Metrics per Query
 These metrics are available as png files and csv files.
 
 <p align="center">
@@ -622,7 +644,7 @@ Warmup and cooldown are not included.
 If data transfer or connection time is also benchmarked, the chart is stacked.
 The bars are ordered ascending.
 
-### Slice Query and Timer
+### Slice Queries and Timers
 
 #### Statistics Table
 These tables are available as dataframes and in the evaluation dict.
@@ -664,19 +686,19 @@ This is for inspection of variation and outliers.
 
 ### Further Data
 
-#### Result Sets per Query and Run
+#### Result Sets per Query
 This evaluation is available as dataframes and csv files.
 
 The result set (sorted values, hashed or pure size) of the first run of each DBMS can be saved per query.
 This is for comparison and inspection. 
 
-#### All Benchmark Times per Query
+#### All Benchmark Times
 This evaluation is available as dataframes, in the evaluation dict and as csv files.
 
 The benchmark times of all runs of each DBMS can be saved per query.
 This is for comparison and inspection. 
 
-#### Errors per Query
+#### All Errors
 This evaluation is available as dicts.
 
 The errors that may have occured are saved for each DBMS and per query.
