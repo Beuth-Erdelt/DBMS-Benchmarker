@@ -179,12 +179,18 @@ class evaluator():
 			evaluation['query'][i]['dbms'] = {}
 			for connection, dbms in self.benchmarker.dbms.items():
 				evaluation['query'][i]['dbms'][connection] = {}
-			for connection, error in self.benchmarker.protocol['query'][str(i)]['errors'].items():
-				if len(error) > 0 and self.benchmarker.dbms[connection].connectiondata['active']:
-					evaluation['query'][i]['dbms'][connection]['error'] = error
-			for connection, size in self.benchmarker.protocol['query'][str(i)]['sizes'].items():
-				if size > 0 and self.benchmarker.dbms[connection].connectiondata['active']:
-					evaluation['query'][i]['dbms'][connection]['received_size_byte'] = size
+			if 'errors' in self.benchmarker.protocol['query'][str(i)]:
+				for connection, error in self.benchmarker.protocol['query'][str(i)]['errors'].items():
+					if len(error) > 0 and self.benchmarker.dbms[connection].connectiondata['active']:
+						evaluation['query'][i]['dbms'][connection]['error'] = error
+			if 'warnings' in self.benchmarker.protocol['query'][str(i)]:
+				for connection, warning in self.benchmarker.protocol['query'][str(i)]['warnings'].items():
+					if len(warning) > 0 and self.benchmarker.dbms[connection].connectiondata['active']:
+						evaluation['query'][i]['dbms'][connection]['warning'] = warning
+			if 'sizes' in self.benchmarker.protocol['query'][str(i)]:
+				for connection, size in self.benchmarker.protocol['query'][str(i)]['sizes'].items():
+					if size > 0 and self.benchmarker.dbms[connection].connectiondata['active']:
+						evaluation['query'][i]['dbms'][connection]['received_size_byte'] = size
 			# are there benchmarks for this query?
 			numQuery = i
 			if self.benchmarker.timerExecution.checkForSuccessfulBenchmarks(numQuery):

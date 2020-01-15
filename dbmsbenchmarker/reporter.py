@@ -1221,6 +1221,36 @@ class latexer(reporter):
 		# save
 		plt.savefig(filename, bbox_inches='tight')
 		plt.close('all')
+		# Heatmaps of warnings
+		filename = self.benchmarker.path+'/total_heatmap_warnings.png'
+		title = 'Heatmap of Errors'
+		df = tools.dataframehelper.evaluateWarningsToDataFrame(evaluation)
+		fig = plt.figure(figsize = (10,12))
+		plt.imshow(df, cmap="Reds", aspect='auto')
+		#plt.colorbar()
+		plt.xticks(range(len(df.columns)),df.columns, rotation=90)
+		plt.yticks(range(len(df)),df.index)
+		ax = plt.gca()
+		data = df.values
+		max_cell = np.nanmax(df.values)
+		min_cell = np.nanmin(df.values)
+		for y in range(data.shape[0]):
+			for x in range(data.shape[1]):
+				color_cell = 'white' if data[y, x] > (min_cell+max_cell)/2 else 'black'
+				plt.text(x, y, 'W' if data[y,x] else '',
+					horizontalalignment='center',
+					verticalalignment='center',
+					color=color_cell, fontsize=8)
+		ax.set_xticks(np.arange(len(df.columns)+1)-.5, minor=True)
+		ax.set_yticks(np.arange(len(df.index)+1)-.5, minor=True)
+		ax.grid(which="minor", color="black", linestyle='-', linewidth=1)
+		ax.tick_params(which="minor", bottom=False, left=False)
+		plt.tight_layout()
+		# set title
+		plt.title(title)
+		# save
+		plt.savefig(filename, bbox_inches='tight')
+		plt.close('all')
 		# Monitoring
 		metrics = [True if 'hardwaremetrics' in d else False for c,d in evaluation['dbms'].items()]
 		settings_translate = {

@@ -856,6 +856,9 @@ class benchmarker():
 		# prepare protocol for errors
 		if c not in self.protocol['query'][str(numQuery)]['errors']:
 			self.protocol['query'][str(numQuery)]['errors'][c] = ""
+		# prepare protocol for warnings
+		if c not in self.protocol['query'][str(numQuery)]['warnings']:
+			self.protocol['query'][str(numQuery)]['warnings'][c] = ""
 		# prepare protocol for duration
 		if c not in self.protocol['query'][str(numQuery)]['durations']:
 			self.protocol['query'][str(numQuery)]['durations'][c] = 0.0
@@ -996,7 +999,7 @@ class benchmarker():
 							#print(l_data[i])
 							#print("Received data 0:")
 							#print(l_data[0])
-							self.protocol['query'][str(numQuery)]['errors'][c] = 'NumRun '+str(i+1)+': Received inconsistent result set'
+							self.protocol['query'][str(numQuery)]['warnings'][c] = 'NumRun '+str(i+1)+': Received inconsistent result set'
 							logging.debug('Received differing result set')
 							keepResultsets = True
 							break
@@ -1026,7 +1029,7 @@ class benchmarker():
 						#print("Received data #%i:" % i)
 						#print(l_data[i])
 						if not l_data[i] == self.protocol['query'][str(numQuery)]['dataStorage'][i]:
-							self.protocol['query'][str(numQuery)]['errors'][c] = 'NumRun '+str(i+1)+': Received differing result set'
+							self.protocol['query'][str(numQuery)]['warnings'][c] = 'NumRun '+str(i+1)+': Received differing result set'
 							logging.debug('Received differing result set')
 							keepResultsets = True
 							break
@@ -1345,6 +1348,11 @@ class benchmarker():
 			return self.protocol['query'][str(query)]['errors']
 		else:
 			return self.protocol['query'][str(query)]['errors'][connection]
+	def getWarning(self, query, connection=None):
+		if connection is None:
+			return self.protocol['query'][str(query)]['warnings']
+		else:
+			return self.protocol['query'][str(query)]['warnings'][connection]
 	def printErrors(self):
 		for numQuery in range(1, len(self.queries)+1):
 			queryObject = tools.query(self.queries[numQuery-1])
@@ -1352,6 +1360,13 @@ class benchmarker():
 				continue
 			print("Q"+str(numQuery))
 			print(self.getError(numQuery))
+	def printWarnings(self):
+		for numQuery in range(1, len(self.queries)+1):
+			queryObject = tools.query(self.queries[numQuery-1])
+			if not queryObject.active:
+				continue
+			print("Q"+str(numQuery))
+			print(self.getWarning(numQuery))
 	def printDataStorageSizes(self):
 		for numQuery in range(1, len(self.queries)+1):
 			queryObject = tools.query(self.queries[numQuery-1])
