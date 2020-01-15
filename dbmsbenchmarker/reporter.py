@@ -664,6 +664,7 @@ class tps(reporter):
 		}
 		dataframe = dataframe.reindex(['throughput_run_total_ps','throughput_run_mean_ps','throughput_session_total_ps','throughput_session_mean_ps','latency_run_mean_ms','latency_session_mean_ms','throughput_run_mean_ph'], axis=1)
 		dataframe = dataframe.rename(columns = settings_translate)
+		dataframe = dataframe.reindex(sorted(dataframe.index), axis=0)
 		#print(dataframe)
 		plt.figure()
 		df1 = dataframe[['tps_r1','tps_r2','tps_s1','tps_s2']].transpose()
@@ -1783,6 +1784,7 @@ class latexer(reporter):
 				'totaltime_ms':'total [s]'
 			}
 			df = df.reindex(['throughput_run_total_ps','throughput_run_mean_ps','throughput_session_total_ps','throughput_session_mean_ps','latency_run_mean_ms','latency_session_mean_ms','throughput_run_mean_ph'], axis=1)
+			df = df.reindex(sorted(df.index), axis=0)
 			df=df.rename(columns = settings_translate)
 			df = tools.dataframehelper.addStatistics(df)
 			result["benchmarkmetrics"] = tabulate(df,headers=df.columns, tablefmt="latex", stralign="right", floatfmt=",.2f", showindex=True).replace("\\textbackslash{}", "\\").replace("\\{", "{").replace("\\}","}")
