@@ -1575,14 +1575,22 @@ class latexer(reporter):
 				l = [x for l1 in l for l2 in l1 for x in l2]
 				result['querySurvey'] += "\\\\\\hyperref[data:{code}-Q{queryNumber}]{{Storage size}}: ".format(**result, queryNumber=i)+str(sys.getsizeof(l))+" bytes ("+queryObject.result+")"
 			if 'errors' in self.benchmarker.protocol['query'][str(i)]:
+				bFoundErrors = False
 				for connection, error in self.benchmarker.protocol['query'][str(i)]['errors'].items():
 					if len(error) > 0 and self.benchmarker.dbms[connection].connectiondata['active']:
+						if not bFoundErrors:
+							result['querySurvey'] += "\\\\\\noindent Errors:"
+						bFoundErrors = True
 						result['querySurvey'] += "\\\\\\noindent "+self.benchmarker.dbms[connection].getName()+": {\\textit{\\error{"+tools.tex_escape(error)+"}}}\n"
 						#result['querySurvey'] += "\\\\\\noindent "+connection+": {\\tiny{\\begin{verbatim}"+error+"\\end{verbatim}}}\n"
 						#result['querySurvey'] += "\\\\"+connection+": Error"
 			if 'warnings' in self.benchmarker.protocol['query'][str(i)]:
+				bFoundWarnings = False
 				for connection, warning in self.benchmarker.protocol['query'][str(i)]['warnings'].items():
 					if len(warning) > 0 and self.benchmarker.dbms[connection].connectiondata['active']:
+						if not bFoundWarnings:
+							result['querySurvey'] += "\\\\\\noindent Warnings:"
+						bFoundWarnings = True
 						result['querySurvey'] += "\\\\\\noindent "+self.benchmarker.dbms[connection].getName()+": {\\textit{\\error{"+tools.tex_escape(warning)+"}}}\n"
 						#result['querySurvey'] += "\\\\\\noindent "+connection+": {\\tiny{\\begin{verbatim}"+error+"\\end{verbatim}}}\n"
 						#result['querySurvey'] += "\\\\"+connection+": Error"
@@ -1661,6 +1669,17 @@ class latexer(reporter):
 				errors = '\\subsubsection{{Error}}\\label{{error:{code}-Q{queryNumber}}}'.format(**result)+errors
 			errors += ''
 			result['errors'] = errors
+			# format warnings
+			warnings = ''
+			for key, value in self.benchmarker.protocol['query'][str(numQuery)]['warnings'].items():
+				if not self.benchmarker.dbms[key].connectiondata['active']:
+					continue
+				if len(value) > 0:
+					warnings += self.benchmarker.dbms[key].getName() + ': \\error{' + tools.tex_escape(value) + '}\\\\'
+			if len(warnings) > 0:
+				warnings = '\\subsubsection{{Warning}}\\label{{error:{code}-Q{queryNumber}}}'.format(**result)+warnings
+			warnings += ''
+			result['warnings'] = warnings
 			# format parameter
 			parameter = ''
 			showParameter = self.benchmarker.queryconfig["reporting"]["queryparameter"]
