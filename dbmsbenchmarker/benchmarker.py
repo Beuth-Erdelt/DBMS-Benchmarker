@@ -438,7 +438,7 @@ class benchmarker():
 			if not "reporting" in self.queryconfig:
 				self.queryconfig["reporting"] = {'resultsetPerQuery': False, 'resultsetPerQueryConnection': False, 'queryparameter': False, 'rowsPerResultset': False}
 		for numQuery in range(1, len(self.queries)+1):
-			self.protocol['query'][str(numQuery)] = {'errors':{}, 'durations':{}, 'duration':0.0, 'start':'', 'end':'', 'dataStorage': [], 'resultSets': {}, 'parameter': [], 'sizes': {}, 'starts': {}, 'ends': {}, 'runs': []}
+			self.protocol['query'][str(numQuery)] = {'errors':{}, 'warnings':{}, 'durations':{}, 'duration':0.0, 'start':'', 'end':'', 'dataStorage': [], 'resultSets': {}, 'parameter': [], 'sizes': {}, 'starts': {}, 'ends': {}, 'runs': []}
 	def cleanProtocol(self, numQuery):
 		"""
 		Cleans the protocol for an existing query.

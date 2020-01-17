@@ -1223,7 +1223,7 @@ class latexer(reporter):
 		plt.close('all')
 		# Heatmaps of warnings
 		filename = self.benchmarker.path+'/total_heatmap_warnings.png'
-		title = 'Heatmap of Errors'
+		title = 'Heatmap of Warnings'
 		df = tools.dataframehelper.evaluateWarningsToDataFrame(evaluation)
 		fig = plt.figure(figsize = (10,12))
 		plt.imshow(df, cmap="Reds", aspect='auto')
@@ -1574,11 +1574,18 @@ class latexer(reporter):
 			if len(l) > 0 and len(l[0]) > 0 and len(l[0][0]) > 0:
 				l = [x for l1 in l for l2 in l1 for x in l2]
 				result['querySurvey'] += "\\\\\\hyperref[data:{code}-Q{queryNumber}]{{Storage size}}: ".format(**result, queryNumber=i)+str(sys.getsizeof(l))+" bytes ("+queryObject.result+")"
-			for connection, error in self.benchmarker.protocol['query'][str(i)]['errors'].items():
-				if len(error) > 0 and self.benchmarker.dbms[connection].connectiondata['active']:
-					result['querySurvey'] += "\\\\\\noindent "+self.benchmarker.dbms[connection].getName()+": {\\textit{\\error{"+tools.tex_escape(error)+"}}}\n"
-					#result['querySurvey'] += "\\\\\\noindent "+connection+": {\\tiny{\\begin{verbatim}"+error+"\\end{verbatim}}}\n"
-					#result['querySurvey'] += "\\\\"+connection+": Error"
+			if 'errors' in self.benchmarker.protocol['query'][str(i)]:
+				for connection, error in self.benchmarker.protocol['query'][str(i)]['errors'].items():
+					if len(error) > 0 and self.benchmarker.dbms[connection].connectiondata['active']:
+						result['querySurvey'] += "\\\\\\noindent "+self.benchmarker.dbms[connection].getName()+": {\\textit{\\error{"+tools.tex_escape(error)+"}}}\n"
+						#result['querySurvey'] += "\\\\\\noindent "+connection+": {\\tiny{\\begin{verbatim}"+error+"\\end{verbatim}}}\n"
+						#result['querySurvey'] += "\\\\"+connection+": Error"
+			if 'warnings' in self.benchmarker.protocol['query'][str(i)]:
+				for connection, warning in self.benchmarker.protocol['query'][str(i)]['warnings'].items():
+					if len(warning) > 0 and self.benchmarker.dbms[connection].connectiondata['active']:
+						result['querySurvey'] += "\\\\\\noindent "+self.benchmarker.dbms[connection].getName()+": {\\textit{\\error{"+tools.tex_escape(warning)+"}}}\n"
+						#result['querySurvey'] += "\\\\\\noindent "+connection+": {\\tiny{\\begin{verbatim}"+error+"\\end{verbatim}}}\n"
+						#result['querySurvey'] += "\\\\"+connection+": Error"
 			for connection, size in self.benchmarker.protocol['query'][str(i)]['sizes'].items():
 				if size > 0 and self.benchmarker.dbms[connection].connectiondata['active']:
 					result['querySurvey'] += "\\\\\\noindent "+self.benchmarker.dbms[connection].getName()+": Received data = "+tools.sizeof_fmt(size)+"\n"

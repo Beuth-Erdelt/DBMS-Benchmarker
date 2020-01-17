@@ -267,13 +267,25 @@ All active queries and DBMS are considered.
 \clearpage
 \newpage
 \subsection{{Occurrences of Errors}}
-The next chart shows per DBMS and per timer, if an error occured.
+The next chart shows per DBMS and per timer, if an error has occured.
 All active queries and DBMS are considered.
 
 \begin{{figure}}[ht]
 \centering
 \includegraphics[width=0.8\textwidth]{{total_heatmap_errors.png}}\\
-\caption{{DBMS: Errors occurrences}}
+\caption{{DBMS: Error occurrences}}
+\end{{figure}}
+
+\clearpage
+\newpage
+\subsection{{Occurrences of Warnings}}
+The next chart shows per DBMS and per timer, if a warning has occured.
+All active queries and DBMS are considered.
+
+\begin{{figure}}[ht]
+\centering
+\includegraphics[width=0.8\textwidth]{{total_heatmap_warnings.png}}\\
+\caption{{DBMS: Warning occurrences}}
 \end{{figure}}
 
 \clearpage
