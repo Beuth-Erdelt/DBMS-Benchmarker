@@ -804,6 +804,8 @@ class arear(reporter):
 		:return: returns nothing
 		"""
 		dataframe, title = tools.dataframehelper.totalTimes(self.benchmarker)
+		if dataframe is None:
+			return dataframe
 		if self.normed:
 			# normalize
 			dataframePlot = dataframe.div(dataframe.sum(axis=1)/100.0, axis=0)
@@ -820,8 +822,6 @@ class arear(reporter):
 			dataframe.index.name = '[ms]'
 			#dataframePlot = dataframePlot.reset_index(drop=True)
 			#dataframe = dataframe.reset_index(drop=True)
-		if dataframe is None:
-			return dataframe
 		#print(dataframe)
 		if numQuery is None:
 			if not self.normed:
