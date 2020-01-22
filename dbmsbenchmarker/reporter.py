@@ -661,9 +661,11 @@ class tps(reporter):
 			'throughput_run_total_ph':'tph_r1',
 			'throughput_run_mean_ph':'tph_r2',
 			'throughput_session_total_ph':'tph_s1',
-			'throughput_session_mean_ph':'tph_s2'
+			'throughput_session_mean_ph':'tph_s2',
+			'queuesize_run':'qs_r',
+			'queuesize_sesion':'qs_s'
 		}
-		dataframe = dataframe.reindex(['throughput_run_total_ps','throughput_run_mean_ps','throughput_session_total_ps','throughput_session_mean_ps','latency_run_mean_ms','latency_session_mean_ms','throughput_run_mean_ph'], axis=1)
+		dataframe = dataframe.reindex(['throughput_run_total_ps','throughput_run_mean_ps','throughput_session_total_ps','throughput_session_mean_ps','latency_run_mean_ms','latency_session_mean_ms','throughput_run_mean_ph','queuesize_run','queuesize_session'], axis=1)
 		dataframe = dataframe.rename(columns = settings_translate)
 		dataframe = dataframe.reindex(sorted(dataframe.index), axis=0)
 		#print(dataframe)
@@ -1161,6 +1163,36 @@ class latexer(reporter):
 		# save
 		plt.savefig(filename, bbox_inches='tight')
 		plt.close('all')
+		# Heatmaps of queuesize
+		filename = self.benchmarker.path+'/total_heatmap_queuesize.png'
+		title = 'Heatmap of Queue Sizes'
+		df = tools.dataframehelper.evaluateQueuesizeToDataFrame(evaluation)
+		fig = plt.figure(figsize = (10,12))
+		plt.imshow(df, cmap="Reds_r", aspect='auto')
+		plt.colorbar()
+		plt.xticks(range(len(df.columns)),df.columns, rotation=90)
+		plt.yticks(range(len(df)),df.index)
+		ax = plt.gca()
+		data = df.values
+		max_cell = np.nanmax(df.values)
+		min_cell = np.nanmin(df.values)
+		for y in range(data.shape[0]):
+			for x in range(data.shape[1]):
+				color_cell = 'black' if data[y, x] > (min_cell+max_cell)/2 else 'white'
+				plt.text(x, y, '%.2f' % data[y, x],
+					horizontalalignment='center',
+					verticalalignment='center',
+					color=color_cell, fontsize=8)
+		ax.set_xticks(np.arange(len(df.columns)+1)-.5, minor=True)
+		ax.set_yticks(np.arange(len(df.index)+1)-.5, minor=True)
+		ax.grid(which="minor", color="black", linestyle='-', linewidth=1)
+		ax.tick_params(which="minor", bottom=False, left=False)
+		plt.tight_layout()
+		# set title
+		plt.title(title)
+		# save
+		plt.savefig(filename, bbox_inches='tight')
+		plt.close('all')
 		# Heatmaps of result size
 		filename = self.benchmarker.path+'/total_heatmap_resultsize.png'
 		title = 'Heatmap of Size of Resultsets [%]'
@@ -1287,7 +1319,7 @@ class latexer(reporter):
 		dfTotalLatTPS = dfTotalLatTPS.drop(columns=['totaltime_ms','throughput_run_total_ph','throughput_session_total_ph','throughput_session_mean_ph'])
 		#print(dfTotalLatTPS)
 		#dfTotalLatTPS = dfTotalLatTPS.reindex(sorted(dfTotalLatTPS.columns), axis=1)
-		dfTotalLatTPS = dfTotalLatTPS.reindex(['throughput_run_total_ps','throughput_run_mean_ps','throughput_session_total_ps','throughput_session_mean_ps','latency_run_mean_ms','latency_session_mean_ms','throughput_run_mean_ph'], axis=1)
+		dfTotalLatTPS = dfTotalLatTPS.reindex(['throughput_run_total_ps','throughput_run_mean_ps','throughput_session_total_ps','throughput_session_mean_ps','latency_run_mean_ms','latency_session_mean_ms','throughput_run_mean_ph', 'queuesize_run', 'queuesize_session'], axis=1)
 		#print(dfTotalLatTPS)
 		dfTotalLatTPS.index = dfTotalLatTPS.index.map(tools.dbms.anonymizer)
 		dfTotalLatTPS = dfTotalLatTPS.reindex(sorted(dfTotalLatTPS.index), axis=0)
@@ -1304,6 +1336,8 @@ class latexer(reporter):
 			'throughput_session_total_ph':'tph_s1 [ph]',
 			'throughput_session_mean_ph':'tph_s2 [ph]',
 			'totaltime_ms':'total [s]',
+			'queuesize_run':'qs_r',
+			'queuesize_session':'qs_s',
 		}
 		dfTotalLatTPS_units = dfTotalLatTPS.rename(columns = settings_translate)
 		settings_translate = {
@@ -1816,7 +1850,7 @@ class latexer(reporter):
 				settings[dbmsname] = {}
 				cm = self.benchmarker.getConnectionManager(numQuery, c)
 				settings[dbmsname]['Clients'] = cm['numProcesses']
-				settings[dbmsname]['Runs / Connection'] = cm['runsPerConnection']
+				settings[dbmsname]['Runs / Con'] = cm['runsPerConnection']
 				settings[dbmsname]['Timeout'] = str(cm['timeout'])
 				if cm['timeout'] is not None and cm['timeout'] != 0:
 					settings[dbmsname]['Timeout'] += "s"
@@ -1824,6 +1858,14 @@ class latexer(reporter):
 					settings[dbmsname]['Timeout'] = str(cm['timeout'])
 				if c in self.benchmarker.protocol['query'][str(numQuery)]['durations']:
 					settings[dbmsname]['Total Time'] = tools.formatDuration(self.benchmarker.protocol['query'][str(numQuery)]['durations'][c])
+				#print(evaluation['query'][numQuery]['dbms'][c]['metrics'])
+				if c in evaluation['dbms'] and 'queuesize_run' in evaluation['query'][numQuery]['dbms'][c]['metrics']:
+					settings[dbmsname]['qs_r / clients [%]'] = evaluation['query'][numQuery]['dbms'][c]['metrics']['queuesize_run']/cm['numProcesses']*100.0
+				if c in evaluation['dbms'] and 'queuesize_session' in evaluation['query'][numQuery]['dbms'][c]['metrics']:
+					settings[dbmsname]['qs_s / clients [%]'] = evaluation['query'][numQuery]['dbms'][c]['metrics']['queuesize_session']/cm['numProcesses']*100.0
+				#print(settings)
+			df = pd.DataFrame.from_dict(settings).transpose()
+			result["querysettings"] = tabulate(df,headers=df.columns, tablefmt="latex", stralign="right", floatfmt=",.2f", showindex=True).replace("\\textbackslash{}", "\\").replace("\\{", "{").replace("\\}","}")
 			# Lat and Tps
 			df = pd.DataFrame.from_dict({c:d['metrics'] for c,d in evaluation['query'][numQuery]['dbms'].items() if 'metrics' in d and c in evaluation['dbms'] and not 'error' in d}).transpose()
 			df.index = df.index.map(tools.dbms.anonymizer)
@@ -1838,15 +1880,15 @@ class latexer(reporter):
 				'throughput_run_mean_ph':'tph_r2 [ph]',
 				'throughput_session_total_ph':'tph_s1 [ph]',
 				'throughput_session_mean_ph':'tph_s2 [ph]',
-				'totaltime_ms':'total [s]'
+				'totaltime_ms':'total [s]',
+				'queuesize_run':'qs_r',
+				'queuesize_session':'qs_s',
 			}
-			df = df.reindex(['throughput_run_total_ps','throughput_run_mean_ps','throughput_session_total_ps','throughput_session_mean_ps','latency_run_mean_ms','latency_session_mean_ms','throughput_run_mean_ph'], axis=1)
+			df = df.reindex(['throughput_run_total_ps','throughput_run_mean_ps','throughput_session_total_ps','throughput_session_mean_ps','latency_run_mean_ms','latency_session_mean_ms','throughput_run_mean_ph','queuesize_run', 'queuesize_session'], axis=1)
 			df = df.reindex(sorted(df.index), axis=0)
 			df=df.rename(columns = settings_translate)
 			df = tools.dataframehelper.addStatistics(df)
 			result["benchmarkmetrics"] = tabulate(df,headers=df.columns, tablefmt="latex", stralign="right", floatfmt=",.2f", showindex=True).replace("\\textbackslash{}", "\\").replace("\\{", "{").replace("\\}","}")
-			df = pd.DataFrame.from_dict(settings).transpose()
-			result["querysettings"] = tabulate(df,headers=df.columns, tablefmt="latex", stralign="right", floatfmt=",.2f", showindex=True).replace("\\textbackslash{}", "\\").replace("\\{", "{").replace("\\}","}")
 			# dbms metrics
 			# query list
 			result["queryList"] = ""

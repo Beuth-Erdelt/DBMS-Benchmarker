@@ -1088,6 +1088,36 @@ class dataframehelper():
 		#print(df)
 		return df
 	@staticmethod
+	def evaluateQueuesizeToDataFrame(evaluation):
+		factors = {}
+		rows = []
+		for i,q in evaluation['query'].items():
+			if q['config']['active']:
+				#print(q)
+				rows.append('Q'+str(i))
+				for c,d in q['dbms'].items():
+					if c in evaluation['dbms']:
+						if 'metrics' in d and 'queuesize_run' in d['metrics']:
+							if not c in factors:
+								factors[c] = []
+							factors[c].append(d['metrics']['queuesize_run']/d['connectionmanagement']['numProcesses']*100.0)
+							#print(c)
+							#print(d['factor'])
+						else:
+							if not c in factors:
+								factors[c] = []
+							factors[c].append(None)
+							#print(i)
+							#print(c)
+		#print(factors)
+		df = pd.DataFrame(factors)
+		df.columns = df.columns.map(dbms.anonymizer)
+		df = df.reindex(sorted(df.columns), axis=1)
+		#df.index = df.index.map(lambda x: 'Q'+str(x+1))
+		df.index = rows
+		#print(df)
+		return df
+	@staticmethod
 	def evaluateResultsizeToDataFrame(evaluation):
 		# heatmap of resultsize
 		l = {i: {c: d['received_size_byte'] if 'received_size_byte' in d else 0 for c,d in q['dbms'].items() if c in evaluation['dbms']} for i,q in evaluation['query'].items()}
