@@ -75,7 +75,9 @@ tps\_r1 &= Throughput of runs (number of runs / total time) [Hz]\\
 tps\_r2 &= Throughput of runs (number of parallel clients / cleaned mean time) [Hz]\\
 tps\_s1 &= Throughput of sessions (number of runs / length of sessions / total time) [Hz]\\
 tps\_s2 &= Throughput of sessions (number of parallel clients / cleaned mean time) [Hz]\\
-tph\_r2 &= Throughput of runs (number of parallel clients / cleaned mean time) [h^{{-1}}]
+tph\_r2 &= Throughput of runs (number of parallel clients / cleaned mean time) [h^{{-1}}]\\
+qs\_r &= Queuesize of runs (tps\_r1 $\cdot{{}}$ lat\_r)\\
+qs\_s &= Queuesize of sessions (tps\_s1 $\cdot{{}}$ lat\_s)
 \end{{tabular}}
 }}}}
 
@@ -200,6 +202,18 @@ All active queries and DBMS are considered.
 \centering
 \includegraphics[width=0.8\textwidth]{{total_heatmap_lat.png}}
 \caption{{DBMS: Heatmap of Latencies}}
+\end{{figure}}
+
+\clearpage
+\newpage
+\subsubsection{{Heatmap of Queue Sizes}}
+The next chart shows queuesize per query and DBMS.
+All active queries and DBMS are considered.
+
+\begin{{figure}}[!htbp]
+\centering
+\includegraphics[width=0.8\textwidth]{{total_heatmap_queuesize.png}}
+\caption{{DBMS: Heatmap of Queue Sizes}}
 \end{{figure}}
 
 \clearpage
