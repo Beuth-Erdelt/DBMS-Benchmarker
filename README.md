@@ -239,7 +239,7 @@ This uses `fetchall()` on a cursor of the JDBC connection
 This uses `close()` on the cursor and the connection
 
 The times needed for steps connection (1.), execution (2. and 3.) and transfer (4.) are measured on the client side.
-A unit of send, execute, transfer is called a **run**.
+A unit of connect, send, execute and transfer is called a **run**. Connection time will be zero if an existing connection is reused.
 A sequence of runs between establishing and discarding a connection is called a **session**.
 
 ### Basic Parameters
@@ -433,6 +433,15 @@ tps_s1 = Throughput of sessions (number of runs / length of sessions / total tim
 tps_s2 = Throughput of sessions (number of parallel clients / cleaned mean time) [Hz]
 tph_r2 = Throughput of runs (number of parallel clients / cleaned mean time) [pH]
 ```
+
+The metrics of index 2 are based on the assumption that the number of clients equals the size of the queues. To check this, there are another metrics:
+```
+qs_r = Queue size of runs (tps_r1 * lat_r)
+qs_s = Queue size of sessions (tps_s1 * lat_s)
+```
+
+**Note** that the total times include some overhead like spawning a pool of subprocesses and storing result sets, so these metrics are also a measurement of overhead.
+
 
 
 ### Global Metrics

@@ -1316,10 +1316,10 @@ class latexer(reporter):
 		# TPS / Latency
 		dfTotalLatTPS = pd.DataFrame.from_dict({c:{m:metric for m,metric in dbms['metrics'].items()} for c,dbms in evaluation['dbms'].items()}).transpose()
 		#print(dfTotalLatTPS)
-		dfTotalLatTPS = dfTotalLatTPS.drop(columns=['totaltime_ms','throughput_run_total_ph','throughput_session_total_ph','throughput_session_mean_ph'])
+		dfTotalLatTPS = dfTotalLatTPS.drop(columns=['totaltime_ms','throughput_run_total_ph','throughput_session_total_ph','throughput_session_mean_ph','queuesize_run', 'queuesize_session'])
 		#print(dfTotalLatTPS)
 		#dfTotalLatTPS = dfTotalLatTPS.reindex(sorted(dfTotalLatTPS.columns), axis=1)
-		dfTotalLatTPS = dfTotalLatTPS.reindex(['throughput_run_total_ps','throughput_run_mean_ps','throughput_session_total_ps','throughput_session_mean_ps','latency_run_mean_ms','latency_session_mean_ms','throughput_run_mean_ph', 'queuesize_run', 'queuesize_session'], axis=1)
+		dfTotalLatTPS = dfTotalLatTPS.reindex(['throughput_run_total_ps','throughput_run_mean_ps','throughput_session_total_ps','throughput_session_mean_ps','latency_run_mean_ms','latency_session_mean_ms','throughput_run_mean_ph', 'queuesize_run_percent', 'queuesize_session_percent'], axis=1)
 		#print(dfTotalLatTPS)
 		dfTotalLatTPS.index = dfTotalLatTPS.index.map(tools.dbms.anonymizer)
 		dfTotalLatTPS = dfTotalLatTPS.reindex(sorted(dfTotalLatTPS.index), axis=0)
@@ -1338,6 +1338,8 @@ class latexer(reporter):
 			'totaltime_ms':'total [s]',
 			'queuesize_run':'qs_r',
 			'queuesize_session':'qs_s',
+			'queuesize_run_percent':'qs_r [%]',
+			'queuesize_session_percent':'qs_s [%]',
 		}
 		dfTotalLatTPS_units = dfTotalLatTPS.rename(columns = settings_translate)
 		settings_translate = {
@@ -1860,9 +1862,11 @@ class latexer(reporter):
 					settings[dbmsname]['Total Time'] = tools.formatDuration(self.benchmarker.protocol['query'][str(numQuery)]['durations'][c])
 				#print(evaluation['query'][numQuery]['dbms'][c]['metrics'])
 				if c in evaluation['dbms'] and 'queuesize_run' in evaluation['query'][numQuery]['dbms'][c]['metrics']:
-					settings[dbmsname]['qs_r / clients [%]'] = evaluation['query'][numQuery]['dbms'][c]['metrics']['queuesize_run']/cm['numProcesses']*100.0
+					#settings[dbmsname]['qs_r / clients [%]'] = evaluation['query'][numQuery]['dbms'][c]['metrics']['queuesize_run']/cm['numProcesses']*100.0
+					settings[dbmsname]['qs_r / clients [%]'] = evaluation['query'][numQuery]['dbms'][c]['metrics']['queuesize_run_percent']
 				if c in evaluation['dbms'] and 'queuesize_session' in evaluation['query'][numQuery]['dbms'][c]['metrics']:
-					settings[dbmsname]['qs_s / clients [%]'] = evaluation['query'][numQuery]['dbms'][c]['metrics']['queuesize_session']/cm['numProcesses']*100.0
+					#settings[dbmsname]['qs_s / clients [%]'] = evaluation['query'][numQuery]['dbms'][c]['metrics']['queuesize_session']/cm['numProcesses']*100.0
+					settings[dbmsname]['qs_s / clients [%]'] = evaluation['query'][numQuery]['dbms'][c]['metrics']['queuesize_session_percent']
 				#print(settings)
 			df = pd.DataFrame.from_dict(settings).transpose()
 			result["querysettings"] = tabulate(df,headers=df.columns, tablefmt="latex", stralign="right", floatfmt=",.2f", showindex=True).replace("\\textbackslash{}", "\\").replace("\\{", "{").replace("\\}","}")
@@ -1883,6 +1887,8 @@ class latexer(reporter):
 				'totaltime_ms':'total [s]',
 				'queuesize_run':'qs_r',
 				'queuesize_session':'qs_s',
+				'queuesize_run_percent':'qs_r [%]',
+				'queuesize_session_percent':'qs_s [%]',
 			}
 			df = df.reindex(['throughput_run_total_ps','throughput_run_mean_ps','throughput_session_total_ps','throughput_session_mean_ps','latency_run_mean_ms','latency_session_mean_ms','throughput_run_mean_ph','queuesize_run', 'queuesize_session'], axis=1)
 			df = df.reindex(sorted(df.index), axis=0)

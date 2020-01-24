@@ -240,8 +240,10 @@ class evaluator():
 							print(c+" missing in timerSession statistics for query Q"+str(numQuery))
 						if 'throughput_run_total_ps' in evaluation['query'][i]['dbms'][c]['metrics'] and 'latency_run_mean_ms' in evaluation['query'][i]['dbms'][c]['metrics']:
 							evaluation['query'][i]['dbms'][c]['metrics']['queuesize_run'] = evaluation['query'][i]['dbms'][c]['metrics']['throughput_run_total_ps'] * evaluation['query'][i]['dbms'][c]['metrics']['latency_run_mean_ms'] / 1000.0
+							evaluation['query'][i]['dbms'][c]['metrics']['queuesize_run_percent'] = evaluation['query'][i]['dbms'][c]['metrics']['queuesize_run'] / cm['numProcesses'] * 100.0
 						if 'throughput_session_total_ps' in evaluation['query'][i]['dbms'][c]['metrics'] and 'latency_session_mean_ms' in evaluation['query'][i]['dbms'][c]['metrics']:
 							evaluation['query'][i]['dbms'][c]['metrics']['queuesize_session'] = evaluation['query'][i]['dbms'][c]['metrics']['throughput_session_total_ps'] * evaluation['query'][i]['dbms'][c]['metrics']['latency_session_mean_ms'] / 1000.0
+							evaluation['query'][i]['dbms'][c]['metrics']['queuesize_session_percent'] = evaluation['query'][i]['dbms'][c]['metrics']['queuesize_session'] / cm['numProcesses'] * 100.0
 				evaluation['query'][i]['start'] = self.benchmarker.protocol['query'][str(numQuery)]['start']
 				evaluation['query'][i]['end'] = self.benchmarker.protocol['query'][str(numQuery)]['end']
 				evaluation['query'][i]['benchmarks'] = {}
