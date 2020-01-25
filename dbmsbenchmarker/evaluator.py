@@ -39,7 +39,8 @@ class evaluator():
 		:return: returns nothing
 		"""
 		self.benchmarker = benchmarker
-		evaluator.evaluation = self.generate()
+		if len(evaluator.evaluation) == 0:
+			evaluator.evaluation = self.generate()
 	def generate(self):
 		"""
 		Prepares a dict containing evaluation data about experiment, dbms query and timer.
@@ -303,6 +304,10 @@ class evaluator():
 			f.write(str(evaluation))
 			#pprint.pprint(evaluation, f)
 		return evaluation
+	def load(self):
+		filename = self.benchmarker.path+'/evaluation.dict'
+		with open(filename,'r') as inp:
+			evaluator.evaluation = ast.literal_eval(inp.read())
 	def pretty(self, d="", indent=0):
 		if len(d) == 0:
 			d = evaluator.evaluation
@@ -321,3 +326,9 @@ class evaluator():
 				self.structure(value, indent+1)
 			#else:
 			#	print('  ' * indent + str(key) + ":" + str(value))
+	def dfMeasures(self, query, timer):
+		l={c: [x for i,x in b.items()] for c,b in evaluator.evaluation['query'][query]['benchmarks'][timer]['benchmarks'].items()}
+		df = pd.DataFrame(l).T
+		df.index.name = 'DBMS'
+		#print(df)
+		return df

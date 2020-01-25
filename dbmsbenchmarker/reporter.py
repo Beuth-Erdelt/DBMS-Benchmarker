@@ -316,6 +316,7 @@ class ploter(reporter):
 	"""
 	def __init__(self, benchmarker):
 		reporter.__init__(self, benchmarker)
+		self.e = None
 	def save(self, dataframe, query, title, subtitle, filename, timer):
 		"""
 		Saves report of a given query as plot image per timer.
@@ -369,7 +370,13 @@ class ploter(reporter):
 			if not query.active:
 				continue
 			# benchmark times as a datarame
-			df = self.benchmarker.benchmarksToDataFrame(numQuery, t)
+			#df = self.benchmarker.benchmarksToDataFrame(numQuery, t)
+			#print(df)
+			if self.e is None:
+				self.e = evaluator.evaluator(self.benchmarker)
+			df = self.e.dfMeasures(numQuery, t.name)
+			#df.index = df.index.map(tools.dbms.anonymizer)
+			#print(df)
 			logging.debug("Plot Q"+str(numQuery)+" for timer "+t.name)
 			if t.perRun:
 				#subtitle = "Warmup = "+str(query.warmup)+", test runs = "+str(query.numRun-query.warmup-query.cooldown)+", cooldown = "+str(query.cooldown)
@@ -457,6 +464,7 @@ class boxploter(reporter):
 	"""
 	def __init__(self, benchmarker):
 		reporter.__init__(self, benchmarker)
+		self.e = None
 	def save(self, dataframe, title, filename):
 		"""
 		Saves report of a given query as boxplot image per timer.
@@ -516,7 +524,10 @@ class boxploter(reporter):
 			if not query.active:
 				continue
 			# benchmark times as a dataframe
-			df = self.benchmarker.benchmarksToDataFrame(numQuery, t)
+			#df = self.benchmarker.benchmarksToDataFrame(numQuery, t)
+			if self.e is None:
+				self.e = evaluator.evaluator(self.benchmarker)
+			df = self.e.dfMeasures(numQuery, t.name)
 			logging.debug("Boxplot Q"+str(numQuery)+" for timer "+t.name)
 			#print(df)
 			#print(query.warmup)
@@ -524,8 +535,8 @@ class boxploter(reporter):
 			#print(query.numRun)
 			if t.perRun:
 				# leave out warumup/cooldown
-				df = df.drop(range(1,query.warmup+1),axis=1)
-				df = df.drop(range(query.numRunEnd+1, query.numRun+1),axis=1)
+				df = df.drop(range(query.warmup),axis=1)
+				df = df.drop(range(query.numRunEnd, query.numRun),axis=1)
 			df = df.loc[:, (df != 0).any(axis=0)]
 			# save as boxplot
 			self.save(
@@ -701,7 +712,9 @@ class tps(reporter):
 		:param type: Can be 'sum' or 'product'
 		:return: returns nothing
 		"""
-		if len(evaluator.evaluator.evaluation) == 0:
+		#if len(evaluator.evaluator.evaluation) == 0:
+		#	self.e = evaluator.evaluator(self.benchmarker)
+		if self.e is None:
 			self.e = evaluator.evaluator(self.benchmarker)
 		evaluation = evaluator.evaluator.evaluation
 		if numQuery is None:
@@ -758,6 +771,111 @@ class tps(reporter):
 				logging.debug("TPS Bar Chart Q"+str(numQuery))
 				self.generate(numQuery, timer)
 		self.generate(numQuery=None, timer=timer)
+
+
+class hister(reporter):
+	"""
+	Class for generating reports.
+	Generates a bar chart of the time series and saves it to disk.
+	"""
+	def __init__(self, benchmarker):
+		reporter.__init__(self, benchmarker)
+		self.e = None
+	def save(self, dataframe, filename, title):
+		"""
+		Saves report of a given query as bar chart image per timer.
+		Anonymizes dbms if activated.
+
+		:param dataframe: Report data given as a pandas DataFrame
+		:param title: Title of the report
+		:param filename: Name of the file the report will be saved to
+		:return: returns nothing
+		"""
+		# align box to labels
+		#hist = dataframe.plot.hist(bins=len(dataframe.index), figsize=(12,8))
+		#print(dataframe)
+		df1_nonzero = ((dataframe != 0) & (dataframe is not None) & (dataframe.notnull())).astype(int).sum(axis=0)
+		bins = df1_nonzero.min()
+		#print(bins)
+		#bins = int((len(dataframe.index)+1)/4)
+		#print(df1_nonzero)
+		#hist = dataframe.hist(bins=int(len(dataframe.columns)/2+1), figsize=(12,8), label=dataframe.columns)#, color=[tools.dbms.dbmscolors.get(x, '#333333') for x in dataframe.columns])
+		hist = dataframe.hist(bins=bins, figsize=(12,8), label=dataframe.columns, ec='black')#, color=[tools.dbms.dbmscolors.get(x, '#333333') for x in dataframe.columns])
+		for i in range(len(hist)):
+			#print(i)
+			for j in range(len(hist[i])):
+				#print(hist[i][j].title)
+				if not hist[i][j].title:
+					continue
+				dbms = hist[i][j].title.get_text()
+				if len(dbms) == 0:
+					continue
+				#print(dbms)
+				obs = df1_nonzero[dbms]
+				hist[i][j].set_xlabel(dbms)
+				hist[i][j].title.set_text(str(obs)+" observations in "+str(bins)+" bins")
+		plt.subplots_adjust(hspace=0.5)
+		#dataframe.plot.hist(bins=len(dataframe.index), title=title, figsize=(12,8), alpha=0.5, color=[tools.dbms.dbmscolors.get(x, '#333333') for x in dataframe.columns])
+		#plt.axvline(dataframe.mean(), color='b', linestyle='dashed', linewidth=1)
+		#plt.show()
+		plt.tight_layout()
+		#ax = plt.gca()
+		#ax.set_title(title)
+		plt.legend()
+		#plt.legend(title=title)
+		#filename = self.benchmarker.path+'/total_bar_lat.png'
+		plt.savefig(filename)
+		plt.close('all')
+	def generate(self, numQuery, timer):
+		"""
+		Generates a boxplot of the time series and saves it to disk.
+		Anonymizes dbms if activated.
+
+		:param numQuery: Number of query to generate report of
+		:param timer: Timer containing benchmark results
+		:return: returns nothing
+		"""
+		for t in timer:
+			# are there benchmarks for this query?
+			if not t.checkForSuccessfulBenchmarks(numQuery):
+				continue
+			query = tools.query(self.benchmarker.queries[numQuery-1])
+			# is timer active for this query?
+			if not query.timer[t.name]['active']:
+				continue
+			# is query active?
+			if not query.active:
+				continue
+			# benchmark times as a dataframe
+			#if len(evaluator.evaluator.evaluation) == 0:
+			if self.e is None:
+				self.e = evaluator.evaluator(self.benchmarker)
+			df = self.e.dfMeasures(numQuery, t.name)
+			logging.debug("Hist Q"+str(numQuery)+" for timer "+t.name)
+			#print(df)
+			#print(query.warmup)
+			#print(query.numRunEnd)
+			#print(query.numRun)
+			if t.perRun:
+				# leave out warumup/cooldown
+				#print(df)
+				df = df.drop(range(0,query.warmup),axis=1)
+				df = df.drop(range(query.numRunEnd, query.numRun),axis=1)
+			#df = df.replace(np.nan, 0)
+			df = df.replace(0, np.nan)
+			#df = df.loc[(df != 0).any(axis=0),:]
+			df = df[(df.T.notnull()).any()]
+			#df = df[(df.T != 0).any()]
+			#df = df.loc[:, (df.notnull()).any(axis=0)]
+			#df = df[(df[0:].notnull()).any(axis=0)]
+			#print(df)
+			#print(numQuery)
+			#print(t.name)
+			# save as boxplot
+			self.save(
+				dataframe = df.T,
+				title = "Q"+str(numQuery)+": Time "+t.name+" [ms] in "+str(len(df.index))+" observations",
+				filename = self.benchmarker.path+'/query_'+str(numQuery)+'_'+t.name+'_hist.png')
 
 
 
@@ -1057,7 +1175,8 @@ class latexer(reporter):
 		plt.close('all')
 		# store in parameter array for replacement in templates
 		parameter = self.prepare(0, 0)
-		if len(evaluator.evaluator.evaluation) == 0:
+		#if len(evaluator.evaluator.evaluation) == 0:
+		if self.e is None:
 			self.e = evaluator.evaluator(self.benchmarker)
 		evaluation = evaluator.evaluator.evaluation
 		# Heatmaps of timers
@@ -1463,7 +1582,8 @@ class latexer(reporter):
 		:param timer: List of timers to collect data from. timer=None for title page
 		:return: returns dict of data about query and timer
 		"""
-		if len(evaluator.evaluator.evaluation) == 0:
+		#if len(evaluator.evaluator.evaluation) == 0:
+		if self.e is None:
 			self.e = evaluator.evaluator(self.benchmarker)
 		evaluation = evaluator.evaluator.evaluation
 		result = {}
@@ -2054,7 +2174,8 @@ class latexer(reporter):
 		:param timer: List of timer objects
 		"""
 		self.init()
-		if len(evaluator.evaluator.evaluation) == 0:
+		if self.e is None:
+		#if len(evaluator.evaluator.evaluation) == 0:
 			self.e = evaluator.evaluator(self.benchmarker)
 		self.generate(1, timer)
 
