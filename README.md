@@ -440,7 +440,7 @@ qs_r = Queue size of runs (tps_r1 * lat_r)
 qs_s = Queue size of sessions (tps_s1 * lat_s)
 ```
 
-**Note** that the total times include some overhead like spawning a pool of subprocesses and storing result sets, so these metrics are also a measurement of overhead.
+**Note** that the total times include some overhead like spawning a pool of subprocesses, so these metrics are also a measurement of overhead.
 
 
 

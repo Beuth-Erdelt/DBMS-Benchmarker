@@ -62,6 +62,7 @@ if __name__ == '__main__':
 		experiments.reporter.append(benchmarker.reporter.metricer(experiments))
 		experiments.reporter.append(benchmarker.reporter.latexer(experiments, args.latex_template))
 		experiments.reporter.append(benchmarker.reporter.tps(experiments))
+		experiments.reporter.append(benchmarker.reporter.hister(experiments))
 	# switch for args.mode
 	if args.mode == 'read':
 		experiments.readBenchmarks()
