@@ -117,6 +117,7 @@ Benchmarks can be [evaluated](#evaluation) in
   * [throughputs](#throughputs)
   * [sizes of result sets](#sizes-of-result-sets)
   * [errors](#errors)
+  * [warnings](#warnings)
 * [Slices of Queries](#slice-queries)
   * [latency and throughput](#latency-and-throughput-per-query)
   * [hardware metrics](#hardware-metrics-per-query)
@@ -615,7 +616,18 @@ This evaluation is available in the evaluation dict and as png files.
 <img src="docs/errors-heatmap.png" width="480">
 </p>
 
-The chart shows per DBMS and per timer, if an error occured.
+The chart shows per DBMS and per timer, if an error has occured.
+All active queries and DBMS are considered.
+
+#### Warnings
+
+This evaluation is available in the evaluation dict and as png files.
+
+<p align="center">
+<img src="docs/warnings-heatmap.png" width="480">
+</p>
+
+The chart shows per DBMS and per timer, if a warning has occured.
 All active queries and DBMS are considered.
 
 ### Slice Queries
