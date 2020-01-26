@@ -1827,11 +1827,12 @@ class latexer(reporter):
 			result['errors'] = errors
 			# format warnings
 			warnings = ''
-			for key, value in self.benchmarker.protocol['query'][str(numQuery)]['warnings'].items():
-				if not self.benchmarker.dbms[key].connectiondata['active']:
-					continue
-				if len(value) > 0:
-					warnings += self.benchmarker.dbms[key].getName() + ': \\error{' + tools.tex_escape(value) + '}\\\\'
+			if 'warnings' in self.benchmarker.protocol['query'][str(numQuery)]:
+				for key, value in self.benchmarker.protocol['query'][str(numQuery)]['warnings'].items():
+					if not self.benchmarker.dbms[key].connectiondata['active']:
+						continue
+					if len(value) > 0:
+						warnings += self.benchmarker.dbms[key].getName() + ': \\error{' + tools.tex_escape(value) + '}\\\\'
 			if len(warnings) > 0:
 				warnings = '\\subsubsection{{Warning}}\\label{{error:{code}-Q{queryNumber}}}'.format(**result)+warnings
 			warnings += ''
