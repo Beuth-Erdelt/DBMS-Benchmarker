@@ -129,6 +129,7 @@ Benchmarks can be [evaluated](#evaluation) in
 * summarizing and exhaustive latex reports containing [further data](#further-data) like
   * precision and identity checks of [result sets](#comparison)
   * [error messages](#all-errors)
+  * [warnings](#all-warnings)
   * [benchmark times](#all-benchmark-times)
   * [experiment workflow](#bexhoma-workflow)
   * [initialization scripts](#initialization-scripts)
@@ -298,7 +299,7 @@ This timer ignores warmup / cooldown phases, since they are only valid for runs.
 The benchmark times of a query are stored in csv files (optional pickeled pandas dataframe): For connection, execution and transfer.
 The columns represent DBMS and each row contains a run.
 
-We also measure and store the **total time** of the benchmark of the query, since for parallel execution this differs from the **sum of times** based on *timerRun*. Total time means measurement starts before first benchmark run and stops after the last benchmark run has been finished. Thus total time also includes some overhead for example for spawning a pool of processes. Additionally total time always spans all benchmarks. The sum of times on the other hand ignores warmup and cooldown phase.
+We also measure and store the **total time** of the benchmark of the query, since for parallel execution this differs from the **sum of times** based on *timerRun*. Total time means measurement starts before first benchmark run and stops after the last benchmark run has been finished. Thus total time also includes some overhead (for spawning a pool of subprocesses, compute size of result sets and joining results of subprocesses). Additionally total time always spans all benchmarks. The sum of times on the other hand ignores warmup and cooldown phase.
 
 We think
 * the sum of times is more of an indicator for performance of the server system
@@ -431,13 +432,13 @@ tps_r1 = Throughput of runs (number of runs / total time) [Hz]
 tps_r2 = Throughput of runs (number of parallel clients / cleaned mean time) [Hz]
 tps_s1 = Throughput of sessions (number of runs / length of sessions / total time) [Hz]
 tps_s2 = Throughput of sessions (number of parallel clients / cleaned mean time) [Hz]
-tph_r2 = Throughput of runs (number of parallel clients / cleaned mean time) [pH]
+tph_r2 = Throughput of runs (tps_r2 * 3600) [pH]
 ```
 
 The metrics of index 2 are based on the assumption that the number of clients equals the size of the queues. To check this, there are another metrics:
 ```
-qs_r = Queue size of runs (tps_r1 * lat_r)
-qs_s = Queue size of sessions (tps_s1 * lat_s)
+qs_r = Queue size of runs (tps_r1 * lat_r * 1000)
+qs_s = Queue size of sessions (tps_s1 * lat_s * 1000)
 ```
 
 **Note** that the total times include some overhead like spawning a pool of subprocesses, so these metrics are also a measurement of overhead.
@@ -693,6 +694,18 @@ These plots show the variation of benchmarking time during the various runs per 
 Warmup, cooldown and zero (missing) values are not included.
 This is for inspection of variation and outliers.
 
+#### Histogram of Values
+These plots are available as png files.
+
+<p align="center">
+<img src="docs/histogram.png" width="640">
+</p>
+
+These plots show the variation of benchmarking time during the various runs per DBMS as a histogram.
+The number of bins equals the minimum number of result times.
+Warmup, cooldown and zero (missing) values are not included.
+This is for inspection of the distribution of times.
+
 ### Further Data
 
 #### Result Sets per Query
@@ -712,6 +725,13 @@ This evaluation is available as dicts.
 
 The errors that may have occured are saved for each DBMS and per query.
 The error messages are fetched from Python exceptions thrown during a benchmark run.
+This is for inspection of problems.
+
+#### All Warnings
+This evaluation is available as dicts.
+
+The warnings that may have occured are saved for each DBMS and per query.
+The warning messages are generated if comparison of result sets detects any difference.
 This is for inspection of problems.
 
 #### Initialization Scripts
@@ -964,6 +984,8 @@ For example the query above should always return the same number of rows in tabl
 * `result`: Compare complete result set. Every cell is trimmed. Floats can be rounded to a given `precision` (decimal places). This is important for example for comparing CPU and GPU based DBMS.
 * `hash`: Compare hash value of result set.
 * `size`: Compare size of result set.
+
+If comparison detects any difference in result sets, a warning is generated.
 
 The result set can optionally be sorted by each column before comparison by using `sorted`.
 This helps avoid mismatch due to different orderings in the received sets.
