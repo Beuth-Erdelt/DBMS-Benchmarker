@@ -22,7 +22,7 @@ import pickle
 import sys
 import math
 import pprint
-
+import ast
 
 class evaluator():
 	evaluation = {}
@@ -31,7 +31,7 @@ class evaluator():
 	This class generates a survey in latex and saves it to disk.
 	The survey has one page per timer.
 	"""
-	def __init__(self, benchmarker):
+	def __init__(self, benchmarker, load=False):
 		"""
 		Construct a new 'reporter' object.
 
@@ -40,7 +40,10 @@ class evaluator():
 		"""
 		self.benchmarker = benchmarker
 		if len(evaluator.evaluation) == 0:
-			evaluator.evaluation = self.generate()
+			if load:
+				self.load()
+			else:
+				evaluator.evaluation = self.generate()
 	def generate(self):
 		"""
 		Prepares a dict containing evaluation data about experiment, dbms query and timer.
@@ -303,11 +306,19 @@ class evaluator():
 		with open(filename, 'w') as f:
 			f.write(str(evaluation))
 			#pprint.pprint(evaluation, f)
+		filename = self.benchmarker.path+'/evaluation.json'
+		with open(filename, 'w') as f:
+			json.dump(evaluation, f)
 		return evaluation
 	def load(self):
-		filename = self.benchmarker.path+'/evaluation.dict'
-		with open(filename,'r') as inp:
-			evaluator.evaluation = ast.literal_eval(inp.read())
+		print("Load Evaluation")
+		filename = self.benchmarker.path+'/evaluation.json'
+		with open(filename,'r') as f:
+			evaluator.evaluation = json.load(f)
+			#evaluator.evaluation = ast.literal_eval(inp.read())
+		#filename = self.benchmarker.path+'/evaluation.dict'
+		#with open(filename,'r') as f:
+		#	#evaluator.evaluation = ast.literal_eval(inp.read())
 	def pretty(self, d="", indent=0):
 		if len(d) == 0:
 			d = evaluator.evaluation
