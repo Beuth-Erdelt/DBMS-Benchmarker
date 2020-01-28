@@ -75,9 +75,9 @@ tps\_r1 &= Throughput of runs (number of runs / total time) [Hz]\\
 tps\_r2 &= Throughput of runs (number of parallel clients / cleaned mean time) [Hz]\\
 tps\_s1 &= Throughput of sessions (number of runs / length of sessions / total time) [Hz]\\
 tps\_s2 &= Throughput of sessions (number of parallel clients / cleaned mean time) [Hz]\\
-tph\_r2 &= Throughput of runs (number of parallel clients / cleaned mean time) [h^{{-1}}]\\
-qs\_r &= Queue size of runs (tps\_r1 $\cdot{{}}$ lat\_r)\\
-qs\_s &= Queue size of sessions (tps\_s1 $\cdot{{}}$ lat\_s)
+tph\_r2 &= Throughput of runs (tps\_r2 $\cdot{{}}$ 3600) [h^{{-1}}]\\
+qs\_r &= Queue size of runs (tps\_r1 $\cdot{{}}$ lat\_r $\cdot{{}}$ 1000)\\
+qs\_s &= Queue size of sessions (tps\_s1 $\cdot{{}}$ lat\_s $\cdot{{}}$ 1000)
 \end{{tabular}}
 }}}}
 

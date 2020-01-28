@@ -871,6 +871,8 @@ class hister(reporter):
 			#print(df)
 			#print(numQuery)
 			#print(t.name)
+			if df.empty:
+				continue
 			# save as boxplot
 			self.save(
 				dataframe = df.T,
