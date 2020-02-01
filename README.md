@@ -66,7 +66,7 @@ This documentation contains
 
 ## Features
 
-The lists of [DBMS](#connection-file) and [queries](#query-file) are given in config files in dict format.
+### Featured Usage
 
 This tool can be [used](#usage) to
 * [run](#run-benchmarks) benchmarks
@@ -78,6 +78,10 @@ This tool can be [used](#usage) to
 * fetch hardware metrics from a [grafana](#monitoring-hardware-metrics) server for monitoring
 * generate reports [during](#run-benchmarks-and-generate-reports) or [after](#generate-reports-of-stored-benchmarks) benchmarking, with real names or [anonymized](#anonymize) DBMS
 * interactively [inspect](#inspector) results
+
+### Featured Parameters
+
+The lists of [DBMS](#connection-file) and [queries](#query-file) are given in config files in dict format.
 
 Benchmarks can be [parametrized](#query-file) by
 * number of benchmark runs: *Is performance stable across time?*
@@ -97,6 +101,8 @@ Benchmarks can be [randomized](#randomized-query-file) (optionally with specifie
 * range of years
 
 This is inspired by [TPC-H](http://www.tpc.org/tpch/) and [TPC-DS](http://www.tpc.org/tpcds/) - Decision Support Benchmarks.
+
+### Featured Evaluations
 
 Benchmarks can be [evaluated](#evaluation) in
 * [Global Metrics](#global-metrics)
