@@ -528,7 +528,7 @@ class dbms():
 		# color of dbms
 		colors = plt.rcParams['axes.prop_cycle'].by_key()['color']
 		if self.connectiondata['active']:
-			dbms.dbmscolors[self.name] = colors[len(dbms.dbmscolors)]
+			dbms.dbmscolors[self.name] = colors[len(dbms.dbmscolors) % len(plt.rcParams['axes.prop_cycle'].by_key()['color'])]
 	def connect(self):
 		"""
 		Connects to one single dbms.
