@@ -169,6 +169,7 @@ class evaluator():
 			queryObject = tools.query(self.benchmarker.queries[i-1])
 			evaluation['query'][i]['title'] = queryObject.title
 			evaluation['query'][i]['active'] = queryObject.active
+			evaluation['query'][i]['dbms'] = {}
 			if not queryObject.active:
 				continue
 			if len(self.benchmarker.protocol['query'][str(i)]['parameter']) > 0:
@@ -180,7 +181,6 @@ class evaluator():
 				l = [x for l1 in l for l2 in l1 for x in l2]
 				evaluation['query'][i]['storage_size_byte'] = sys.getsizeof(l)
 				evaluation['query'][i]['storage_type'] = queryObject.result
-			evaluation['query'][i]['dbms'] = {}
 			for connection, dbms in self.benchmarker.dbms.items():
 				evaluation['query'][i]['dbms'][connection] = {}
 			if 'errors' in self.benchmarker.protocol['query'][str(i)]:
