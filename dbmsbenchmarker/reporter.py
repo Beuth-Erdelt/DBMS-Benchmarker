@@ -1348,7 +1348,9 @@ class latexer(reporter):
 		filename = self.benchmarker.path+'/total_heatmap_errors.png'
 		title = 'Heatmap of Errors'
 		df = tools.dataframehelper.evaluateErrorsToDataFrame(evaluation)
-		df = ((df is not None) & (df.notnull()))
+		#df = df[((df is not None) & (df.notnull()))]
+		df = df.dropna().astype(int)
+		#print(df)
 		fig = plt.figure(figsize = (10,12))
 		plt.imshow(df, cmap="Reds", aspect='auto')
 		#plt.colorbar()
@@ -1379,7 +1381,8 @@ class latexer(reporter):
 		filename = self.benchmarker.path+'/total_heatmap_warnings.png'
 		title = 'Heatmap of Warnings'
 		df = tools.dataframehelper.evaluateWarningsToDataFrame(evaluation)
-		df = ((df is not None) & (df.notnull()))
+		df = df.dropna().astype(int)
+		#df = df[((df is not None) & (df.notnull()))]
 		fig = plt.figure(figsize = (10,12))
 		plt.imshow(df, cmap="Reds", aspect='auto')
 		#plt.colorbar()
