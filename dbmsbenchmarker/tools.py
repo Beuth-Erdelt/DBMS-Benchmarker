@@ -945,6 +945,8 @@ class dataframehelper():
 		stat_q1 = df.quantile(0.25)
 		stat_q2 = df.quantile(0.5)
 		stat_q3 = df.quantile(0.75)
+		stat_min = df.min()
+		stat_max = df.max()
 		#print(stat_q1)
 		#print(stat_q3)
 		df.loc['Mean']= stat_mean
@@ -954,6 +956,8 @@ class dataframehelper():
 		df.loc['Median']= stat_q2
 		df.loc['iqr']=stat_q3-stat_q1
 		df.loc['qcod [%]']=(stat_q3-stat_q1)/(stat_q3+stat_q1)*100.0
+		df.loc['Min']=stat_min
+		df.loc['Max']=stat_max
 		#if with_nan:
 		#	print(df)
 		return df
