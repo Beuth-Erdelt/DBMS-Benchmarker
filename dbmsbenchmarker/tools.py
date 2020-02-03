@@ -947,8 +947,10 @@ class dataframehelper():
 		stat_q3 = df.quantile(0.75)
 		stat_min = df.min()
 		stat_max = df.max()
+		stat_n = len(df.index)
 		#print(stat_q1)
 		#print(stat_q3)
+		df.loc['n']=stat_n
 		df.loc['Mean']= stat_mean
 		df.loc['Std Dev']= stat_std
 		df.loc['Std Dev'] = stat_std.map(lambda x: x if not np.isnan(x) else 0.0)
