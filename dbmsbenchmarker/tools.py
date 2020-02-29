@@ -361,6 +361,7 @@ class query():
 		self.storeResultSet = False
 		self.storeResultSetFormat = []
 		self.queryList = []
+		self.query = ""
 		self.withConnect = False
 		self.timer = {}
 		self.timer['connection'] = {}
@@ -921,9 +922,13 @@ class dataframehelper():
 		df2=pd.DataFrame.from_dict({c:d['hostsystem'] for c,d in evaluation['dbms'].items()}).transpose()
 		if 'CUDA' in df2.columns:
 			df2 = df2.drop(['CUDA'],axis=1)
+		if 'GPUIDs' in df2.columns:
+			df2 = df2.drop(['GPUIDs'],axis=1)
 		if 'node' in df2.columns:
 			df2 = df2.drop(['node'],axis=1)
-		df = df1.merge(df2,left_index=True,right_index=True).drop(['host','CPU','GPU','instance','RAM','Cores'],axis=1)
+		if 'instance' in df2.columns:
+			df2 = df2.drop(['instance'],axis=1)
+		df = df1.merge(df2,left_index=True,right_index=True).drop(['host','CPU','GPU','RAM','Cores'],axis=1)
 		#df3=df1.merge(df2,left_index=True,right_index=True).drop(['CUDA','host','CPU','GPU','instance','RAM','Cores'],axis=1)
 		df = df.astype(float)
 		df.index = df.index.map(dbms.anonymizer)
@@ -1145,7 +1150,7 @@ class dataframehelper():
 		df = df.div(d).replace(0,np.nan)
 		df = df.T
 		df.index = ['Q'+str(i+1) for i,j in enumerate(df.index)]
-		df.columns = list(l[1].keys())
+		df.columns = list(l["1"].keys())
 		df.columns = df.columns.map(dbms.anonymizer)
 		df = df.reindex(sorted(df.columns), axis=1)
 		return df
@@ -1155,7 +1160,7 @@ class dataframehelper():
 		df = pd.DataFrame(l)
 		df = df.T
 		df.index = ['Q'+str(i+1) for i,j in enumerate(df.index)]
-		df.columns = list(l[1].keys())
+		df.columns = list(l["1"].keys())
 		df.columns = df.columns.map(dbms.anonymizer)
 		df = df.reindex(sorted(df.columns), axis=1)
 		return df
@@ -1165,7 +1170,7 @@ class dataframehelper():
 		df = pd.DataFrame(l)
 		df = df.T
 		df.index = ['Q'+str(i+1) for i,j in enumerate(df.index)]
-		df.columns = list(l[1].keys())
+		df.columns = list(l["1"].keys())
 		df.columns = df.columns.map(dbms.anonymizer)
 		df = df.reindex(sorted(df.columns), axis=1)
 		return df
