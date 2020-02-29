@@ -374,7 +374,7 @@ class ploter(reporter):
 			#print(df)
 			if self.e is None:
 				self.e = evaluator.evaluator(self.benchmarker)
-			df = self.e.dfMeasures(numQuery, t.name)
+			df = evaluator.dfMeasuresQ(numQuery, t.name)
 			#df.index = df.index.map(tools.dbms.anonymizer)
 			#print(df)
 			logging.debug("Plot Q"+str(numQuery)+" for timer "+t.name)
@@ -527,7 +527,7 @@ class boxploter(reporter):
 			#df = self.benchmarker.benchmarksToDataFrame(numQuery, t)
 			if self.e is None:
 				self.e = evaluator.evaluator(self.benchmarker)
-			df = self.e.dfMeasures(numQuery, t.name)
+			df = evaluator.dfMeasuresQ(numQuery, t.name)
 			logging.debug("Boxplot Q"+str(numQuery)+" for timer "+t.name)
 			#print(df)
 			#print(query.warmup)
@@ -723,7 +723,7 @@ class tps(reporter):
 				return None
 			dfTotalLatTPS = dfTotalLatTPS.drop(columns='totaltime_ms')
 		else:
-			dfTotalLatTPS = pd.DataFrame.from_dict({c:d['metrics'] for c,d in evaluation['query'][numQuery]['dbms'].items() if 'metrics' in d and c in evaluation['dbms'] and not 'error' in d}).transpose()
+			dfTotalLatTPS = pd.DataFrame.from_dict({c:d['metrics'] for c,d in evaluation['query'][str(numQuery)]['dbms'].items() if 'metrics' in d and c in evaluation['dbms'] and not 'error' in d}).transpose()
 		if dfTotalLatTPS is None or dfTotalLatTPS.empty:
 			return None
 		dfTotalLatTPS.index = dfTotalLatTPS.index.map(tools.dbms.anonymizer)
@@ -850,7 +850,7 @@ class hister(reporter):
 			#if len(evaluator.evaluator.evaluation) == 0:
 			if self.e is None:
 				self.e = evaluator.evaluator(self.benchmarker)
-			df = self.e.dfMeasures(numQuery, t.name)
+			df = evaluator.dfMeasuresQ(numQuery, t.name)
 			logging.debug("Hist Q"+str(numQuery)+" for timer "+t.name)
 			#print(df)
 			#print(query.warmup)
@@ -1989,17 +1989,17 @@ class latexer(reporter):
 				if c in self.benchmarker.protocol['query'][str(numQuery)]['durations']:
 					settings[dbmsname]['Total Time'] = tools.formatDuration(self.benchmarker.protocol['query'][str(numQuery)]['durations'][c])
 				#print(evaluation['query'][numQuery]['dbms'][c]['metrics'])
-				if c in evaluation['dbms'] and 'queuesize_run' in evaluation['query'][numQuery]['dbms'][c]['metrics']:
+				if c in evaluation['dbms'] and 'queuesize_run' in evaluation['query'][str(numQuery)]['dbms'][c]['metrics']:
 					#settings[dbmsname]['qs_r / clients [%]'] = evaluation['query'][numQuery]['dbms'][c]['metrics']['queuesize_run']/cm['numProcesses']*100.0
-					settings[dbmsname]['qs_r / clients [%]'] = evaluation['query'][numQuery]['dbms'][c]['metrics']['queuesize_run_percent']
-				if c in evaluation['dbms'] and 'queuesize_session' in evaluation['query'][numQuery]['dbms'][c]['metrics']:
+					settings[dbmsname]['qs_r / clients [%]'] = evaluation['query'][str(numQuery)]['dbms'][c]['metrics']['queuesize_run_percent']
+				if c in evaluation['dbms'] and 'queuesize_session' in evaluation['query'][str(numQuery)]['dbms'][c]['metrics']:
 					#settings[dbmsname]['qs_s / clients [%]'] = evaluation['query'][numQuery]['dbms'][c]['metrics']['queuesize_session']/cm['numProcesses']*100.0
-					settings[dbmsname]['qs_s / clients [%]'] = evaluation['query'][numQuery]['dbms'][c]['metrics']['queuesize_session_percent']
+					settings[dbmsname]['qs_s / clients [%]'] = evaluation['query'][str(numQuery)]['dbms'][c]['metrics']['queuesize_session_percent']
 				#print(settings)
 			df = pd.DataFrame.from_dict(settings).transpose()
 			result["querysettings"] = tabulate(df,headers=df.columns, tablefmt="latex", stralign="right", floatfmt=",.2f", showindex=True).replace("\\textbackslash{}", "\\").replace("\\{", "{").replace("\\}","}")
 			# Lat and Tps
-			df = pd.DataFrame.from_dict({c:d['metrics'] for c,d in evaluation['query'][numQuery]['dbms'].items() if 'metrics' in d and c in evaluation['dbms'] and not 'error' in d}).transpose()
+			df = pd.DataFrame.from_dict({c:d['metrics'] for c,d in evaluation['query'][str(numQuery)]['dbms'].items() if 'metrics' in d and c in evaluation['dbms'] and not 'error' in d}).transpose()
 			df.index = df.index.map(tools.dbms.anonymizer)
 			settings_translate = {
 				'latency_run_mean_ms':'lat_r [ms]',

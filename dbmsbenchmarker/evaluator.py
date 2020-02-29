@@ -23,6 +23,8 @@ import sys
 import math
 import pprint
 import ast
+from scipy import stats
+import numpy as np
 
 class evaluator():
 	evaluation = {}
@@ -44,6 +46,8 @@ class evaluator():
 				self.load()
 			else:
 				evaluator.evaluation = self.generate()
+				# force to use stored format
+				self.load()
 	def generate(self):
 		"""
 		Prepares a dict containing evaluation data about experiment, dbms query and timer.
@@ -337,9 +341,110 @@ class evaluator():
 				self.structure(value, indent+1)
 			#else:
 			#	print('  ' * indent + str(key) + ":" + str(value))
-	def dfMeasures(self, query, timer):
-		l={c: [x for i,x in b.items()] for c,b in evaluator.evaluation['query'][query]['benchmarks'][timer]['benchmarks'].items()}
-		df = pd.DataFrame(l).T
-		df.index.name = 'DBMS'
-		#print(df)
-		return df
+
+def dfMeasuresQ(query, timer):
+	l={c: [x for i,x in b.items()] for c,b in evaluator.evaluation['query'][str(query)]['benchmarks'][timer]['benchmarks'].items()}
+	df = pd.DataFrame(l).T
+	df.index.name = 'DBMS'
+	#print(df)
+	return df
+def addStatistics(dataframe):
+	df = dataframe.copy().T
+	#print(df)
+	#with_nan = False
+	#print(df)
+	if df.isnull().any().any():
+		#print("Missing!")
+		with_nan = True
+		df = df.dropna()
+	stat_mean = df.mean()
+	#print(stat_mean)
+	stat_std = df.std()
+	stat_q1 = df.quantile(0.25)
+	stat_q2 = df.quantile(0.5)
+	stat_q3 = df.quantile(0.75)
+	stat_min = df.min()
+	stat_max = df.max()
+	stat_geo = stats.gmean(df,axis=0)
+	#print(stat_q1)
+	#print(stat_q3)
+	df.loc['n']= len(df.index)
+	df.loc['Mean']= stat_mean
+	df.loc['Std Dev']= stat_std
+	df.loc['Std Dev'] = stat_std.map(lambda x: x if not np.isnan(x) else 0.0)
+	df.loc['cv [%]']= df.loc['Std Dev']/df.loc['Mean']*100.0
+	df.loc['Median']= stat_q2
+	df.loc['iqr']=stat_q3-stat_q1
+	df.loc['qcod [%]']=(stat_q3-stat_q1)/(stat_q3+stat_q1)*100.0
+	df.loc['Min'] = stat_min
+	df.loc['Max'] = stat_max
+	df.loc['Geo'] = stat_geo
+	#if with_nan:
+	#   print(df)
+	#print(df.T)
+	#dfFactor(df, 'Mean')
+	return df.T
+def dfStatisticsQ(query, timer):
+	dataframe = dfMeasuresQ(query, timer)
+	numValues = len(dataframe.columns)
+	dataframe = addStatistics(dataframe)
+	#df = tools.dataframehelper.addStatistics(df.T)
+	return dataframe.iloc[:,numValues:]
+def addFactor(dataframe, factor):
+	dataframe = dataframe.T
+	#dataframe = dfStatistics(evaluation, query, timer)
+	if dataframe.empty:
+		return dataframe
+	# select column 0 = connections
+	#connections = dataframe.iloc[0:,0].values.tolist()
+	# only consider not 0, starting after n
+	dataframe_non_zero = dataframe[(dataframe.T[1:] != 0).any()]
+	# select column for factor and find minimum in cleaned dataframe
+	factorlist = dataframe.loc[factor]
+	minimum = dataframe_non_zero.loc[factor].min()
+	# norm list to mean = 1
+	if minimum > 0:
+		mean_list_normed = [round(float(item/minimum),2) for item in factorlist]
+	else:
+		#print(dataframe_non_zero)
+		mean_list_normed = [round(float(item),2) for item in factorlist]
+	dataframe = dataframe.T
+	# insert factor column
+	dataframe.insert(loc=0, column='factor', value=mean_list_normed)
+	# sort by factor
+	dataframe = dataframe.sort_values(dataframe.columns[0], ascending = True)
+	# replace float by string
+	dataframe = dataframe.replace(0.00, "0.00")
+	# drop rows of only 0 (starting after factor and n)
+	dataframe = dataframe[(dataframe.T[3:] != "0.00").any()]
+	# replace string by float
+	dataframe = dataframe.replace("0.00", 0.00)
+	# anonymize dbms
+	#dataframe.iloc[0:,0] = dataframe.iloc[0:,0].map(dbms.anonymizer)
+	#dataframe = dataframe.set_index(dataframe.columns[0])
+	return dataframe
+def dfTPSQ(query, numClients):
+	df = dfMeasuresQ(query, 'run')
+	df = df.T.apply(lambda x: numClients*1000/x)
+	#tools.dataframehelper.addStatistics(df2.T).T
+	return df
+def dfHardware():
+	df1=pd.DataFrame.from_dict({c:d['hardwaremetrics'] for c,d in evaluator.evaluation['dbms'].items()}).transpose()
+	df2=pd.DataFrame.from_dict({c:d['hostsystem'] for c,d in evaluator.evaluation['dbms'].items()}).transpose()
+	if 'CUDA' in df2.columns:
+		df2 = df2.drop(['CUDA'],axis=1)
+	if 'GPUIDs' in df2.columns:
+		df2 = df2.drop(['GPUIDs'],axis=1)
+	if 'node' in df2.columns:
+		df2 = df2.drop(['node'],axis=1)
+	if 'instance' in df2.columns:
+		df2 = df2.drop(['instance'],axis=1)
+	df = df1.merge(df2,left_index=True,right_index=True).drop(['host','CPU','GPU','RAM','Cores'],axis=1)
+	#df3=df1.merge(df2,left_index=True,right_index=True).drop(['CUDA','host','CPU','GPU','instance','RAM','Cores'],axis=1)
+	df = df.astype(float)
+	df.index = df.index.map(tools.dbms.anonymizer)
+	#df = self.addStatistics(df.T).T
+	df = df.applymap(lambda x: x if not np.isnan(x) else 0.0)
+	return df
+def dfSubRows(dataframe, l):
+	return dataframe[dataframe.index.isin(l)]
