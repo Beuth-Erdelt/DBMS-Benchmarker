@@ -109,7 +109,10 @@ def singleRun(connectiondata, inputConfig, numRuns, connectionname, numQuery, pa
 			time.sleep(query.delay_run)
 		error = ""
 		try:
+			start = default_timer()
 			connection.openCursor()
+			end = default_timer()
+			durationConnect += 1000.0*(end - start)
 			start = default_timer()
 			connection.executeQuery(queryString)
 			end = default_timer()
@@ -147,7 +150,10 @@ def singleRun(connectiondata, inputConfig, numRuns, connectionname, numQuery, pa
 			columnnames = []
 			size = 0
 		finally:
+			start = default_timer()
 			connection.closeCursor()
+			end = default_timer()
+			durationConnect += 1000.0*(end - start)
 		result = singleRunOutput()
 		# connection time is valid only for first run (making the connection)
 		if numRun==numRuns[0] and query.withConnect:
@@ -163,7 +169,10 @@ def singleRun(connectiondata, inputConfig, numRuns, connectionname, numQuery, pa
 		#result.size = size
 		results.append(result)
 	if not len(activeConnections) > numActiveConnection:
+		start = default_timer()
 		connection.disconnect()
+		end = default_timer()
+		durationConnect += 1000.0*(end - start)
 	return results
 
 
@@ -945,12 +954,12 @@ class benchmarker():
 					lists = [res.get(timeout=timeout) for res in multiple_results]
 					lists = [i for j in lists for i in j]
 			# store end time for query / connection
+			end = default_timer()
+			durationBenchmark = 1000.0*(end - start)
 			self.protocol['query'][str(numQuery)]['ends'][c] = str(datetime.datetime.now())
 			#pool.close()
 			#pool.join()
 			#lists = [res.get() for res in multiple_results]
-			end = default_timer()
-			durationBenchmark = 1000.0*(end - start)
 			l_connect, l_execute, l_transfer, l_error, l_data, l_columnnames, l_size = self.flattenResult(lists)
 			error = ""
 			for i in range(len(l_error)):
@@ -1451,7 +1460,7 @@ class benchmarker():
 		f.close()
 		return result
 	def getParameterDF(self, numQuery):
-		listParameter = self.protocol['query'][str(numQuery-1)]['parameter']
+		listParameter = self.protocol['query'][str(numQuery)]['parameter']
 		dataframeParameter = pd.DataFrame.from_records(listParameter)
 		dataframeParameter.index=range(1,len(listParameter)+1)
 		return dataframeParameter
