@@ -342,9 +342,21 @@ class evaluator():
 			#else:
 			#	print('  ' * indent + str(key) + ":" + str(value))
 
-def dfMeasuresQ(query, timer):
+def dfMeasuresQ(query, timer, warmup=0, cooldown=0):
 	l={c: [x for i,x in b.items()] for c,b in evaluator.evaluation['query'][str(query)]['benchmarks'][timer]['benchmarks'].items()}
-	df = pd.DataFrame(l).T
+	df = pd.DataFrame(l)
+	numRunBegin = warmup
+	numRunEnd = len(df.index)-cooldown
+	df = df[numRunBegin:numRunEnd].T
+	df.index.name = 'DBMS'
+	#print(df)
+	return df
+def dfLatQ(query, warmup=0, cooldown=0):
+	l={c: [x for i,x in b.items()] for c,b in evaluator.evaluation['query'][str(query)]['benchmarks']['run']['benchmarks'].items()}
+	df = pd.DataFrame(l)
+	numRunBegin = warmup
+	numRunEnd = len(df.index)-cooldown
+	df = df[numRunBegin:numRunEnd].T
 	df.index.name = 'DBMS'
 	#print(df)
 	return df
@@ -384,8 +396,8 @@ def addStatistics(dataframe):
 	#print(df.T)
 	#dfFactor(df, 'Mean')
 	return df.T
-def dfStatisticsQ(query, timer):
-	dataframe = dfMeasuresQ(query, timer)
+def dfStatisticsQ(query, timer, warmup=0, cooldown=0):
+	dataframe = dfMeasuresQ(query, timer, warmup, cooldown)
 	numValues = len(dataframe.columns)
 	dataframe = addStatistics(dataframe)
 	#df = tools.dataframehelper.addStatistics(df.T)
