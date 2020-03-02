@@ -119,6 +119,7 @@ class evaluator():
 			if self.benchmarker.dbms[c].connectiondata['active']:
 				evaluation['dbms'][c] = {}
 				evaluation['dbms'][c]['name'] = self.benchmarker.dbms[c].getName()
+				evaluation['dbms'][c]['docker'] = self.benchmarker.dbms[c].connectiondata["docker"]
 				evaluation['dbms'][c]['version'] = self.benchmarker.dbms[c].connectiondata["version"]
 				evaluation['dbms'][c]['info'] = self.benchmarker.dbms[c].connectiondata["info"]
 				if 'connectionmanagement' in self.benchmarker.dbms[c].connectiondata:
