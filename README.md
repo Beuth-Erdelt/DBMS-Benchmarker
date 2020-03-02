@@ -285,8 +285,7 @@ We have several **timers** to collect timing information:
 
 * **timerConnection**  
 This timer gives the time in ms and per run.  
-It measures the time it takes to establish a JDBC connection.
-It also contains the time for opening and closing a cursor and for disconnection.  
+It measures the time it takes to establish a JDBC connection.  
 **Note** that if a run reuses an established connection, this timer will be 0 for that run.
 * **timerExecution**  
 This timer gives the time in ms and per run.  
