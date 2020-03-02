@@ -109,10 +109,10 @@ def singleRun(connectiondata, inputConfig, numRuns, connectionname, numQuery, pa
 			time.sleep(query.delay_run)
 		error = ""
 		try:
-			start = default_timer()
+			#start = default_timer()
 			connection.openCursor()
-			end = default_timer()
-			durationConnect += 1000.0*(end - start)
+			#end = default_timer()
+			#durationConnect += 1000.0*(end - start)
 			start = default_timer()
 			connection.executeQuery(queryString)
 			end = default_timer()
@@ -150,10 +150,10 @@ def singleRun(connectiondata, inputConfig, numRuns, connectionname, numQuery, pa
 			columnnames = []
 			size = 0
 		finally:
-			start = default_timer()
+			#start = default_timer()
 			connection.closeCursor()
-			end = default_timer()
-			durationConnect += 1000.0*(end - start)
+			#end = default_timer()
+			#durationExecute += 1000.0*(end - start)
 		result = singleRunOutput()
 		# connection time is valid only for first run (making the connection)
 		if numRun==numRuns[0] and query.withConnect:
@@ -169,10 +169,10 @@ def singleRun(connectiondata, inputConfig, numRuns, connectionname, numQuery, pa
 		#result.size = size
 		results.append(result)
 	if not len(activeConnections) > numActiveConnection:
-		start = default_timer()
+		#start = default_timer()
 		connection.disconnect()
-		end = default_timer()
-		durationConnect += 1000.0*(end - start)
+		#end = default_timer()
+		#durationConnect += 1000.0*(end - start)
 	return results
 
 
