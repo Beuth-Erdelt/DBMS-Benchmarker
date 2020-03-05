@@ -119,7 +119,10 @@ class evaluator():
 			if self.benchmarker.dbms[c].connectiondata['active']:
 				evaluation['dbms'][c] = {}
 				evaluation['dbms'][c]['name'] = self.benchmarker.dbms[c].getName()
-				evaluation['dbms'][c]['docker'] = self.benchmarker.dbms[c].connectiondata["docker"]
+				if "docker" in evaluation['dbms'][c]:
+					evaluation['dbms'][c]['docker'] = self.benchmarker.dbms[c].connectiondata["docker"]
+				else:
+					evaluation['dbms'][c]['docker'] = ""
 				evaluation['dbms'][c]['version'] = self.benchmarker.dbms[c].connectiondata["version"]
 				evaluation['dbms'][c]['info'] = self.benchmarker.dbms[c].connectiondata["info"]
 				if 'connectionmanagement' in self.benchmarker.dbms[c].connectiondata:
@@ -361,17 +364,13 @@ def dfLatQ(query, warmup=0, cooldown=0):
 	df.index.name = 'DBMS'
 	#print(df)
 	return df
-def addStatistics(dataframe):
+def addStatistics(dataframe, drop_nan=True):
 	df = dataframe.copy().T
-	#print(df)
-	#with_nan = False
-	#print(df)
-	if df.isnull().any().any():
+	if drop_nan and df.isnull().any().any():
 		#print("Missing!")
 		with_nan = True
 		df = df.dropna()
 	stat_mean = df.mean()
-	#print(stat_mean)
 	stat_std = df.std()
 	stat_q1 = df.quantile(0.25)
 	stat_q2 = df.quantile(0.5)
@@ -379,9 +378,9 @@ def addStatistics(dataframe):
 	stat_min = df.min()
 	stat_max = df.max()
 	stat_geo = stats.gmean(df,axis=0)
-	#print(stat_q1)
-	#print(stat_q3)
-	df.loc['n']= len(df.index)
+	stat_n = df.count(axis=0).array
+	#df.loc['n']= len(df.index)
+	df.loc['n']= stat_n
 	df.loc['Mean']= stat_mean
 	df.loc['Std Dev']= stat_std
 	df.loc['Std Dev'] = stat_std.map(lambda x: x if not np.isnan(x) else 0.0)
