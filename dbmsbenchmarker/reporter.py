@@ -2067,11 +2067,17 @@ class latexer(reporter):
 			result['end']=self.benchmarker.protocol['query'][str(numQuery)]['end']
 			# hardware metrics
 			result['hardwareMetrics'] = ""
+			result['hardwareMetricsTable'] = ""
 			for connectionname, connection in self.benchmarker.dbms.items():
 				if self.benchmarker.dbms[connectionname].hasHardwareMetrics():
 					metricsReporter = monitor.metrics(self.benchmarker)
 					#result['hardwareMetrics'] = monitor.metrics.latex.format(**result)
 					result['hardwareMetrics'] = metricsReporter.generateLatexForQuery(result)
+					m = 'total_gpu_util'
+					df1 = metricsReporter.dfHardwareMetrics(numQuery, m)
+					df2 = evaluator.addStatistics(df1, drop_nan=False)
+					result['hardwareMetricsTable'] = '\\newpage'
+					result['hardwareMetricsTable'] += tabulate(df2, headers=df2.columns, tablefmt="latex", stralign="right", floatfmt=",.2f", showindex=True)
 					break
 			# report per timer
 			if numTimer > 0:
