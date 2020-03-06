@@ -145,7 +145,7 @@ class metrics():
                 #print(df_all.index)
             #print(df_all)
             title=metric['title']
-            ax = df_all.plot(title=title, color=[tools.dbms.dbmscolors.get(x, '#333333') for x in df_all.columns])
+            ax = df_all.plot(title=title, color=[tools.dbms.dbmscolors.get(x, '#333333') for x in df_all.columns])#, legend=False)
             ax.set_ylim(bottom=0, top=df_all.max().max()*1.10)
             #plt.legend(title="Metric")
             if add_interval > 0:
@@ -203,3 +203,15 @@ class metrics():
         #print(metrics.m_avg)
         #print(numContribute)
         return metrics.m_avg
+    def dfHardwareMetrics(self, numQuery, metric):
+        df_all = None
+        dbms_filter = self.benchmarker.protocol['query'][str(numQuery)]["starts"].keys()
+        for c in dbms_filter:
+            filename = self.benchmarker.path+'/query_'+str(numQuery)+'_metric_'+str(metric)+'_'+c+'.csv'
+            df = self.loadMetricsDataframe(filename)
+            df.columns=[c]
+            if df_all is None:
+                df_all = df
+            else:
+                df_all = df_all.merge(df,how='outer', left_index=True,right_index=True)
+        return df_all.T
