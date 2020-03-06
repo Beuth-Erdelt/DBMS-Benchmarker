@@ -364,12 +364,13 @@ def dfLatQ(query, warmup=0, cooldown=0):
 	df.index.name = 'DBMS'
 	#print(df)
 	return df
-def addStatistics(dataframe, drop_nan=True):
+def addStatistics(dataframe, drop_nan=True, drop_measures=False):
 	df = dataframe.copy().T
 	if drop_nan and df.isnull().any().any():
 		#print("Missing!")
 		with_nan = True
 		df = df.dropna()
+	num_measures = len(df.index)
 	stat_mean = df.mean()
 	stat_std = df.std()
 	stat_q1 = df.quantile(0.25)
@@ -395,6 +396,8 @@ def addStatistics(dataframe, drop_nan=True):
 	#   print(df)
 	#print(df.T)
 	#dfFactor(df, 'Mean')
+	if drop_measures:
+		df = df[num_measures:]
 	return df.T
 def dfStatisticsQ(query, timer, warmup=0, cooldown=0):
 	dataframe = dfMeasuresQ(query, timer, warmup, cooldown)
