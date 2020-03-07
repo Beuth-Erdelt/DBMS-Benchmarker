@@ -112,6 +112,13 @@ class metrics():
                     # this yields seconds
                     time_start = int(datetime.timestamp(datetime.strptime(times["starts"][c],'%Y-%m-%d %H:%M:%S.%f')))
                     time_end = int(datetime.timestamp(datetime.strptime(times["ends"][c],'%Y-%m-%d %H:%M:%S.%f')))
+                    # is there a global timeshift
+                    if 'grafanashift' in self.benchmarker.dbms[c].connectiondata['monitoring']:
+                        time_shift = self.benchmarker.dbms[c].connectiondata['monitoring']['grafanashift']
+                    else:
+                        time_shift = 0
+                    time_start = time_start + time_shift
+                    time_end = time_end + time_shift
                     intervals[c] = time_end-time_start #+1# because of ceil()
                     add_interval = int(self.benchmarker.dbms[c].connectiondata['monitoring']['grafanaextend'])
                     time_start = time_start - add_interval
