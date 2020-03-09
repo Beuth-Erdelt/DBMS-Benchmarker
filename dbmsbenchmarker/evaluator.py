@@ -462,4 +462,7 @@ def dfHardware():
 	df = df.applymap(lambda x: x if not np.isnan(x) else 0.0)
 	return df
 def dfSubRows(dataframe, l):
-	return dataframe[dataframe.index.isin(l)]
+	if len(l) > 0:
+		return dataframe[dataframe.index.isin(l)]
+	else:
+		return dataframe
