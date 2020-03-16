@@ -1135,7 +1135,7 @@ class dataframehelper():
 		df = pd.DataFrame(l)
 		d = df.replace(0, np.nan).min()
 		df = df.T
-		df.index = ['Q'+str(i+1) for i,j in enumerate(df.index)]
+		df.index = ['Q'+j for i,j in enumerate(df.index)]
 		df.columns = list(l["1"].keys())
 		df.columns = df.columns.map(dbms.anonymizer)
 		df = df.reindex(sorted(df.columns), axis=1)
@@ -1149,34 +1149,38 @@ class dataframehelper():
 		# normalization
 		df = df.div(d).replace(0,np.nan)
 		df = df.T
-		df.index = ['Q'+str(i+1) for i,j in enumerate(df.index)]
+		df.index = ['Q'+j for i,j in enumerate(df.index)]
 		df.columns = list(l["1"].keys())
 		df.columns = df.columns.map(dbms.anonymizer)
 		df = df.reindex(sorted(df.columns), axis=1)
 		return df
 	def evaluateErrorsToDataFrame(evaluation):
 		# heatmap of errors
-		l = {i: {c: True if 'error' in d else False for c,d in q['dbms'].items() if c in evaluation['dbms']} for i,q in evaluation['query'].items()}
+		l = {i: {c: True if 'error' in d else False for c,d in q['dbms'].items() if c in evaluation['dbms']} for i,q in evaluation['query'].items() if q['active']}
 		df = pd.DataFrame(l)
 		df = df.T
-		df.index = ['Q'+str(i+1) for i,j in enumerate(df.index)]
+		df.index = ['Q'+j for i,j in enumerate(df.index)]
 		df.columns = list(l["1"].keys())
 		df.columns = df.columns.map(dbms.anonymizer)
 		df = df.reindex(sorted(df.columns), axis=1)
 		return df
 	def evaluateWarningsToDataFrame(evaluation):
 		# heatmap of errors
-		l = {i: {c: True if 'warning' in d else False for c,d in q['dbms'].items() if c in evaluation['dbms']} for i,q in evaluation['query'].items()}
+		l = {i: {c: True if 'warning' in d else False for c,d in q['dbms'].items() if c in evaluation['dbms']} for i,q in evaluation['query'].items() if q['active']}
 		df = pd.DataFrame(l)
 		df = df.T
-		df.index = ['Q'+str(i+1) for i,j in enumerate(df.index)]
+		df.index = ['Q'+j for i,j in enumerate(df.index)]
 		df.columns = list(l["1"].keys())
 		df.columns = df.columns.map(dbms.anonymizer)
 		df = df.reindex(sorted(df.columns), axis=1)
 		return df
 	@staticmethod
-	def merge(df1, df2):
-		return df1.merge(df2,left_index=True,right_index=True)
+	def merge(*args):
+		df = args[0]
+		for i, df2 in enumerate(args):
+			if i > 0:
+				df = df.merge(df2,left_index=True,right_index=True)
+		return df#df1.merge(df2,left_index=True,right_index=True)
 	@staticmethod
 	def getWorkflow(benchmarker):
 		print("getWorkflow")
