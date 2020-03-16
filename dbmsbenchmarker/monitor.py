@@ -7,6 +7,7 @@ import csv
 import os.path
 import logging
 from dbmsbenchmarker import benchmarker, tools
+from numpy import nan
 # https://www.robustperception.io/productive-prometheus-python-parsing
 
 class metrics():
@@ -152,11 +153,27 @@ class metrics():
                 #print(df_all.index)
             #print(df_all)
             title=metric['title']
-            ax = df_all.plot(title=title, color=[tools.dbms.dbmscolors.get(x, '#333333') for x in df_all.columns])#, legend=False)
+            # remove zeros to compensate monitoring shifts
+            df_all = clean_dataframe(df_all.T).T
+            # plot lines
+            ax = df_all.plot(title=title, color=[tools.dbms.dbmscolors.get(x, '#333333') for x in df_all.columns], legend=False)
             ax.set_ylim(bottom=0, top=df_all.max().max()*1.10)
             #plt.legend(title="Metric")
-            if add_interval > 0:
-                plt.axvline(x=0, linestyle="--", color="black")
+            # show start line
+            plt.axvline(x=0, linestyle="--", color="black")
+            show_shift_line = False
+            show_end_line = True
+            show_first_connection_line = False
+            # show shift line
+            if show_shift_line and time_shift > 0:
+                plt.axvline(x=time_shift, linestyle=":", color="black")
+            # show first connection
+            queryObject = tools.query(self.benchmarker.queries[int(query)-1])
+            if show_first_connection_line and queryObject.delay_connect > 0:
+                plt.axvline(x=queryObject.delay_connect, linestyle=":", color="black")
+            #if add_interval > 0:
+            # show end line
+            if show_end_line:
                 list_of_colors = plt.rcParams['axes.prop_cycle'].by_key()['color']
                 i = 0
                 for c,end in intervals.items():
@@ -222,3 +239,22 @@ class metrics():
             else:
                 df_all = df_all.merge(df,how='outer', left_index=True,right_index=True)
         return df_all.T
+
+def clean_dataframe(dataframe):
+    # helps evaluating GPU util
+    # removes leading zeros in each row
+    # shifts values > 0 to the beginning
+    # appends NaN to keep numbers of columns the same
+    # replaces all 0 by nan
+    #print(dataframe)
+    for rows in range(len(dataframe.index)):
+        s = dataframe.iloc[rows]
+        for i,j in s.items():
+            if j > 0:
+                break
+        #print("{}: remove {} leading zero values".format(dataframe.index[rows], i))
+        t = s[i:]
+        s = t.append(pd.Series([nan for x in range(i)]))
+        s = s.reset_index(drop=True)
+        dataframe.iloc[rows] = s
+    return dataframe.replace(0, nan)
