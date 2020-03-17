@@ -154,7 +154,7 @@ class metrics():
             #print(df_all)
             title=metric['title']
             # remove zeros to compensate monitoring shifts
-            df_all = clean_dataframe(df_all.T).T
+            #df_all = clean_dataframe(df_all.T).T
             # plot lines
             ax = df_all.plot(title=title, color=[tools.dbms.dbmscolors.get(x, '#333333') for x in df_all.columns], legend=False)
             ax.set_ylim(bottom=0, top=df_all.max().max()*1.10)
