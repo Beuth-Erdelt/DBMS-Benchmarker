@@ -330,12 +330,7 @@ class evaluator():
 	def pretty(self, d="", indent=0):
 		if len(d) == 0:
 			d = evaluator.evaluation
-		for key, value in d.items():
-			if isinstance(value, dict):
-				print('  ' * indent + str(key))
-				self.pretty(value, indent+1)
-			else:
-				print('  ' * indent + str(key) + ":" + str(value))
+		pretty(d, indent)
 	def structure(self, d="", indent=0):
 		if len(d) == 0:
 			d = evaluator.evaluation
@@ -345,6 +340,14 @@ class evaluator():
 				self.structure(value, indent+1)
 			#else:
 			#	print('  ' * indent + str(key) + ":" + str(value))
+
+def pretty(d, indent=0):
+	for key, value in d.items():
+		if isinstance(value, dict):
+			print('  ' * indent + str(key))
+			pretty(value, indent+1)
+		else:
+			print('  ' * indent + str(key) + ":" + str(value))
 
 def dfMeasuresQ(query, timer, warmup=0, cooldown=0):
 	l={c: [x for i,x in b.items()] for c,b in evaluator.evaluation['query'][str(query)]['benchmarks'][timer]['benchmarks'].items()}
@@ -407,22 +410,24 @@ def dfStatisticsQ(query, timer, warmup=0, cooldown=0):
 	return dataframe.iloc[:,numValues:]
 def addFactor(dataframe, factor):
 	dataframe = dataframe.T
+	#print(dataframe)
 	#dataframe = dfStatistics(evaluation, query, timer)
 	if dataframe.empty:
 		return dataframe
 	# select column 0 = connections
 	#connections = dataframe.iloc[0:,0].values.tolist()
 	# only consider not 0, starting after n
-	dataframe_non_zero = dataframe[(dataframe.T[1:] != 0).any()]
+	#dataframe_non_zero = dataframe[(dataframe.T[1:] != 0).any()]
+	dataframe_non_zero = dataframe[(dataframe.T != 0).any()]
 	# select column for factor and find minimum in cleaned dataframe
 	factorlist = dataframe.loc[factor]
 	minimum = dataframe_non_zero.loc[factor].min()
 	# norm list to mean = 1
 	if minimum > 0:
-		mean_list_normed = [round(float(item/minimum),2) for item in factorlist]
+		mean_list_normed = [round(float(item/minimum),4) for item in factorlist]
 	else:
 		#print(dataframe_non_zero)
-		mean_list_normed = [round(float(item),2) for item in factorlist]
+		mean_list_normed = [round(float(item),4) for item in factorlist]
 	dataframe = dataframe.T
 	# insert factor column
 	dataframe.insert(loc=0, column='factor', value=mean_list_normed)
@@ -431,7 +436,7 @@ def addFactor(dataframe, factor):
 	# replace float by string
 	dataframe = dataframe.replace(0.00, "0.00")
 	# drop rows of only 0 (starting after factor and n)
-	dataframe = dataframe[(dataframe.T[3:] != "0.00").any()]
+	#dataframe = dataframe[(dataframe.T[3:] != "0.00").any()]
 	# replace string by float
 	dataframe = dataframe.replace("0.00", 0.00)
 	# anonymize dbms
