@@ -231,9 +231,9 @@ tools.sizeof_fmt(list_received_sizes[connection])
 
 # collect 3 aggregated metrics for query
 df1, df2 = evaluate.get_measures_and_statistics(numQuery, type='timer', name='run')
-df = tools.dataframehelper.collect(df2, 'Mean', 'timer_run_media')
+df = tools.dataframehelper.collect(df2, 'Mean', 'timer_run_mean')
 df1, df2 = evaluate.get_measures_and_statistics(numQuery, type='timer', name='session')
-df = tools.dataframehelper.collect(df2, 'Mean', 'timer_session_median', df)
+df = tools.dataframehelper.collect(df2, 'Mean', 'timer_session_mean', df)
 df1, df2 = evaluate.get_measures_and_statistics(numQuery, type='throughput', name='session')
 df = tools.dataframehelper.collect(df2, 'Median', 'throughput_session_median', df)
 # show as table and bar chart
@@ -245,12 +245,84 @@ df
 ##### examples
 ###################
 
-# using colors in plots
 # colors by dbms
+list_connections_dbms = evaluate.get_experiment_list_connections_by_dbms()
 connection_colors = evaluate.get_experiment_list_connection_colors(list_connections_dbms)
 #connection_colors = evaluate.get_experiment_list_connection_colors(list_connections_node)
-numQuery=6
-import matplotlib.pyplot as plt
-df1,df2=evaluate.get_measures_and_statistics(numQuery, type='timer', name='run', warmup=1)
-df1.T.plot(color=[connection_colors.get(x, '#333333') for x in df1.T.columns])
-plt.show()
+
+numQuery=21
+df1,df2=evaluate.get_measures_and_statistics(numQuery, type='timer', name='run', warmup=0)
+# using colors in matplotlib plots
+#import matplotlib.pyplot as plt
+#df1.T.plot(color=[connection_colors.get(x, '#333333') for x in df1.T.columns])
+#plt.show()
+
+
+# Some plotly figures
+import plotly.graph_objects as go
+
+# Plots
+fig = go.Figure()
+for i in range(len(df1.index)):
+    t = fig.add_trace(go.Scatter(x=df1.T.index, y=df1.iloc[i], name=df1.index[i], line=dict(color=connection_colors[df1.index[i]], width=1)))
+
+fig.show()
+
+# Boxplots
+fig = go.Figure()
+for i in range(len(df1.index)):
+    t = fig.add_trace(go.Box(y=df1.iloc[i], name=df1.index[i], line=dict(color=connection_colors[df1.index[i]], width=1), boxmean='sd'))
+
+fig.show()
+
+# Histograms
+fig = go.Figure(layout = go.Layout(barmode='overlay'))
+for i in range(len(df1.index)):
+    t = fig.add_trace(go.Histogram(x=df1.iloc[i], name=df1.index[i], opacity=0.75, marker=dict(color=connection_colors[df1.index[i]])))
+
+fig.show()
+
+# Table of statistics
+df=df2.applymap(lambda x: ("%.2f" % float(x)))
+df_2 = df.reset_index()
+fig = go.Figure(data=[go.Table(
+    header=dict(values=list(df_2.columns),
+                fill_color='paleturquoise',
+                align='left'),
+    cells=dict(values=df_2.T.values.tolist(),
+               fill_color='lavender',
+               align='left'))
+])
+fig.show()
+
+# Table of aggregated measures
+df = evaluate.get_aggregated_query_statistics(type='timer', name='run', query_aggregate='Mean')
+df=df.applymap(lambda x: ("%.2f" % x))
+df_2 = df.reset_index()
+fig = go.Figure(data=[go.Table(
+    header=dict(values=list(df_2.columns),
+                fill_color='paleturquoise',
+                align='left'),
+    cells=dict(values=df_2.T.values.tolist(),
+               fill_color='lavender',
+               align='left'))
+])
+fig.show()
+
+# Heatmap
+df = evaluate.get_aggregated_query_statistics(type='timer', name='run', query_aggregate='factor')
+df = df.sort_index()
+df_2=df.applymap(lambda x: ("%.2f" % x))
+fig = go.Figure(data=[go.Heatmap(z=df_2.T.values.tolist(),x=df_2.index, y=df_2.columns,colorscale='Reds')])
+# optionally fixed size
+#t = fig.update_layout(autosize=False,height=2000)
+fig.show()
+
+# Bar
+df1, df2 = evaluate.get_measures_and_statistics(numQuery, type='timer', name='run')
+df = tools.dataframehelper.collect(df2, 'Mean', 'timer_run_mean')
+fig = go.Figure()
+for i in range(len(df.index)):
+    t = fig.add_trace(go.Bar(x=[df.index[i]], y=df.iloc[i], name=df.index[i], marker=dict(color=connection_colors[df.index[i]])))
+
+fig.show()
