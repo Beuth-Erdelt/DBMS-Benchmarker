@@ -1182,6 +1182,13 @@ class dataframehelper():
 				df = df.merge(df2,left_index=True,right_index=True)
 		return df#df1.merge(df2,left_index=True,right_index=True)
 	@staticmethod
+	def collect(dataframe, column, alias, dataframe_collect=None):
+		df = pd.DataFrame(dataframe[column]).rename(columns = {column:alias})
+		if dataframe_collect is not None:
+			return dataframehelper.merge(dataframe_collect, df)
+		else:
+			return df
+	@staticmethod
 	def getWorkflow(benchmarker):
 		print("getWorkflow")
 		filename = benchmarker.path+'/experiments.config'
