@@ -33,7 +33,7 @@ class evaluator():
 	This class generates a survey in latex and saves it to disk.
 	The survey has one page per timer.
 	"""
-	def __init__(self, benchmarker, load=False):
+	def __init__(self, benchmarker, load=False, force=False):
 		"""
 		Construct a new 'reporter' object.
 
@@ -41,6 +41,8 @@ class evaluator():
 		:return: returns nothing
 		"""
 		self.benchmarker = benchmarker
+		if force:
+			evaluator.evaluation = {}
 		if len(evaluator.evaluation) == 0:
 			if load:
 				self.load()

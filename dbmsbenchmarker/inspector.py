@@ -47,8 +47,7 @@ class inspector():
         self.benchmarks = benchmarker.inspector(self.result_path, code)
         self.benchmarks.computeTimerRun()
         self.benchmarks.computeTimerSession()
-        evaluator.evaluation = {}
-        self.e = evaluator.evaluator(self.benchmarks, load=True)
+        self.e = evaluator.evaluator(self.benchmarks, load=True, force=True)
     def get_experiment_list_queries(self):
         # list of successful queries
         return self.benchmarks.listQueries()
