@@ -7,3 +7,4 @@ tqdm>=4.28.1
 requests>=2.22.0
 JPype1==0.6.3
 scipy==1.4.1
+colour==0.1.5

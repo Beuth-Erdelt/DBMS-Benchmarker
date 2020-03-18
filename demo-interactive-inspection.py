@@ -240,3 +240,17 @@ df = tools.dataframehelper.collect(df2, 'Median', 'throughput_session_median', d
 df
 
 
+
+###################
+##### examples
+###################
+
+# using colors in plots
+# colors by dbms
+connection_colors = evaluate.get_experiment_list_connection_colors(list_connections_dbms)
+#connection_colors = evaluate.get_experiment_list_connection_colors(list_connections_node)
+numQuery=6
+import matplotlib.pyplot as plt
+df1,df2=evaluate.get_measures_and_statistics(numQuery, type='timer', name='run', warmup=1)
+df1.T.plot(color=[connection_colors.get(x, '#333333') for x in df1.T.columns])
+plt.show()

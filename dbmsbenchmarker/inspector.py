@@ -5,8 +5,19 @@ from os import listdir
 from os.path import isdir, isfile, join
 import sys
 import ast
+from colour import Color
 
 from dbmsbenchmarker import benchmarker, tools, evaluator, monitor
+
+color_ranges = [
+    ["#ff0000", "#ffcccc"],
+    ["#006600", "#ccffcc"],
+    ["#000066", "#ccccff"],
+    ["#666600", "#ffffcc"],
+    ["#660066", "#ffccff"],
+    ["#006666", "#ccffff"],
+    ["#000000", "#ffffff"],
+]
 
 def getIntersection(df1, df2):
     return pd.merge(df1, df2, how='inner')
@@ -87,6 +98,17 @@ class inspector():
                 dbms_list[d['hostsystem'][property]] = []
             dbms_list[d['hostsystem'][property]].append(c)
         return dbms_list
+    def get_experiment_list_connection_colors(self, list_connections):
+        #list_connections_dbms = self.get_experiment_list_connections_by_dbms()
+        dbms_colors={}
+        list_colors = []
+        num_colorset = 0
+        for i,j in list_connections.items():
+            list_colors.append(list(Color(color_ranges[num_colorset][0]).range_to(Color(color_ranges[num_colorset][1]), len(j))))
+            for k,c in enumerate(j):
+                dbms_colors[c] = '#%02x%02x%02x' % (int(255*list_colors[num_colorset][k].red), int(255*list_colors[num_colorset][k].green), int(255*list_colors[num_colorset][k].blue))
+            num_colorset = num_colorset + 1
+        return dbms_colors
     def get_experiment_connection_properties(self, connection=None):
         # dict of dict of dbms info
         if connection is not None:
