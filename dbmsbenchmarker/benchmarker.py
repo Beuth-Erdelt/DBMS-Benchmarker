@@ -434,7 +434,7 @@ class benchmarker():
 			if not "intro" in self.queryconfig:
 				self.queryconfig["intro"] = ""
 			if not "factor" in self.queryconfig:
-				self.queryconfig["factor"] = "total"
+				self.queryconfig["factor"] = "mean"
 			if "connectionmanagement" in self.queryconfig:
 				#self.connectionmanagement = self.queryconfig["connectionmanagement"].copy()
 				self.connectionmanagement = tools.joinDicts(self.connectionmanagement, self.queryconfig["connectionmanagement"])
