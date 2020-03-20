@@ -73,8 +73,11 @@ class metrics():
         csv_file.write(csv)
         csv_file.close()
     def loadMetricsDataframe(self, filename):
-        df = pd.read_csv(filename)
-        return df
+        if os.path.isfile(filename):
+            df = pd.read_csv(filename)
+            return df
+        else:
+            return None
     def generatePlots(self):
         for q,d in self.benchmarker.protocol['query'].items():
             print("Hardware metrics for Q"+str(q))
@@ -228,16 +231,23 @@ class metrics():
         #print(numContribute)
         return metrics.m_avg
     def dfHardwareMetrics(self, numQuery, metric):
-        df_all = None
-        dbms_filter = self.benchmarker.protocol['query'][str(numQuery)]["starts"].keys()
-        for c in dbms_filter:
-            filename = self.benchmarker.path+'/query_'+str(numQuery)+'_metric_'+str(metric)+'_'+c+'.csv'
-            df = self.loadMetricsDataframe(filename)
-            df.columns=[c]
-            if df_all is None:
-                df_all = df
-            else:
-                df_all = df_all.merge(df,how='outer', left_index=True,right_index=True)
+        filename = self.benchmarker.path+'/query_'+str(numQuery)+'_metric_'+str(metric)+'.csv'
+        if os.path.isfile(filename) and not self.benchmarker.overwrite:
+            df_all = self.loadMetricsDataframe(filename)
+        else:
+            df_all = None
+        if df_all is None:
+            dbms_filter = self.benchmarker.protocol['query'][str(numQuery)]["starts"].keys()
+            for c in dbms_filter:
+                filename = self.benchmarker.path+'/query_'+str(numQuery)+'_metric_'+str(metric)+'_'+c+'.csv'
+                df = self.loadMetricsDataframe(filename)
+                df.columns=[c]
+                if df_all is None:
+                    df_all = df
+                else:
+                    df_all = df_all.merge(df,how='outer', left_index=True,right_index=True)
+            filename = self.benchmarker.path+'/query_'+str(numQuery)+'_metric_'+str(metric)+'.csv'
+            self.saveMetricsDataframe(filename, df_all)
         return df_all.T
 
 def clean_dataframe(dataframe):
