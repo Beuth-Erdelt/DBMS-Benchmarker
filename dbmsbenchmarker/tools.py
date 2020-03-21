@@ -355,7 +355,7 @@ class query():
 		self.parameter = {}
 		self.withData = False
 		self.storeData = False
-		self.result = False
+		self.result = ""
 		self.restrict_precision = None
 		self.sorted = False
 		self.storeResultSet = False

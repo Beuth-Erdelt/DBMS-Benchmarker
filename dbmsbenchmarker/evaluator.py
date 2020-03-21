@@ -352,6 +352,7 @@ def pretty(d, indent=0):
 			print('  ' * indent + str(key) + ":" + str(value))
 
 def dfMeasuresQ(query, timer, warmup=0, cooldown=0):
+	#print("{}:{}".format(query, timer))
 	l={c: [x for i,x in b.items()] for c,b in evaluator.evaluation['query'][str(query)]['benchmarks'][timer]['benchmarks'].items()}
 	df = pd.DataFrame(l)
 	numRunBegin = warmup
