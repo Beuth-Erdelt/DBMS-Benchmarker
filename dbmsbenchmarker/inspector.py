@@ -98,10 +98,11 @@ class inspector():
     def get_experiment_list_connections_by_hostsystem(self, property):
         # dict of lists of node
         dbms_list = {}
-        for c,d in self.e.evaluation['dbms'].items() if 'hostsystem' in d:
-            if not d['hostsystem'][property] in dbms_list:
-                dbms_list[d['hostsystem'][property]] = []
-            dbms_list[d['hostsystem'][property]].append(c)
+        for c,d in self.e.evaluation['dbms'].items():
+            if 'hostsystem' in d:
+                if not d['hostsystem'][property] in dbms_list:
+                    dbms_list[d['hostsystem'][property]] = []
+                dbms_list[d['hostsystem'][property]].append(c)
         return dbms_list
     def get_experiment_list_connection_colors(self, list_connections):
         #list_connections_dbms = self.get_experiment_list_connections_by_dbms()
