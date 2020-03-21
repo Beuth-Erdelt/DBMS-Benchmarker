@@ -53,16 +53,6 @@ if __name__ == '__main__':
 		numProcesses=args.numProcesses,
 		seed=args.seed)
 	experiments.getConfig(args.config_folder, args.connection_file, args.query_file)
-	if args.generate_output == 'yes':
-		experiments.reporter.append(benchmarker.reporter.pickler(experiments))
-		experiments.reporter.append(benchmarker.reporter.dataframer(experiments))
-		experiments.reporter.append(benchmarker.reporter.barer(experiments))
-		experiments.reporter.append(benchmarker.reporter.ploter(experiments))
-		experiments.reporter.append(benchmarker.reporter.boxploter(experiments))
-		experiments.reporter.append(benchmarker.reporter.metricer(experiments))
-		experiments.reporter.append(benchmarker.reporter.latexer(experiments, args.latex_template))
-		experiments.reporter.append(benchmarker.reporter.tps(experiments))
-		experiments.reporter.append(benchmarker.reporter.hister(experiments))
 	# switch for args.mode
 	if args.mode == 'read':
 		experiments.readBenchmarks()
@@ -76,4 +66,14 @@ if __name__ == '__main__':
 			experiments.continueBenchmarks(overwrite = False)
 		else:
 			print("Continue needs result folder")
-
+	if args.generate_output == 'yes':
+		experiments.reporter.append(benchmarker.reporter.pickler(experiments))
+		experiments.reporter.append(benchmarker.reporter.dataframer(experiments))
+		experiments.reporter.append(benchmarker.reporter.barer(experiments))
+		experiments.reporter.append(benchmarker.reporter.ploter(experiments))
+		experiments.reporter.append(benchmarker.reporter.boxploter(experiments))
+		experiments.reporter.append(benchmarker.reporter.metricer(experiments))
+		experiments.reporter.append(benchmarker.reporter.latexer(experiments, args.latex_template))
+		experiments.reporter.append(benchmarker.reporter.tps(experiments))
+		experiments.reporter.append(benchmarker.reporter.hister(experiments))
+		experiments.generateReportsAll()
