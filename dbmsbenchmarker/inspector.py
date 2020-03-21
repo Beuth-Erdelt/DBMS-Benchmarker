@@ -99,7 +99,7 @@ class inspector():
         # dict of lists of node
         dbms_list = {}
         for c,d in self.e.evaluation['dbms'].items():
-            if 'hostsystem' in d:
+            if 'hostsystem' in d and property in d['hostsystem']:
                 if not d['hostsystem'][property] in dbms_list:
                     dbms_list[d['hostsystem'][property]] = []
                 dbms_list[d['hostsystem'][property]].append(c)
