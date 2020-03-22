@@ -355,7 +355,7 @@ class query():
 		self.parameter = {}
 		self.withData = False
 		self.storeData = False
-		self.result = False
+		self.result = ""
 		self.restrict_precision = None
 		self.sorted = False
 		self.storeResultSet = False
@@ -970,7 +970,7 @@ class dataframehelper():
 		return df
 	@staticmethod
 	def evaluateMonitoringToDataFrame(evaluation):
-		df = pd.DataFrame.from_dict({c:d['hardwaremetrics'] for c,d in evaluation['dbms'].items()}).transpose()
+		df = pd.DataFrame.from_dict({c:d['hardwaremetrics'] for c,d in evaluation['dbms'].items() if 'hardwaremetrics' in d}).transpose()
 		df.index = df.index.map(dbms.anonymizer)
 		#df = pd.DataFrame.from_dict({c:d['hardwaremetrics'] if 'hardwaremetrics' in d else [] for c,d in evaluation['dbms'].items()}).transpose()
 		df = df.astype(float)
@@ -978,9 +978,13 @@ class dataframehelper():
 		df = df.applymap(lambda x: x if not np.isnan(x) else 0.0)
 		return df
 	def evaluateHostToDataFrame(evaluation):
-		df1 = pd.DataFrame.from_dict({c:d['hostsystem'] for c,d in evaluation['dbms'].items()}).transpose()
+		df1 = pd.DataFrame.from_dict({c:d['hostsystem'] for c,d in evaluation['dbms'].items() if 'hostsystem' in d}).transpose()
+		if df1.empty:
+			return df1
 		#print({c:d['prices']['benchmark_usd'] for c,d in evaluation['dbms'].items()})
-		df2 = pd.DataFrame.from_dict({c:{'benchmark_usd':d['prices']['benchmark_usd'],'benchmark_time_s':d['times']['benchmark_ms']/1000.0,'total_time_s':(d['times']['load_ms']+d['times']['benchmark_ms'])/1000.0} for c,d in evaluation['dbms'].items()}).transpose()
+		df2 = pd.DataFrame.from_dict({c:{'benchmark_usd':d['prices']['benchmark_usd'],'benchmark_time_s':d['times']['benchmark_ms']/1000.0,'total_time_s':(d['times']['load_ms']+d['times']['benchmark_ms'])/1000.0} for c,d in evaluation['dbms'].items() if 'prices' in d and 'benchmark_usd' in d['prices']}).transpose()
+		if df2.empty:
+			return df2
 		df = df1.merge(df2,left_index=True,right_index=True)
 		df.index = df.index.map(dbms.anonymizer)
 		if 'CUDA' in df.columns:

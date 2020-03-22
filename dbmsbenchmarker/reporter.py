@@ -369,7 +369,7 @@ class ploter(reporter):
 			# is query active?
 			if not query.active:
 				continue
-			# benchmark times as a datarame
+			# benchmark times as a dataframe
 			#df = self.benchmarker.benchmarksToDataFrame(numQuery, t)
 			#print(df)
 			if self.e is None:

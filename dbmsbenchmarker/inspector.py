@@ -27,6 +27,10 @@ def getDifference12(df1, df2):
     return pd.concat([df1, df2, df2]).drop_duplicates(keep=False)
 def completeSort(df):
     return df.sort_values(by=[df_union_all.columns[i] for i in range(0,len(df.columns))], ascending=True)
+def list_intersection(lst1, lst2): 
+    lst3 = [value for value in lst1 if value in lst2] 
+    return lst3 
+
 
 class inspector():
     """
@@ -95,9 +99,10 @@ class inspector():
         # dict of lists of node
         dbms_list = {}
         for c,d in self.e.evaluation['dbms'].items():
-            if not d['hostsystem'][property] in dbms_list:
-                dbms_list[d['hostsystem'][property]] = []
-            dbms_list[d['hostsystem'][property]].append(c)
+            if 'hostsystem' in d and property in d['hostsystem']:
+                if not d['hostsystem'][property] in dbms_list:
+                    dbms_list[d['hostsystem'][property]] = []
+                dbms_list[d['hostsystem'][property]].append(c)
         return dbms_list
     def get_experiment_list_connection_colors(self, list_connections):
         #list_connections_dbms = self.get_experiment_list_connections_by_dbms()
