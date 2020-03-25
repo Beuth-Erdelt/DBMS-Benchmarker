@@ -232,6 +232,7 @@ class metrics():
         return metrics.m_avg
     def dfHardwareMetrics(self, numQuery, metric):
         filename = self.benchmarker.path+'/query_'+str(numQuery)+'_metric_'+str(metric)+'.csv'
+        #print(filename)
         if os.path.isfile(filename) and not self.benchmarker.overwrite:
             df_all = self.loadMetricsDataframe(filename)
         else:

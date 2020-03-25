@@ -266,6 +266,12 @@ class evaluator():
 					evaluation['query'][i]['benchmarks'][timer.name] = {}
 					evaluation['query'][i]['benchmarks'][timer.name]['benchmarks'] = self.benchmarker.benchmarksToDataFrame(i, timer).to_dict(orient='index')
 					evaluation['query'][i]['benchmarks'][timer.name]['statistics'] = self.benchmarker.statsToDataFrame(i, timer).to_dict(orient='index')
+				# compute hardware metrics per query
+				evaluation['query'][i]['hardwaremetrics'] = {}
+				metricsReporter = monitor.metrics(self.benchmarker)
+				for m, metric in monitor.metrics.metrics.items():
+					df = metricsReporter.dfHardwareMetrics(i, m)
+					evaluation['query'][i]['hardwaremetrics'][m] = df.to_dict(orient='index')
 		# dbms metrics
 		# find position of execution timer
 		epos = [i for i,t in enumerate(self.benchmarker.timers) if t.name=="execution"]
@@ -351,6 +357,16 @@ def pretty(d, indent=0):
 		else:
 			print('  ' * indent + str(key) + ":" + str(value))
 
+def dfMonitoringQ(query, metric, warmup=0, cooldown=0):
+	#print("{}:{}".format(query, timer))
+	l={c: [x for i,x in b.items()] for c,b in evaluator.evaluation['query'][str(query)]['hardwaremetrics'][metric].items()}
+	df = pd.DataFrame(l)
+	numRunBegin = warmup
+	numRunEnd = len(df.index)-cooldown
+	df = df[numRunBegin:numRunEnd].T
+	df.index.name = 'DBMS'
+	#print(df)
+	return df
 def dfMeasuresQ(query, timer, warmup=0, cooldown=0):
 	#print("{}:{}".format(query, timer))
 	l={c: [x for i,x in b.items()] for c,b in evaluator.evaluation['query'][str(query)]['benchmarks'][timer]['benchmarks'].items()}

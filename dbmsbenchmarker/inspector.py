@@ -292,9 +292,10 @@ class inspector():
         else:
             return self.get_experiment_queries_successful()
     def get_hardware_metrics(self, numQuery, metric, warmup=0, cooldown=0):
-        hw = monitor.metrics(self.benchmarks)
-        df = hw.dfHardwareMetrics(numQuery, metric)
-        numRunBegin = warmup
-        numRunEnd = len(df.columns)-cooldown
-        df = df.T[numRunBegin:numRunEnd].T
-        return df
+        return evaluator.dfMonitoringQ(numQuery, metric, warmup, cooldown)
+        #hw = monitor.metrics(self.benchmarks)
+        #df = hw.dfHardwareMetrics(numQuery, metric)
+        #numRunBegin = warmup
+        #numRunEnd = len(df.columns)-cooldown
+        #df = df.T[numRunBegin:numRunEnd].T
+        #return df
