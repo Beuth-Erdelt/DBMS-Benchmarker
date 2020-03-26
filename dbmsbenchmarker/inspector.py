@@ -94,6 +94,8 @@ class inspector():
             if not d['connectionmanagement'][property] in dbms_list:
                 dbms_list[d['connectionmanagement'][property]] = []
             dbms_list[d['connectionmanagement'][property]].append(c)
+        if len(dbms_list) == 0:
+            dbms_list = {'': self.get_experiment_list_connections()}
         return dbms_list
     def get_experiment_list_connections_by_hostsystem(self, property):
         # dict of lists of node
@@ -103,6 +105,8 @@ class inspector():
                 if not d['hostsystem'][property] in dbms_list:
                     dbms_list[d['hostsystem'][property]] = []
                 dbms_list[d['hostsystem'][property]].append(c)
+        if len(dbms_list) == 0:
+            dbms_list = {'': self.get_experiment_list_connections()}
         return dbms_list
     def get_experiment_list_connection_colors(self, list_connections):
         #list_connections_dbms = self.get_experiment_list_connections_by_dbms()
