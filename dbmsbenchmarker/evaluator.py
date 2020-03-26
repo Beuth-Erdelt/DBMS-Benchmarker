@@ -359,6 +359,9 @@ def pretty(d, indent=0):
 
 def dfMonitoringQ(query, metric, warmup=0, cooldown=0):
 	#print("{}:{}".format(query, timer))
+	if not 'hardwaremetrics' in evaluator.evaluation['query'][str(query)]:
+		print('No hardware metrics for query {}'.format(str(query)))
+		return pd.DataFrame()
 	l={c: [x for i,x in b.items()] for c,b in evaluator.evaluation['query'][str(query)]['hardwaremetrics'][metric].items()}
 	df = pd.DataFrame(l)
 	numRunBegin = warmup
