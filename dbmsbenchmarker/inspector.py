@@ -168,6 +168,9 @@ class inspector():
         else:
             print("Unknown type")
             return None, None
+        if df_stat.empty:
+            print("No data")
+            return df, df_stat
         if len(factor_base) > 0:
             df_stat = evaluator.addFactor(df_stat, factor_base)
         return df, df_stat
@@ -180,6 +183,8 @@ class inspector():
         for q in queries:
             column_new = 'Q{}'.format(q+1)
             df_measures, df_statistics = self.get_measures_and_statistics(q+1, type, name, dbms_filter, warmup, cooldown, factor_base)
+            if df_statistics.empty:
+                return pd.DataFrame()
             if df_aggregated is None:
                 df_aggregated = pd.DataFrame(df_statistics[column]).rename(columns = {column: column_new})
             else:

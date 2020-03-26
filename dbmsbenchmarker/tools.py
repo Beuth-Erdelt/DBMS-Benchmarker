@@ -1187,6 +1187,12 @@ class dataframehelper():
 		return df#df1.merge(df2,left_index=True,right_index=True)
 	@staticmethod
 	def collect(dataframe, column, alias, dataframe_collect=None):
+		if not column in dataframe.columns:
+			# nothing to add
+			if dataframe_collect is not None:
+				return dataframe_collect
+			else:
+				return pd.DataFrame()
 		df = pd.DataFrame(dataframe[column]).rename(columns = {column:alias})
 		if dataframe_collect is not None:
 			return dataframehelper.merge(dataframe_collect, df)

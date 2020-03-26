@@ -395,6 +395,8 @@ def addStatistics(dataframe, drop_nan=True, drop_measures=False):
 		#print("Missing!")
 		with_nan = True
 		df = df.dropna()
+	if df.empty:
+		return pd.DataFrame()
 	num_measures = len(df.index)
 	stat_mean = df.mean()
 	stat_std = df.std()
