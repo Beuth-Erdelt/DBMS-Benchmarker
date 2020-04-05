@@ -67,13 +67,17 @@ if __name__ == '__main__':
 		else:
 			print("Continue needs result folder")
 	if args.generate_output == 'yes':
+		# store measures ans statistics in separate files
 		experiments.reporter.append(benchmarker.reporter.pickler(experiments))
 		experiments.reporter.append(benchmarker.reporter.dataframer(experiments))
+		# collect hardware metrics
+		experiments.reporter.append(benchmarker.reporter.metricer(experiments))
+		# generate charts
 		experiments.reporter.append(benchmarker.reporter.barer(experiments))
 		experiments.reporter.append(benchmarker.reporter.ploter(experiments))
 		experiments.reporter.append(benchmarker.reporter.boxploter(experiments))
-		experiments.reporter.append(benchmarker.reporter.metricer(experiments))
-		experiments.reporter.append(benchmarker.reporter.latexer(experiments, args.latex_template))
 		experiments.reporter.append(benchmarker.reporter.tps(experiments))
 		experiments.reporter.append(benchmarker.reporter.hister(experiments))
+		# generate latex report
+		experiments.reporter.append(benchmarker.reporter.latexer(experiments, args.latex_template))
 		experiments.generateReportsAll()
