@@ -217,6 +217,8 @@ class evaluator():
 				if "reporting" in self.benchmarker.queryconfig:
 					evaluation['general']['reporting'] = self.benchmarker.queryconfig["reporting"]
 				for c, dbms in self.benchmarker.dbms.items():
+					if not self.benchmarker.dbms[c].connectiondata['active']:
+						continue
 					# query settings (connection manager)
 					cm = self.benchmarker.getConnectionManager(numQuery, c)
 					evaluation['query'][i]['connectionmanagement'] = cm
