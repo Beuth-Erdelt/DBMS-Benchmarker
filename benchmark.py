@@ -67,6 +67,7 @@ if __name__ == '__main__':
 		else:
 			print("Continue needs result folder")
 	if args.generate_output == 'yes':
+		experiments.overwrite = True
 		# store measures ans statistics in separate files
 		experiments.reporter.append(benchmarker.reporter.pickler(experiments))
 		experiments.reporter.append(benchmarker.reporter.dataframer(experiments))
