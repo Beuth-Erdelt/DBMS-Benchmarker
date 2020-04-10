@@ -108,6 +108,28 @@ class inspector():
         if len(dbms_list) == 0:
             dbms_list = {'': self.get_experiment_list_connections()}
         return dbms_list
+    def get_experiment_list_connections_by_hostsystem_resource_requests(self, property):
+        # dict of lists of node
+        dbms_list = {}
+        for c,d in self.e.evaluation['dbms'].items():
+            if 'hostsystem' in d and 'resources' in d['hostsystem'] and 'requests' in d['hostsystem']['resources'] and property in d['hostsystem']['resources']['requests']:
+                if not d['hostsystem']['resources']['requests'][property] in dbms_list:
+                    dbms_list[d['hostsystem']['resources']['requests'][property]] = []
+                dbms_list[d['hostsystem']['resources']['requests'][property]].append(c)
+        if len(dbms_list) == 0:
+            dbms_list = {'': self.get_experiment_list_connections()}
+        return dbms_list
+    def get_experiment_list_connections_by_hostsystem_resource_limits(self, property):
+        # dict of lists of node
+        dbms_list = {}
+        for c,d in self.e.evaluation['dbms'].items():
+            if 'hostsystem' in d and 'resources' in d['hostsystem'] and 'limits' in d['hostsystem']['resources'] and property in d['hostsystem']['resources']['limits']:
+                if not d['hostsystem']['resources']['limits'][property] in dbms_list:
+                    dbms_list[d['hostsystem']['resources']['limits'][property]] = []
+                dbms_list[d['hostsystem']['resources']['limits'][property]].append(c)
+        if len(dbms_list) == 0:
+            dbms_list = {'': self.get_experiment_list_connections()}
+        return dbms_list
     def get_experiment_list_connection_colors(self, list_connections):
         #list_connections_dbms = self.get_experiment_list_connections_by_dbms()
         dbms_colors={}
