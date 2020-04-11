@@ -1989,12 +1989,13 @@ class latexer(reporter):
 				if c in self.benchmarker.protocol['query'][str(numQuery)]['durations']:
 					settings[dbmsname]['Total Time'] = tools.formatDuration(self.benchmarker.protocol['query'][str(numQuery)]['durations'][c])
 				#print(evaluation['query'][numQuery]['dbms'][c]['metrics'])
-				if c in evaluation['dbms'] and 'queuesize_run' in evaluation['query'][str(numQuery)]['dbms'][c]['metrics']:
-					#settings[dbmsname]['qs_r / clients [%]'] = evaluation['query'][numQuery]['dbms'][c]['metrics']['queuesize_run']/cm['numProcesses']*100.0
-					settings[dbmsname]['qs_r / clients [%]'] = evaluation['query'][str(numQuery)]['dbms'][c]['metrics']['queuesize_run_percent']
-				if c in evaluation['dbms'] and 'queuesize_session' in evaluation['query'][str(numQuery)]['dbms'][c]['metrics']:
-					#settings[dbmsname]['qs_s / clients [%]'] = evaluation['query'][numQuery]['dbms'][c]['metrics']['queuesize_session']/cm['numProcesses']*100.0
-					settings[dbmsname]['qs_s / clients [%]'] = evaluation['query'][str(numQuery)]['dbms'][c]['metrics']['queuesize_session_percent']
+				if 'metrics' in evaluation['query'][str(numQuery)]['dbms'][c]:
+					if c in evaluation['dbms'] and 'queuesize_run' in evaluation['query'][str(numQuery)]['dbms'][c]['metrics']:
+						#settings[dbmsname]['qs_r / clients [%]'] = evaluation['query'][numQuery]['dbms'][c]['metrics']['queuesize_run']/cm['numProcesses']*100.0
+						settings[dbmsname]['qs_r / clients [%]'] = evaluation['query'][str(numQuery)]['dbms'][c]['metrics']['queuesize_run_percent']
+					if c in evaluation['dbms'] and 'queuesize_session' in evaluation['query'][str(numQuery)]['dbms'][c]['metrics']:
+						#settings[dbmsname]['qs_s / clients [%]'] = evaluation['query'][numQuery]['dbms'][c]['metrics']['queuesize_session']/cm['numProcesses']*100.0
+						settings[dbmsname]['qs_s / clients [%]'] = evaluation['query'][str(numQuery)]['dbms'][c]['metrics']['queuesize_session_percent']
 				#print(settings)
 			df = pd.DataFrame.from_dict(settings).transpose()
 			result["querysettings"] = tabulate(df,headers=df.columns, tablefmt="latex", stralign="right", floatfmt=",.2f", showindex=True).replace("\\textbackslash{}", "\\").replace("\\{", "{").replace("\\}","}")
