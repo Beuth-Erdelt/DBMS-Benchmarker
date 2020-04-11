@@ -979,6 +979,7 @@ class dataframehelper():
 		return df
 	def evaluateHostToDataFrame(evaluation):
 		df1 = pd.DataFrame.from_dict({c:d['hostsystem'] for c,d in evaluation['dbms'].items() if 'hostsystem' in d}).transpose()
+		#print(df1)
 		if df1.empty:
 			return df1
 		#print({c:d['prices']['benchmark_usd'] for c,d in evaluation['dbms'].items()})
@@ -995,6 +996,14 @@ class dataframehelper():
 			df = df.drop(['instance'],axis=1)
 		if 'GPUIDs' in df.columns:
 			df = df.drop(['GPUIDs'],axis=1)
+		if 'requests_cpu' in df.columns:
+			df = df.drop(['requests_cpu'],axis=1)
+		if 'requests_memory' in df.columns:
+			df = df.drop(['requests_memory'],axis=1)
+		if 'limits_cpu' in df.columns:
+			df = df.drop(['limits_cpu'],axis=1)
+		if 'limits_memory' in df.columns:
+			df = df.drop(['limits_memory'],axis=1)
 		df = df.drop(['host','CPU','GPU'],axis=1)#,'RAM','Cores'
 		df = df.astype(float)
 		if 'RAM' in df:
