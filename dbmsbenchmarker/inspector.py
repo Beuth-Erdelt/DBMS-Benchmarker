@@ -51,8 +51,8 @@ class inspector():
                 connection_properties = ast.literal_eval(inp.read())
             workload_preview[code] = {}
             workload_preview[code]['name'] = workload_properties['name']
-            workload_preview[code]['info'] = workload_properties['info']
-            workload_preview[code]['intro'] = workload_properties['intro']
+            workload_preview[code]['info'] = workload_properties.get('info', '')
+            workload_preview[code]['intro'] = workload_properties.get('intro', '')
             l = [q for q in workload_properties['queries'] if q['active'] == True]
             workload_preview[code]['queries'] = len(l)
             l = [c for c in connection_properties if c['active'] == True]
