@@ -716,7 +716,8 @@ class tps(reporter):
 		#	self.e = evaluator.evaluator(self.benchmarker)
 		if self.e is None:
 			self.e = evaluator.evaluator(self.benchmarker)
-		evaluation = evaluator.evaluator.evaluation
+		#evaluation = evaluator.evaluator.evaluation
+		evaluation = self.e.get_evaluation()
 		if numQuery is None:
 			dfTotalLatTPS = pd.DataFrame.from_dict({c:{m:metric for m,metric in dbms['metrics'].items()} for c,dbms in evaluation['dbms'].items()}).transpose()
 			if dfTotalLatTPS.empty:
@@ -1180,7 +1181,8 @@ class latexer(reporter):
 		#if len(evaluator.evaluator.evaluation) == 0:
 		if self.e is None:
 			self.e = evaluator.evaluator(self.benchmarker)
-		evaluation = evaluator.evaluator.evaluation
+		#evaluation = evaluator.evaluator.evaluation
+		evaluation = self.e.get_evaluation()
 		# Heatmaps of timers
 		for i, t in enumerate(self.benchmarker.timers):
 			filename = self.benchmarker.path+'/total_heatmap_timer_'+t.name+'.png'
@@ -1592,7 +1594,8 @@ class latexer(reporter):
 		#if len(evaluator.evaluator.evaluation) == 0:
 		if self.e is None:
 			self.e = evaluator.evaluator(self.benchmarker)
-		evaluation = evaluator.evaluator.evaluation
+		#evaluation = evaluator.evaluator.evaluation
+		evaluation = self.e.get_evaluation()
 		result = {}
 		result['now'] = evaluation['general']['now']
 		result['path'] = evaluation['general']['path']
