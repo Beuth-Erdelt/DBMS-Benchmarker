@@ -50,6 +50,8 @@ class evaluator():
 				evaluator.evaluation = self.generate()
 				# force to use stored format
 				self.load()
+	def get_evaluation(self):
+		return evaluator.evaluation
 	def generate(self):
 		"""
 		Prepares a dict containing evaluation data about experiment, dbms query and timer.
