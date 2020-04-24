@@ -43,6 +43,7 @@ class metrics():
         self.benchmarker = benchmarks
     def getMetrics(self, metric,time_start, time_end, step=1):
         query = 'query_range?query='+metric['query']+'&start='+str(time_start)+'&end='+str(time_end)+'&step='+str(self.step)
+        logging.debug("Querying metrics: "+query)
         headers = {'Authorization': self.token}
         l = [(time_start,0)]
         #return l
