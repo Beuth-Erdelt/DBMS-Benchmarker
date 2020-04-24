@@ -131,7 +131,7 @@ class metrics():
                     #print(time_end-time_start)
                     csvfile = self.benchmarker.path+'/query_'+str(query)+'_metric_'+str(m)+'_'+c+'.csv'
                     #print(csvfile)
-                    if os.path.isfile(csvfile) and not self.benchmarker.overwrite:
+                    if os.path.isfile(csvfile):# and not self.benchmarker.overwrite:
                         logging.debug("Data exists")
                         df = self.loadMetricsDataframe(csvfile)
                         df.columns=[c]
