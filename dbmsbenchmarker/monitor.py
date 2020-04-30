@@ -49,11 +49,11 @@ class metrics():
             'title': 'Net Tx [b]'
         },
         'total_fs_read': {
-            'query': 'container_fs_reads_bytes_total{{job="monitor-node", container_label_io_kubernetes_container_name="dbms"}}',
+            'query': 'sum(container_fs_reads_bytes_total{{job="monitor-node", container_label_io_kubernetes_container_name="dbms"}})',
             'title': 'FS Read [b]'
         },
         'total_fs_write': {
-            'query': 'container_fs_writes_bytes_total{{job="monitor-node", container_label_io_kubernetes_container_name="dbms"}}',
+            'query': 'sum(container_fs_writes_bytes_total{{job="monitor-node", container_label_io_kubernetes_container_name="dbms"}})',
             'title': 'FS Write [b]'
         },
     }
