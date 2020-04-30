@@ -36,6 +36,26 @@ class metrics():
             'query': 'sum(dcgm_fb_used)',
             'title': 'GPU Memory [MiB]'
         },
+        'total_cpu_throttled': {
+            'query': 'sum(rate(container_cpu_cfs_throttled_seconds_total{{job="monitor-node", container_label_io_kubernetes_container_name="dbms"}}[1m]))',
+            'title': 'CPU Throttle [%]'
+        },
+        'total_network_rx': {
+            'query': 'sum(container_network_receive_bytes_total{{container_label_app="dbmsbenchmarker", job="monitor-node"}})',
+            'title': 'Net Rx [b]'
+        },
+        'total_network_tx': {
+            'query': 'sum(container_network_transmit_bytes_total{{container_label_app="dbmsbenchmarker", job="monitor-node"}})',
+            'title': 'Net Tx [b]'
+        },
+        'total_fs_read': {
+            'query': 'container_fs_reads_bytes_total{{job="monitor-node", container_label_io_kubernetes_container_name="dbms"}}',
+            'title': 'FS Read [b]'
+        },
+        'total_fs_write': {
+            'query': 'container_fs_writes_bytes_total{{job="monitor-node", container_label_io_kubernetes_container_name="dbms"}}',
+            'title': 'FS Write [b]'
+        },
     }
     m_avg = None
     def __init__(self, benchmarks):
