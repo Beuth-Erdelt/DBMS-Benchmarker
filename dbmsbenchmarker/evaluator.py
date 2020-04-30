@@ -437,7 +437,6 @@ def dfStatisticsQ(query, timer, warmup=0, cooldown=0):
 	#df = tools.dataframehelper.addStatistics(df.T)
 	return dataframe.iloc[:,numValues:]
 def addFactor(dataframe, factor):
-	dataframe = dataframe.T
 	#print(dataframe)
 	#dataframe = dfStatistics(evaluation, query, timer)
 	if dataframe.empty:
@@ -446,6 +445,11 @@ def addFactor(dataframe, factor):
 	#connections = dataframe.iloc[0:,0].values.tolist()
 	# only consider not 0, starting after n
 	#dataframe_non_zero = dataframe[(dataframe.T[1:] != 0).any()]
+	if dataframe[factor].max() == 0:
+		# there are only zero values
+		dataframe.insert(loc=0, column='factor', value=[1 for item in range(len(dataframe.index))])
+		return dataframe
+	dataframe = dataframe.T
 	dataframe_non_zero = dataframe[(dataframe.T != 0).any()]
 	# select column for factor and find minimum in cleaned dataframe
 	factorlist = dataframe.loc[factor]
