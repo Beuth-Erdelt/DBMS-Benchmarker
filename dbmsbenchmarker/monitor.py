@@ -88,11 +88,12 @@ class metrics():
         df.iloc[0:,0] = df.iloc[0:,0].map(float)
         return df
     def saveMetricsDataframe(self, filename, df):
-        csv = df.to_csv(index_label=False,index=False)
-        # save
-        csv_file = open(filename, "w")
-        csv_file.write(csv)
-        csv_file.close()
+        if df is not None:
+            csv = df.to_csv(index_label=False,index=False)
+            # save
+            csv_file = open(filename, "w")
+            csv_file.write(csv)
+            csv_file.close()
     def loadMetricsDataframe(self, filename):
         if os.path.isfile(filename):
             df = pd.read_csv(filename)
@@ -272,6 +273,8 @@ class metrics():
                     df_all = df_all.merge(df,how='outer', left_index=True,right_index=True)
             filename = self.benchmarker.path+'/query_'+str(numQuery)+'_metric_'+str(metric)+'.csv'
             self.saveMetricsDataframe(filename, df_all)
+        if df_all is None:
+            return pd.DataFrame()
         return df_all.T
 
 def clean_dataframe(dataframe):
