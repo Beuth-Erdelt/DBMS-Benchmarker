@@ -1330,11 +1330,16 @@ class benchmarker():
 		result = pickle.load(f)
 		f.close()
 		return result
-	def listQueries(self):
+	def listQueriesSuccess(self):
 		# find position of execution timer
 		e = [i for i,t in enumerate(self.timers) if t.name=="execution"]
 		# list of active queries for timer e[0] = execution
 		qs = tools.findSuccessfulQueriesAllDBMS(self, None, self.timers)[e[0]]
+		# index +1 for public addressing
+		qs = [q+1 for q in qs]
+		return qs
+	def listQueries(self):
+		qs = [i for i,q in enumerate(self.queries) if 'active' in q and q['active']]
 		# index +1 for public addressing
 		qs = [q+1 for q in qs]
 		return qs
