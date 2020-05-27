@@ -171,6 +171,16 @@ class metrics():
                     #print(df_all)
             if df_all is None:
                 continue
+            # options
+            remove_delay = True
+            show_shift_line = False
+            show_end_line = True
+            show_first_connection_line = False
+            # remove connection delay (metrics are collected, but nothing happens here)
+            queryObject = tools.query(self.benchmarker.queries[int(query)-1])
+            if remove_delay:
+                df_all = df_all.iloc[int(queryObject.delay_connect):]
+            # anonymize dbms
             df_all.columns = df_all.columns.map(tools.dbms.anonymizer)
             df_all.index.name = "Seconds"
             if add_interval > 0:
@@ -186,14 +196,10 @@ class metrics():
             #plt.legend(title="Metric")
             # show start line
             plt.axvline(x=0, linestyle="--", color="black")
-            show_shift_line = False
-            show_end_line = True
-            show_first_connection_line = False
             # show shift line
             if show_shift_line and time_shift > 0:
                 plt.axvline(x=time_shift, linestyle=":", color="black")
             # show first connection
-            queryObject = tools.query(self.benchmarker.queries[int(query)-1])
             if show_first_connection_line and queryObject.delay_connect > 0:
                 plt.axvline(x=queryObject.delay_connect, linestyle=":", color="black")
             #if add_interval > 0:
@@ -275,6 +281,19 @@ class metrics():
             self.saveMetricsDataframe(filename, df_all)
         if df_all is None:
             return pd.DataFrame()
+        # remove connection delay (metrics are collected, but nothing happens here)
+        query = tools.query(self.benchmarker.queries[numQuery-1])
+        #print(df_all)
+        df_all = df_all.iloc[int(query.delay_connect):]
+        for c, connection in self.benchmarker.dbms.items():
+            add_interval = int(connection.connectiondata['monitoring']['grafanaextend'])
+            #print(add_interval)
+            #print(c)
+            #print(df_all[c])
+            #df_all[c] = list(df_all[c])[add_interval:-add_interval].extend([0]*(2*add_interval))
+        # take last extend value
+        df_all = df_all.iloc[add_interval:-add_interval]
+        #print(df_all)
         return df_all.T
 
 def clean_dataframe(dataframe):
