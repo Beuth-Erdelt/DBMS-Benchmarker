@@ -217,6 +217,19 @@ class inspector():
         df = self.get_aggregated_query_statistics(type, name, dbms_filter, warmup, cooldown, factor_base, query_aggregate)
         df_stat = evaluator.addStatistics(df, drop_nan=False, drop_measures=True)
         return pd.DataFrame(df_stat[total_aggregate]).rename(columns = {total_aggregate: "total_"+type+"_"+name})
+    def get_aggregated_by_connection(self, dataframe, list_connections=[], connection_aggregate='Mean'):
+        df_stats = pd.DataFrame()
+        if len(list_connections) > 0:
+            for i, l2 in list_connections.items():
+                df = pd.DataFrame()
+                for c in l2:
+                    df.insert(0, column=c, value=dataframe.loc[c])
+                df = evaluator.addStatistics(df)
+                df_stats.insert(0, column=i, value=df[connection_aggregate])
+        else:
+            df_stats = evaluator.addStatistics(dataframe.T, drop_measures=True)
+            df_stats = pd.DataFrame(df_stats[connection_aggregate])
+        return df_stats.T
     def get_error(self, numQuery, connection=None):
         # error message of connection at query
         return self.benchmarks.getError(numQuery, connection)
