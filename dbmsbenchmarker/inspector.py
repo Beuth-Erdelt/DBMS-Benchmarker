@@ -6,6 +6,7 @@ from os.path import isdir, isfile, join
 import sys
 import ast
 from colour import Color
+from numpy import nan
 
 from dbmsbenchmarker import benchmarker, tools, evaluator, monitor
 
@@ -178,7 +179,8 @@ class inspector():
         elif type == 'monitoring':
             df = self.get_hardware_metrics(numQuery, name, warmup=warmup, cooldown=cooldown)
             df = evaluator.dfSubRows(df, dbms_filter)
-            df_stat = evaluator.addStatistics(df, drop_nan=False, drop_measures=True)
+            df_cleaned = self.dfCleanMonitoring(df.copy())
+            df_stat = evaluator.addStatistics(df_cleaned, drop_nan=False, drop_measures=True)
         elif type == 'latency':
             df = self.get_lat(numQuery, name, warmup=warmup, cooldown=cooldown)
             df = evaluator.dfSubRows(df, dbms_filter)
@@ -345,3 +347,17 @@ class inspector():
         #numRunEnd = len(df.columns)-cooldown
         #df = df.T[numRunBegin:numRunEnd].T
         #return df
+    def dfCleanMonitoring(self, dataframe):
+        # remove grafanaextend for statistics
+        for c, connection in self.benchmarks.dbms.items():
+            add_interval = int(connection.connectiondata['monitoring']['grafanaextend'])
+            print(c)
+            print(add_interval)
+            if c in dataframe.index:
+                s = dataframe.loc[c]
+                x = s.last_valid_index()
+                print(x)
+                s[x-add_interval+1:x+1]=nan
+                s[0:add_interval-1]=nan
+        return dataframe
+
