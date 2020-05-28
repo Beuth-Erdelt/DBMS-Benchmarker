@@ -409,10 +409,8 @@ def addStatistics(dataframe, drop_nan=True, drop_measures=False):
 	stat_q3 = df.quantile(0.75)
 	stat_min = df.min()
 	stat_max = df.max()
-	print(df)
-	stat_geo = np.exp(np.log(df.prod(axis=0))/df.notna().sum(1))
-	print(stat_geo)
-	#stat_geo = stats.gmean(df,axis=0)
+	#stat_geo = np.exp(np.log(df.prod(axis=0))/df.notna().sum(1))
+	stat_geo = stats.gmean(df,axis=0)
 	stat_n = df.count(axis=0).array
 	#df.loc['n']= len(df.index)
 	df.loc['n']= stat_n
