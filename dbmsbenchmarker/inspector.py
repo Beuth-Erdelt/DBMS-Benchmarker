@@ -215,6 +215,8 @@ class inspector():
         return df_aggregated
     def get_aggregated_experiment_statistics(self, type='timer', name='run', dbms_filter=[], warmup=0, cooldown=0, factor_base='Mean', query_aggregate='Mean', total_aggregate='Mean'):
         df = self.get_aggregated_query_statistics(type, name, dbms_filter, warmup, cooldown, factor_base, query_aggregate)
+        if df.empty:
+            return df
         df_stat = evaluator.addStatistics(df, drop_nan=False, drop_measures=True)
         return pd.DataFrame(df_stat[total_aggregate]).rename(columns = {total_aggregate: "total_"+type+"_"+name})
     def get_aggregated_by_connection(self, dataframe, list_connections=[], connection_aggregate='Mean'):
