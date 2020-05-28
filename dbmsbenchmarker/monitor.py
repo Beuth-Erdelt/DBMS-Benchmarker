@@ -195,7 +195,7 @@ class metrics():
             ax.set_ylim(bottom=0, top=df_all.max().max()*1.10)
             #plt.legend(title="Metric")
             # show start line
-            plt.axvline(x=0, linestyle="--", color="black")
+            plt.axvline(x=int(queryObject.delay_connect), linestyle="--", color="black")
             # show shift line
             if show_shift_line and time_shift > 0:
                 plt.axvline(x=time_shift, linestyle=":", color="black")
@@ -283,16 +283,17 @@ class metrics():
             return pd.DataFrame()
         # remove connection delay (metrics are collected, but nothing happens here)
         query = tools.query(self.benchmarker.queries[numQuery-1])
-        #print(df_all)
         df_all = df_all.iloc[int(query.delay_connect):]
-        for c, connection in self.benchmarker.dbms.items():
-            add_interval = int(connection.connectiondata['monitoring']['grafanaextend'])
-            #print(add_interval)
-            #print(c)
-            #print(df_all[c])
-            #df_all[c] = list(df_all[c])[add_interval:-add_interval].extend([0]*(2*add_interval))
+        #print(df_all)
+        # remove extend
+        #for c, connection in self.benchmarker.dbms.items():
+        #    add_interval = int(connection.connectiondata['monitoring']['grafanaextend'])
+        #    #print(add_interval)
+        #    #print(c)
+        #    #print(df_all[c])
+        #    #df_all[c] = list(df_all[c])[add_interval:-add_interval].extend([0]*(2*add_interval))
         # take last extend value
-        df_all = df_all.iloc[add_interval:-add_interval]
+        #df_all = df_all.iloc[add_interval:-add_interval]
         #print(df_all)
         return df_all.T
 

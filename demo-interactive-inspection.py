@@ -18,6 +18,11 @@ import pandas as pd
 
 # path of folder containing experiment results
 resultfolder = "/results/"
+resultfolder = "C:\\Users\\perdelt\\eclipse-workspace\\Lecture-DeepLearning\\GPU\\DBMS\\benchmark"
+code = '1580550342'
+code = '1588251957'
+code = '1586423668'
+code = '1590442222'
 
 # create evaluation object for result folder
 evaluate = inspector.inspector(resultfolder)
@@ -29,11 +34,12 @@ evaluate.list_experiments
 evaluate.get_experiments_preview()
 
 # pick first experiment
-code = evaluate.list_experiments[0]
+#code = evaluate.list_experiments[0]
 
 # load it
 evaluate.load_experiment(code)
 
+df1,df2=evaluate.get_measures_and_statistics(1, type='monitoring', name='total_cpu_util')
 
 
 ###################
@@ -183,6 +189,7 @@ evaluate.get_measures_and_statistics(numQuery, type='timer', name='run')
 evaluate.get_measures_and_statistics(numQuery, type='timer', name='session')
 evaluate.get_measures_and_statistics(numQuery, type='throughput', name='session')
 evaluate.get_measures_and_statistics(numQuery, type='monitoring', name='total_gpu_util')
+evaluate.get_measures_and_statistics(numQuery, type='monitoring', name='total_cpu_throttled')
 evaluate.get_measures_and_statistics(numQuery, type='monitoring', name='total_gpu_memory')
 evaluate.get_measures_and_statistics(numQuery, type='monitoring', name='total_gpu_memory', dbms_filter=list_omnisci, factor_base='Min')
 
