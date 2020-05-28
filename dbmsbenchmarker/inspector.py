@@ -351,12 +351,12 @@ class inspector():
         # remove grafanaextend for statistics
         for c, connection in self.benchmarks.dbms.items():
             add_interval = int(connection.connectiondata['monitoring']['grafanaextend'])
-            print(c)
-            print(add_interval)
+            #print(c)
+            #print(add_interval)
             if c in dataframe.index:
                 s = dataframe.loc[c]
                 x = s.last_valid_index()
-                print(x)
+                #print(x)
                 s[x-add_interval+1:x+1]=nan
                 s[0:add_interval-1]=nan
         return dataframe
