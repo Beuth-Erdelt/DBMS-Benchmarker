@@ -179,8 +179,11 @@ class inspector():
         elif type == 'monitoring':
             df = self.get_hardware_metrics(numQuery, name, warmup=warmup, cooldown=cooldown)
             df = evaluator.dfSubRows(df, dbms_filter)
-            df_cleaned = self.dfCleanMonitoring(df.copy())
-            df_stat = evaluator.addStatistics(df_cleaned, drop_nan=False, drop_measures=True)
+            df = self.dfCleanMonitoring(df) # remove extension interval
+            #df = df_cleaned
+            #df_cleaned = self.dfCleanMonitoring(df.copy())
+            #df_stat = evaluator.addStatistics(df_cleaned, drop_nan=False, drop_measures=True)
+            df_stat = evaluator.addStatistics(df, drop_nan=False, drop_measures=True)
         elif type == 'latency':
             df = self.get_lat(numQuery, name, warmup=warmup, cooldown=cooldown)
             df = evaluator.dfSubRows(df, dbms_filter)
@@ -359,5 +362,10 @@ class inspector():
                 #print(x)
                 s[x-add_interval+1:x+1]=nan
                 s[0:add_interval-1]=nan
+        #print(dataframe)
+        dataframe = dataframe.loc[:,add_interval:len(dataframe.columns)-add_interval-1]
+        #df_all.columns = df_all.columns.map(mapper=(lambda i: i-add_interval))
+        #dataframe = dataframe.T.reset_index().T
+        #print(dataframe)
         return dataframe
 
