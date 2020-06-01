@@ -41,7 +41,7 @@ class metrics():
             'title': 'CPU Throttle [%]'
         },
         'total_cpu_util_others': {
-            'query': 'sum(irate(container_cpu_usage_seconds_total{{job="monitor-node", container_label_io_kubernetes_container_name!="dbms"}}[1m]))',
+            'query': 'sum(irate(container_cpu_usage_seconds_total{{job="monitor-node", container_label_io_kubernetes_container_name!="dbms",id!="/"}}[1m]))',
             'title': 'CPU Throttle [%]'
         },
         'total_network_rx': {
@@ -69,7 +69,7 @@ class metrics():
         query = 'query_range?query='+metric['query']+'&start='+str(time_start)+'&end='+str(time_end)+'&step='+str(self.step)
         logging.debug("Querying metrics: "+query)
         headers = {'Authorization': self.token}
-        l = [(time_start,0)]
+        l = [(t,0) for t in range(time_start, time_end+1)]#[(time_start,0)]
         #return l
         #print(self.url+query)
         try:
@@ -78,7 +78,7 @@ class metrics():
             if len(r.json()['data']['result']) > 0:
                 l = r.json()['data']['result'][0]['values']
             else:
-                l = [(time_start,0)]
+                l = [(t,0) for t in range(time_start, time_end+1)]#[(time_start,0)]
         except Exception as e:
             logging.exception('Caught an error: %s' % str(e))
         return l
