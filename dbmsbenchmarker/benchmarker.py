@@ -1477,8 +1477,8 @@ class inspector(benchmarker):
 	"""
 	Class for inspecting done benchmarks
 	"""
-	def __init__(self, result_path, code):
-		benchmarker.__init__(self,result_path=result_path+"/"+code)
+	def __init__(self, result_path, code, anonymize=False):
+		benchmarker.__init__(self,result_path=result_path+"/"+code, anonymize=anonymize)
 		self.getConfig()
 		self.readResultfolder()
 		print("Connections:")

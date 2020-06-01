@@ -59,9 +59,9 @@ class inspector():
             l = [c for c in connection_properties if c['active'] == True]
             workload_preview[code]['connections'] = len(l)
         return pd.DataFrame(workload_preview).T
-    def load_experiment(self, code):
+    def load_experiment(self, code, anonymize=False):
         self.queries_successful = []
-        self.benchmarks = benchmarker.inspector(self.result_path, code)
+        self.benchmarks = benchmarker.inspector(self.result_path, code, anonymize=anonymize)
         self.benchmarks.computeTimerRun()
         self.benchmarks.computeTimerSession()
         self.e = evaluator.evaluator(self.benchmarks, load=True, force=True)
