@@ -77,6 +77,10 @@ class metrics():
             #print(r.json)
             if len(r.json()['data']['result']) > 0:
                 l = r.json()['data']['result'][0]['values']
+                # missing values due to end of monitoring?
+                n = time_end-time_start-len(l)+1
+                l2 = [(t+len(l)+time_start, 0) for t in range(n)]
+                l = l + l2
             else:
                 l = [(t,0) for t in range(time_start, time_end+1)]#[(time_start,0)]
         except Exception as e:
