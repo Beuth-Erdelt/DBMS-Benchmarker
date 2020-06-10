@@ -60,7 +60,7 @@ class randomizer():
 		#return random.randrange(l[0],l[1]+1)
 	def float(self, parameter):
 		l = parameter['range']
-		return random.uniform(l[0],l[1]+1)
+		return random.uniform(l[0],l[1])
 	def list(self, parameter):
 		l = parameter['range']
 		size = parameter['size']
