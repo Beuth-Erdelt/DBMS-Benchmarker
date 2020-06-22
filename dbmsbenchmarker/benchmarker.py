@@ -1402,6 +1402,8 @@ class benchmarker():
 		# remove first row
 		df = df[1:]
 		return df
+	def readResultSetDict(self, query):
+		return self.protocol['query'][str(query)]['resultSets']
 	def getQueryObject(self, query):
 		return tools.query(self.queries[query-1])
 	def runIsolatedQueryMultiple(self, connectionname, queryString, times=1):
