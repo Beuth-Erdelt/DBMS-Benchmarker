@@ -249,6 +249,8 @@ class inspector():
     def get_datastorage_df(self, numQuery, numRun=0):
         # dataframe of data storage for query and run
         return self.benchmarks.readDataStorage(numQuery, numRun)
+    def get_resultset_dict(self, numQuery):
+        return self.benchmarks.readResultSetDict(str(numQuery))
     def get_resultset_df(self, numQuery, connection, numRun=0):
         # dataframe of received result set for query, connection and run
         return self.benchmarks.readResultSet(numQuery, connection=connection, numRun=numRun)
