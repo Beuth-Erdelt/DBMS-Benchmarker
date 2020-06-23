@@ -21,6 +21,14 @@ demoparameters = {
 	'forth': {
 		'type': "date",
 		'range': ["2008-01-01", "2009-01-01"]
+	},
+	'fifth': {
+		'type': "dict",
+		'range': {"AFRICA": ["MOROCCO", "ALGERIA", "MOZAMBIQUE", "ETHIOPIA", "KENYA"],
+"AMERICA": ["CANADA", "UNITED STATES", "ARGENTINA", "PERU", "BRAZIL"],
+"ASIA": ["INDIA", "JAPAN", "INDONESIA", "VIETNAM", "CHINA"],
+"EUROPE": ["GERMANY", "ROMANIA", "UNITED KINGDOM", "FRANCE", "RUSSIA"],
+"MIDDLE EAST": ["IRAQ", "EGYPT", "SAUDI ARABIA", "JORDAN", "IRAN"]}
 	}
 }
 
@@ -42,6 +50,8 @@ def generateParameters(parameters, number):
 				result[i][k] = w
 	logging.debug(result)
 	return result
+
+# generateParameters(demoparameters,1)
 
 class randomizer():
 	def __init__(self, parameter):
@@ -103,3 +113,9 @@ class randomizer():
 		else:
 			value = resultlist
 		return value
+	def dict(self, parameter):
+		d = parameter['range']
+		k = list(d.keys())[random.randrange(len(d.keys()))]
+		k2 = random.randrange(len(d[k]))
+		v = d[k][k2]
+		return [k, v]
