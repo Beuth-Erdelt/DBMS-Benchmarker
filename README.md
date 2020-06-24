@@ -871,7 +871,7 @@ Example for `CONNECTION_FILE`:
 		},
 		'hostsystem': {
 			'RAM': 61.0,
-			'CPU': 'CPU: Intel(R) Xeon(R) CPU E5-2686 v4 @ 2.30GHz\n',
+			'CPU': 'Intel(R) Xeon(R) CPU E5-2686 v4 @ 2.30GHz\n',
 			'Cores': '8\n',
 			'host': '4.4.0-1075-aws\n',
 			'disk': '82G\n',
