@@ -52,7 +52,7 @@ Predefined evaluations are
 This evaluation is available in the evaluation dict and in the latex reports.
 
 <p align="center">
-<img src="docs/dbms.png" width="480">
+<img src="dbms.png" width="480">
 </p>
 
 The user has to provide in a [config file](#connection-file)
@@ -91,7 +91,7 @@ qs_s = Queue size of sessions (tps_s1 * lat_s * 1000)
 This evaluation is available as dataframes, in the evaluation dict and as png files.
 
 <p align="center">
-<img src="docs/relative-tps-lat.png" width="640">
+<img src="relative-tps-lat.png" width="640">
 </p>
 
 For each query, latency and throughput is computed per DBMS.
@@ -102,7 +102,7 @@ Only successful queries and DBMS not producing any error are considered there.
 This evaluation is available as dataframes, in the evaluation dict and as png files.
 
 <p align="center">
-<img src="docs/ranking.png" width="480">
+<img src="ranking.png" width="480">
 </p>
 
 We compute a ranking of DBMS for each query based on the sum of times, from fastest to slowest.
@@ -113,7 +113,7 @@ The chart shows the average ranking per DBMS.
 This evaluation is available as dataframes, in the evaluation dict and as png files.
 
 <p align="center">
-<img src="docs/total_barh_ingest.png" width="480">
+<img src="total_barh_ingest.png" width="480">
 </p>
 
 This is part of the informations provided by the user.
@@ -126,7 +126,7 @@ Values are computed as arithmetic mean across benchmarking time.
 Only successful queries and DBMS not producing any error are considered.
 
 <p align="center">
-<img src="docs/monitoring-metrics.png" width="640">
+<img src="monitoring-metrics.png" width="640">
 </p>
 
 #### Host Metrics
@@ -136,7 +136,7 @@ The host information is provided in the [config file](#connection-file).
 Here, cost is based on the total time.
 
 <p align="center">
-<img src="docs/host-metrics.png" width="640">
+<img src="host-metrics.png" width="640">
 </p>
 
 ### Drill-Down Timers
@@ -145,7 +145,7 @@ Here, cost is based on the total time.
 This evaluation is available as dataframes, in the evaluation dict and as png files.
 
 <p align="center">
-<img src="docs/relative.png" width="480">
+<img src="relative.png" width="480">
 </p>
 
 For each query and timer, the best DBMS is considered as gold standard = 100%. Based on their times, the other DBMS obtain a relative ranking factor.
@@ -156,7 +156,7 @@ The chart shows the geometric mean of factors per DBMS.
 This evaluation is available as dataframes, in the evaluation dict and as png files.
 
 <p align="center">
-<img src="docs/sum_of_times.png" width="480">
+<img src="sum_of_times.png" width="480">
 </p>
 
 This is based on the mean times of all benchmark test runs.
@@ -173,7 +173,7 @@ The chart shows the average of query times based on mean values per DBMS and per
 This evaluation is available as dataframes, in the evaluation dict and as png files.
 
 <p align="center">
-<img src="docs/heatmap-timer.png" width="480">
+<img src="heatmap-timer.png" width="480">
 </p>
 
 The relative ranking can be refined to see the contribution of each query.
@@ -187,7 +187,7 @@ All active queries and DBMS are considered.
 This evaluation is available as dataframes, in the evaluation dict and as png files.
 
 <p align="center">
-<img src="docs/total_times.png" width="480">
+<img src="total_times.png" width="480">
 </p>
 
 This is based on the times each DBMS is queried in total. Measurement starts before first benchmark run and stops after the last benchmark run has been finished. Parallel benchmarks should speed up the total time in an ideal situation.
@@ -199,7 +199,7 @@ The chart shows the total query time per DBMS and query.
 This evaluation is available in the evaluation dict and as png files.
 
 <p align="center">
-<img src="docs/total_times-norm.png" width="480">
+<img src="total_times-norm.png" width="480">
 </p>
 
 The chart shows total times per query, normalized to the average total time of that query.
@@ -207,7 +207,7 @@ Only successful queries and DBMS not producing any error are considered.
 This is also available as a heatmap.
 
 <p align="center">
-<img src="docs/total_times-heatmap.png" width="480">
+<img src="total_times-heatmap.png" width="480">
 </p>
 
 #### Throughputs
@@ -215,7 +215,7 @@ This is also available as a heatmap.
 This evaluation is available in the evaluation dict and as png files.
 
 <p align="center">
-<img src="docs/tps-heatmap.png" width="480">
+<img src="tps-heatmap.png" width="480">
 </p>
 
 For each query, latency and throughput is computed per DBMS.
@@ -227,7 +227,7 @@ Only successful queries and DBMS not producing any error are considered there.
 This evaluation is available in the evaluation dict and as png files.
 
 <p align="center">
-<img src="docs/lat-heatmap.png" width="480">
+<img src="lat-heatmap.png" width="480">
 </p>
 
 For each query, latency and throughput is computed per DBMS.
@@ -239,7 +239,7 @@ Only successful queries and DBMS not producing any error are considered there.
 This evaluation is available in the evaluation dict and as png files.
 
 <p align="center">
-<img src="docs/resultsets-heatmap.png" width="480">
+<img src="resultsets-heatmap.png" width="480">
 </p>
 
 For each query, the size of received data per DBMS is stored.
@@ -252,7 +252,7 @@ All active queries and DBMS are considered.
 This evaluation is available in the evaluation dict and as png files.
 
 <p align="center">
-<img src="docs/errors-heatmap.png" width="480">
+<img src="errors-heatmap.png" width="480">
 </p>
 
 The chart shows per DBMS and per timer, if an error has occured.
@@ -263,7 +263,7 @@ All active queries and DBMS are considered.
 This evaluation is available in the evaluation dict and as png files.
 
 <p align="center">
-<img src="docs/warnings-heatmap.png" width="480">
+<img src="warnings-heatmap.png" width="480">
 </p>
 
 The chart shows per DBMS and per timer, if a warning has occured.
@@ -275,7 +275,7 @@ All active queries and DBMS are considered.
 This evaluation is available as dataframes, in the evaluation dict and as png files.
 
 <p align="center">
-<img src="docs/tps-lat.png" width="640">
+<img src="tps-lat.png" width="640">
 </p>
 
 For each query, latency and throughput is computed per DBMS.
@@ -286,7 +286,7 @@ Only successful queries and DBMS not producing any error are considered there.
 These metrics are available as png files and csv files.
 
 <p align="center">
-<img src="docs/hardware-metrics.png" width="640">
+<img src="hardware-metrics.png" width="640">
 </p>
 
 These metrics are collected from a Prometheus / Grafana stack.
@@ -296,7 +296,7 @@ This expects time-synchronized servers.
 These plots are available as png files.
 
 <p align="center">
-<img src="docs/bar.png" width="480">
+<img src="bar.png" width="480">
 </p>
 
 This is based on the sum of times of all single benchmark test runs.
@@ -311,7 +311,7 @@ The bars are ordered ascending.
 These tables are available as dataframes and in the evaluation dict.
 
 <p align="center">
-<img src="docs/table.png" width="640">
+<img src="table.png" width="640">
 </p>
 
 These tables show [statistics](#statistics) about benchmarking time during the various runs per DBMS as a table.
@@ -325,7 +325,7 @@ The DBMS are ordered ascending by factor.
 These plots are available as png files.
 
 <p align="center">
-<img src="docs/plot.png" width="640">
+<img src="plot.png" width="640">
 </p>
 
 These plots show the variation of benchmarking time during the various runs per DBMS as a plot.
@@ -338,7 +338,7 @@ This is for inspection of time dependence.
 These plots are available as png files.
 
 <p align="center">
-<img src="docs/boxplot.png" width="640">
+<img src="boxplot.png" width="640">
 </p>
 
 These plots show the variation of benchmarking time during the various runs per DBMS as a boxplot.
@@ -349,7 +349,7 @@ This is for inspection of variation and outliers.
 These plots are available as png files.
 
 <p align="center">
-<img src="docs/histogram.png" width="640">
+<img src="histogram.png" width="640">
 </p>
 
 These plots show the variation of benchmarking time during the various runs per DBMS as a histogram.
