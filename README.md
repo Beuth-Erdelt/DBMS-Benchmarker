@@ -12,54 +12,37 @@ An interactive dashboard assists in multi-dimensional analysis of the results.
 
 DBMS-Benchmarker
 * is Python3-based
-* connects to all [DBMS](#connection-file) having a JDBC interface - including GPU-enhanced DBMS
+* connects to all [DBMS](docs/Options.md#connection-file) having a JDBC interface - including GPU-enhanced DBMS
 * requires *only* JDBC - no vendor specific supplements are used
 * benchmarks arbitrary SQL queries - in all dialects
-* allows [planning](#query-file) of complex test scenarios - to simulate realistic or revealing use cases
+* allows [planning](docs/Options.md#query-file) of complex test scenarios - to simulate realistic or revealing use cases
 * allows easy repetition of benchmarks in varying settings - different hardware, DBMS, DBMS configurations, DB settings etc
 * investigates a number of timing aspects - connection, execution, data transfer, in total, per session etc
 * investigates a number of other aspects - received result sets, precision, number of clients
 * collects hardware metrics from a Grafana server - hardware utilization, energy consumption etc
-* helps to [evaluate](#evaluation) results - by providing  
+* helps to [evaluate](docs/Evaluations.md) results - by providing  
   * standard Python data structures
   * predefined evaluations like statistics, plots, Latex reporting
-  * an [inspection tool](#inspector)
-  * an [interactive dashboard](#dashboard)
+  * an [inspection tool](docs/Inspection.md)
+  * an [interactive dashboard](docs/Dashboard.md)
 
 **TODO: Multi-dimensional**
 
-For more informations, see a [basic example](#basic-usage), take a look at help for a full list of [options](#command-line-options-and-configuration) or take a look at a [demo report](docs/Report-example-tpch.pdf).
+For more informations, see a [basic example](#basic-usage), take a look at help for a full list of [options](docs/Options.md#command-line-options-and-configuration) or take a look at a [demo report](docs/Report-example-tpch.pdf).
 
 The code uses several Python modules, in particular <a href="https://github.com/baztian/jaydebeapi" target="_blank">jaydebeapi</a> for handling DBMS.
 This module has been tested with Brytlyt, Exasol, Kinetica, MariaDB, MemSQL, Mariadb, MonetDB, OmniSci and PostgreSQL.
 
-### Overview
+## Overview
 
 This documentation contains
 * an example of the [basic usage](#basic-usage) in Python
 * an illustration of the [concepts](docs/Concept.md)
-* an illustration of the [evaluations](#statistics-and-metrics)
-* a description of the [options and configurations](#parameters)
-* more extensive examples of using the [cli tool](#usage)
-* some [use-cases](#use-cases) and [test scenarios](#scenarios)
-* examples of how to use the interactive [inspector](#inspector)
-
-#### Limitations
-
-Limitations are:
-* strict black box perspective - may not use all tricks available for a DBMS
-* strict JDBC perspective - depends on a JVM and provided drivers
-* strict user perspective - client system, network connection and other host workloads may affect performance
-* not officially applicable for well known benchmark standards - partially, but not fully complying with TPC-H and TPC-DS
-* hardware metrics are collected from a monitoring system - not as precise as profiling
-* no GUI for configuration
-* strictly Python - a very good and widely used language, but maybe not your choice
-
-Other comparable products you might like
-* [Apache JMeter](https://jmeter.apache.org/index.html) - Java-based performance measure tool, including a configuration GUI and reporting to HTML
-* [HammerDB](https://www.hammerdb.com/) - industry accepted benchmark tool, but limited to some DBMS
-* [Sysbench](https://github.com/akopytov/sysbench) - a scriptable multi-threaded benchmark tool based on LuaJIT
-* [OLTPBench](https://github.com/oltpbenchmark/oltpbench) -Java-based performance measure tool, using JDBC and including a lot of predefined benchmarks 
+* an illustration of the [evaluations](docs/Evaluations.md)
+* a description of the [options and configurations](docs/Options.md)
+* more extensive [examples](docs/Usage.md) of using the [cli tool](docs/Options.md#command-line-options-and-configuration)
+* some [use-cases](docs/Usecases.md#use-cases) and [test scenarios](docs/Usecases.md#scenarios)
+* examples of how to use the interactive [inspector](docs/Inspection.md)
 
 ## Basic Usage
 
@@ -67,7 +50,7 @@ The following very simple use case runs the query `SELECT COUNT(*) FROM test` 10
 As a result we obtain the execution times as a csv file, as a series plot and as a bloxplot.
 
 We need to provide
-* a [DBMS configuration file](#connection-file), e.g. in `./config/connections.config`  
+* a [DBMS configuration file](docs/Options.md#connection-file), e.g. in `./config/connections.config`  
 ```
 [
   {
@@ -82,7 +65,7 @@ We need to provide
   }
 ]
 ```
-* a [Queries configuration file](#query-file), e.g. in `./config/queries.config`  
+* a [Queries configuration file](docs/Options.md#query-file), e.g. in `./config/queries.config`  
 ```
 {
   'name': 'Some simple queries',
@@ -131,10 +114,27 @@ dfb1 = benchmarks.benchmarksToDataFrame(1,benchmarks.timerRun)
 # get dataframe of statistics for query 1 and timerRun
 dfs1 = benchmarks.statsToDataFrame(1,benchmarks.timerRun)
 ```
-There also is a [command line interface](#command-line-options-and-configuration) for running benchmarks and generation of reports.
+There also is a [command line interface](docs/Options.md#command-line-options-and-configuration) for running benchmarks and generation of reports.
 
 **TODO: New inspection**
 
+
+## Limitations
+
+Limitations are:
+* strict black box perspective - may not use all tricks available for a DBMS
+* strict JDBC perspective - depends on a JVM and provided drivers
+* strict user perspective - client system, network connection and other host workloads may affect performance
+* not officially applicable for well known benchmark standards - partially, but not fully complying with TPC-H and TPC-DS
+* hardware metrics are collected from a monitoring system - not as precise as profiling
+* no GUI for configuration
+* strictly Python - a very good and widely used language, but maybe not your choice
+
+Other comparable products you might like
+* [Apache JMeter](https://jmeter.apache.org/index.html) - Java-based performance measure tool, including a configuration GUI and reporting to HTML
+* [HammerDB](https://www.hammerdb.com/) - industry accepted benchmark tool, but limited to some DBMS
+* [Sysbench](https://github.com/akopytov/sysbench) - a scriptable multi-threaded benchmark tool based on LuaJIT
+* [OLTPBench](https://github.com/oltpbenchmark/oltpbench) -Java-based performance measure tool, using JDBC and including a lot of predefined benchmarks 
 
 
 

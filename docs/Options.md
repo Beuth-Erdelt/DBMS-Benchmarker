@@ -11,7 +11,7 @@ Benchmarks can be [parametrized](#query-file) by
 * number of parallel clients: *How do multiple user scenarios affect performance?*
 * optional list of timers (currently: connection, execution, data transfer, run and session): *Where does my time go?*
 * [sequences](#query-list) of queries: *How does sequencing influence performance?*
-* optional [comparison](#comparison) of result sets: *Do I always receive the same results sets?*
+* optional [comparison](#results-and-comparison) of result sets: *Do I always receive the same results sets?*
 
 Benchmarks can be [randomized](#randomized-query-file) (optionally with specified [seeds](#random-seed) for reproducible results) to avoid caching side effects and to increase variety of queries by taking samples of arbitrary size from a
 * list of elements
@@ -26,7 +26,7 @@ This is inspired by [TPC-H](http://www.tpc.org/tpch/) and [TPC-DS](http://www.tp
 
 ## Command Line Options and Configuration
 
-How to configure the benchmarker can be illustrated best by looking at the source code of the [command line tool](benchmark.py), which will be described in the following.
+How to configure the benchmarker can be illustrated best by looking at the source code of the [command line tool](../benchmark.py), which will be described in the following.
 
 `python3 benchmark.py -h`
 
@@ -239,6 +239,11 @@ Extended example for `QUERY_FILE`:
       },
       'timer':
       {
+        'connection':
+        {
+          'active': True,
+          'delay': 0
+        },
         'datatransfer':
         {
           'active': True,
@@ -246,11 +251,6 @@ Extended example for `QUERY_FILE`:
           'compare': 'result',
           'store': 'dataframe',
           'precision': 4,
-        },
-        'connection':
-        {
-          'active': True,
-          'delay': 0
         }
       }
     },
@@ -258,30 +258,7 @@ Extended example for `QUERY_FILE`:
 }
 ```
 
-The `datatransfer` timer will also measure the time for data transfer.
-The tool can store retrieved data to compare different queries and dbms.
-This helps to be sure different approaches yield the same results.
-For example the query above should always return the same number of rows in table `test`.
-
-`compare` can be used to compare result sets obtained from different runs and dbms.
-`compare` is optional and can be 
-* `result`: Compare complete result set. Every cell is trimmed. Floats can be rounded to a given `precision` (decimal places). This is important for example for comparing CPU and GPU based DBMS.
-* `hash`: Compare hash value of result set.
-* `size`: Compare size of result set.
-
-If comparison detects any difference in result sets, a warning is generated.
-
-The result set can optionally be sorted by each column before comparison by using `sorted`.
-This helps avoid mismatch due to different orderings in the received sets.
-
-Note that comparing result sets necessarily means they have to be stored, so `result` should only be used for small data sets. The parameter `store` commands the tool to keep the result set and is automatically set to `True` if any of the above is used. It can be set to `False` to command the tool to fetch the result set and immediately forget it. This helps measuring the time for data transfer without having to store all result sets, which in particular for large result sets and numbers of runs can exhauste the RAM.
-Setting `store` can also yield the result sets to be stored in extra files. Possible values are: `'store': ['dataframe', 'csv']`
-
-The `connection` timer will also measure the time for establishing a connection.
-It is possible to force sleeping before each establishment by using `delay` (in seconds).
-Default is 0.
-
-The `DBMS` key allows to specify SQL dialects. All connections starting with the key in this dict with use the specified alternative query. In the example above, for instance a connection 'MySQL-InnoDB' will use the alternative.
+#### Reporting
 
 Some options are used to configure reporting:
 * `intro`: Intro text for report
@@ -303,10 +280,45 @@ Some options are used to configure reporting:
   `False`: No limit
   `n`: Maximum number of rows
 
+#### SQL Dialects
+
+The `DBMS` key allows to specify SQL dialects. All connections starting with the key in this dict with use the specified alternative query. In the example above, for instance a connection 'MySQL-InnoDB' will use the alternative.
+
+#### Connection Management
+
 The first `connectionmanagement` options set global values valid for all DBMS. This can be overwritten by the settings in the [connection config](#connection-file). The second `connectionmanagement` is fixed valid for this particular query and cannot be overwritten.
   * `timeout`: Maximum lifespan of a connection. Default is None, i.e. no limit.
   * `numProcesses`: Number of parallel client processes. Default is 1.
   * `runsPerConnection`: Number of runs performed before connection is closed. Default is None, i.e. no limit.
+
+
+#### Connection Latency
+The `connection` timer will also measure the time for establishing a connection.
+It is possible to force sleeping before each establishment by using `delay` (in seconds).
+Default is 0.
+
+#### Results and Comparison
+
+The `datatransfer` timer will also measure the time for data transfer.
+The tool can store retrieved data to compare different queries and dbms.
+This helps to be sure different approaches yield the same results.
+For example the query above should always return the same number of rows in table `test`.
+
+`compare` can be used to compare result sets obtained from different runs and dbms.
+`compare` is optional and can be 
+* `result`: Compare complete result set. Every cell is trimmed. Floats can be rounded to a given `precision` (decimal places). This is important for example for comparing CPU and GPU based DBMS.
+* `hash`: Compare hash value of result set.
+* `size`: Compare size of result set.
+
+If comparison detects any difference in result sets, a warning is generated.
+
+The result set can optionally be sorted by each column before comparison by using `sorted`.
+This helps avoid mismatch due to different orderings in the received sets.
+
+Note that comparing result sets necessarily means they have to be stored, so `result` should only be used for small data sets. The parameter `store` commands the tool to keep the result set and is automatically set to `True` if any of the above is used. It can be set to `False` to command the tool to fetch the result set and immediately forget it. This helps measuring the time for data transfer without having to store all result sets, which in particular for large result sets and numbers of runs can exhauste the RAM.
+Setting `store` can also yield the result sets to be stored in extra files. Possible values are: `'store': ['dataframe', 'csv']`
+
+
 
 ### Randomized Query File
 
@@ -419,20 +431,20 @@ Connections are called by name.
 
 If set to yes, some reports are generated each time a benchmark of a single connection and query is finished.
 Currently this means
-* [bar charts](#example-bar-chart-per-query) as png files
-* [plots](#example-plot-per-query) as png files
-* [boxplots](#example-boxplot-per-query) as png files
-* [dataframer](#benchmark-times-per-query) - benchmark times as pickled dataframe files
-* [pickler](#example-statistics-table-per-query) - statistics as pickled dataframe files
-* [metricer](#hardware-metrics-per-query) - hardware metrics as png and csv files
+* [bar charts](Evaluations.md#example-bar-chart-per-query) as png files
+* [plots](Evaluations.md#example-plot-per-query) as png files
+* [boxplots](Evaluations.md#example-boxplot-of-values) as png files
+* [dataframer](Evaluations.md#benchmark-times-per-query) - benchmark times as pickled dataframe files
+* [pickler](Evaluations.md#example-statistics-table-per-query) - statistics as pickled dataframe files
+* [metricer](Evaluations.md#hardware-metrics-per-query) - hardware metrics as png and csv files
 * latexer, see an [example report](Report-example-tpch.pdf), also containing all plots and charts, and possibly error messages and fetched result tables. The latex reporter demands all other reporters to be active.
 
 Reports are generated per query, that is one for each entry in the list in the `QUERY_FILE`.
-The latex survey file contains all latex reports, that is all [evaluations](#evaluation) for all queries.
+The latex survey file contains all latex reports, that is all [evaluations](Evaluations.md) for all queries.
 
 ### Generate evaluation
 
-If set to yes, an evaluation file is generated. This is a JSON file containing most of the [evaluations](#evaluation).
+If set to yes, an evaluation file is generated. This is a JSON file containing most of the [evaluations](Evaluations.md).
 It can be accessed most easily using the inspection class or the interactive dashboard.
 
 ### Debug
