@@ -103,20 +103,19 @@ dbms.runBenchmarks()
 # print collected errors
 dbms.printErrors()
 
-# get evaluation dict
-e = evaluator.evaluator(benchmarks)
-# show it
-e.pretty()
-# show part about query 1
-e.pretty(e.evaluation['query'][1])
-# get dataframe of benchmarks for query 1 and timerRun
-dfb1 = benchmarks.benchmarksToDataFrame(1,benchmarks.timerRun)
-# get dataframe of statistics for query 1 and timerRun
-dfs1 = benchmarks.statsToDataFrame(1,benchmarks.timerRun)
+# get unique code of this experiment
+code = dbms.code
+
+# generate inspection object
+evaluate = inspector.inspector(resultfolder)
+
+# load this experiment into inspector
+evaluate.load_experiment(code)
+
+# get latency of run (measures and statistics) of first query
+df_measure, df_statistics = evaluate.get_measures_and_statistics(1, type='latency', name='run')
 ```
 There also is a [command line interface](docs/Options.md#command-line-options-and-configuration) for running benchmarks and generation of reports.
-
-**TODO: New inspection**
 
 
 ## Limitations
