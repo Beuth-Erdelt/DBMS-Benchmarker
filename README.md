@@ -6,6 +6,7 @@ It connects to a given list of DBMS (via JDBC) and runs a given list of (SQL) be
 Queries can be parametrized and randomized.
 Results and evaluations are available via a Python interface.
 Optionally some reports are generated.
+An interactive dashboard assists in multi-dimensional analysis of the results.
 
 ## Key Features
 
@@ -18,38 +19,21 @@ DBMS-Benchmarker
 * allows easy repetition of benchmarks in varying settings - different hardware, DBMS, DBMS configurations, DB settings etc
 * investigates a number of timing aspects - connection, execution, data transfer, in total, per session etc
 * investigates a number of other aspects - received result sets, precision, number of clients, hardware metrics etc
-* helps to [evaluate](#evaluation) results - by providing Python data structures, [statistics](#statistical-measures), plots, Latex reporting, an [inspection tool](#inspector) and an [interactive dashboard](#dashboard)
+* helps to [evaluate](#evaluation) results - by providing  
+  * standard Python data structures
+  * predefined evaluations like statistics, plots, Latex reporting
+  * an [inspection tool](#inspector)
+  * an [interactive dashboard](#dashboard)
 
-[Use Cases](#use-cases) may be
-* [Benchmark 1 Query in 1 DBMS](#benchmark-1-query-in-1-dbms)
-* [Compare 2 Queries in 1 DBMS](#compare-2-queries-in-1-dbms)
-* [Compare 2 Databases in 1 DBMS](#compare-2-databases-in-1-dbms)
-* [Compare 1 Query in 2 DBMS](#compare-1-query-in-2-dbms)  
-and combinations like compare n queries in m DBMS.
-* [Benchmarking DBMS Configurations](#benchmarking-dbms-configurations)
+DBMS (in a specific hardware / configuration setup) can be [compared](#informations-about-dbms) by
+* time (connection, execution, transfer, ingest)
+* price
+* hardware utilization / energy consumption
 
-[Scenarios](#scenarios) may be
-* [Many Users / Few, Complex Queries](#many-users--few-complex-queries)
-* [Few Users / Several simple Queries](#few-users--several-simple-queries)
-* [Updated Database](#updated-database)
-
-Limitations are:
-* strict black box perspective - may not use all tricks available for a DBMS
-* strict JDBC perspective - depends on a JVM and provided drivers
-* strict user perspective - client system, network connection and other host workloads may affect performance
-* not officially applicable for well known benchmark standards - partially, but not fully complying with TPC-H and TPC-DS
-* hardware metrics are collected from a monitoring system - not as precise as profiling
-* no GUI for configuration
-* strictly Python - a very good and widely used language, but maybe not your choice
-
-Other comparable products you might like
-* [Apache JMeter](https://jmeter.apache.org/index.html) - Java-based performance measure tool, including a configuration GUI and reporting to HTML
-* [HammerDB](https://www.hammerdb.com/) - industry accepted benchmark tool, but limited to some DBMS
-* [Sysbench](https://github.com/akopytov/sysbench) - a scriptable multi-threaded benchmark tool based on LuaJIT
-* [OLTPBench](https://github.com/oltpbenchmark/oltpbench) -Java-based performance measure tool, using JDBC and including a lot of predefined benchmarks 
 
 For more informations, see a [basic example](#basic-usage), take a look at help for a full list of [options](#command-line-options-and-configuration) or take a look at a [demo report](docs/Report-example-tpch.pdf).
 
+The code uses several Python modules, in particular <a href="https://github.com/baztian/jaydebeapi" target="_blank">jaydebeapi</a> for handling DBMS.
 This module has been tested with Brytlyt, Exasol, Kinetica, MariaDB, MemSQL, Mariadb, MonetDB, OmniSci and PostgreSQL.
 
 ## Overview
@@ -94,6 +78,7 @@ Benchmarks can be [parametrized](#query-file) by
 
 Benchmarks can be [randomized](#randomized-query-file) (optionally with specified [seeds](#random-seed) for reproducible results) to avoid caching side effects and to increase variety of queries by taking samples of arbitrary size from a
 * list of elements
+* dict of elements (one-to-many relations)
 * range of integers
 * range of floats
 * range of days
@@ -142,13 +127,22 @@ Benchmarks can be [evaluated](#evaluation) in
   * [initialization scripts](#initialization-scripts)
 * an interactive [inspection tool](#inspector)
 
-DBMS (in a specific hardware / configuration setup) can be [compared](#informations-about-dbms) by
-* time (connection, execution, transfer, ingest)
-* price
-* hardware utilization
-* energy consumption
+### Limitations
 
-The code uses several Python modules, in particular <a href="https://github.com/baztian/jaydebeapi" target="_blank">jaydebeapi</a> for handling DBMS.
+Limitations are:
+* strict black box perspective - may not use all tricks available for a DBMS
+* strict JDBC perspective - depends on a JVM and provided drivers
+* strict user perspective - client system, network connection and other host workloads may affect performance
+* not officially applicable for well known benchmark standards - partially, but not fully complying with TPC-H and TPC-DS
+* hardware metrics are collected from a monitoring system - not as precise as profiling
+* no GUI for configuration
+* strictly Python - a very good and widely used language, but maybe not your choice
+
+Other comparable products you might like
+* [Apache JMeter](https://jmeter.apache.org/index.html) - Java-based performance measure tool, including a configuration GUI and reporting to HTML
+* [HammerDB](https://www.hammerdb.com/) - industry accepted benchmark tool, but limited to some DBMS
+* [Sysbench](https://github.com/akopytov/sysbench) - a scriptable multi-threaded benchmark tool based on LuaJIT
+* [OLTPBench](https://github.com/oltpbenchmark/oltpbench) -Java-based performance measure tool, using JDBC and including a lot of predefined benchmarks 
 
 ## Basic Usage
 
@@ -360,43 +354,6 @@ Result sets of different runs (not randomized) and different DBMS can be compare
 
 In order to do so, result sets (or their hash value or size) are stored as lists of lists and additionally can be saved as csv files or pickled pandas dataframes.
 
-### Evaluation
-
-After an experiment has finished, the results can be evaluated
-* with an interactive [dashboard](#dashboard)
-* in a Latex report containing most of the results
-* with an interactive [inspection module](#inspector)
-
-There is an *evaluator class*, which collects most of the (numerical) evaluations and provides them as an **evaluation dict**.
-
-## Statistics and Metrics
-
-### Statistical Measures
-
-Currently the following statistics are computed:
-* Sensitive to outliers
-  * Arithmetic mean
-  * Standard deviation
-  * Coefficient of variation
-* Insensitive to outliers
-  * Median
-  * Interquartile range
-  * Quartile coefficient of dispersion
-
-### Informations about DBMS
-This evaluation is available in the evaluation dict and in the latex reports.
-
-<p align="center">
-<img src="docs/dbms.png" width="480">
-</p>
-
-The user has to provide in a [config file](#connection-file)
-* a unique name (**connectionname**)
-* JDBC connection information
-
-If a monitoring interface is provided, [hardware metrics](#hardware-metrics) are collected and aggregated.
-We may further provide describing information for reporting.
-
 ### Monitoring Hardware Metrics
 
 To make these metrics available, we must [provide](#connection-file) an API URL and an API Access Token for a Grafana Server.
@@ -449,6 +406,43 @@ Example:
 **Note** this expects monitoring to be installed properly and naming to be appropriate. See https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager for a working example and more details.
 
 **Note** this has limited validity, since metrics are typically scraped only on a basis of several seconds. It works best with a high repetition of the same query.
+
+### Evaluation
+
+After an experiment has finished, the results can be evaluated
+* with an interactive [dashboard](#dashboard)
+* in a Latex report containing most of the results
+* with an interactive [inspection module](#inspector)
+
+There is an *evaluator class*, which collects most of the (numerical) evaluations and provides them as an **evaluation dict**.
+
+## Statistics and Metrics
+
+### Statistical Measures
+
+Currently the following statistics are computed:
+* Sensitive to outliers
+  * Arithmetic mean
+  * Standard deviation
+  * Coefficient of variation
+* Insensitive to outliers
+  * Median
+  * Interquartile range
+  * Quartile coefficient of dispersion
+
+### Informations about DBMS
+This evaluation is available in the evaluation dict and in the latex reports.
+
+<p align="center">
+<img src="docs/dbms.png" width="480">
+</p>
+
+The user has to provide in a [config file](#connection-file)
+* a unique name (**connectionname**)
+* JDBC connection information
+
+If a monitoring interface is provided, [hardware metrics](#hardware-metrics) are collected and aggregated.
+We may further provide describing information for reporting.
 
 #### Throughput and Latency
 
@@ -1365,6 +1359,19 @@ The example uses `12345/connections.config` and `12345/queries.config` as config
 In this example, the connection named MySQL is benchmarked (again) in any case.
 
 ## Use Cases
+
+[Use Cases](#use-cases) may be
+* [Benchmark 1 Query in 1 DBMS](#benchmark-1-query-in-1-dbms)
+* [Compare 2 Queries in 1 DBMS](#compare-2-queries-in-1-dbms)
+* [Compare 2 Databases in 1 DBMS](#compare-2-databases-in-1-dbms)
+* [Compare 1 Query in 2 DBMS](#compare-1-query-in-2-dbms)  
+and combinations like compare n queries in m DBMS.
+* [Benchmarking DBMS Configurations](#benchmarking-dbms-configurations)
+
+[Scenarios](#scenarios) may be
+* [Many Users / Few, Complex Queries](#many-users--few-complex-queries)
+* [Few Users / Several simple Queries](#few-users--several-simple-queries)
+* [Updated Database](#updated-database)
 
 ### Benchmark 1 Query in 1 DBMS
 
