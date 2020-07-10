@@ -18,7 +18,7 @@ DBMS-Benchmarker
 * allows easy repetition of benchmarks in varying settings - different hardware, DBMS, DBMS configurations, DB settings etc
 * investigates a number of timing aspects - connection, execution, data transfer, in total, per session etc
 * investigates a number of other aspects - received result sets, precision, number of clients, hardware metrics etc
-* helps to [evaluate](#evaluation) results - by providing Python data structures, [statistics](#statistical-measures), plots, Latex reporting and an [inspection tool](#inspector)
+* helps to [evaluate](#evaluation) results - by providing Python data structures, [statistics](#statistical-measures), plots, Latex reporting, an [inspection tool](#inspector) and an [interactive dashboard](#dashboard)
 
 [Use Cases](#use-cases) may be
 * [Benchmark 1 Query in 1 DBMS](#benchmark-1-query-in-1-dbms)
@@ -363,6 +363,7 @@ In order to do so, result sets (or their hash value or size) are stored as lists
 ### Evaluation
 
 After an experiment has finished, the results can be evaluated
+* with an interactive [dashboard](#dashboard)
 * in a Latex report containing most of the results
 * with an interactive [inspection module](#inspector)
 
@@ -374,7 +375,7 @@ There is an *evaluator class*, which collects most of the (numerical) evaluation
 
 Currently the following statistics are computed:
 * Sensitive to outliers
-  * Mean
+  * Arithmetic mean
   * Standard deviation
   * Coefficient of variation
 * Insensitive to outliers
@@ -404,6 +405,7 @@ The requested interval matches the interval a specific DBMS is queried.
 To increase expressiveness, it is possible to extend the scraping interval by n seconds at both ends.
 In the end we have a list of per second values for each query and DBMS.
 We may define the metrics in terms of promql.
+Metrics can be defined per connection.
 
 Example:
 ```
@@ -1184,6 +1186,11 @@ Currently this means
 
 Reports are generated per query, that is one for each entry in the list in the `QUERY_FILE`.
 The latex survey file contains all latex reports, that is all [evaluations](#evaluation) for all queries.
+
+#### Generate evaluation
+
+If set to yes, an evaluation file is generated. This is a JSON file containing most of the [evaluations](#evaluation).
+It can be accessed most easily using the inspection class or the interactive dashboard.
 
 #### Debug
 
