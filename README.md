@@ -404,30 +404,49 @@ The requested interval matches the interval a specific DBMS is queried.
 To increase expressiveness, it is possible to extend the scraping interval by n seconds at both ends.
 In the end we have a list of per second values for each query and DBMS.
 We may define the metrics in terms of promql.
-Currently the following metrics are collected:
+
+Example:
 ```
 'title': 'CPU Memory [MB]'
-'query': '(node_memory_MemTotal_bytes-node_memory_MemFree_bytes-node_memory_Buffers_bytes-node_memory_Cached_bytes)/1024/1024'
+'query': 'container_memory_working_set_bytes{container_label_io_kubernetes_container_name="dbms"}'
 
 'title': 'CPU Memory Cached [MB]'
-'query': '(node_memory_Cached_bytes)/1024/1024'
+'query': 'container_memory_usage_bytes{container_label_io_kubernetes_container_name="dbms"}'
 
 'title': 'CPU Util [%]'
-'query': '100 - (avg by (instance) (irate(node_cpu_seconds_total{mode="idle"}[5m])) * 100)'
+'query': 'sum(irate(container_cpu_usage_seconds_total{container_label_io_kubernetes_container_name="dbms"}[1m]))'
+
+'title': 'CPU Throttle [%]'
+'query': 'sum(irate(container_cpu_cfs_throttled_seconds_total{container_label_io_kubernetes_container_name="dbms"}[1m]))'
+
+'title': 'CPU Util Others [%]'
+'query': 'sum(irate(container_cpu_usage_seconds_total{container_label_io_kubernetes_container_name!="dbms",id!="/"}[1m]))'
+
+'title': 'Net Rx [b]'}, 'total_network_tx'
+'query': 'sum(container_network_receive_bytes_total{container_label_app="dbmsbenchmarker"})'
+
+'title': 'Net Tx [b]'
+'query': 'sum(container_network_transmit_bytes_total{container_label_app="dbmsbenchmarker"})'
+
+'title': 'FS Read [b]'
+'query': 'sum(container_fs_reads_bytes_total{container_label_io_kubernetes_container_name="dbms"})'
+
+'title': 'FS Write [b]'
+'query': 'sum(container_fs_writes_bytes_total{container_label_io_kubernetes_container_name="dbms"})'
 
 'title': 'GPU Util [%]'
-'query': 'sum(dcgm_gpu_utilization)'
+'query': 'DCGM_FI_DEV_GPU_UTIL{UUID=~"GPU-4d1c2617-649d-40f1-9430-2c9ab3297b79"}'
 
 'title': 'GPU Power Usage [W]'
-'query': 'sum(dcgm_power_usage)'
+'query': 'DCGM_FI_DEV_POWER_USAGE{UUID=~"GPU-4d1c2617-"}'
 
-'title': 'GPU Memory [MB]'
-'query': 'sum(dcgm_fb_used)'
+'title': 'GPU Memory [MiB]'
+'query': 'DCGM_FI_DEV_FB_USED{UUID=~"GPU-4d1c2617-"}'
 ```
 
+**Note** this expects monitoring to be installed properly and naming to be appropriate. See https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager for a working example and more details.
 
-**Note** this has limited validity, since metrics are typically scraped only on a basis of several seconds. GPU Isolations works very well, but CPU isolation cannot be measured.
-It works best with a high repetition of the same query.
+**Note** this has limited validity, since metrics are typically scraped only on a basis of several seconds. It works best with a high repetition of the same query.
 
 #### Throughput and Latency
 
@@ -770,7 +789,7 @@ How to configure the benchmarker can be illustrated best by looking at the sourc
 usage: benchmark.py [-h] [-d] [-b] [-qf QUERY_FILE] [-cf CONNECTION_FILE]
                     [-q QUERY] [-c CONNECTION] [-l LATEX_TEMPLATE]
                     [-f CONFIG_FOLDER] [-r RESULT_FOLDER] [-g {no,yes}]
-                    [-w {query,connection}] [-a]
+                    [-e {no,yes}] [-w {query,connection}] [-a]
                     [-u [UNANONYMIZE [UNANONYMIZE ...]]] [-p NUMPROCESSES]
                     [-s SEED]
                     {run,read,continue}
@@ -807,6 +826,8 @@ optional arguments:
                         given by timestamp
   -g {no,yes}, --generate-output {no,yes}
                         generate new report files
+  -e {no,yes}, --generate-evaluation {no,yes}
+                        generate new evaluation file
   -w {query,connection}, --working {query,connection}
                         working per query or connection
   -a, --anonymize       anonymize all dbms
