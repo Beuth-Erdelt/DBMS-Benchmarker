@@ -425,7 +425,7 @@ Currently this means
 * [dataframer](#benchmark-times-per-query) - benchmark times as pickled dataframe files
 * [pickler](#example-statistics-table-per-query) - statistics as pickled dataframe files
 * [metricer](#hardware-metrics-per-query) - hardware metrics as png and csv files
-* latexer, see an [example report](docs/Report-example-tpch.pdf), also containing all plots and charts, and possibly error messages and fetched result tables. The latex reporter demands all other reporters to be active.
+* latexer, see an [example report](Report-example-tpch.pdf), also containing all plots and charts, and possibly error messages and fetched result tables. The latex reporter demands all other reporters to be active.
 
 Reports are generated per query, that is one for each entry in the list in the `QUERY_FILE`.
 The latex survey file contains all latex reports, that is all [evaluations](#evaluation) for all queries.
