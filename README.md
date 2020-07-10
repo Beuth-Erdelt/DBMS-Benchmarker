@@ -18,116 +18,33 @@ DBMS-Benchmarker
 * allows [planning](#query-file) of complex test scenarios - to simulate realistic or revealing use cases
 * allows easy repetition of benchmarks in varying settings - different hardware, DBMS, DBMS configurations, DB settings etc
 * investigates a number of timing aspects - connection, execution, data transfer, in total, per session etc
-* investigates a number of other aspects - received result sets, precision, number of clients, hardware metrics etc
+* investigates a number of other aspects - received result sets, precision, number of clients
+* collects hardware metrics from a Grafana server - hardware utilization, energy consumption etc
 * helps to [evaluate](#evaluation) results - by providing  
   * standard Python data structures
   * predefined evaluations like statistics, plots, Latex reporting
   * an [inspection tool](#inspector)
   * an [interactive dashboard](#dashboard)
 
-DBMS (in a specific hardware / configuration setup) can be [compared](#informations-about-dbms) by
-* time (connection, execution, transfer, ingest)
-* price
-* hardware utilization / energy consumption
-
+**TODO: Multi-dimensional**
 
 For more informations, see a [basic example](#basic-usage), take a look at help for a full list of [options](#command-line-options-and-configuration) or take a look at a [demo report](docs/Report-example-tpch.pdf).
 
 The code uses several Python modules, in particular <a href="https://github.com/baztian/jaydebeapi" target="_blank">jaydebeapi</a> for handling DBMS.
 This module has been tested with Brytlyt, Exasol, Kinetica, MariaDB, MemSQL, Mariadb, MonetDB, OmniSci and PostgreSQL.
 
-## Overview
+### Overview
 
 This documentation contains
-* a [feature](#features) list
 * an example of the [basic usage](#basic-usage) in Python
 * an illustration of the [concepts](#concepts)
 * an illustration of the [evaluations](#statistics-and-metrics)
-* a description of the [options and configurations](#command-line-options-and-configuration)
+* a description of the [options and configurations](#parameters)
 * more extensive examples of using the [cli tool](#usage)
 * some [use-cases](#use-cases) and [test scenarios](#scenarios)
 * examples of how to use the interactive [inspector](#inspector)
 
-## Features
-
-### Featured Usage
-
-This tool can be [used](#usage) to
-* [run](#run-benchmarks) benchmarks
-* [continue](#continue-benchmarks) aborted benchmarks
-* [rerun](#rerun-benchmarks) benchmarks for one fixed [query](#rerun-benchmarks-for-one-query) and/or one fixed [DBMS](#rerun-benchmarks-for-one-connection)
-* [compare](#extended-query-file) result sets obtained from different runs and dbms
-* add benchmarks for more [queries](#continue-benchmarks-for-more-queries) or for more [DBMS](#continue-benchmarks-for-more-connections)
-* [read](#read-stored-benchmarks) finished benchmarks
-* fetch hardware metrics from a [grafana](#monitoring-hardware-metrics) server for monitoring
-* generate reports [during](#run-benchmarks-and-generate-reports) or [after](#generate-reports-of-stored-benchmarks) benchmarking, with real names or [anonymized](#anonymize) DBMS
-* interactively [inspect](#inspector) results
-
-### Featured Parameters
-
-The lists of [DBMS](#connection-file) and [queries](#query-file) are given in config files in dict format.
-
-Benchmarks can be [parametrized](#query-file) by
-* number of benchmark runs: *Is performance stable across time?*
-* number of benchmark runs per connection: *How does reusing a connection affect performance?*
-* number of warmup and cooldown runs, if any: *How does (re)establishing a connection affect performance?*
-* number of parallel clients: *How do multiple user scenarios affect performance?*
-* optional list of timers (currently: connection, execution, data transfer, run and session): *Where does my time go?*
-* [sequences](#query-list) of queries: *How does sequencing influence performance?*
-* optional [comparison](#comparison) of result sets: *Do I always receive the same results sets?*
-
-Benchmarks can be [randomized](#randomized-query-file) (optionally with specified [seeds](#random-seed) for reproducible results) to avoid caching side effects and to increase variety of queries by taking samples of arbitrary size from a
-* list of elements
-* dict of elements (one-to-many relations)
-* range of integers
-* range of floats
-* range of days
-* range of (first of) months
-* range of years
-
-This is inspired by [TPC-H](http://www.tpc.org/tpch/) and [TPC-DS](http://www.tpc.org/tpcds/) - Decision Support Benchmarks.
-
-### Featured Evaluations
-
-Benchmarks can be [evaluated](#evaluation) in
-* [Global Metrics](#global-metrics)
-  * [average position](#average-ranking)
-  * [latency and throughput](#latency-and-throughput)
-  * [ingestion](#time-of-ingest-per-dbms)
-  * [hardware metrics](#hardware-metrics)
-  * [host metrics](#host-metrics)
-* [Drill-Down Timers](#drill-down-timers)
-  * [relative position](#relative-ranking-based-on-times)
-  * [average times](#average-times)
-* [Slices of Timers](#slice-timers)
-  * [heatmap of factors](#heatmap-of-factors)
-* [Drill-Down Queries](#drill-down-queries)
-  * [total times](#total-times)
-  * [normalized total times](#normalized-total-times)
-  * [latencies](#latencies)
-  * [throughputs](#throughputs)
-  * [sizes of result sets](#sizes-of-result-sets)
-  * [errors](#errors)
-  * [warnings](#warnings)
-* [Slices of Queries](#slice-queries)
-  * [latency and throughput](#latency-and-throughput-per-query)
-  * [hardware metrics](#hardware-metrics-per-query)
-  * [timers](#timers-per-query)
-* [Slices of Queries and Timers](#slice-queries-and-timers)
-  * [statistics](#statistics-table) - measures of tendency and dispersion, sensitive and insensitive to outliers
-  * [plots](#plot-of-values) of times
-  * [box plots](#boxplot-of-values) of times
-  * [bar plots](#bar-chart-per-query) of times
-* summarizing and exhaustive latex reports containing [further data](#further-data) like
-  * precision and identity checks of [result sets](#comparison)
-  * [error messages](#all-errors)
-  * [warnings](#all-warnings)
-  * [benchmark times](#all-benchmark-times)
-  * [experiment workflow](#bexhoma-workflow)
-  * [initialization scripts](#initialization-scripts)
-* an interactive [inspection tool](#inspector)
-
-### Limitations
+#### Limitations
 
 Limitations are:
 * strict black box perspective - may not use all tricks available for a DBMS
@@ -215,6 +132,16 @@ dfb1 = benchmarks.benchmarksToDataFrame(1,benchmarks.timerRun)
 dfs1 = benchmarks.statsToDataFrame(1,benchmarks.timerRun)
 ```
 There also is a [command line interface](#command-line-options-and-configuration) for running benchmarks and generation of reports.
+
+**TODO: New inspection**
+
+
+
+
+
+
+
+
 
 ## Concepts
 
@@ -409,16 +336,17 @@ Example:
 
 ### Evaluation
 
-After an experiment has finished, the results can be evaluated
-* with an interactive [dashboard](#dashboard)
-* in a Latex report containing most of the results
-* with an interactive [inspection module](#inspector)
+**TODO: Multi-Dimensional**
+As a result we obtain measured times in milliseconds for the query processing parts: connection, execution, data transfer.
+These are described in three dimensions:
+number of run, number of query and number of configuration.
+The configurations can consist of various parameters like DBMS, selected processor, assigned cluster node, number of clients and execution order.
+We also can have various hardware metrics like CPU and GPU utilization, CPU throttling, memory caching and working set.
+These are also described in three dimensions:
+Second of query execution time, number of query and number of configuration.
+All these metrics can be sliced or diced, rolled-up or drilled-down into the various dimensions using several aggregation functions.
 
-There is an *evaluator class*, which collects most of the (numerical) evaluations and provides them as an **evaluation dict**.
-
-## Statistics and Metrics
-
-### Statistical Measures
+#### Statistical Measures
 
 Currently the following statistics are computed:
 * Sensitive to outliers
@@ -429,6 +357,57 @@ Currently the following statistics are computed:
   * Median
   * Interquartile range
   * Quartile coefficient of dispersion
+
+
+# Evaluation
+
+After an experiment has finished, the results can be evaluated
+* with an interactive [dashboard](#dashboard)
+* in a Latex report containing most of the results
+* with an interactive [inspection module](#inspector)
+
+There is an *evaluator class*, which collects most of the (numerical) evaluations and provides them as an **evaluation dict**.
+
+## Featured Evaluations
+
+Predefined evaluations are
+* [Global Metrics](#global-metrics)
+  * [average position](#average-ranking)
+  * [latency and throughput](#latency-and-throughput)
+  * [ingestion](#time-of-ingest-per-dbms)
+  * [hardware metrics](#hardware-metrics)
+  * [host metrics](#host-metrics)
+* [Drill-Down Timers](#drill-down-timers)
+  * [relative position](#relative-ranking-based-on-times)
+  * [average times](#average-times)
+* [Slices of Timers](#slice-timers)
+  * [heatmap of factors](#heatmap-of-factors)
+* [Drill-Down Queries](#drill-down-queries)
+  * [total times](#total-times)
+  * [normalized total times](#normalized-total-times)
+  * [latencies](#latencies)
+  * [throughputs](#throughputs)
+  * [sizes of result sets](#sizes-of-result-sets)
+  * [errors](#errors)
+  * [warnings](#warnings)
+* [Slices of Queries](#slice-queries)
+  * [latency and throughput](#latency-and-throughput-per-query)
+  * [hardware metrics](#hardware-metrics-per-query)
+  * [timers](#timers-per-query)
+* [Slices of Queries and Timers](#slice-queries-and-timers)
+  * [statistics](#statistics-table) - measures of tendency and dispersion, sensitive and insensitive to outliers
+  * [plots](#plot-of-values) of times
+  * [box plots](#boxplot-of-values) of times
+  * [bar plots](#bar-chart-per-query) of times
+* summarizing and exhaustive latex reports containing [further data](#further-data) like
+  * precision and identity checks of [result sets](#comparison)
+  * [error messages](#all-errors)
+  * [warnings](#all-warnings)
+  * [benchmark times](#all-benchmark-times)
+  * [experiment workflow](#bexhoma-workflow)
+  * [initialization scripts](#initialization-scripts)
+* an interactive [inspection tool](#inspector)
+* a Latex report containing most of these
 
 ### Informations about DBMS
 This evaluation is available in the evaluation dict and in the latex reports.
@@ -774,6 +753,32 @@ If the result folder contains init scripts, they will be included in the latex r
 #### Bexhoma Workflow
 
 If the result folder contains the configuration of a [bexhoma](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager) workflow, it will be included in the latex report.
+
+# Parameters
+
+## Featured Parameters
+
+The lists of [DBMS](#connection-file) and [queries](#query-file) are given in config files in dict format.
+
+Benchmarks can be [parametrized](#query-file) by
+* number of benchmark runs: *Is performance stable across time?*
+* number of benchmark runs per connection: *How does reusing a connection affect performance?*
+* number of warmup and cooldown runs, if any: *How does (re)establishing a connection affect performance?*
+* number of parallel clients: *How do multiple user scenarios affect performance?*
+* optional list of timers (currently: connection, execution, data transfer, run and session): *Where does my time go?*
+* [sequences](#query-list) of queries: *How does sequencing influence performance?*
+* optional [comparison](#comparison) of result sets: *Do I always receive the same results sets?*
+
+Benchmarks can be [randomized](#randomized-query-file) (optionally with specified [seeds](#random-seed) for reproducible results) to avoid caching side effects and to increase variety of queries by taking samples of arbitrary size from a
+* list of elements
+* dict of elements (one-to-many relations)
+* range of integers
+* range of floats
+* range of days
+* range of (first of) months
+* range of years
+
+This is inspired by [TPC-H](http://www.tpc.org/tpch/) and [TPC-DS](http://www.tpc.org/tpcds/) - Decision Support Benchmarks.
 
 ## Command Line Options and Configuration
 
@@ -1241,7 +1246,20 @@ If nothing is specified, the default value is used, which is half of the number 
 The option `-s` can be used to specify a random seed.
 This should guarantee reproducible results for randomized queries.
 
-## Usage
+# Usage
+
+## Featured Usage
+
+This tool can be [used](#usage) to
+* [run](#run-benchmarks) benchmarks
+* [continue](#continue-benchmarks) aborted benchmarks
+* [rerun](#rerun-benchmarks) benchmarks for one fixed [query](#rerun-benchmarks-for-one-query) and/or one fixed [DBMS](#rerun-benchmarks-for-one-connection)
+* [compare](#extended-query-file) result sets obtained from different runs and dbms
+* add benchmarks for more [queries](#continue-benchmarks-for-more-queries) or for more [DBMS](#continue-benchmarks-for-more-connections)
+* [read](#read-stored-benchmarks) finished benchmarks
+* fetch hardware metrics from a [grafana](#monitoring-hardware-metrics) server for monitoring
+* generate reports [during](#run-benchmarks-and-generate-reports) or [after](#generate-reports-of-stored-benchmarks) benchmarking, with real names or [anonymized](#anonymize) DBMS
+* interactively [inspect](#inspector) results
 
 ### Run benchmarks
 
