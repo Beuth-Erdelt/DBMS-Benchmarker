@@ -1,9 +1,9 @@
 # Evaluation
 
 After an experiment has finished, the results can be evaluated
-* with an interactive [dashboard](#dashboard)
+* with an interactive [dashboard](Dashboard.md)
 * in a Latex report containing most of the results
-* with an interactive [inspection module](#inspector)
+* with an interactive [inspection module](Inspector.md)
 
 There is an *evaluator class*, which collects most of the (numerical) evaluations and provides them as an **evaluation dict**.
 
@@ -55,11 +55,11 @@ This evaluation is available in the evaluation dict and in the latex reports.
 <img src="dbms.png" width="480">
 </p>
 
-The user has to provide in a [config file](#connection-file)
+The user has to provide in a [config file](Options.md#connection-file)
 * a unique name (**connectionname**)
 * JDBC connection information
 
-If a monitoring interface is provided, [hardware metrics](#hardware-metrics) are collected and aggregated.
+If a monitoring interface is provided, [hardware metrics](Concept.md#monitoring-hardware-metrics) are collected and aggregated.
 We may further provide describing information for reporting.
 
 #### Throughput and Latency
@@ -314,7 +314,7 @@ These tables are available as dataframes and in the evaluation dict.
 <img src="table.png" width="640">
 </p>
 
-These tables show [statistics](#statistics) about benchmarking time during the various runs per DBMS as a table.
+These tables show [statistics](Concept.md#aggregation-functions) about benchmarking time during the various runs per DBMS as a table.
 Warmup and cooldown are not included.
 This is for inspection of stability.
 A factor column is included.
