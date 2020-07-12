@@ -26,7 +26,7 @@ DBMS-Benchmarker
   * an [inspection tool](docs/Inspection.md)
   * an [interactive dashboard](docs/Dashboard.md)
 
-**TODO: Multi-dimensional**
+In the end this tool provides metrics that can be analyzed by [aggregation](docs/Concept.md#aggregation-functions) in [multi-dimensions](docs/Concept.md#evaluation), like maximum throughput per DBMS, average CPU utilization per query or geometric mean of run latency per workload.
 
 For more informations, see a [basic example](#basic-usage), take a look at help for a full list of [options](docs/Options.md#command-line-options-and-configuration) or take a look at a [demo report](docs/Report-example-tpch.pdf).
 
