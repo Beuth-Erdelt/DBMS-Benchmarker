@@ -37,7 +37,6 @@ Predefined evaluations are
   * [statistics](#statistics-table) - measures of tendency and dispersion, sensitive and insensitive to outliers
   * [plots](#plot-of-values) of times
   * [box plots](#boxplot-of-values) of times
-  * [bar plots](#bar-chart-per-query) of times
 * summarizing and exhaustive latex reports containing [further data](#further-data) like
   * precision and identity checks of [result sets](#comparison)
   * [error messages](#all-errors)
