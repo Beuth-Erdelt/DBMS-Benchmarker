@@ -140,8 +140,13 @@ In order to do so, result sets (or their hash value or size) are stored as lists
 
 ## Monitoring Hardware Metrics
 
-To make these metrics available, we must [provide](Options.md#connection-file) an API URL and an API Access Token for a Grafana Server.
+To make hardware metrics available, we must [provide](Options.md#connection-file) an API URL and an API Access Token for a Grafana Server.
 The tool collects metrics from the Grafana server with a step size of 1 second.
+
+<p align="center">
+<img src="Concept-Monitoring.png" width="320">
+</p>
+
 The requested interval matches the interval a specific DBMS is queried.
 To increase expressiveness, it is possible to extend the scraping interval by n seconds at both ends.
 In the end we have a list of per second values for each query and DBMS.
