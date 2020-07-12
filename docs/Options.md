@@ -431,11 +431,11 @@ Connections are called by name.
 
 If set to yes, some reports are generated each time a benchmark of a single connection and query is finished.
 Currently this means
-* [bar charts](Evaluations.md#example-bar-chart-per-query) as png files
-* [plots](Evaluations.md#example-plot-per-query) as png files
-* [boxplots](Evaluations.md#example-boxplot-of-values) as png files
-* [dataframer](Evaluations.md#benchmark-times-per-query) - benchmark times as pickled dataframe files
-* [pickler](Evaluations.md#example-statistics-table-per-query) - statistics as pickled dataframe files
+* [bar charts](Evaluations.md#timers-per-query) as png files
+* [plots](Evaluations.md#plot-of-values) as png files
+* [boxplots](Evaluations.md#boxplot-of-values) as png files
+* [dataframer](Evaluations.md#all-benchmark-times) - benchmark times as pickled dataframe files
+* [pickler](Evaluations.md#statistics-table) - statistics as pickled dataframe files
 * [metricer](Evaluations.md#hardware-metrics-per-query) - hardware metrics as png and csv files
 * latexer, see an [example report](Report-example-tpch.pdf), also containing all plots and charts, and possibly error messages and fetched result tables. The latex reporter demands all other reporters to be active.
 
