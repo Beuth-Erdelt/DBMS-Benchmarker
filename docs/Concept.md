@@ -140,7 +140,7 @@ In order to do so, result sets (or their hash value or size) are stored as lists
 
 ## Monitoring Hardware Metrics
 
-To make these metrics available, we must [provide](#connection-file) an API URL and an API Access Token for a Grafana Server.
+To make these metrics available, we must [provide](Options.md#connection-file) an API URL and an API Access Token for a Grafana Server.
 The tool collects metrics from the Grafana server with a step size of 1 second.
 The requested interval matches the interval a specific DBMS is queried.
 To increase expressiveness, it is possible to extend the scraping interval by n seconds at both ends.
@@ -193,19 +193,24 @@ Example:
 
 ## Evaluation
 
-**TODO: Multi-Dimensional**
 As a result we obtain measured times in milliseconds for the query processing parts: connection, execution, data transfer.
+
+<p align="center">
+<img src="Evaluation-Cubes.png">
+</p>
+
 These are described in three dimensions:
-number of run, number of query and number of configuration.
-The configurations can consist of various parameters like DBMS, selected processor, assigned cluster node, number of clients and execution order.
+number of run, number of query and configuration.
+The configuration dimension can consist of various nominal attributes like DBMS, selected processor, assigned cluster node, number of clients and execution order.
 We also can have various hardware metrics like CPU and GPU utilization, CPU throttling, memory caching and working set.
 These are also described in three dimensions:
 Second of query execution time, number of query and number of configuration.
+
 All these metrics can be sliced or diced, rolled-up or drilled-down into the various dimensions using several aggregation functions.
 
-### Statistical Measures
+### Aggregation Functions
 
-Currently the following statistics are computed:
+Currently the following statistics may be computed per dimension:
 * Sensitive to outliers
   * Arithmetic mean
   * Standard deviation
@@ -214,5 +219,9 @@ Currently the following statistics are computed:
   * Median
   * Interquartile range
   * Quartile coefficient of dispersion
+* First
+* Last
+* Sum
+* Geometric Mean
 
-
+In the complex configuration dimension it can be interesting to aggregate to groups like same DBMS or CPU type.
