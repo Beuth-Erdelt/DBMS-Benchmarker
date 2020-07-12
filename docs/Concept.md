@@ -226,6 +226,8 @@ Currently the following statistics may be computed per dimension:
   * Quartile coefficient of dispersion
 * First
 * Last
+* Minimum
+* Maximum
 * Sum
 * Geometric Mean
 
