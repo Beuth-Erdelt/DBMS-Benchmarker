@@ -219,11 +219,33 @@ class inspector():
                 df_aggregated = tools.dataframehelper.merge(df_aggregated, df_column)
         return df_aggregated
     def get_aggregated_experiment_statistics(self, type='timer', name='run', dbms_filter=[], warmup=0, cooldown=0, factor_base='Mean', query_aggregate='Mean', total_aggregate='Mean'):
-        df = self.get_aggregated_query_statistics(type, name, dbms_filter, warmup, cooldown, factor_base, query_aggregate)
-        if df.empty:
-            return df
-        df_stat = evaluator.addStatistics(df, drop_nan=False, drop_measures=True)
-        return pd.DataFrame(df_stat[total_aggregate]).rename(columns = {total_aggregate: "total_"+type+"_"+name})
+        if query_aggregate is not None:
+            df = self.get_aggregated_query_statistics(type, name, dbms_filter, warmup, cooldown, factor_base, query_aggregate)
+            if df.empty:
+                return df
+            df_stat = evaluator.addStatistics(df, drop_nan=False, drop_measures=True)
+            return pd.DataFrame(df_stat[total_aggregate]).rename(columns = {total_aggregate: "total_"+type+"_"+name})
+        else:
+            df_measures = {}
+            for numQuery in self.get_experiment_queries_successful()[0]:
+                df1,df2=self.get_measures_and_statistics(numQuery+1, type=type, name=name, dbms_filter=dbms_filter, warmup=warmup, cooldown=cooldown, factor_base=factor_base)
+                df_measures[numQuery+1] = (df1.copy())
+            #print(df_measures)
+            n = len(df1.columns)
+            #print(n)
+            df_result = pd.DataFrame()
+            for i in range(0,n):
+                df_tmp = pd.DataFrame()
+                for q, df in df_measures.items():
+                    #print(df[i])
+                    df_tmp.insert(loc=len(df_tmp.columns), column=q, value=df[i])
+                #print(df_tmp)
+                df_tmp = evaluator.dfSubRows(df_tmp, dbms_filter)
+                df_stat = evaluator.addStatistics(df_tmp, drop_nan=False, drop_measures=True)
+                #print(df_stat[total_aggregate])
+                df_result.insert(loc=len(df_result.columns), column=i, value=df_stat[total_aggregate])
+            #print(df_result)
+            return df_result
     def get_aggregated_by_connection(self, dataframe, list_connections=[], connection_aggregate='Mean'):
         df_stats = pd.DataFrame()
         if len(list_connections) > 0:
