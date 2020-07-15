@@ -32,6 +32,8 @@ demoparameters = {
 	}
 }
 
+defaultParameters = {'SF': 10}
+
 def generateParameters(parameters, number):
 	result = []
 	for i in range(0, number):
@@ -48,6 +50,7 @@ def generateParameters(parameters, number):
 					result[i][k+str(j+1)] = value
 			else:
 				result[i][k] = w
+		#result[i] = tools.joinDicts(result[i], defaultParameters)
 	logging.debug(result)
 	return result
 

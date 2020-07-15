@@ -656,6 +656,7 @@ class benchmarker():
 		def parametrize(queryTemplate, numQuery, numRun):
 			params = self.protocol['query'][str(numQuery)]['parameter'][numRun]
 			params['numRun'] = numRun
+			params = tools.joinDicts(params, parameter.defaultParameters)
 			return queryTemplate.format(**params)
 		# if query is given as a list of strings (create view, ..., drop view)
 		if isinstance(queryString,list):
