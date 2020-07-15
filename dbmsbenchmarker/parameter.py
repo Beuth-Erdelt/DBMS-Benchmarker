@@ -32,7 +32,10 @@ demoparameters = {
 	}
 }
 
-defaultParameters = {'SF': 10}
+defaultParameters = {}
+
+# example usage:
+# defaultParameters = {'SF': 10}
 
 def generateParameters(parameters, number):
 	result = []
