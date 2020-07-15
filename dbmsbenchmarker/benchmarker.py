@@ -102,7 +102,7 @@ def singleRun(connectiondata, inputConfig, numRuns, connectionname, numQuery, pa
 	for numRun in numRuns:
 		workername = "numRun %i: " % (numRun+1)
 		queryString = inputConfig[numRun].queryString
-		print(workername+queryString)
+		#print(workername+queryString)
 		query = tools.query(inputConfig[numRun].queryConfig)
 		if query.delay_run > 0:
 			print(workername+"Delay Run by "+str(query.delay_run)+" seconds")
@@ -114,7 +114,14 @@ def singleRun(connectiondata, inputConfig, numRuns, connectionname, numQuery, pa
 			#end = default_timer()
 			#durationConnect += 1000.0*(end - start)
 			start = default_timer()
-			connection.executeQuery(queryString)
+			# if query is given as list of strings
+			if isinstance(queryString, list):
+				for queryPart in queryString:
+					print(workername+queryPart)
+					connection.executeQuery(queryPart)
+			else:
+				print(workername+queryString)
+				connection.executeQuery(queryString)
 			end = default_timer()
 			durationExecute = 1000.0*(end - start)
 			print(workername+"execution [ms]: "+str(durationExecute))
@@ -646,14 +653,29 @@ class benchmarker():
 				if connectionname.startswith(c):
 					#queryString = query.DBMS[connectionname]
 					queryString = q
-		# it is a query template
-		if len(self.protocol['query'][str(numQuery)]['parameter']) > 0:
-			bParametrized = True
-			queryTemplate = queryString
+		def parametrize(queryTemplate, numQuery, numRun):
 			params = self.protocol['query'][str(numQuery)]['parameter'][numRun]
-			queryString = queryTemplate.format(**params)
+			return queryTemplate.format(**params)
+		# if query is given as a list of strings (create view, ..., drop view)
+		if isinstance(queryString,list):
+			queryPart = []
+			for queryTemplate in queryString:
+				if len(self.protocol['query'][str(numQuery)]['parameter']) > 0:
+					queryPart.append(parametrize(queryTemplate, numQuery, numRun))
+			#print(queryPart)
+			queryString = queryPart
 		else:
-			bParametrized = False
+			if len(self.protocol['query'][str(numQuery)]['parameter']) > 0:
+				queryString = parametrize(queryString, numQuery, numRun)
+		# it is a query template
+		#if len(self.protocol['query'][str(numQuery)]['parameter']) > 0:
+		#	bParametrized = True
+		#	#queryTemplate = queryString
+		#	#params = self.protocol['query'][str(numQuery)]['parameter'][numRun]
+		#	#queryString = queryTemplate.format(**params)
+		#	queryString = parametrize(queryString, numQuery, numRun)
+		#else:
+		#	bParametrized = False
 		return queryString
 	def getRandomRun(self, numQuery):#, connectionname, numRun=None):
 		q = self.queries[numQuery-1]
