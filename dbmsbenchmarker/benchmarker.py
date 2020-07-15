@@ -110,6 +110,11 @@ def singleRun(connectiondata, inputConfig, numRuns, connectionname, numQuery, pa
 		error = ""
 		try:
 			#start = default_timer()
+			if isinstance(queryString, list):
+				for queryPart in queryString:
+					print(workername+queryPart)
+			else:
+				print(workername+queryString)
 			connection.openCursor()
 			#end = default_timer()
 			#durationConnect += 1000.0*(end - start)
@@ -117,10 +122,8 @@ def singleRun(connectiondata, inputConfig, numRuns, connectionname, numQuery, pa
 			# if query is given as list of strings
 			if isinstance(queryString, list):
 				for queryPart in queryString:
-					print(workername+queryPart)
 					connection.executeQuery(queryPart)
 			else:
-				print(workername+queryString)
 				connection.executeQuery(queryString)
 			end = default_timer()
 			durationExecute = 1000.0*(end - start)
