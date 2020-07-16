@@ -93,7 +93,7 @@ resultfolder = "/results"
 dbms = benchmarker.benchmarker(result_path=resultfolder)
 dbms.getConfig(configfolder)
 
-# tell the benchmarker which evaluations we want to have
+# tell the benchmarker which fixed evaluations we want to have (line plot and box plot per query)
 dbms.reporter.append(benchmarker.reporter.ploter(dbms))
 dbms.reporter.append(benchmarker.reporter.boxploter(dbms))
 

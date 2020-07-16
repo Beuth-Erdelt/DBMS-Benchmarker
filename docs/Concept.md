@@ -170,7 +170,7 @@ Example:
 'title': 'CPU Util Others [%]'
 'query': 'sum(irate(container_cpu_usage_seconds_total{container_label_io_kubernetes_container_name!="dbms",id!="/"}[1m]))'
 
-'title': 'Net Rx [b]'}, 'total_network_tx'
+'title': 'Net Rx [b]'
 'query': 'sum(container_network_receive_bytes_total{container_label_app="dbmsbenchmarker"})'
 
 'title': 'Net Tx [b]'
@@ -211,7 +211,7 @@ We also can have various hardware metrics like CPU and GPU utilization, CPU thro
 These are also described in three dimensions:
 Second of query execution time, number of query and number of configuration.
 
-All these metrics can be sliced or diced, rolled-up or drilled-down into the various dimensions using several aggregation functions.
+All these metrics can be sliced or diced, rolled-up or drilled-down into the various dimensions using several aggregation functions for [evaluation](Evaluations.md).
 
 ### Aggregation Functions
 
