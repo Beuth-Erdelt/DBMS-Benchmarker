@@ -127,6 +127,10 @@ class evaluator():
 					evaluation['dbms'][c]['docker'] = self.benchmarker.dbms[c].connectiondata["docker"]
 				else:
 					evaluation['dbms'][c]['docker'] = ""
+				if 'docker_alias' in self.benchmarker.dbms[c].connectiondata:
+					evaluation['dbms'][c]['docker_alias'] = self.benchmarker.dbms[c].connectiondata["docker_alias"]
+				else:
+					evaluation['dbms'][c]['docker_alias'] = evaluation['dbms'][c]['docker']
 				evaluation['dbms'][c]['version'] = self.benchmarker.dbms[c].connectiondata["version"]
 				evaluation['dbms'][c]['info'] = self.benchmarker.dbms[c].connectiondata["info"]
 				if 'connectionmanagement' in self.benchmarker.dbms[c].connectiondata:

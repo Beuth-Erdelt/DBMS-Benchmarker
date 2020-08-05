@@ -78,9 +78,13 @@ class inspector():
         # dict of lists of dbms
         dbms_list = {}
         for c,d in self.e.evaluation['dbms'].items():
-            if not d['docker'] in dbms_list:
-                dbms_list[d['docker']] = []
-            dbms_list[d['docker']].append(c)
+            if self.benchmarks.anonymize and 'docker_alias' in d:
+                dbms_name = d['docker_alias']
+            else:
+                dbms_name = d['docker']
+            if not dbms_name in dbms_list:
+                dbms_list[dbms_name] = []
+            dbms_list[dbms_name].append(c)
         return dbms_list
     def get_experiment_list_nodes(self):
         # list all different nodes
