@@ -37,8 +37,9 @@ class inspector():
     """
     Class for inspecting done benchmarks
     """
-    def __init__(self, result_path):
+    def __init__(self, result_path, anonymize=False):
         self.result_path = result_path
+        self.anonymize = anonymize
         self.list_experiments = [f for f in listdir(self.result_path) if isdir(join(self.result_path, f)) and f.isdigit()]
         self.queries_successful = []
     def get_experiments_preview(self):
@@ -59,9 +60,12 @@ class inspector():
             l = [c for c in connection_properties if c['active'] == True]
             workload_preview[code]['connections'] = len(l)
         return pd.DataFrame(workload_preview).T
-    def load_experiment(self, code, anonymize=False):
+    def load_experiment(self, code, anonymize=None):
+        if anonymize is not None:
+            self.anonymize = anonymize
+        # TODO: force clean dbms aliases
         self.queries_successful = []
-        self.benchmarks = benchmarker.inspector(self.result_path, code, anonymize=anonymize)
+        self.benchmarks = benchmarker.inspector(self.result_path, code, anonymize=self.anonymize)
         self.benchmarks.computeTimerRun()
         self.benchmarks.computeTimerSession()
         self.e = evaluator.evaluator(self.benchmarks, load=True, force=True)
