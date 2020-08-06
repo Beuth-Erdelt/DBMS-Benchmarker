@@ -117,6 +117,8 @@ Example for `CONNECTION_FILE`:
     'info': "This uses engine innodb",
     'active': True,
     'alias': "DBMS A",
+    'docker': "MySQL",
+    'docker_alias': "DBMS A",
     'timeload': 100,
     'priceperhourdollar': 1.0,
     `monitoring`: {
@@ -151,6 +153,9 @@ Example for `CONNECTION_FILE`:
 * `name`: References the connection
 * `version` and `info`: Just info texts for implementation in reports
 * `active`: Use this connection in benchmarking and reporting (optional, default True)
+* `alias`: Alias for anonymized reports (optional, default is a random name)
+* `docker`: Name of the docker image. This helps aggregating connections using the same docker image.
+* `docker_alias`: Anonymized name of the docker image. This helps aggregating connections using the same docker image in anonymized reports.
 * `alias`: Alias for anonymized reports (optional default is a random name)
 * `driver`, `url`, `auth`, `jar`: JDBC data
 * Additional information useful for reporting and also used for computations
