@@ -543,6 +543,7 @@ class dbms():
 				self.connectiondata['JDBC']['url'],
 				self.connectiondata['JDBC']['auth'],
 				dbms.jars,)
+			#self.connection.jconn.setAutoCommit(True)
 		else:
 			raise ValueError('No connection data for '+self.getName())
 	def openCursor(self):
@@ -1371,3 +1372,30 @@ def joinDicts(d1, d2):
 		else:
 			result[k] = d2[k]
 	return result
+
+def anonymize_dbms(dbms_names):
+    if type(dbms_names) == list:
+        return anonymize_list(dbms_names)
+    elif type(dbms_names) == dict:
+        return anonymize_dict(dbms_names)
+    elif type(dbms_names) == pd.core.frame.DataFrame:
+         anonymize_dataframe(dbms_names)
+    elif type(dbms_names) == str:
+        return dbms.anonymizer[dbms_names]
+ 
+def anonymize_list(list_dbms):
+    list_mapped = [dbms.anonymizer[l] if l in dbms.anonymizer else l for l in list_dbms]
+    return list_mapped
+
+def anonymize_dict(dict_dbms):
+    list_mapped = {dbms.anonymizer[k]:v for k,v in dict_dbms.items()}
+    return list_mapped
+
+def anonymize_dataframe(dataframe_dbms):
+    if not dataframe_dbms.empty:
+        if dataframe_dbms.index[0] in dbms.anonymizer:
+            dataframe_dbms.index = dataframe_dbms.index.map(dbms.anonymizer)
+            #dataframe_dbms.index = anonymize_list(dataframe_dbms.index)
+        elif dataframe_dbms.columns[0] in dbms.anonymizer:
+            dataframe_dbms.columns = dataframe_dbms.columns.map(dbms.anonymizer)
+            #dataframe_dbms.columns = anonymize_list(dataframe_dbms.columns)
