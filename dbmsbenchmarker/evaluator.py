@@ -411,6 +411,7 @@ def addStatistics(dataframe, drop_nan=True, drop_measures=False):
 	stat_q1 = df.quantile(0.25)
 	stat_q2 = df.quantile(0.5)
 	stat_q3 = df.quantile(0.75)
+	stat_90 = df.quantile(0.90)
 	stat_95 = df.quantile(0.95)
 	stat_min = df.min()
 	stat_max = df.max()
@@ -435,6 +436,9 @@ def addStatistics(dataframe, drop_nan=True, drop_measures=False):
 	df.loc['1st'] = stat_first
 	df.loc['Last'] = stat_last
 	df.loc['Sum'] = stat_sum
+	df.loc['P25'] = stat_q1
+	df.loc['P75'] = stat_q3
+	df.loc['P90'] = stat_90
 	df.loc['P95'] = stat_95
 	#if with_nan:
 	#   print(df)
