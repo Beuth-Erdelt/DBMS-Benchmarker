@@ -221,8 +221,8 @@ Currently the following statistics may be computed per dimension:
   * Standard deviation
   * Coefficient of variation
 * Insensitive to outliers
-  * Median
-  * Interquartile range
+  * Median - percentile 50 (Q2)
+  * Interquartile range - Q3-Q1
   * Quartile coefficient of dispersion
 * First
 * Last
@@ -230,5 +230,9 @@ Currently the following statistics may be computed per dimension:
 * Maximum
 * Sum
 * Geometric Mean
+* percentile 25 (Q1)
+* percentile 75 (Q3)
+* percentile 90 - leave out highest 10%
+* percentile 95 - leave out highest 5%
 
 In the complex configuration dimension it can be interesting to aggregate to groups like same DBMS or CPU type.
