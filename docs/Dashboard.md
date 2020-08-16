@@ -42,6 +42,49 @@ The dashboard analyzes the data in [three dimensions](Concept.md#evaluation) usi
 <img src="Evaluation-Cubes.png">
 </p>
 
+### Data
+
+The cells of the runtime cube contains
+* Timer (connection, execution, data transfer)
+* Derived metrics (latencies, throughput)
+
+The cells of the monitoring cube contains
+* Hardware metrics
+
+### Graph Panels
+
+The dashboard is organized into 12 columns and several rows depending on the screen size.
+
+For a graph panel you can
+* change width (number of columns)
+* change height (number of rows)
+* change ordering on the dashboard
+* activate settings
+* download underlying data as csv
+
+#### Graph Types
+
+Available types of display are
+* Line Plot
+* Boxplot
+* Histogramm
+* Bar Chart
+* Heatmap
+* Table of Measures
+* Table of Statistics
+These can be applied to sliced / diced / aggregated data of the cubes.
+
+There are also some preset graphs
+* Heatmap of Errors
+* Heatmap of Warnings
+* Heatmap Result Set Size
+* Heatmap Total Time
+* Heatmap Latency Run
+* Heatmap Throughput Run
+* Heatmap Timer Run Factor
+* Bar Chart Run drill-down
+* Bar Chart Ingestion Time
+
 
 ## Menu
 
@@ -52,19 +95,8 @@ The menu allows you to
 * see details about the current experiment
 * activate all panels on the current dashboard
 * close all active panels on the current dashboard
-* add a [graph](#panel) (panel)
+* add a [graph](#graph-panels) (panel)
 * open the [settings](#settings) panel
-
-## Panels
-
-The dashboard is organized into 12 columns and several rows depending on the screen size.
-
-For a panel you can
-* change width (number of columns)
-* change height (number of rows)
-* change ordering on the dashboard
-* activate settings
-* download underlying data as csv
 
 ## Favorites
 
@@ -79,10 +111,10 @@ The favorites menu allows you to
 
 <img align="right" src="dashboard-settings.png">
 
-In the settings panel you can select
-* the kind of measure you want to inspect (kind, name)
-* the type of plot (graph type, x-axis, annotate)
-* the aggregation functions.
+In the settings panel you can select the
+* [Kind of measure](#data) you want to inspect (kind, name)
+* [Type](#graph-panels) of plot (graph type, x-axis, annotate)
+* [Aggregation functions](Concept.md#aggregation-functions).
   The order of aggregation is
   1. Query (run dimension)
   1. Total (query dimension)
@@ -99,10 +131,10 @@ In the filter panel you can filter
   * a checkbox list of single connections
   * property filters
     * DBMS
-    * CPU
     * Cluster node
-    * GPU
     * Number of clients
+    * CPU
+    * GPU
 * single queries
 
 Moreover you can receive details about
