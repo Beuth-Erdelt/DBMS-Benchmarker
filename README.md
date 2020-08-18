@@ -20,6 +20,7 @@ This documentation contains
 * more extensive [examples](docs/Usage.md) of using the [cli tool](docs/Options.md#command-line-options-and-configuration)
 * some [use-cases](docs/Usecases.md#use-cases) and [test scenarios](docs/Usecases.md#scenarios)
 * examples of how to use the interactive [inspector](docs/Inspection.md)
+* examples of how to use the interactive [dashboard](docs/Dashboard.md)
 
 ## Key Features
 
