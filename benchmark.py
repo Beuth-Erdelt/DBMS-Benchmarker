@@ -34,6 +34,10 @@ if __name__ == '__main__':
 	parser.add_argument('-u', '--unanonymize', help='unanonymize some dbms, only sensible in combination with anonymize', nargs='*', default=[])
 	parser.add_argument('-p', '--numProcesses', help='Number of parallel client processes. Global setting, can be overwritten by connection. If None given, half of all available processes is taken', default=None)
 	parser.add_argument('-s', '--seed', help='random seed', default=None)
+	parser.add_argument('-vq', '--verbose-queries', help='print every query that is sent', action='store_true', default=False)
+	parser.add_argument('-vs', '--verbose-statistics', help='print statistics about query that have been sent', action='store_true', default=False)
+	parser.add_argument('-pn', '--num-run', help='Parameter: Number of executions per query', default=0)
+	#parser.add_argument('-pt', '--timeout', help='Parameter: Timeout in seconds', default=0)
 	args = parser.parse_args()
 	# evaluate args
 	if args.debug:
@@ -42,6 +46,16 @@ if __name__ == '__main__':
 	else:
 		logging.basicConfig(level=logging.ERROR)
 		bBatch = args.batch
+	# set verbose lebvel
+	if args.verbose_queries:
+		benchmarker.BENCHMARKER_VERBOSE_QUERIES = True
+	if args.verbose_statistics:
+		benchmarker.BENCHMARKER_VERBOSE_STATISTICS = True
+	if int(args.num_run) > 0:
+		querymanagement = {
+ 			'numRun': args.num_run,
+ 		}
+		tools.query.template = querymanagement
 	# dbmsbenchmarker with reporter
 	experiments = benchmarker.benchmarker(
 		result_path=args.result_folder,
@@ -62,6 +76,7 @@ if __name__ == '__main__':
 			experiments.continueBenchmarks(overwrite = True)
 		else:
 			experiments.runBenchmarks()
+		print('Experiment {} has been finished'.format(experiments.code))
 	elif args.mode == 'continue':
 		if experiments.continuing:
 			experiments.continueBenchmarks(overwrite = False)

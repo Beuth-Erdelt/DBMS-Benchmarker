@@ -142,7 +142,8 @@ class timer():
 		self.finishTimerQuery()
 		self.times[self.currentQuery][self.nameConnection] = self.time_c
 		self.stats[self.currentQuery][self.nameConnection] = self.stat_c
-		print("Benchmark "+self.name+" has been stored for "+self.nameConnection+" mean: "+str(self.stats[self.currentQuery][self.nameConnection][0]))
+		#if benchmarker.BENCHMARKER_VERBOSE_STATISTICS:
+		#	print("Benchmark "+self.name+" has been stored for "+self.nameConnection+" mean: "+str(self.stats[self.currentQuery][self.nameConnection][0]))
 	def skipTimer(self, numQuery, query, nameConnection):
 		self.nameConnection = nameConnection
 		self.startTimerQuery(numQuery, query)#numWarmup, numRun)
