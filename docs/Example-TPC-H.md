@@ -42,7 +42,11 @@ If necessary, adjust the settings in the file `example/connections.py`:
 
 Run the command:
 
-`python benchmark.py run -qf example/query-tpch.py -cf example/connections.py`
+`python benchmark.py run -e yes -b -f example/tpch`
+
+* `-e yes`: This will precompile some evaluations and generate the timer cube.
+* `-b`: This will suppress some output
+* `-f`: This points to a folder having the configuration files.
 
 After benchmarking has been finished will see a message like
 ```
@@ -51,13 +55,6 @@ Experiment <code> has been finished
 
 The script has created a result folder in the current directory containing the results. `<code>` is the name of the folder.
 
-### Prepare Evaluation
-
-Run the command:
-
-`python benchmark.py read -e yes -r <code>`
-
-This will precompile some evaluations and generate the timer cube.
 
 ### Evaluate Results
 

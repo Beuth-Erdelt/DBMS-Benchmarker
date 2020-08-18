@@ -36,6 +36,11 @@ import pprint
 
 #activeConnections = []
 
+
+BENCHMARKER_VERBOSE_QUERIES = False
+BENCHMARKER_VERBOSE_STATISTICS = False
+
+
 class singleRunInput:
 	"""
 	Class for collecting info about a benchmark run
@@ -56,7 +61,7 @@ class singleRunOutput:
 
 
 
-def singleRun(connectiondata, inputConfig, numRuns, connectionname, numQuery, path=None, activeConnections = []):
+def singleRun(connectiondata, inputConfig, numRuns, connectionname, numQuery, path=None, activeConnections = [], BENCHMARKER_VERBOSE_QUERIES=False):
 	"""
 	Function for running an actual benchmark run
 
@@ -110,11 +115,12 @@ def singleRun(connectiondata, inputConfig, numRuns, connectionname, numQuery, pa
 		error = ""
 		try:
 			#start = default_timer()
-			if isinstance(queryString, list):
-				for queryPart in queryString:
-					print(workername+queryPart)
-			else:
-				print(workername+queryString)
+			if BENCHMARKER_VERBOSE_QUERIES:
+				if isinstance(queryString, list):
+					for queryPart in queryString:
+						print(workername+queryPart)
+				else:
+					print(workername+queryString)
 			connection.openCursor()
 			#end = default_timer()
 			#durationConnect += 1000.0*(end - start)
@@ -759,7 +765,7 @@ class benchmarker():
 		"""
 		queryString = self.getQueryString(numQuery, connectionname=connectionname, numRun=numRun)
 		inputConfig = [singleRunInput(0, queryString, self.queries[numQuery-1])]
-		output = singleRun(self.dbms[connectionname].connectiondata, inputConfig, [0], connectionname, numQuery, None)
+		output = singleRun(self.dbms[connectionname].connectiondata, inputConfig, [0], connectionname, numQuery, None, BENCHMARKER_VERBOSE_QUERIES=BENCHMARKER_VERBOSE_QUERIES)
 		return output[0]
 	def runSingleBenchmarkRunMultiple(self, numQuery, connectionname, numRun=0, times=1):
 		"""
@@ -796,21 +802,22 @@ class benchmarker():
 			print('Min: '+str(min(l)))
 			print('Max: '+str(max(l)))
 			print('Avg: '+str(sum(l)/len(l)))
-		print("Connect:")
-		output(l_connect)
-		print("Execute:")
-		output(l_execute)
-		print("Transfer:")
-		output(l_transfer)
-		#print("Error:")
-		#print(l_error)
-		print("Size:")
-		#print(l_size)
-		output(l_size)
-		#print("Data:")
-		#print(l_data)
-		#print("Column names:")
-		#print(l_columnnames)
+		if BENCHMARKER_VERBOSE_STATISTICS:
+			print("Connect:")
+			output(l_connect)
+			print("Execute:")
+			output(l_execute)
+			print("Transfer:")
+			output(l_transfer)
+			#print("Error:")
+			#print(l_error)
+			print("Size:")
+			#print(l_size)
+			output(l_size)
+			#print("Data:")
+			#print(l_data)
+			#print("Column names:")
+			#print(l_columnnames)
 		return l_connect, l_execute, l_transfer, l_error, l_data, l_columnnames, l_size
 	def runBenchmark(self, numQuery, connectionname):
 		"""
@@ -845,6 +852,7 @@ class benchmarker():
 		self.startBenchmarkingQuery(numQuery)
 		q = self.queries[numQuery-1]
 		c = connectionname
+		print("Connection: "+connectionname)
 		# prepare multiprocessing
 		logger = mp.log_to_stderr()
 		logger.setLevel(logging.ERROR)
@@ -971,13 +979,13 @@ class benchmarker():
 			# pooling
 			if self.pool is not None:
 				#multiple_results = [self.pool.apply_async(singleRun, (self.dbms[c].connectiondata, inputConfig, runs[i*batchsize:(i+1)*batchsize], connectionname, numQuery, self.path, JPickler.dumps(self.activeConnections))) for i in range(numBatches)]
-				multiple_results = [self.pool.apply_async(singleRun, (self.dbms[c].connectiondata, inputConfig, runs[i*batchsize:(i+1)*batchsize], connectionname, numQuery, self.path)) for i in range(numBatches)]
+				multiple_results = [self.pool.apply_async(singleRun, (self.dbms[c].connectiondata, inputConfig, runs[i*batchsize:(i+1)*batchsize], connectionname, numQuery, self.path, [], BENCHMARKER_VERBOSE_QUERIES)) for i in range(numBatches)]
 				lists = [res.get(timeout=timeout) for res in multiple_results]
 				lists = [i for j in lists for i in j]
 			else:
 				with mp.Pool(processes=numProcesses) as pool:
 					#multiple_results = [pool.apply_async(singleRun, (self.dbms[c].connectiondata, inputConfig, runs[i*batchsize:(i+1)*batchsize], connectionname, numQuery, self.path, JPickler.dumps(self.activeConnections))) for i in range(numBatches)]
-					multiple_results = [pool.apply_async(singleRun, (self.dbms[c].connectiondata, inputConfig, runs[i*batchsize:(i+1)*batchsize], connectionname, numQuery, self.path)) for i in range(numBatches)]
+					multiple_results = [pool.apply_async(singleRun, (self.dbms[c].connectiondata, inputConfig, runs[i*batchsize:(i+1)*batchsize], connectionname, numQuery, self.path, [], BENCHMARKER_VERBOSE_QUERIES)) for i in range(numBatches)]
 					lists = [res.get(timeout=timeout) for res in multiple_results]
 					lists = [i for j in lists for i in j]
 			# store end time for query / connection
@@ -1020,7 +1028,7 @@ class benchmarker():
 			#print("Data:")
 			#print(l_data)
 			size = int(sum(l_size))
-			print("Size: "+str(size))
+			print("Size of data storage: "+str(size))
 			self.protocol['query'][str(numQuery)]['sizes'][c] = size
 			# result set of query / connection
 			# only for comparion
@@ -1055,10 +1063,12 @@ class benchmarker():
 			else:
 				numRunStorage = len(self.protocol['query'][str(numQuery)]['dataStorage'])
 				numRunReceived = len(l_data)
-				print("NumRuns in Storage: "+str(numRunStorage))
-				print("NumRuns received: "+str(numRunReceived))
+				if BENCHMARKER_VERBOSE_STATISTICS:
+					print("NumRuns in Storage: "+str(numRunStorage))
+					print("NumRuns received: "+str(numRunReceived))
 				if len(self.protocol['query'][str(numQuery)]['errors'][c]) == 0:
-					print("NumRuns to compare: "+str(dataIndex))
+					if BENCHMARKER_VERBOSE_STATISTICS:
+						print("NumRuns to compare: "+str(dataIndex))
 					for i in range(dataIndex):
 						#print("Stored data #%i:" % i)
 						#print(self.protocol['query'][str(numQuery)]['dataStorage'][i])#, floatfmt=".10f"))
@@ -1471,7 +1481,8 @@ class benchmarker():
 			numRuns=[0],
 			connectionname=connectionname,
 			numQuery=0,
-			path=None)
+			path=None,
+			BENCHMARKER_VERBOSE_QUERIES=BENCHMARKER_VERBOSE_QUERIES)
 		output = output[0]
 		return output
 	def runAndStoreIsolatedQuery(self, connectionname, queryString, queryName=None):
