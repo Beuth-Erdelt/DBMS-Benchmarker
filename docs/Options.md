@@ -36,7 +36,7 @@ usage: benchmark.py [-h] [-d] [-b] [-qf QUERY_FILE] [-cf CONNECTION_FILE]
                     [-f CONFIG_FOLDER] [-r RESULT_FOLDER] [-g {no,yes}]
                     [-e {no,yes}] [-w {query,connection}] [-a]
                     [-u [UNANONYMIZE [UNANONYMIZE ...]]] [-p NUMPROCESSES]
-                    [-s SEED]
+                    [-s SEED] [-vq] [-vs] [-pn NUM_RUN]
                     {run,read,continue}
 
 A benchmark tool for RDBMS. It connects to a given list of RDBMS via JDBC and
@@ -84,6 +84,12 @@ optional arguments:
                         can be overwritten by connection. If None given, half
                         of all available processes is taken
   -s SEED, --seed SEED  random seed
+  -vq, --verbose-queries
+                        print every query that is sent
+  -vs, --verbose-statistics
+                        print statistics about query that have been sent
+  -pn NUM_RUN, --num-run NUM_RUN
+                        Parameter: Number of executions per query
 ```
 
 ### Result folder
