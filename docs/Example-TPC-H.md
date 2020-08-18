@@ -1,10 +1,16 @@
 # Example: TPC-H
 
-This example shows how to benchmark 22 reading queries Q1-Q22 derived from TPC-H.
+This example shows how to benchmark 22 reading queries Q1-Q22 derived from TPC-H in MySQL
 
 > The query file is derived from the TPC-H and as such is not comparable to published TPC-H results, as the query file results do not comply with the TPC-H Specification.
 
 Official TPC-H benchmark - http://www.tpc.org/tpch
+
+Content:
+* [Prerequisits](#prerequisits)
+* [Perform Benchmark](#perform-benchmark)
+* [Evaluate Results in Dashbaord](#evaluate-results-in-dashbaord)
+* [Where to go](#where-to-go)
 
 ## Prerequisits
 
@@ -48,6 +54,8 @@ Run the command:
 * `-b`: This will suppress some output
 * `-f`: This points to a folder having the configuration files.
 
+For more options, see the [documentation](Options.md#command-line-options-and-configuration)
+
 After benchmarking has been finished will see a message like
 ```
 Experiment <code> has been finished
@@ -56,7 +64,7 @@ Experiment <code> has been finished
 The script has created a result folder in the current directory containing the results. `<code>` is the name of the folder.
 
 
-### Evaluate Results
+### Evaluate Results in Dashbaord
 
 Run the command:
 
@@ -65,7 +73,7 @@ Run the command:
 This will start the evaluation dashboard at `localhost:8050`.
 Visit the address in a browser and select the experiment `<code>`.
 
-## Improvements
+## Where to go
 
 * Different DBMS
 * Add metadata

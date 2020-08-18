@@ -8,6 +8,19 @@ Results and evaluations are available via a Python interface.
 Optionally some reports are generated.
 An interactive dashboard assists in multi-dimensional analysis of the results.
 
+## Overview
+
+This documentation contains
+* an example of how to perform a [TPC-H-like Benchmark](docs/Example-TPC-H.md) from a command line
+* a list of the [key features](#key-features)
+* an example of the [basic usage](#basic-usage) in Python
+* an illustration of the [concepts](docs/Concept.md)
+* an illustration of the [evaluations](docs/Evaluations.md)
+* a description of the [options and configurations](docs/Options.md)
+* more extensive [examples](docs/Usage.md) of using the [cli tool](docs/Options.md#command-line-options-and-configuration)
+* some [use-cases](docs/Usecases.md#use-cases) and [test scenarios](docs/Usecases.md#scenarios)
+* examples of how to use the interactive [inspector](docs/Inspection.md)
+
 ## Key Features
 
 DBMS-Benchmarker
@@ -33,16 +46,6 @@ For more informations, see a [basic example](#basic-usage), take a look at help 
 The code uses several Python modules, in particular <a href="https://github.com/baztian/jaydebeapi" target="_blank">jaydebeapi</a> for handling DBMS.
 This module has been tested with Brytlyt, Exasol, Kinetica, MariaDB, MemSQL, Mariadb, MonetDB, OmniSci and PostgreSQL.
 
-## Overview
-
-This documentation contains
-* an example of the [basic usage](#basic-usage) in Python
-* an illustration of the [concepts](docs/Concept.md)
-* an illustration of the [evaluations](docs/Evaluations.md)
-* a description of the [options and configurations](docs/Options.md)
-* more extensive [examples](docs/Usage.md) of using the [cli tool](docs/Options.md#command-line-options-and-configuration)
-* some [use-cases](docs/Usecases.md#use-cases) and [test scenarios](docs/Usecases.md#scenarios)
-* examples of how to use the interactive [inspector](docs/Inspection.md)
 
 ## Basic Usage
 
