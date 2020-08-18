@@ -17,12 +17,7 @@ import pandas as pd
 ###################
 
 # path of folder containing experiment results
-resultfolder = "/results/"
-resultfolder = "C:\\Users\\perdelt\\eclipse-workspace\\Lecture-DeepLearning\\GPU\\DBMS\\benchmark"
-code = '1580550342'
-code = '1588251957'
-code = '1586423668'
-code = '1590442222'
+resultfolder = "./"
 
 # create evaluation object for result folder
 evaluate = inspector.inspector(resultfolder)
@@ -33,13 +28,11 @@ evaluate.list_experiments
 # dataframe of experiments
 evaluate.get_experiments_preview()
 
-# pick first experiment
-#code = evaluate.list_experiments[0]
+# pick last experiment
+code = evaluate.list_experiments[len(evaluate.list_experiments)-1]
 
 # load it
 evaluate.load_experiment(code)
-
-df1,df2=evaluate.get_measures_and_statistics(1, type='monitoring', name='total_cpu_util')
 
 
 ###################
@@ -215,6 +208,10 @@ list_storage[numRun]
 
 # get data storage for query and run as dataframe
 df = evaluate.get_datastorage_df(numQuery, numRun)
+
+# get data storage for query and run as dataframe
+# this only contains results if they differ from data storage 
+df2 = evaluate.get_resultset_df(numQuery, connection, numRun)
 
 # get (sql) parameters of a query as dataframe
 df = evaluate.get_parameter_df(numQuery)
