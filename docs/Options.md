@@ -468,6 +468,11 @@ This flag changes the output slightly and should be used for logging if script r
 This also means reports are generated only at the end of processing.
 Batch mode is automatically turned on if debug mode is used.
 
+### Verbosity Level
+
+Using the flags `-vq` means each query that is sent is dumped to stdout.
+Using the flags `-vs` means after each query that has been finished, some statistics are dumped to stdout.
+
 ### Working querywise or connectionswise
 
 This options sets if benchmarks are performed per query (one after the other is completed) or per connection (one after the other is completed).
