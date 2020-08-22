@@ -656,10 +656,11 @@ class benchmarker():
 			return queryString
 		queryString = query.query
 		#if connectionname is not None and connectionname in query.DBMS:
-		if connectionname is not None and len(query.DBMS) > 0:
+		if connectionname is not None and len(query.DBMS) > 0 and self.dbms[connectionname].connectiondata['dialect']:
 			#print(query.DBMS)
 			for c, q in query.DBMS.items():
-				if connectionname.startswith(c):
+				#if connectionname.startswith(c):
+				if connectionname.startswith(c) or self.dbms[connectionname].connectiondata['dialect'] == c:
 					#queryString = query.DBMS[connectionname]
 					queryString = q
 		def parametrize(queryTemplate, numQuery, numRun):
