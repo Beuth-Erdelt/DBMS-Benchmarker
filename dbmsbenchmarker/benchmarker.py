@@ -889,11 +889,6 @@ class benchmarker():
 		#	batchsize = math.ceil(query.numRun/numProcesses)
 		numBatches = math.ceil(query.numRun/batchsize)
 		runs = list(range(0,query.numRun))
-		# dump settings
-		print("runsPerConnection: "+str(batchsize))
-		print("numProcesses: "+str(numProcesses))
-		print("timeout: "+str(timeout))
-		print("singleConnection: "+str(singleConnection))
 		# prepare protocol for result data
 		if c not in self.protocol['query'][str(numQuery)]['resultSets']:
 			self.protocol['query'][str(numQuery)]['resultSets'][c] = []
@@ -927,6 +922,11 @@ class benchmarker():
 			self.timerConnect.skipTimer(numQuery, query, connectionname)
 			self.stopBenchmarkingQuery(numQuery)
 			return False
+		# dump settings
+		print("runsPerConnection: "+str(batchsize))
+		print("numProcesses: "+str(numProcesses))
+		print("timeout: "+str(timeout))
+		print("singleConnection: "+str(singleConnection))
 		# do we want to keep result sets? (because of mismatch)
 		keepResultsets = False
 		# do we want to cancel / abort loop over benchmarks?
