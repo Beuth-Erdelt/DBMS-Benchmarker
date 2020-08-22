@@ -324,10 +324,14 @@ class evaluator():
 		# generate barh plot of total ranking
 		dfTotalRank, timers = self.benchmarker.generateSortedTotalRanking()
 		evaluation['general']['results'] = {}
-		evaluation['general']['results']['totalSum'] = dfTotalSum.to_dict(orient='index')
-		evaluation['general']['results']['totalProd'] = dfTotalProd.to_dict(orient='index')
-		evaluation['general']['results']['totalTime'] = dfTotalTime.to_dict()
-		evaluation['general']['results']['totalRank'] = dfTotalRank.to_dict(orient='index')
+		if dfTotalSum is not None:
+			evaluation['general']['results']['totalSum'] = dfTotalSum.to_dict(orient='index')
+		if dfTotalProd is not None:
+			evaluation['general']['results']['totalProd'] = dfTotalProd.to_dict(orient='index')
+		if dfTotalTime is not None:
+			evaluation['general']['results']['totalTime'] = dfTotalTime.to_dict()
+		if dfTotalRank is not None:
+			evaluation['general']['results']['totalRank'] = dfTotalRank.to_dict(orient='index')
 		filename = self.benchmarker.path+'/evaluation.dict'
 		with open(filename, 'w') as f:
 			f.write(str(evaluation))
