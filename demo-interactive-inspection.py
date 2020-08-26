@@ -213,6 +213,8 @@ df = evaluate.get_datastorage_df(numQuery, numRun)
 # this only contains results if they differ from data storage 
 df2 = evaluate.get_resultset_df(numQuery, connection, numRun)
 
+inspector.getDifference12(df2,df)
+
 # get (sql) parameters of a query as dataframe
 df = evaluate.get_parameter_df(numQuery)
 
