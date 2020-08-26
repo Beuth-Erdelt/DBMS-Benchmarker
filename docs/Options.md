@@ -125,6 +125,7 @@ Example for `CONNECTION_FILE`:
     'alias': "DBMS A",
     'docker': "MySQL",
     'docker_alias': "DBMS A",
+    'dialect': "MySQL",
     'timeload': 100,
     'priceperhourdollar': 1.0,
     `monitoring`: {
@@ -163,6 +164,7 @@ Example for `CONNECTION_FILE`:
 * `docker`: Name of the docker image. This helps aggregating connections using the same docker image.
 * `docker_alias`: Anonymized name of the docker image. This helps aggregating connections using the same docker image in anonymized reports.
 * `alias`: Alias for anonymized reports (optional default is a random name)
+* `dialect`: Key for (optional) alternative SQL statements in the query file
 * `driver`, `url`, `auth`, `jar`: JDBC data
 * Additional information useful for reporting and also used for computations
   * `timeload`: Time for ingest (in milliseconds), because not part of the benchmark
@@ -294,6 +296,7 @@ Some options are used to configure reporting:
 #### SQL Dialects
 
 The `DBMS` key allows to specify SQL dialects. All connections starting with the key in this dict with use the specified alternative query. In the example above, for instance a connection 'MySQL-InnoDB' will use the alternative.
+Optionally at the definition of the connections an attribute `dialect` can be used. For example MemSQL may use the dialect `MySQL`.
 
 #### Connection Management
 
