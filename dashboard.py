@@ -1,3 +1,20 @@
+"""
+    Web-based Dashboard for the Python Package DBMS Benchmarker
+    Copyright (C) 2020  Jascha Jestel
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as
+    published by the Free Software Foundation, either version 3 of the
+    License, or (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+"""
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
@@ -486,11 +503,11 @@ class Graph:
         title += f' | w: {self.warmup}, c: {self.cooldown}'
 
         if self.query_aggregate is not None:
-            title += f' | query: {self.query_aggregate}'
+            title += f' | run: {self.query_aggregate}'
         if self.total_aggregate is not None:
-            title += f' | total: {self.total_aggregate}'
+            title += f' | query: {self.total_aggregate}'
         if self.connection_aggregate is not None:
-            title += f' | connection: {self.connection_aggregate}'
+            title += f' | config: {self.connection_aggregate}'
 
         return title
 
