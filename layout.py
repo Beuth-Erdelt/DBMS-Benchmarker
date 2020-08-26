@@ -1,3 +1,20 @@
+"""
+    Layout File for the Dashboard of the Python Package DBMS Benchmarker
+    Copyright (C) 2020  Jascha Jestel
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as
+    published by the Free Software Foundation, either version 3 of the
+    License, or (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+"""
 import dash_core_components as dcc
 import dash_html_components as html
 import dash_table
@@ -330,7 +347,7 @@ def serve_layout(preview) -> html.Div:
                         id='dd_name',
                     ),
 
-                    html.Label('Query aggregate', id='label_query_aggregate'),
+                    html.Label('Aggregate Run', id='label_query_aggregate'),
                     dcc.Dropdown(
                         id='dd_query_aggregate',
                         options=[
@@ -339,7 +356,7 @@ def serve_layout(preview) -> html.Div:
                         ],
                     ),
 
-                    html.Label('Total aggregate', id='label_total_aggregate'),
+                    html.Label('Aggregate Query', id='label_total_aggregate'),
                     dcc.Dropdown(
                         id='dd_total_aggregate',
                         options=[
@@ -348,7 +365,7 @@ def serve_layout(preview) -> html.Div:
                         ],
                     ),
 
-                    html.Label('Connection aggregate', id='label_connection_aggregate'),
+                    html.Label('Aggregate Config', id='label_connection_aggregate'),
                     dcc.Dropdown(
                         id='dd_connection_aggregate',
                         options=[
