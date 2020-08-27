@@ -6,18 +6,18 @@ This example shows how to benchmark 22 reading queries Q1-Q22 derived from TPC-H
 
 Official TPC-H benchmark - http://www.tpc.org/tpch
 
-Content:
-* [Prerequisits](#prerequisits)
+**Content**:
+* [Prerequisites](#prerequisites)
 * [Perform Benchmark](#perform-benchmark)
 * [Evaluate Results in Dashbaord](#evaluate-results-in-dashbaord)
 * [Where to go](#where-to-go)
 
-## Prerequisits
+## Prerequisites
 
 We need
 * a local instance of MySQL
-  * having a database `database` containing the TPC-H data for SF=1
-  * access rights for user / password `username/password`
+  * having a database `database` containing the TPC-H data of SF=1
+  * access rights for user / password: `username/password`
 * a suitable MySQL JDBC driver jar file
 * JDK 8 installed
 
@@ -31,6 +31,7 @@ If necessary, adjust the settings in the file `example/connections.py`:
     'version': "CE 8.0.13",
     'docker': 'MySQL',
     'docker_alias': "DBMS A",
+    'dialect': "MySQL",
     'hostsystem': {'node': 'localhost'},
     'info': "This is an example: MySQL on localhost",
     'active': True,
