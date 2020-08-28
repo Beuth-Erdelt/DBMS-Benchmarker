@@ -1436,12 +1436,15 @@ class benchmarker():
 			print("Q"+str(numQuery))
 			print(str(sys.getsizeof(self.protocol['query'][str(numQuery)]['dataStorage']))+" bytes")
 	def readDataStorage(self, query, numRun=0):
-		df = pd.DataFrame(self.protocol['query'][str(query)]['dataStorage'][numRun])
-		if not df.empty:
-			# set column names
-			df.columns = df.iloc[0]
-			# remove first row
-			df = df[1:]
+		if str(query) in self.protocol['query'] and len(self.protocol['query'][str(query)]['dataStorage']) > numRun:
+			df = pd.DataFrame(self.protocol['query'][str(query)]['dataStorage'][numRun])
+			if not df.empty:
+				# set column names
+				df.columns = df.iloc[0]
+				# remove first row
+				df = df[1:]
+		else:
+			df = pd.DataFrame()
 		return df
 	def readResultSet(self, query, connection, numRun=0):
 		df = pd.DataFrame(self.protocol['query'][str(query)]['resultSets'][connection][numRun])
