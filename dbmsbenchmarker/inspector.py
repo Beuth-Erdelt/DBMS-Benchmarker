@@ -316,7 +316,10 @@ class inspector():
         return self.benchmarks.protocol['query'][str(numQuery)]['sizes']
     def get_experiment_workflow(self):
         # dataframe of experiment workflow
-        return tools.dataframehelper.getWorkflow(self.benchmarks)
+        df_workflow = tools.dataframehelper.getWorkflow(self.benchmarks)
+        if df_workflow is None:
+            df_workflow = pd.DataFrame()
+        return df_workflow
     def get_experiment_initscript(self, connection):
         # string of init script for connection
         def initfilename(c, i):
