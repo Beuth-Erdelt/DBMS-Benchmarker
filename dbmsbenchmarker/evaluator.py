@@ -131,6 +131,10 @@ class evaluator():
 			if self.benchmarker.dbms[c].connectiondata['active']:
 				evaluation['dbms'][c] = {}
 				evaluation['dbms'][c]['name'] = self.benchmarker.dbms[c].getName()
+				if 'script' in self.benchmarker.dbms[c].connectiondata:
+					evaluation['dbms'][c]['script'] = self.benchmarker.dbms[c].connectiondata["script"]
+				else:
+					evaluation['dbms'][c]['script'] = ""
 				if 'docker' in self.benchmarker.dbms[c].connectiondata:
 					evaluation['dbms'][c]['docker'] = self.benchmarker.dbms[c].connectiondata["docker"]
 				else:

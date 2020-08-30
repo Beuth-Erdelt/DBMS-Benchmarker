@@ -107,6 +107,15 @@ class inspector():
                 dbms_list[dbms_name] = []
             dbms_list[dbms_name].append(c)
         return dbms_list
+    def get_experiment_list_connections_by_script(self):
+        # dict of lists of scripts
+        dbms_list = {}
+        for c,d in self.e.evaluation['dbms'].items():
+            dbms_name = d['script'] if 'script' in d else ''
+            if not dbms_name in dbms_list:
+                dbms_list[dbms_name] = []
+            dbms_list[dbms_name].append(c)
+        return dbms_list
     def get_experiment_list_nodes(self):
         # list all different nodes
         return list(self.get_experiment_list_connections_by_node().keys())
