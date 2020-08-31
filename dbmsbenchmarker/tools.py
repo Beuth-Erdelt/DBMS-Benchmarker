@@ -949,6 +949,7 @@ class dataframehelper():
 		return df
 	@staticmethod
 	def addStatistics(df):
+		#print("Compute statistics")
 		#print(df)
 		#with_nan = False
 		#print(df)
@@ -1266,7 +1267,7 @@ class dataframehelper():
 			return None
 
 
-def findSuccessfulQueriesAllDBMS(benchmarker, numQuery, timer):
+def findSuccessfulQueriesAllDBMS(benchmarker, numQuery, timer, dbms_filter=[]):
 	"""
 	Find all queries where all dbms retrieved results successfully for a given list of timers.
 	These may be taken into account for comparisons and a total bar chart.
@@ -1296,6 +1297,10 @@ def findSuccessfulQueriesAllDBMS(benchmarker, numQuery, timer):
 				# use all queries (total) or this query is requested
 				if numQuery is None:
 					for connectionname, c in benchmarker.dbms.items():
+						# for total: ignore dbms not in dbms_filter
+						if len(dbms_filter) > 0 and connectionname not in dbms_filter:
+							logging.debug("Total bar: Ignore connection "+str(connectionname)+" - filter")
+							continue
 						# ignore queries not active
 						if not queryObject.active:
 							logging.debug("Total bar: Ignore query "+str(i+1)+" - query inactive")
