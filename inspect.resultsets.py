@@ -19,6 +19,7 @@
 """
 from dbmsbenchmarker import *
 import pandas as pd
+import argparse
 
 #import logging
 #logging.basicConfig(level=logging.DEBUG)
@@ -27,8 +28,13 @@ import pandas as pd
 ##### general properties
 ###################
 
+parser = argparse.ArgumentParser(description='A benchmark tool for RDBMS. It connects to a given list of RDBMS via JDBC and runs a given list benchmark queries. Optionally some reports are generated.')
+parser.add_argument('-r', '--result-folder', help='folder for storing benchmark result files, default is given by timestamp', default="./")
+
+args = parser.parse_args()
+
 # path of folder containing experiment results
-resultfolder = "./"
+resultfolder = args.result_folder#"./"
 
 # create evaluation object for result folder
 evaluate = inspector.inspector(resultfolder)
