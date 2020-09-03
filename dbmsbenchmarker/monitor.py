@@ -153,48 +153,49 @@ class metrics():
             logging.debug("Metric "+m)
             df_all = None
             for c,t in times["starts"].items():
-                self.token = self.benchmarker.dbms[c].connectiondata['monitoring']['grafanatoken']
-                self.url = self.benchmarker.dbms[c].connectiondata['monitoring']['grafanaurl']
-                if self.benchmarker.dbms[c].connectiondata['active'] and self.token and self.url:
-                    logging.debug("Connection "+c)
-                    # is there a custom query for this metric and dbms?
-                    if 'metrics' in self.benchmarker.dbms[c].connectiondata['monitoring'] and m in self.benchmarker.dbms[c].connectiondata['monitoring']['metrics']:
-                        metric = self.benchmarker.dbms[c].connectiondata['monitoring']['metrics'][m].copy()
-                    #print(metric)
-                    # this yields seconds
-                    time_start = int(datetime.timestamp(datetime.strptime(times["starts"][c],'%Y-%m-%d %H:%M:%S.%f')))
-                    time_end = int(datetime.timestamp(datetime.strptime(times["ends"][c],'%Y-%m-%d %H:%M:%S.%f')))
-                    # is there a global timeshift
-                    if 'grafanashift' in self.benchmarker.dbms[c].connectiondata['monitoring']:
-                        time_shift = self.benchmarker.dbms[c].connectiondata['monitoring']['grafanashift']
-                    else:
-                        time_shift = 0
-                    time_start = time_start + time_shift
-                    time_end = time_end + time_shift
-                    intervals[c] = time_end-time_start #+1# because of ceil()
-                    add_interval = int(self.benchmarker.dbms[c].connectiondata['monitoring']['grafanaextend'])
-                    time_start = time_start - add_interval
-                    time_end = time_end + add_interval
-                    #print(time_end-time_start)
-                    csvfile = self.benchmarker.path+'/query_'+str(query)+'_metric_'+str(m)+'_'+c+'.csv'
-                    #print(csvfile)
-                    if os.path.isfile(csvfile):# and not self.benchmarker.overwrite:
-                        logging.debug("Data exists")
-                        df = self.loadMetricsDataframe(csvfile)
-                        df.columns=[c]
-                    else:
-                        values = self.getMetrics(metric,time_start, time_end)
-                        df = self.metricsToDataframe(metric, values)
-                        df.columns=[c]
-                        self.saveMetricsDataframe(csvfile, df)
-                    #print(df)
-                    if df.empty or len(df.index)==1:
-                        continue
-                    if df_all is None:
-                        df_all = df
-                    else:
-                        df_all = df_all.merge(df,how='outer', left_index=True,right_index=True)
-                    #print(df_all)
+                if 'monitoring' in self.benchmarker.dbms[c].connectiondata:
+                    self.token = self.benchmarker.dbms[c].connectiondata['monitoring']['grafanatoken']
+                    self.url = self.benchmarker.dbms[c].connectiondata['monitoring']['grafanaurl']
+                    if self.benchmarker.dbms[c].connectiondata['active'] and self.token and self.url:
+                        logging.debug("Connection "+c)
+                        # is there a custom query for this metric and dbms?
+                        if 'metrics' in self.benchmarker.dbms[c].connectiondata['monitoring'] and m in self.benchmarker.dbms[c].connectiondata['monitoring']['metrics']:
+                            metric = self.benchmarker.dbms[c].connectiondata['monitoring']['metrics'][m].copy()
+                        #print(metric)
+                        # this yields seconds
+                        time_start = int(datetime.timestamp(datetime.strptime(times["starts"][c],'%Y-%m-%d %H:%M:%S.%f')))
+                        time_end = int(datetime.timestamp(datetime.strptime(times["ends"][c],'%Y-%m-%d %H:%M:%S.%f')))
+                        # is there a global timeshift
+                        if 'grafanashift' in self.benchmarker.dbms[c].connectiondata['monitoring']:
+                            time_shift = self.benchmarker.dbms[c].connectiondata['monitoring']['grafanashift']
+                        else:
+                            time_shift = 0
+                        time_start = time_start + time_shift
+                        time_end = time_end + time_shift
+                        intervals[c] = time_end-time_start #+1# because of ceil()
+                        add_interval = int(self.benchmarker.dbms[c].connectiondata['monitoring']['grafanaextend'])
+                        time_start = time_start - add_interval
+                        time_end = time_end + add_interval
+                        #print(time_end-time_start)
+                        csvfile = self.benchmarker.path+'/query_'+str(query)+'_metric_'+str(m)+'_'+c+'.csv'
+                        #print(csvfile)
+                        if os.path.isfile(csvfile):# and not self.benchmarker.overwrite:
+                            logging.debug("Data exists")
+                            df = self.loadMetricsDataframe(csvfile)
+                            df.columns=[c]
+                        else:
+                            values = self.getMetrics(metric,time_start, time_end)
+                            df = self.metricsToDataframe(metric, values)
+                            df.columns=[c]
+                            self.saveMetricsDataframe(csvfile, df)
+                        #print(df)
+                        if df.empty or len(df.index)==1:
+                            continue
+                        if df_all is None:
+                            df_all = df
+                        else:
+                            df_all = df_all.merge(df,how='outer', left_index=True,right_index=True)
+                        #print(df_all)
             if df_all is None:
                 continue
             # options
