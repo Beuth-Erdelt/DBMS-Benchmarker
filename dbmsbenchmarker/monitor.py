@@ -92,7 +92,7 @@ class metrics():
         try:
             r = requests.post(self.url+query, headers=headers)
             #print(r.json())
-            if isinstance(r.json(), list) and 'data' in r.json() and 'result' in r.json()['data'] and len(r.json()['data']['result']) > 0:
+            if isinstance(r.json(), dict) and 'data' in r.json() and 'result' in r.json()['data'] and len(r.json()['data']['result']) > 0:
                 l = r.json()['data']['result'][0]['values']
                 # missing values due to end of monitoring?
                 n = time_end-time_start-len(l)+1
