@@ -255,29 +255,30 @@ class metrics():
         for query, protocol in self.benchmarker.protocol['query'].items():
             if int(query)-1 in qs:
                 for c,t in protocol["starts"].items():
-                    self.token = self.benchmarker.dbms[c].connectiondata['monitoring']['grafanatoken']
-                    self.url = self.benchmarker.dbms[c].connectiondata['monitoring']['grafanaurl']
-                    if self.benchmarker.dbms[c].connectiondata['active'] and self.token and self.url:
-                        numContribute = numContribute + 1
-                        if not c in m_n:
-                            m_n[c] = {}
-                            m_sum[c] = {}
-                        for m, metric in metrics.metrics.items():
-                            if not m in m_n[c]:
-                                m_n[c][m] = 0
-                                m_sum[c][m] = 0
-                            #logging.debug("Connection "+c)
-                            add_interval = int(self.benchmarker.dbms[c].connectiondata['monitoring']['grafanaextend'])
-                            csvfile = self.benchmarker.path+'/query_'+str(query)+'_metric_'+str(m)+'_'+c+'.csv'
-                            if os.path.isfile(csvfile):
-                                #print(csvfile)
-                                logging.debug("Data exists")
-                                df = self.loadMetricsDataframe(csvfile)
-                                #df = pd.read_csv(csvfile)
-                                #print(df)
-                                m_n[c][m] += len(df.index)-add_interval
-                                m_sum[c][m] += float(df.iloc[add_interval:m_n[c][m]+add_interval].sum())
-                                #print(m_n)
+                    if 'monitoring' in self.benchmarker.dbms[c].connectiondata:
+                        self.token = self.benchmarker.dbms[c].connectiondata['monitoring']['grafanatoken']
+                        self.url = self.benchmarker.dbms[c].connectiondata['monitoring']['grafanaurl']
+                        if self.benchmarker.dbms[c].connectiondata['active'] and self.token and self.url:
+                            numContribute = numContribute + 1
+                            if not c in m_n:
+                                m_n[c] = {}
+                                m_sum[c] = {}
+                            for m, metric in metrics.metrics.items():
+                                if not m in m_n[c]:
+                                    m_n[c][m] = 0
+                                    m_sum[c][m] = 0
+                                #logging.debug("Connection "+c)
+                                add_interval = int(self.benchmarker.dbms[c].connectiondata['monitoring']['grafanaextend'])
+                                csvfile = self.benchmarker.path+'/query_'+str(query)+'_metric_'+str(m)+'_'+c+'.csv'
+                                if os.path.isfile(csvfile):
+                                    #print(csvfile)
+                                    logging.debug("Data exists")
+                                    df = self.loadMetricsDataframe(csvfile)
+                                    #df = pd.read_csv(csvfile)
+                                    #print(df)
+                                    m_n[c][m] += len(df.index)-add_interval
+                                    m_sum[c][m] += float(df.iloc[add_interval:m_n[c][m]+add_interval].sum())
+                                    #print(m_n)
         metrics.m_avg = {c:{m:float(m_sum[c][m]/v) if v > 0 else 0 for m,v in a.items()} for c,a in m_n.items()}
         #print(m_n)
         #print(m_sum)
