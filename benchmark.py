@@ -60,7 +60,7 @@ if __name__ == '__main__':
 		benchmarker.BENCHMARKER_VERBOSE_STATISTICS = True
 	if int(args.num_run) > 0:
 		querymanagement = {
- 			'numRun': args.num_run,
+ 			'numRun': int(args.num_run),
  		}
 		tools.query.template = querymanagement
 	# dbmsbenchmarker with reporter
