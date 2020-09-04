@@ -2061,7 +2061,12 @@ class latexer(reporter):
 			queryName = 'Query %d%s' % (numQuery, ': '+query.title)
 			result['queryName'] = queryName
 			if len(query.query) > 0:
-				result['queryString'] = "\\begin{sqlFormat}\n"+query.query+"\n\\end{sqlFormat}\n"
+				if isinstance(query.query,list):
+					result['queryString'] = "\\begin{sqlFormat}\n"+"\n".join(query.query)+"\n\\end{sqlFormat}\n"
+				elif isinstance(query.query,str):
+					result['queryString'] = "\\begin{sqlFormat}\n"+query.query+"\n\\end{sqlFormat}\n"
+				else:
+					result['queryString'] = ""
 			else:
 				result['queryString'] = ""
 			queryNotes = ""

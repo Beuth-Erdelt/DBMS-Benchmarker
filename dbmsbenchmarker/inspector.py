@@ -107,6 +107,15 @@ class inspector():
                 dbms_list[dbms_name] = []
             dbms_list[dbms_name].append(c)
         return dbms_list
+    def get_experiment_list_connections_by_script(self):
+        # dict of lists of scripts
+        dbms_list = {}
+        for c,d in self.e.evaluation['dbms'].items():
+            dbms_name = d['script'] if 'script' in d else ''
+            if not dbms_name in dbms_list:
+                dbms_list[dbms_name] = []
+            dbms_list[dbms_name].append(c)
+        return dbms_list
     def get_experiment_list_nodes(self):
         # list all different nodes
         return list(self.get_experiment_list_connections_by_node().keys())
@@ -227,9 +236,14 @@ class inspector():
             df_stat = evaluator.addFactor(df_stat, factor_base)
         return df, df_stat
     def get_aggregated_query_statistics(self, type='timer', name='run', dbms_filter=[], warmup=0, cooldown=0, factor_base='Mean', query_aggregate='Mean'):
-        l = self.get_experiment_queries_successful()
+        # only successful queries (and all dbms)
+        #print(dbms_filter)
+        l = self.get_experiment_queries_successful(dbms_filter=dbms_filter)
         epos = [i for i,t in enumerate(self.benchmarks.timers) if t.name=='run']
         queries = l[epos[0]]
+        # all queries (but only successful dbms)
+        #l = self.get_experiment_list_queries()# _successful()
+        #queries = [x-1 for x in l]
         column = query_aggregate
         df_aggregated = None
         for q in queries:
@@ -379,13 +393,13 @@ class inspector():
     def get_survey_ranking(self):
         dftr, title = self.benchmarks.generateSortedTotalRanking()
         return dftr
-    def get_experiment_queries_successful(self):
+    def get_experiment_queries_successful(self, dbms_filter=[]):
         # list of active queries for timer e[0] = execution
-        if len(self.queries_successful) > 0:
-            return self.queries_successful
-        else:
-            self.queries_successful = tools.findSuccessfulQueriesAllDBMS(self.benchmarks, None, self.benchmarks.timers)
-            return self.queries_successful
+        #if len(self.queries_successful) > 0:
+        #    return self.queries_successful
+        #else:
+        self.queries_successful = tools.findSuccessfulQueriesAllDBMS(self.benchmarks, None, self.benchmarks.timers, dbms_filter)
+        return self.queries_successful
     def get_survey_successful(self, timername=None):
         # list of active queries for timer e[0] = execution
         if not timername is None:

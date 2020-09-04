@@ -91,14 +91,15 @@ class metrics():
         #print(self.url+query)
         try:
             r = requests.post(self.url+query, headers=headers)
-            #print(r.json)
-            if len(r.json()['data']['result']) > 0:
+            #print(r.json())
+            if isinstance(r.json(), dict) and 'data' in r.json() and 'result' in r.json()['data'] and len(r.json()['data']['result']) > 0:
                 l = r.json()['data']['result'][0]['values']
                 # missing values due to end of monitoring?
                 n = time_end-time_start-len(l)+1
                 l2 = [(t+len(l)+time_start, 0) for t in range(n)]
                 l = l + l2
             else:
+                print(r.json())
                 l = [(t,0) for t in range(time_start, time_end+1)]#[(time_start,0)]
         except Exception as e:
             logging.exception('Caught an error: %s' % str(e))
@@ -152,48 +153,49 @@ class metrics():
             logging.debug("Metric "+m)
             df_all = None
             for c,t in times["starts"].items():
-                self.token = self.benchmarker.dbms[c].connectiondata['monitoring']['grafanatoken']
-                self.url = self.benchmarker.dbms[c].connectiondata['monitoring']['grafanaurl']
-                if self.benchmarker.dbms[c].connectiondata['active'] and self.token and self.url:
-                    logging.debug("Connection "+c)
-                    # is there a custom query for this metric and dbms?
-                    if 'metrics' in self.benchmarker.dbms[c].connectiondata['monitoring'] and m in self.benchmarker.dbms[c].connectiondata['monitoring']['metrics']:
-                        metric = self.benchmarker.dbms[c].connectiondata['monitoring']['metrics'][m].copy()
-                    #print(metric)
-                    # this yields seconds
-                    time_start = int(datetime.timestamp(datetime.strptime(times["starts"][c],'%Y-%m-%d %H:%M:%S.%f')))
-                    time_end = int(datetime.timestamp(datetime.strptime(times["ends"][c],'%Y-%m-%d %H:%M:%S.%f')))
-                    # is there a global timeshift
-                    if 'grafanashift' in self.benchmarker.dbms[c].connectiondata['monitoring']:
-                        time_shift = self.benchmarker.dbms[c].connectiondata['monitoring']['grafanashift']
-                    else:
-                        time_shift = 0
-                    time_start = time_start + time_shift
-                    time_end = time_end + time_shift
-                    intervals[c] = time_end-time_start #+1# because of ceil()
-                    add_interval = int(self.benchmarker.dbms[c].connectiondata['monitoring']['grafanaextend'])
-                    time_start = time_start - add_interval
-                    time_end = time_end + add_interval
-                    #print(time_end-time_start)
-                    csvfile = self.benchmarker.path+'/query_'+str(query)+'_metric_'+str(m)+'_'+c+'.csv'
-                    #print(csvfile)
-                    if os.path.isfile(csvfile):# and not self.benchmarker.overwrite:
-                        logging.debug("Data exists")
-                        df = self.loadMetricsDataframe(csvfile)
-                        df.columns=[c]
-                    else:
-                        values = self.getMetrics(metric,time_start, time_end)
-                        df = self.metricsToDataframe(metric, values)
-                        df.columns=[c]
-                        self.saveMetricsDataframe(csvfile, df)
-                    #print(df)
-                    if df.empty or len(df.index)==1:
-                        continue
-                    if df_all is None:
-                        df_all = df
-                    else:
-                        df_all = df_all.merge(df,how='outer', left_index=True,right_index=True)
-                    #print(df_all)
+                if 'monitoring' in self.benchmarker.dbms[c].connectiondata:
+                    self.token = self.benchmarker.dbms[c].connectiondata['monitoring']['grafanatoken']
+                    self.url = self.benchmarker.dbms[c].connectiondata['monitoring']['grafanaurl']
+                    if self.benchmarker.dbms[c].connectiondata['active'] and self.token and self.url:
+                        logging.debug("Connection "+c)
+                        # is there a custom query for this metric and dbms?
+                        if 'metrics' in self.benchmarker.dbms[c].connectiondata['monitoring'] and m in self.benchmarker.dbms[c].connectiondata['monitoring']['metrics']:
+                            metric = self.benchmarker.dbms[c].connectiondata['monitoring']['metrics'][m].copy()
+                        #print(metric)
+                        # this yields seconds
+                        time_start = int(datetime.timestamp(datetime.strptime(times["starts"][c],'%Y-%m-%d %H:%M:%S.%f')))
+                        time_end = int(datetime.timestamp(datetime.strptime(times["ends"][c],'%Y-%m-%d %H:%M:%S.%f')))
+                        # is there a global timeshift
+                        if 'grafanashift' in self.benchmarker.dbms[c].connectiondata['monitoring']:
+                            time_shift = self.benchmarker.dbms[c].connectiondata['monitoring']['grafanashift']
+                        else:
+                            time_shift = 0
+                        time_start = time_start + time_shift
+                        time_end = time_end + time_shift
+                        intervals[c] = time_end-time_start #+1# because of ceil()
+                        add_interval = int(self.benchmarker.dbms[c].connectiondata['monitoring']['grafanaextend'])
+                        time_start = time_start - add_interval
+                        time_end = time_end + add_interval
+                        #print(time_end-time_start)
+                        csvfile = self.benchmarker.path+'/query_'+str(query)+'_metric_'+str(m)+'_'+c+'.csv'
+                        #print(csvfile)
+                        if os.path.isfile(csvfile):# and not self.benchmarker.overwrite:
+                            logging.debug("Data exists")
+                            df = self.loadMetricsDataframe(csvfile)
+                            df.columns=[c]
+                        else:
+                            values = self.getMetrics(metric,time_start, time_end)
+                            df = self.metricsToDataframe(metric, values)
+                            df.columns=[c]
+                            self.saveMetricsDataframe(csvfile, df)
+                        #print(df)
+                        if df.empty or len(df.index)==1:
+                            continue
+                        if df_all is None:
+                            df_all = df
+                        else:
+                            df_all = df_all.merge(df,how='outer', left_index=True,right_index=True)
+                        #print(df_all)
             if df_all is None:
                 continue
             # options
@@ -254,29 +256,30 @@ class metrics():
         for query, protocol in self.benchmarker.protocol['query'].items():
             if int(query)-1 in qs:
                 for c,t in protocol["starts"].items():
-                    self.token = self.benchmarker.dbms[c].connectiondata['monitoring']['grafanatoken']
-                    self.url = self.benchmarker.dbms[c].connectiondata['monitoring']['grafanaurl']
-                    if self.benchmarker.dbms[c].connectiondata['active'] and self.token and self.url:
-                        numContribute = numContribute + 1
-                        if not c in m_n:
-                            m_n[c] = {}
-                            m_sum[c] = {}
-                        for m, metric in metrics.metrics.items():
-                            if not m in m_n[c]:
-                                m_n[c][m] = 0
-                                m_sum[c][m] = 0
-                            #logging.debug("Connection "+c)
-                            add_interval = int(self.benchmarker.dbms[c].connectiondata['monitoring']['grafanaextend'])
-                            csvfile = self.benchmarker.path+'/query_'+str(query)+'_metric_'+str(m)+'_'+c+'.csv'
-                            if os.path.isfile(csvfile):
-                                #print(csvfile)
-                                logging.debug("Data exists")
-                                df = self.loadMetricsDataframe(csvfile)
-                                #df = pd.read_csv(csvfile)
-                                #print(df)
-                                m_n[c][m] += len(df.index)-add_interval
-                                m_sum[c][m] += float(df.iloc[add_interval:m_n[c][m]+add_interval].sum())
-                                #print(m_n)
+                    if 'monitoring' in self.benchmarker.dbms[c].connectiondata:
+                        self.token = self.benchmarker.dbms[c].connectiondata['monitoring']['grafanatoken']
+                        self.url = self.benchmarker.dbms[c].connectiondata['monitoring']['grafanaurl']
+                        if self.benchmarker.dbms[c].connectiondata['active'] and self.token and self.url:
+                            numContribute = numContribute + 1
+                            if not c in m_n:
+                                m_n[c] = {}
+                                m_sum[c] = {}
+                            for m, metric in metrics.metrics.items():
+                                if not m in m_n[c]:
+                                    m_n[c][m] = 0
+                                    m_sum[c][m] = 0
+                                #logging.debug("Connection "+c)
+                                add_interval = int(self.benchmarker.dbms[c].connectiondata['monitoring']['grafanaextend'])
+                                csvfile = self.benchmarker.path+'/query_'+str(query)+'_metric_'+str(m)+'_'+c+'.csv'
+                                if os.path.isfile(csvfile):
+                                    #print(csvfile)
+                                    logging.debug("Data exists")
+                                    df = self.loadMetricsDataframe(csvfile)
+                                    #df = pd.read_csv(csvfile)
+                                    #print(df)
+                                    m_n[c][m] += len(df.index)-add_interval
+                                    m_sum[c][m] += float(df.iloc[add_interval:m_n[c][m]+add_interval].sum())
+                                    #print(m_n)
         metrics.m_avg = {c:{m:float(m_sum[c][m]/v) if v > 0 else 0 for m,v in a.items()} for c,a in m_n.items()}
         #print(m_n)
         #print(m_sum)

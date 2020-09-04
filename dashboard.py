@@ -114,6 +114,8 @@ def get_connections_by_filter(filter_by: str, e: inspector.inspector) -> dict:
         connections_by_filter = e.get_experiment_list_connections_by_dbms()
     elif filter_by == 'Node':
         connections_by_filter = e.get_experiment_list_connections_by_node()
+    elif filter_by == 'Script':
+        connections_by_filter = e.get_experiment_list_connections_by_script()
     elif filter_by == 'GPU':
         connections_by_filter = e.get_experiment_list_connections_by_hostsystem('GPU')
     elif filter_by == 'Client':

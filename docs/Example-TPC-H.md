@@ -9,7 +9,7 @@ Official TPC-H benchmark - http://www.tpc.org/tpch
 **Content**:
 * [Prerequisites](#prerequisites)
 * [Perform Benchmark](#perform-benchmark)
-* [Evaluate Results in Dashbaord](#evaluate-results-in-dashbaord)
+* [Evaluate Results in Dashboard](#evaluate-results-in-dashboard)
 * [Where to go](#where-to-go)
 
 ## Prerequisites
@@ -65,7 +65,7 @@ Experiment <code> has been finished
 The script has created a result folder in the current directory containing the results. `<code>` is the name of the folder.
 
 
-### Evaluate Results in Dashbaord
+### Evaluate Results in Dashboard
 
 Run the command:
 
