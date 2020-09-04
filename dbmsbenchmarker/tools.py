@@ -1330,9 +1330,18 @@ def convertToFloat(var):
 	:param var: Some variable
 	:return: returns float converted variable
 	"""
+	#print(var)
+	#print(type(var))
 	try:
+		if isinstance(var, float):
+			#print(var)
+			#print("is float")
+			return float
 		return type(ast.literal_eval(var))
-	except Exception:
+	except Exception as e:
+		#print(str(e))
+		#print("Not convertible")
+		#print(var)
 		return str
 
 
