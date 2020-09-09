@@ -128,7 +128,7 @@ class inspector():
         for c,d in self.e.evaluation['dbms'].items():
             if not d['connectionmanagement'][property] in dbms_list:
                 dbms_list[d['connectionmanagement'][property]] = []
-            dbms_list[d['connectionmanagement'][property]].append(c)
+            dbms_list[d['connectionmanagement'][property]].append(str(c))
         if len(dbms_list) == 0:
             dbms_list = {'': self.get_experiment_list_connections()}
         return dbms_list
@@ -139,7 +139,7 @@ class inspector():
             if 'hostsystem' in d and property in d['hostsystem']:
                 if not d['hostsystem'][property] in dbms_list:
                     dbms_list[d['hostsystem'][property]] = []
-                dbms_list[d['hostsystem'][property]].append(c)
+                dbms_list[d['hostsystem'][property]].append(str(c))
         if len(dbms_list) == 0:
             dbms_list = {'': self.get_experiment_list_connections()}
         return dbms_list
@@ -150,7 +150,7 @@ class inspector():
             if 'hostsystem' in d and 'resources' in d['hostsystem'] and 'requests' in d['hostsystem']['resources'] and property in d['hostsystem']['resources']['requests']:
                 if not d['hostsystem']['resources']['requests'][property] in dbms_list:
                     dbms_list[d['hostsystem']['resources']['requests'][property]] = []
-                dbms_list[d['hostsystem']['resources']['requests'][property]].append(c)
+                dbms_list[d['hostsystem']['resources']['requests'][property]].append(str(c))
         if len(dbms_list) == 0:
             dbms_list = {'': self.get_experiment_list_connections()}
         return dbms_list
@@ -161,7 +161,7 @@ class inspector():
             if 'hostsystem' in d and 'resources' in d['hostsystem'] and 'limits' in d['hostsystem']['resources'] and property in d['hostsystem']['resources']['limits']:
                 if not d['hostsystem']['resources']['limits'][property] in dbms_list:
                     dbms_list[d['hostsystem']['resources']['limits'][property]] = []
-                dbms_list[d['hostsystem']['resources']['limits'][property]].append(c)
+                dbms_list[d['hostsystem']['resources']['limits'][property]].append(str(c))
         if len(dbms_list) == 0:
             dbms_list = {'': self.get_experiment_list_connections()}
         return dbms_list
