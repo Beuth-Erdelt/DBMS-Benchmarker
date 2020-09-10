@@ -434,4 +434,6 @@ class inspector():
         #dataframe = dataframe.T.reset_index().T
         #print(dataframe)
         return dataframe
+    def get_querystring(self, numQuery, connectionname, numRun):
+        return self.benchmarks.getQueryString(numQuery, connectionname, numRun)
 
