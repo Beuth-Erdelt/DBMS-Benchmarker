@@ -122,6 +122,8 @@ def get_connections_by_filter(filter_by: str, e: inspector.inspector) -> dict:
         connections_by_filter = e.get_experiment_list_connections_by_connectionmanagement('numProcesses')
     elif filter_by == 'CPU':
         connections_by_filter = e.get_experiment_list_connections_by_hostsystem('CPU')
+    elif filter_by == 'CPU Limit':
+        connections_by_filter = e.get_experiment_list_connections_by_hostsystem('limits_cpu')
     else:
         raise KeyError('filter_by')
 
@@ -854,24 +856,28 @@ class Graph:
             df_round = df.round(decimals=3)
             
             ff_fig = ff.create_annotated_heatmap(
-                    x=list(df_round.columns),
-                    y=list(df_round.index),
+                    x=[str(x) for x in list(df_round.columns)],
+                    y=[str(x) for x in list(df_round.index)],
                     z=df_round.values.tolist(),
                     showscale=True)
 
             fig = go.Figure(ff_fig)
             fig.layout.xaxis.side = 'bottom'
+            fig.layout.xaxis.type = 'category'
+            fig.layout.yaxis.type = 'category'
 
         else:
             fig = go.Figure(
                 data=go.Heatmap(
-                    x=list(df.columns),
-                    y=list(df.index),
+                    x=[str(x) for x in list(df.columns)],
+                    y=[str(x) for x in list(df.index)],
                     z=df.values.tolist(),
                     hoverongaps=False,
                     text=text
                 )
             )
+            fig.layout.xaxis.type = 'category'
+            fig.layout.yaxis.type = 'category'
 
         return fig
 

@@ -61,6 +61,18 @@ class metrics():
             'query': 'sum(irate(container_cpu_usage_seconds_total{{job="monitor-node", container_label_io_kubernetes_container_name!="dbms",id!="/"}}[1m]))',
             'title': 'CPU Others [%]'
         },
+        'total_cpu_util_s': {
+            'query': 'sum(container_cpu_usage_seconds_total{{job="monitor-node", container_label_io_kubernetes_container_name="dbms"}})',
+            'title': 'CPU Util [s]'
+        },
+        'total_cpu_throttled_s': {
+            'query': 'sum(container_cpu_cfs_throttled_seconds_total{{job="monitor-node", container_label_io_kubernetes_container_name="dbms"}})',
+            'title': 'CPU Throttle [s]'
+        },
+        'total_cpu_util_others_s': {
+            'query': 'sum(container_cpu_usage_seconds_total{{job="monitor-node", container_label_io_kubernetes_container_name!="dbms",id!="/"}})',
+            'title': 'CPU Util Others [s]'
+        },
         'total_network_rx': {
             'query': 'sum(container_network_receive_bytes_total{{container_label_app="dbmsbenchmarker", job="monitor-node"}})',
             'title': 'Net Rx [b]'
