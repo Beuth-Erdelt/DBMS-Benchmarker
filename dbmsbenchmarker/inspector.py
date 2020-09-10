@@ -436,4 +436,30 @@ class inspector():
         return dataframe
     def get_querystring(self, numQuery, connectionname, numRun):
         return self.benchmarks.getQueryString(numQuery, connectionname, numRun)
+    def measures_reset_zero(self, dataframe):
+        return dataframe.sub(dataframe.min(axis=1), axis=0)
+    def get_number_of_measures(self, dataframe):
+        return dataframe.isnull().sum(axis=1)+len(dataframe.columns)
+    def measures_rolling_difference(self, dataframe, periods=1):
+        dataframe = dataframe.diff(periods=periods, axis=1)/periods
+        for i in range(0, periods):
+            dataframe.T.iloc[i] = 0.0
+        return dataframe
+    def measures_smoothing(self, dataframe, window=1, number=1):
+        if window > 0:
+            for i in range(0, number):
+                dataframe = dataframe.rolling(window=window, axis=1).mean()
+        return dataframe
+    def plot_measures(self, dataframe, connection_colors):
+        print(evaluator.addStatistics(dataframe)['Mean'])            # little affected by window
+        print(evaluator.addStatistics(dataframe)['Median'])          # much affected by window
+        print(evaluator.addStatistics(dataframe,drop_measures=True)) # variation and max drops
+        df_nums = df_get_number_of_measures(dataframe)
+        # total CPU in unit CPU-seconds
+        print(dataframe.mean(axis=1)*df_nums)
+        fig = go.Figure()
+        for i in range(len(dataframe.index)):
+            t = fig.add_trace(go.Scatter(x=dataframe.T.index, y=dataframe.iloc[i], name=dataframe.index[i], line=dict(color=connection_colors[dataframe.index[i]], width=1)))
+        n = fig.update_layout(yaxis=dict(range=[0,dataframe.max().max()]))
+        fig.show()
 
