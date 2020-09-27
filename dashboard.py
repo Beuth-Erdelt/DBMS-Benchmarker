@@ -1184,7 +1184,7 @@ class Graph:
                 if self.connection_aggregate is None:
                     if self.xaxis == 'Query':
                         for i, item in enumerate(list(df.index)):
-                            tt_value = filter_by_connection[item]
+                            tt_value = str(filter_by_connection[item])
                             if len(tt_value) == 0:
                                 tt_value = 'None'
                             tooltip = {df.index.name: {'type': 'text', 'value': tt_value, 'delay': 50, 'duration': 36000}}
