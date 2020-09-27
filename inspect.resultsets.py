@@ -109,9 +109,9 @@ for numQuery in list_queries:
                         df2[c] = pd.DataFrame(sorted(data, key=itemgetter(*list(range(0,len(data[0]))))), columns=df_tmp.columns)
                     for c,d in df2.items():
                         print("Storage has more than {}:".format(c))
-                        print(inspector.getDifference12(d,df))
-                        print(c+" has more than storage")
                         print(inspector.getDifference12(df,d))
+                        print(c+" has more than storage")
+                        print(inspector.getDifference12(d,df))
                     if len(df2) > 0:
                         break
 
