@@ -77,7 +77,7 @@ class inspector():
             l = [c for c in connection_properties if c['active'] == True]
             workload_preview[code]['connections'] = len(l)
         return pd.DataFrame(workload_preview).T
-    def load_experiment(self, code, anonymize=None):
+    def load_experiment(self, code, anonymize=None, load=True):
         if anonymize is not None:
             self.anonymize = anonymize
         # TODO: force clean dbms aliases
@@ -85,7 +85,7 @@ class inspector():
         self.benchmarks = benchmarker.inspector(self.result_path, code, anonymize=self.anonymize)
         self.benchmarks.computeTimerRun()
         self.benchmarks.computeTimerSession()
-        self.e = evaluator.evaluator(self.benchmarks, load=True, force=True)
+        self.e = evaluator.evaluator(self.benchmarks, load=load, force=True)
     def get_experiment_list_queries(self):
         # list of successful queries
         return self.benchmarks.listQueries()
