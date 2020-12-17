@@ -35,6 +35,8 @@ color_ranges = [
     ["#660066", "#ffccff"],
     ["#006666", "#ccffff"],
     ["#000000", "#ffffff"],
+    ["#666666", "#cccccc"],
+    ["#2288aa", "#aaccff"],
 ]
 
 def getIntersection(df1, df2):
