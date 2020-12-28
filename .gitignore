@@ -3,3 +3,4 @@ tmp/*
 *.jar
 __pycache__/*
 1*/
+*.zip
