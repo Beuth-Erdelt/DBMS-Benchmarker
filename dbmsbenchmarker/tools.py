@@ -498,7 +498,12 @@ class dbms():
 		self.connection = None
 		self.cursor = None
 		if not connectiondata['JDBC']['jar'] in dbms.jars:
-			dbms.jars.append(connectiondata['JDBC']['jar'])
+			if isinstance(connectiondata['JDBC']['jar'], list):
+				# accept list of jars
+				dbms.jars.extend(connectiondata['JDBC']['jar'])
+			else:
+				# append single jar
+				dbms.jars.append(connectiondata['JDBC']['jar'])
 		if not 'version' in self.connectiondata:
 			self.connectiondata['version'] = "-"
 		if not 'info' in self.connectiondata:
