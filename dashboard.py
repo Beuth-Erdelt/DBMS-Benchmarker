@@ -591,6 +591,7 @@ class Graph:
                                      showlegend=index in legend_connections,
                                      **common)
                               )
+                fig.update_traces(quartilemethod="inclusive")
         else:
             color, df = self.color_switch('Query', df, e)
             
@@ -604,6 +605,7 @@ class Graph:
                                      name=index,
                                      line_color=color.get(index),
                                      **common))
+                fig.update_traces(quartilemethod="inclusive")
 
         #
         if self.xaxis == 'Connection':
