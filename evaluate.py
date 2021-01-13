@@ -63,7 +63,7 @@ if __name__ == '__main__':
             #data = [[round(float(item), int(query.restrict_precision)) if tools.convertToFloat(item) == float else item for item in sublist] for sublist in data]
             #print(data)
             if len(data) > 0 and sum([len(v) for k,v in list_warnings.items()]) > 0:
-                print("===Q{}===".format(numQuery))
+                print("\n===Q{}: {}===".format(numQuery, query.title))
                 print(list_warnings)
                 df = pd.DataFrame(sorted(data, key=itemgetter(*list(range(0,len(data[0]))))), columns=df.columns)
                 for c in list_connections:
@@ -75,10 +75,13 @@ if __name__ == '__main__':
                                 continue
                             df2={}
                             data_stored = s[numRun]
+                            if len(r[c]) == 0:
+                                continue
                             print("numRun: "+str(numRun))
                             #print(data)
                             s2 = [[round(float(item), int(query.restrict_precision)) if tools.convertToFloat(item) == float else item for item in sublist] for sublist in data_stored]
                             #print(s2)
+                            #print(r[c])
                             r2 = [[round(float(item), int(query.restrict_precision)) if tools.convertToFloat(item) == float else item for item in sublist] for sublist in r[c][numRun]]
                             #print(r2)
                             #for c, result_diff in r.items():
@@ -111,7 +114,8 @@ if __name__ == '__main__':
         for numQuery in list_queries:
             if args.query is not None and int(args.query) != numQuery:
                 continue
-            print("===Q{}===".format(numQuery))
+            query = tools.query(evaluate.benchmarks.queries[numQuery-1])
+            print("===Q{}: {}===".format(numQuery, query.title))
             list_errors = evaluate.get_error(numQuery)
             #print(list_errors)
             list_errors = {k:v for k,v in list_errors.items() if len(v) > 0}
@@ -124,7 +128,8 @@ if __name__ == '__main__':
         for numQuery in list_queries:
             if args.query is not None and int(args.query) != numQuery:
                 continue
-            print("===Q{}===".format(numQuery))
+            query = tools.query(evaluate.benchmarks.queries[numQuery-1])
+            print("===Q{}: {}===".format(numQuery, query.title))
             list_warnings = evaluate.get_warning(numQuery)
             #print(list_warnings)
             list_warnings = {k:v for k,v in list_warnings.items() if len(v) > 0}
