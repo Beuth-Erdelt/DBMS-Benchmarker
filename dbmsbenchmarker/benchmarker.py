@@ -934,6 +934,10 @@ class benchmarker():
 			self.timerConnect.skipTimer(numQuery, query, connectionname)
 			self.stopBenchmarkingQuery(numQuery)
 			return False
+		# always reset parts of protocol
+		self.protocol['query'][str(numQuery)]['resultSets'][c] = []
+		self.protocol['query'][str(numQuery)]['errors'][c] = ""
+		self.protocol['query'][str(numQuery)]['warnings'][c] = ""
 		# dump settings
 		print("runsPerConnection: "+str(batchsize))
 		print("numProcesses: "+str(numProcesses))
