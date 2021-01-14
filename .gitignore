@@ -2,3 +2,6 @@ tmp/*
 /temp-plot.html
 *.jar
 __pycache__/*
+1*/
+*.zip
+*.log

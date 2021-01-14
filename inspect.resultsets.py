@@ -30,6 +30,7 @@ import argparse
 
 parser = argparse.ArgumentParser(description='A benchmark tool for RDBMS. It connects to a given list of RDBMS via JDBC and runs a given list benchmark queries. Optionally some reports are generated.')
 parser.add_argument('-r', '--result-folder', help='folder for storing benchmark result files, default is given by timestamp', default="./")
+parser.add_argument('-c', '--code', help='code of experiment', default="")
 parser.add_argument('-q', '--query', help='number of query to inspect', default=None)
 parser.add_argument('-n', '--num-run', help='number of run to inspect', default=None)
 
@@ -47,9 +48,11 @@ evaluate.list_experiments
 # dataframe of experiments
 evaluate.get_experiments_preview()
 
-# pick last experiment
-code = evaluate.list_experiments[len(evaluate.list_experiments)-1]
-
+if not len(args.code) > 0:
+    # pick last experiment
+    code = evaluate.list_experiments[len(evaluate.list_experiments)-1]
+else:
+    code = args.code
 # load it
 evaluate.load_experiment(code)
 
@@ -106,12 +109,16 @@ for numQuery in list_queries:
                         r2 = [[round(float(item), int(query.restrict_precision)) if tools.convertToFloat(item) == float else item for item in sublist] for sublist in data]
                         #print(r2)
                         data = r2
-                        df2[c] = pd.DataFrame(sorted(data, key=itemgetter(*list(range(0,len(data[0]))))), columns=df_tmp.columns)
+                        #print(data)
+                        if len(data) > 0:
+                            df2[c] = pd.DataFrame(sorted(data, key=itemgetter(*list(range(0,len(data[0]))))), columns=df_tmp.columns)
+                        else:
+                            df2[c] = pd.DataFrame()
                     for c,d in df2.items():
                         print("Storage has more than {}:".format(c))
-                        print(inspector.getDifference12(d,df))
-                        print(c+" has more than storage")
                         print(inspector.getDifference12(df,d))
+                        print("{} has more than storage".format(c))
+                        print(inspector.getDifference12(d,df))
                     if len(df2) > 0:
                         break
 

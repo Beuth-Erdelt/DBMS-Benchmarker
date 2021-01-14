@@ -591,6 +591,7 @@ class Graph:
                                      showlegend=index in legend_connections,
                                      **common)
                               )
+                fig.update_traces(quartilemethod="inclusive")
         else:
             color, df = self.color_switch('Query', df, e)
             
@@ -604,6 +605,7 @@ class Graph:
                                      name=index,
                                      line_color=color.get(index),
                                      **common))
+                fig.update_traces(quartilemethod="inclusive")
 
         #
         if self.xaxis == 'Connection':
@@ -1184,7 +1186,7 @@ class Graph:
                 if self.connection_aggregate is None:
                     if self.xaxis == 'Query':
                         for i, item in enumerate(list(df.index)):
-                            tt_value = filter_by_connection[item]
+                            tt_value = str(filter_by_connection[item])
                             if len(tt_value) == 0:
                                 tt_value = 'None'
                             tooltip = {df.index.name: {'type': 'text', 'value': tt_value, 'delay': 50, 'duration': 36000}}

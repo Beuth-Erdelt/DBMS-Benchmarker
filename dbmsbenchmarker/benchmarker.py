@@ -664,13 +664,15 @@ class benchmarker():
 			queryString = self.getQueryString(query.queryList[numRun % len(query.queryList)], connectionname, self.protocol['query'][str(numQuery)]['runs'][numRun])
 			return queryString
 		queryString = query.query
-		#if connectionname is not None and connectionname in query.DBMS:
+		# overwrite default query string with dialect
 		if connectionname is not None and len(query.DBMS) > 0 and 'dialect' in self.dbms[connectionname].connectiondata:
-			#print(query.DBMS)
 			for c, q in query.DBMS.items():
-				#if connectionname.startswith(c):
-				if connectionname.startswith(c) or self.dbms[connectionname].connectiondata['dialect'] == c:
-					#queryString = query.DBMS[connectionname]
+				if self.dbms[connectionname].connectiondata['dialect'] == c:
+					queryString = q
+		# overwrite default query string with variant matching the beginning of the name of connection
+		if connectionname is not None and len(query.DBMS) > 0:
+			for c, q in query.DBMS.items():
+				if connectionname.startswith(c):
 					queryString = q
 		def parametrize(queryTemplate, numQuery, numRun):
 			params = self.protocol['query'][str(numQuery)]['parameter'][numRun]

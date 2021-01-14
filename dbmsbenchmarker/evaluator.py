@@ -425,7 +425,7 @@ def addStatistics(dataframe, drop_nan=True, drop_measures=False):
 		return pd.DataFrame()
 	num_measures = len(df.index)
 	stat_mean = df.mean()
-	stat_std = df.std()
+	stat_std = df.std(ddof=0)
 	stat_q1 = df.quantile(0.25)
 	stat_q2 = df.quantile(0.5)
 	stat_q3 = df.quantile(0.75)
