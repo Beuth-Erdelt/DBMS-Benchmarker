@@ -77,8 +77,9 @@ if __name__ == '__main__':
                             data_stored = s[numRun]
                             if len(r[c]) == 0:
                                 continue
-                            print("numRun: "+str(numRun))
+                            print("numRun: "+str(numRun+1))
                             #print(data)
+                            #print(data_stored, r[c][numRun])
                             s2 = [[round(float(item), int(query.restrict_precision)) if tools.convertToFloat(item) == float else item for item in sublist] for sublist in data_stored]
                             #print(s2)
                             #print(r[c])
