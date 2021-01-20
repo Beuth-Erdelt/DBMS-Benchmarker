@@ -120,7 +120,7 @@ class timer():
 		self.nameConnection = nameConnection
 		self.startTimerQuery(numQuery, query)#numWarmup, numRun)
 		self.startTimerConnection()
-		if len(self.times) <= self.currentQuery:
+		while len(self.times) <= self.currentQuery:
 			self.times.append({})
 			self.stats.append({})
 		if len(self.times) >= self.currentQuery and self.nameConnection in self.times[self.currentQuery]:
