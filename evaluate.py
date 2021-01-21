@@ -21,13 +21,32 @@ import pandas as pd
 from operator import itemgetter
 import argparse
 
+import ast
+def convertToInt(var):
+    """
+    Converts variable to float.
+
+    :param var: Some variable
+    :return: returns float converted variable
+    """
+    #print(var)
+    #print(type(var))
+    try:
+        return int(var)
+    except Exception as e:
+        #print(str(e))
+        #print("Not convertible")
+        #print(var)
+        return var
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='A benchmark tool for RDBMS. It connects to a given list of RDBMS via JDBC and runs a given list benchmark queries. Optionally some reports are generated.')
     parser.add_argument('-r', '--result-folder', help='folder for storing benchmark result files, default is given by timestamp', default="./")
     parser.add_argument('-c', '--code', help='code of experiment', default="")
     parser.add_argument('-q', '--query', help='number of query to inspect', default=None)
     parser.add_argument('-n', '--num-run', help='number of run to inspect', default=None)
-    parser.add_argument('mode', help='run benchmarks and save results, or just read benchmark results from folder, or continue with missing benchmarks only', choices=['resultsets', 'errors', 'warnings'])
+    parser.add_argument('mode', help='run benchmarks and save results, or just read benchmark results from folder, or continue with missing benchmarks only', choices=['resultsets', 'errors', 'warnings', 'query'])
     args = parser.parse_args()
     # path of folder containing experiment results
     resultfolder = args.result_folder#"./"
@@ -60,7 +79,7 @@ if __name__ == '__main__':
             df = evaluate.get_datastorage_df(numQuery, numRun)
             data = df.values
             #print(data)
-            #data = [[round(float(item), int(query.restrict_precision)) if tools.convertToFloat(item) == float else item for item in sublist] for sublist in data]
+            #data = [[round(float(item), int(query.restrict_precision)) if tools.convertToFloat(item) == float or tools.convertToFloat(item) == int else item for item in sublist] for sublist in data]
             #print(data)
             if len(data) > 0 and sum([len(v) for k,v in list_warnings.items()]) > 0:
                 print("\n===Q{}: {}===".format(numQuery, query.title))
@@ -80,23 +99,43 @@ if __name__ == '__main__':
                             print("numRun: "+str(numRun+1))
                             #print(data)
                             #print(data_stored, r[c][numRun])
-                            s2 = [[round(float(item), int(query.restrict_precision)) if tools.convertToFloat(item) == float else item for item in sublist] for sublist in data_stored]
+                            s2 = [[round(float(item), int(query.restrict_precision)) if tools.convertToFloat(item) == float else convertToInt(item) if convertToInt(item) == item else item for item in sublist] for sublist in data_stored]
                             #print(s2)
                             #print(r[c])
-                            r2 = [[round(float(item), int(query.restrict_precision)) if tools.convertToFloat(item) == float else item for item in sublist] for sublist in r[c][numRun]]
+                            r2 = [[round(float(item), int(query.restrict_precision)) if tools.convertToFloat(item) == float else convertToInt(item) if convertToInt(item) == item else item for item in sublist] for sublist in r[c][numRun]]
                             #print(r2)
                             #for c, result_diff in r.items():
+                            #print(convertToInt(r2[0][0]))
+                            #print(type(convertToInt(r2[0][0])))
+                            #print(type(convertToInt(s2[0][0])))
+                            #print(len(s2[0][0].strip()))
+                            #print(type(r2[0][0]))
+                            #print(type(s2[0][0]))
+                            #print(s2[0][0])
+                            #for x in s2[0][0]:
+                            #    print(x)
                             if len(r2) > 0 and r2 != s2:# r[c][numRun] != data_stored:
                                 #print(c)
-                                #s2 = [[round(float(item), int(query.restrict_precision)) if tools.convertToFloat(item) == float else item for item in sublist] for sublist in data_stored]
+                                #s2 = [[round(float(item), int(query.restrict_precision)) if tools.convertToFloat(item) == float or tools.convertToFloat(item) == int else item for item in sublist] for sublist in data_stored]
                                 #print(s2)
-                                #r2 = [[round(float(item), int(query.restrict_precision)) if tools.convertToFloat(item) == float else item for item in sublist] for sublist in r[c][numRun]]
+                                #r2 = [[round(float(item), int(query.restrict_precision)) if tools.convertToFloat(item) == float or tools.convertToFloat(item) == int else item for item in sublist] for sublist in r[c][numRun]]
                                 #print(r2)
                                 #exit()
                                 df_tmp = evaluate.get_resultset_df(numQuery, c, numRun)
                                 data = df_tmp.values
-                                r2 = [[round(float(item), int(query.restrict_precision)) if tools.convertToFloat(item) == float else item for item in sublist] for sublist in data]
+                                r2 = [[round(float(item), int(query.restrict_precision)) if tools.convertToFloat(item) == float else convertToInt(item) if convertToInt(item) == item else item for item in sublist] for sublist in data]
                                 #print(r2)
+                                #print(convertToInt(r2[0][0]))
+                                #print(type(convertToInt(r2[0][0])))
+                                #print(type(convertToInt(s2[0][0])))
+                                #print(len(s2[0][0].strip()))
+                                #print(type(r2[0][0]))
+                                #print(type(s2[0][0]))
+                                #print(s2[1][0])
+                                #for x in s2[0][0]:
+                                #    print(x)
+                                #print(type(ast.literal_eval(s2[0][0])))
+                                #print((tools.convertToFloat(s2[0][0])))
                                 data = r2
                                 #print(data)
                                 if len(data) > 0:
@@ -116,27 +155,29 @@ if __name__ == '__main__':
             if args.query is not None and int(args.query) != numQuery:
                 continue
             query = tools.query(evaluate.benchmarks.queries[numQuery-1])
-            print("===Q{}: {}===".format(numQuery, query.title))
             list_errors = evaluate.get_error(numQuery)
             #print(list_errors)
             list_errors = {k:v for k,v in list_errors.items() if len(v) > 0}
             df2_errors = pd.DataFrame(list_errors, index=['ERROR'])
             df2_errors = df2_errors.T.sort_index()
             pd.set_option('display.max_colwidth', None)
-            print(df2_errors)
+            if not df2_errors.empty:
+                print("===Q{}: {}===".format(numQuery, query.title))
+                print(df2_errors)
     elif args.mode == 'warnings':
         print(evaluate.get_total_errors())
         for numQuery in list_queries:
             if args.query is not None and int(args.query) != numQuery:
                 continue
             query = tools.query(evaluate.benchmarks.queries[numQuery-1])
-            print("===Q{}: {}===".format(numQuery, query.title))
             list_warnings = evaluate.get_warning(numQuery)
             #print(list_warnings)
             list_warnings = {k:v for k,v in list_warnings.items() if len(v) > 0}
             df2_warnings = pd.DataFrame(list_warnings, index=['WARNINGS'])
             df2_warnings = df2_warnings.T.sort_index()
             pd.set_option('display.max_colwidth', None)
-            print(df2_warnings)
+            if not df2_warnings.empty:
+                print("===Q{}: {}===".format(numQuery, query.title))
+                print(df2_warnings)
 
 
