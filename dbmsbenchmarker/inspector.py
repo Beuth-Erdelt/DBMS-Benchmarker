@@ -65,19 +65,24 @@ class inspector():
         workload_preview = {}
         for code in self.list_experiments:
             filename = self.result_path+'/'+code+'/queries.config'
-            with open(filename,'r') as inp:
-                workload_properties = ast.literal_eval(inp.read())
-            filename = self.result_path+'/'+code+'/connections.config'
-            with open(filename,'r') as inp:
-                connection_properties = ast.literal_eval(inp.read())
-            workload_preview[code] = {}
-            workload_preview[code]['name'] = workload_properties['name']
-            workload_preview[code]['info'] = workload_properties.get('info', '')
-            workload_preview[code]['intro'] = workload_properties.get('intro', '')
-            l = [q for q in workload_properties['queries'] if q['active'] == True]
-            workload_preview[code]['queries'] = len(l)
-            l = [c for c in connection_properties if c['active'] == True]
-            workload_preview[code]['connections'] = len(l)
+            try:
+                with open(filename,'r') as inp:
+                    workload_properties = ast.literal_eval(inp.read())
+                filename = self.result_path+'/'+code+'/connections.config'
+                with open(filename,'r') as inp:
+                    connection_properties = ast.literal_eval(inp.read())
+                workload_preview[code] = {}
+                workload_preview[code]['name'] = workload_properties['name']
+                workload_preview[code]['info'] = workload_properties.get('info', '')
+                workload_preview[code]['intro'] = workload_properties.get('intro', '')
+                l = [q for q in workload_properties['queries'] if q['active'] == True]
+                workload_preview[code]['queries'] = len(l)
+                l = [c for c in connection_properties if c['active'] == True]
+                workload_preview[code]['connections'] = len(l)
+            except Exception as e:
+                raise e
+            finally:
+                pass
         return pd.DataFrame(workload_preview).T
     def load_experiment(self, code, anonymize=None, load=True):
         if anonymize is not None:
