@@ -311,7 +311,7 @@ class benchmarker():
 	"""
 	Class for running benchmarks
 	"""
-	def __init__(self, result_path=None, working='query', batch=False, fixedQuery=None, fixedConnection=None, anonymize=False, unanonymize=[], numProcesses=None, seed=None):
+	def __init__(self, result_path=None, working='query', batch=False, fixedQuery=None, fixedConnection=None, anonymize=False, unanonymize=[], numProcesses=None, seed=None, code=None):
 		"""
 		Construct a new 'benchmarker' object.
 		Allocated the reporters store (always called) and printer (if reports are to be generated).
@@ -325,6 +325,8 @@ class benchmarker():
 		:param anonymize: Anonymize all dbms
 		:param unanonymize: List of names of connections, which should not be anonymized despite of parameter anonymize
 		:param numProcesses: Number of parallel client processes. Global setting, can be overwritten by connection or query
+		:param seed: -
+		:param code: Optional code for result folder
 		:return: returns nothing
 		"""
 		if seed is not None:
@@ -358,7 +360,10 @@ class benchmarker():
 		# should result folder be created
 		self.continuing = False
 		if result_path is None:
-			self.code = str(round(time.time()))
+			if code is None:
+				self.code = str(round(time.time()))
+			else:
+				self.code = str(int(code))
 			self.path = self.code
 			makedirs(self.path)
 		else:
