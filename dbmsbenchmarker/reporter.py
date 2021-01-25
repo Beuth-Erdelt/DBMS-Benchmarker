@@ -187,7 +187,7 @@ class storer(reporter):
 			with open(filename, 'r') as f:
 				self.benchmarker.protocol = json.load(f)
 		except Exception as e:
-            print("No protocol found")
+				print("No protocol found")
 		finally:
 			pass
 
