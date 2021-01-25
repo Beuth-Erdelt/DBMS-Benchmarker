@@ -57,6 +57,7 @@ if __name__ == '__main__':
 		bBatch = args.batch
 	# sleep before going to work
 	if int(args.sleep) > 0:
+		print("Sleeping ", int(args.sleep), "seconds")
 		time.sleep(int(args.sleep))
 	# set verbose lebvel
 	if args.verbose_queries:
