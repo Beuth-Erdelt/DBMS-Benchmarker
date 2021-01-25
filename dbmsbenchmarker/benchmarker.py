@@ -372,7 +372,8 @@ class benchmarker():
 					# result folder exists and contains results
 					self.code = path.basename(path.normpath(result_path))
 					self.path = result_path
-					self.continuing = True
+					if path.isfile(result_path+'/protocol.json'):
+						self.continuing = True
 				else:
 					# result path is not the result folder
 					self.code = str(round(time.time()))
