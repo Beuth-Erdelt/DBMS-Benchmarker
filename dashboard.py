@@ -920,6 +920,9 @@ class Graph:
                     if self.query_id:
                         df = df[[f'Q{self.query_id}']]
 
+                    if self.connection_ids:
+                        df = df[df.index.isin(self.connection_ids)]
+
                     df_text = df.replace({0: '', 1: 'error'})
 
                     for index, row in df_text.iterrows():
@@ -939,6 +942,7 @@ class Graph:
 
                     if self.query_id:
                         df = df[[f'Q{self.query_id}']]
+
                     if self.connection_ids:
                         df = df[df.index.isin(self.connection_ids)]
 
