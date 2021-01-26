@@ -906,8 +906,6 @@ class Graph:
 
                 if self.query_id:
                     df = df[[f'Q{self.query_id}']]
-                if self.connection_ids:
-                    df = df[df.index.isin(self.connection_ids)]
 
                 if self.connection_aggregate is not None:
                     df = self.calculate_connection_aggregate(df, e)
@@ -937,12 +935,15 @@ class Graph:
 
 
                 elif self.preset == 'heatmap_warnings':
-                    df = e.get_total_warnings().replace({False: 0, True: 1})
+                    df = e.get_total_warnings()#.replace({False: 0, True: 1})
 
                     if self.query_id:
                         df = df[[f'Q{self.query_id}']]
+                    if self.connection_ids:
+                        df = df[df.index.isin(self.connection_ids)]
 
                     df_text = df.replace({False: '', True: 'warning'})
+                    df = df.replace({False: 0, True: 1})
 
                     for index, row in df_text.iterrows():
                         for column, value in row.iteritems():
