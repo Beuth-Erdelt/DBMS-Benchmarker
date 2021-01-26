@@ -368,6 +368,8 @@ class inspector():
         return tools.dataframehelper.evaluateWarningsToDataFrame(self.e.evaluation).T
     def get_total_times(self):
         df, title = tools.dataframehelper.totalTimes(self.benchmarks)
+        if df is None:
+            return pd.DataFrame()
         return df.T
     def get_total_times_normalized(self):
         df = self.get_total_times().T
