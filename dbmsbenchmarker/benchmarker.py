@@ -359,6 +359,7 @@ class benchmarker():
 		self.clearBenchmarks()
 		# should result folder be created
 		self.continuing = False
+		self.path = ""
 		if result_path is None:
 			if code is None:
 				self.code = str(round(time.time()))
