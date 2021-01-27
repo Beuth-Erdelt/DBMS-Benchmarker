@@ -83,6 +83,8 @@ optional arguments:
                         Number of parallel client processes. Global setting,
                         can be overwritten by connection. If None given, half
                         of all available processes is taken
+  -sl SLEEP, --sleep SLEEP
+                        sleep SLEEP seconds before going to work
   -s SEED, --seed SEED  random seed
   -vq, --verbose-queries
                         print every query that is sent
@@ -464,6 +466,11 @@ It can be accessed most easily using the inspection class or the interactive das
 ### Debug
 
 This flag activates output of debug infos.
+
+### Sleep
+
+Time in seconds to wait before starting to operate.
+This is handy when we want to wait for other systems (e.g. a DBMS) to startup completely.
 
 ### Batch
 
