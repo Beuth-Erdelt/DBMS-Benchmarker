@@ -172,6 +172,7 @@ Example for `CONNECTION_FILE`:
   * `timeload`: Time for ingest (in milliseconds), because not part of the benchmark
   * `priceperhourdollar`: Used to compute total cost based on total time (optional)
   * `grafanatoken`, `grafanaurl`, `grafanaextend`: To fetch hardware metrics from Grafana API. `grafanaextend` extends the fetched interval by `n` seconds at both ends.
+  More information about monitoring and metrics can be found here: https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/docs/Monitoring.md
 * `connectionmanagement`: Parameter for connection management. This overwrites general settings made in the [query config](#extended-query-file) and can be overwritten by query-wise settings made there.
   * `timeout`: Maximum lifespan of a connection. Default is None, i.e. no limit.
   * `numProcesses`: Number of parallel client processes. Default is 1.
