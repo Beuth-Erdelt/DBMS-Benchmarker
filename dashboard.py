@@ -900,7 +900,7 @@ class Graph:
                     df = e.get_total_resultsize_normalized()
 
                 elif self.preset == 'heatmap_total_time':
-                    df = e.get_total_times()
+                    df = e.get_total_times(self.connection_ids)
                     #e.get_total_times_normalized()
                     #e.get_total_times_relative()
 

@@ -366,11 +366,14 @@ class inspector():
         return tools.dataframehelper.evaluateErrorsToDataFrame(self.e.evaluation).T
     def get_total_warnings(self):
         return tools.dataframehelper.evaluateWarningsToDataFrame(self.e.evaluation).T
-    def get_total_times(self):
-        df, title = tools.dataframehelper.totalTimes(self.benchmarks)
+    def get_total_times(self, dbms_filter=[]):
+        df, title = tools.dataframehelper.totalTimes(self.benchmarks, dbms_filter)
         if df is None:
             return pd.DataFrame()
-        return df.T
+        df = df.T
+        if len(dbms_filter)>0:
+            df = df[df.index.isin(dbms_filter)]
+        return df
     def get_total_times_normalized(self):
         df = self.get_total_times().T
         # adds to 100% per query
