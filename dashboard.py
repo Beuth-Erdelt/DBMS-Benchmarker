@@ -41,6 +41,7 @@ import logging
 import base64
 
 logging.basicConfig(level=logging.DEBUG)
+#logging.basicConfig(level=logging.ERROR)
 
 
 if __name__ == '__main__':
