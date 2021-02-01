@@ -18,12 +18,13 @@
 import pickle
 from tabulate import tabulate
 import pandas as pd
-from os import listdir
+from os import listdir, stat
 from os.path import isdir, isfile, join
 import sys
 import ast
 from colour import Color
 from numpy import nan
+from datetime import datetime, timezone
 
 from dbmsbenchmarker import benchmarker, tools, evaluator, monitor
 
@@ -79,6 +80,11 @@ class inspector():
                 workload_preview[code]['queries'] = len(l)
                 l = [c for c in connection_properties if c['active'] == True]
                 workload_preview[code]['connections'] = len(l)
+                filename = self.result_path+'/'+code+'/protocol.json'
+                statbuf = stat(filename)
+                #print("Modification time: {}".format(statbuf.st_mtime))
+                modified = datetime.fromtimestamp(statbuf.st_mtime).isoformat(sep=' ', timespec='seconds')#, tz=timezone.utc)
+                workload_preview[code]['time'] = modified
             except Exception as e:
                 raise e
             finally:
