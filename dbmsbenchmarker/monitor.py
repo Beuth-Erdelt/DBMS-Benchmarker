@@ -102,7 +102,7 @@ class metrics():
         #return l
         #print(self.url+query)
         try:
-            r = requests.post(self.url+query, headers=headers)
+            r = requests.post(self.url+query)#, headers=headers)
             #print(r.json())
             if isinstance(r.json(), dict) and 'data' in r.json() and 'result' in r.json()['data'] and len(r.json()['data']['result']) > 0:
                 l = r.json()['data']['result'][0]['values']
