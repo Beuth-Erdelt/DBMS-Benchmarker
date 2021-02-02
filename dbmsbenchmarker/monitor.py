@@ -97,7 +97,7 @@ class metrics():
     def getMetrics(self, metric,time_start, time_end, step=1):
         query = 'query_range?query='+metric['query']+'&start='+str(time_start)+'&end='+str(time_end)+'&step='+str(self.step)
         logging.debug("Querying metrics: "+query)
-        headers = {'Authorization': self.token}
+        #headers = {'Authorization': self.token}
         l = [(t,0) for t in range(time_start, time_end+1)]#[(time_start,0)]
         #return l
         #print(self.url+query)
@@ -166,8 +166,9 @@ class metrics():
             df_all = None
             for c,t in times["starts"].items():
                 if 'monitoring' in self.benchmarker.dbms[c].connectiondata:
-                    self.token = self.benchmarker.dbms[c].connectiondata['monitoring']['grafanatoken']
-                    self.url = self.benchmarker.dbms[c].connectiondata['monitoring']['grafanaurl']
+                    #self.token = self.benchmarker.dbms[c].connectiondata['monitoring']['grafanatoken']
+                    #self.url = self.benchmarker.dbms[c].connectiondata['monitoring']['grafanaurl']
+                    self.url = self.benchmarker.dbms[c].connectiondata['monitoring']['prometheus_url']
                     if self.benchmarker.dbms[c].connectiondata['active'] and self.token and self.url:
                         logging.debug("Connection "+c)
                         # is there a custom query for this metric and dbms?
@@ -269,8 +270,9 @@ class metrics():
             if int(query)-1 in qs:
                 for c,t in protocol["starts"].items():
                     if 'monitoring' in self.benchmarker.dbms[c].connectiondata:
-                        self.token = self.benchmarker.dbms[c].connectiondata['monitoring']['grafanatoken']
-                        self.url = self.benchmarker.dbms[c].connectiondata['monitoring']['grafanaurl']
+                        #self.token = self.benchmarker.dbms[c].connectiondata['monitoring']['grafanatoken']
+                        #self.url = self.benchmarker.dbms[c].connectiondata['monitoring']['grafanaurl']
+                        self.url = self.benchmarker.dbms[c].connectiondata['monitoring']['prometheus_url']
                         if self.benchmarker.dbms[c].connectiondata['active'] and self.token and self.url:
                             numContribute = numContribute + 1
                             if not c in m_n:
