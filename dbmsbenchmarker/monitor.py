@@ -169,7 +169,7 @@ class metrics():
                     #self.token = self.benchmarker.dbms[c].connectiondata['monitoring']['grafanatoken']
                     #self.url = self.benchmarker.dbms[c].connectiondata['monitoring']['grafanaurl']
                     self.url = self.benchmarker.dbms[c].connectiondata['monitoring']['prometheus_url']
-                    if self.benchmarker.dbms[c].connectiondata['active'] and self.token and self.url:
+                    if self.benchmarker.dbms[c].connectiondata['active'] and self.url: #
                         logging.debug("Connection "+c)
                         # is there a custom query for this metric and dbms?
                         if 'metrics' in self.benchmarker.dbms[c].connectiondata['monitoring'] and m in self.benchmarker.dbms[c].connectiondata['monitoring']['metrics']:
@@ -273,7 +273,7 @@ class metrics():
                         #self.token = self.benchmarker.dbms[c].connectiondata['monitoring']['grafanatoken']
                         #self.url = self.benchmarker.dbms[c].connectiondata['monitoring']['grafanaurl']
                         self.url = self.benchmarker.dbms[c].connectiondata['monitoring']['prometheus_url']
-                        if self.benchmarker.dbms[c].connectiondata['active'] and self.token and self.url:
+                        if self.benchmarker.dbms[c].connectiondata['active'] and self.url: # and self.token
                             numContribute = numContribute + 1
                             if not c in m_n:
                                 m_n[c] = {}
