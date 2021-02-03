@@ -83,6 +83,8 @@ optional arguments:
                         Number of parallel client processes. Global setting,
                         can be overwritten by connection. If None given, half
                         of all available processes is taken
+  -sl SLEEP, --sleep SLEEP
+                        sleep SLEEP seconds before going to work
   -s SEED, --seed SEED  random seed
   -vq, --verbose-queries
                         print every query that is sent
@@ -170,6 +172,7 @@ Example for `CONNECTION_FILE`:
   * `timeload`: Time for ingest (in milliseconds), because not part of the benchmark
   * `priceperhourdollar`: Used to compute total cost based on total time (optional)
   * `grafanatoken`, `grafanaurl`, `grafanaextend`: To fetch hardware metrics from Grafana API. `grafanaextend` extends the fetched interval by `n` seconds at both ends.
+  More information about monitoring and metrics can be found here: https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/docs/Monitoring.md
 * `connectionmanagement`: Parameter for connection management. This overwrites general settings made in the [query config](#extended-query-file) and can be overwritten by query-wise settings made there.
   * `timeout`: Maximum lifespan of a connection. Default is None, i.e. no limit.
   * `numProcesses`: Number of parallel client processes. Default is 1.
@@ -464,6 +467,11 @@ It can be accessed most easily using the inspection class or the interactive das
 ### Debug
 
 This flag activates output of debug infos.
+
+### Sleep
+
+Time in seconds to wait before starting to operate.
+This is handy when we want to wait for other systems (e.g. a DBMS) to startup completely.
 
 ### Batch
 

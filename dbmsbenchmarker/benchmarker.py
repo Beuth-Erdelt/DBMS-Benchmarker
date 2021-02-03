@@ -311,7 +311,7 @@ class benchmarker():
 	"""
 	Class for running benchmarks
 	"""
-	def __init__(self, result_path=None, working='query', batch=False, fixedQuery=None, fixedConnection=None, anonymize=False, unanonymize=[], numProcesses=None, seed=None):
+	def __init__(self, result_path=None, working='query', batch=False, fixedQuery=None, fixedConnection=None, anonymize=False, unanonymize=[], numProcesses=None, seed=None, code=None):
 		"""
 		Construct a new 'benchmarker' object.
 		Allocated the reporters store (always called) and printer (if reports are to be generated).
@@ -325,6 +325,8 @@ class benchmarker():
 		:param anonymize: Anonymize all dbms
 		:param unanonymize: List of names of connections, which should not be anonymized despite of parameter anonymize
 		:param numProcesses: Number of parallel client processes. Global setting, can be overwritten by connection or query
+		:param seed: -
+		:param code: Optional code for result folder
 		:return: returns nothing
 		"""
 		if seed is not None:
@@ -357,8 +359,12 @@ class benchmarker():
 		self.clearBenchmarks()
 		# should result folder be created
 		self.continuing = False
+		self.path = ""
 		if result_path is None:
-			self.code = str(round(time.time()))
+			if code is None:
+				self.code = str(round(time.time()))
+			else:
+				self.code = str(int(code))
 			self.path = self.code
 			makedirs(self.path)
 		else:
@@ -367,7 +373,8 @@ class benchmarker():
 					# result folder exists and contains results
 					self.code = path.basename(path.normpath(result_path))
 					self.path = result_path
-					self.continuing = True
+					if path.isfile(result_path+'/protocol.json'):
+						self.continuing = True
 				else:
 					# result path is not the result folder
 					self.code = str(round(time.time()))
@@ -934,6 +941,10 @@ class benchmarker():
 			self.timerConnect.skipTimer(numQuery, query, connectionname)
 			self.stopBenchmarkingQuery(numQuery)
 			return False
+		# always reset parts of protocol
+		self.protocol['query'][str(numQuery)]['resultSets'][c] = []
+		self.protocol['query'][str(numQuery)]['errors'][c] = ""
+		self.protocol['query'][str(numQuery)]['warnings'][c] = ""
 		# dump settings
 		print("runsPerConnection: "+str(batchsize))
 		print("numProcesses: "+str(numProcesses))
@@ -1534,7 +1545,7 @@ class inspector(benchmarker):
 	Class for inspecting done benchmarks
 	"""
 	def __init__(self, result_path, code, anonymize=False):
-		benchmarker.__init__(self,result_path=result_path+"/"+code, anonymize=anonymize)
+		benchmarker.__init__(self,result_path=result_path+"/"+str(code), anonymize=anonymize)
 		self.getConfig()
 		self.readResultfolder()
 		print("Connections:")

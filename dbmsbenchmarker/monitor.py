@@ -97,12 +97,12 @@ class metrics():
     def getMetrics(self, metric,time_start, time_end, step=1):
         query = 'query_range?query='+metric['query']+'&start='+str(time_start)+'&end='+str(time_end)+'&step='+str(self.step)
         logging.debug("Querying metrics: "+query)
-        headers = {'Authorization': self.token}
+        #headers = {'Authorization': self.token}
         l = [(t,0) for t in range(time_start, time_end+1)]#[(time_start,0)]
         #return l
         #print(self.url+query)
         try:
-            r = requests.post(self.url+query, headers=headers)
+            r = requests.post(self.url+query)#, headers=headers)
             #print(r.json())
             if isinstance(r.json(), dict) and 'data' in r.json() and 'result' in r.json()['data'] and len(r.json()['data']['result']) > 0:
                 l = r.json()['data']['result'][0]['values']
@@ -166,9 +166,10 @@ class metrics():
             df_all = None
             for c,t in times["starts"].items():
                 if 'monitoring' in self.benchmarker.dbms[c].connectiondata:
-                    self.token = self.benchmarker.dbms[c].connectiondata['monitoring']['grafanatoken']
-                    self.url = self.benchmarker.dbms[c].connectiondata['monitoring']['grafanaurl']
-                    if self.benchmarker.dbms[c].connectiondata['active'] and self.token and self.url:
+                    #self.token = self.benchmarker.dbms[c].connectiondata['monitoring']['grafanatoken']
+                    #self.url = self.benchmarker.dbms[c].connectiondata['monitoring']['grafanaurl']
+                    self.url = self.benchmarker.dbms[c].connectiondata['monitoring']['prometheus_url']
+                    if self.benchmarker.dbms[c].connectiondata['active'] and self.url: #
                         logging.debug("Connection "+c)
                         # is there a custom query for this metric and dbms?
                         if 'metrics' in self.benchmarker.dbms[c].connectiondata['monitoring'] and m in self.benchmarker.dbms[c].connectiondata['monitoring']['metrics']:
@@ -231,7 +232,7 @@ class metrics():
             #df_all = clean_dataframe(df_all.T).T
             # plot lines
             ax = df_all.plot(title=title, color=[tools.dbms.dbmscolors.get(x, '#333333') for x in df_all.columns], legend=False)
-            ax.set_ylim(bottom=0, top=df_all.max().max()*1.10)
+            ax.set_ylim(bottom=0, top=df_all.max().max()*1.10+0.00001)
             #plt.legend(title="Metric")
             # show start line
             plt.axvline(x=int(queryObject.delay_connect), linestyle="--", color="black")
@@ -269,9 +270,10 @@ class metrics():
             if int(query)-1 in qs:
                 for c,t in protocol["starts"].items():
                     if 'monitoring' in self.benchmarker.dbms[c].connectiondata:
-                        self.token = self.benchmarker.dbms[c].connectiondata['monitoring']['grafanatoken']
-                        self.url = self.benchmarker.dbms[c].connectiondata['monitoring']['grafanaurl']
-                        if self.benchmarker.dbms[c].connectiondata['active'] and self.token and self.url:
+                        #self.token = self.benchmarker.dbms[c].connectiondata['monitoring']['grafanatoken']
+                        #self.url = self.benchmarker.dbms[c].connectiondata['monitoring']['grafanaurl']
+                        self.url = self.benchmarker.dbms[c].connectiondata['monitoring']['prometheus_url']
+                        if self.benchmarker.dbms[c].connectiondata['active'] and self.url: # and self.token
                             numContribute = numContribute + 1
                             if not c in m_n:
                                 m_n[c] = {}

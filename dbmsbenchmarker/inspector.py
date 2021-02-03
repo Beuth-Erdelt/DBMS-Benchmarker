@@ -18,12 +18,13 @@
 import pickle
 from tabulate import tabulate
 import pandas as pd
-from os import listdir
+from os import listdir, stat
 from os.path import isdir, isfile, join
 import sys
 import ast
 from colour import Color
 from numpy import nan
+from datetime import datetime, timezone
 
 from dbmsbenchmarker import benchmarker, tools, evaluator, monitor
 
@@ -65,19 +66,29 @@ class inspector():
         workload_preview = {}
         for code in self.list_experiments:
             filename = self.result_path+'/'+code+'/queries.config'
-            with open(filename,'r') as inp:
-                workload_properties = ast.literal_eval(inp.read())
-            filename = self.result_path+'/'+code+'/connections.config'
-            with open(filename,'r') as inp:
-                connection_properties = ast.literal_eval(inp.read())
-            workload_preview[code] = {}
-            workload_preview[code]['name'] = workload_properties['name']
-            workload_preview[code]['info'] = workload_properties.get('info', '')
-            workload_preview[code]['intro'] = workload_properties.get('intro', '')
-            l = [q for q in workload_properties['queries'] if q['active'] == True]
-            workload_preview[code]['queries'] = len(l)
-            l = [c for c in connection_properties if c['active'] == True]
-            workload_preview[code]['connections'] = len(l)
+            try:
+                with open(filename,'r') as inp:
+                    workload_properties = ast.literal_eval(inp.read())
+                filename = self.result_path+'/'+code+'/connections.config'
+                with open(filename,'r') as inp:
+                    connection_properties = ast.literal_eval(inp.read())
+                workload_preview[code] = {}
+                workload_preview[code]['name'] = workload_properties['name']
+                workload_preview[code]['info'] = workload_properties.get('info', '')
+                workload_preview[code]['intro'] = workload_properties.get('intro', '')
+                l = [q for q in workload_properties['queries'] if q['active'] == True]
+                workload_preview[code]['queries'] = len(l)
+                l = [c for c in connection_properties if c['active'] == True]
+                workload_preview[code]['connections'] = len(l)
+                filename = self.result_path+'/'+code+'/protocol.json'
+                statbuf = stat(filename)
+                #print("Modification time: {}".format(statbuf.st_mtime))
+                modified = datetime.fromtimestamp(statbuf.st_mtime).isoformat(sep=' ', timespec='seconds')#, tz=timezone.utc)
+                workload_preview[code]['time'] = modified
+            except Exception as e:
+                raise e
+            finally:
+                pass
         return pd.DataFrame(workload_preview).T
     def load_experiment(self, code, anonymize=None, load=True):
         if anonymize is not None:
@@ -361,9 +372,14 @@ class inspector():
         return tools.dataframehelper.evaluateErrorsToDataFrame(self.e.evaluation).T
     def get_total_warnings(self):
         return tools.dataframehelper.evaluateWarningsToDataFrame(self.e.evaluation).T
-    def get_total_times(self):
-        df, title = tools.dataframehelper.totalTimes(self.benchmarks)
-        return df.T
+    def get_total_times(self, dbms_filter=[]):
+        df, title = tools.dataframehelper.totalTimes(self.benchmarks, dbms_filter)
+        if df is None:
+            return pd.DataFrame()
+        df = df.T
+        if len(dbms_filter)>0:
+            df = df[df.index.isin(dbms_filter)]
+        return df
     def get_total_times_normalized(self):
         df = self.get_total_times().T
         # adds to 100% per query

@@ -182,9 +182,14 @@ class storer(reporter):
 
 		:return: returns nothing
 		"""
-		filename = self.benchmarker.path+'/protocol.json'
-		with open(filename, 'r') as f:
-			self.benchmarker.protocol = json.load(f)
+		try:
+			filename = self.benchmarker.path+'/protocol.json'
+			with open(filename, 'r') as f:
+				self.benchmarker.protocol = json.load(f)
+		except Exception as e:
+				print("No protocol found")
+		finally:
+			pass
 
 
 

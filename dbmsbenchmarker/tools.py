@@ -120,7 +120,7 @@ class timer():
 		self.nameConnection = nameConnection
 		self.startTimerQuery(numQuery, query)#numWarmup, numRun)
 		self.startTimerConnection()
-		if len(self.times) <= self.currentQuery:
+		while len(self.times) <= self.currentQuery:
 			self.times.append({})
 			self.stats.append({})
 		if len(self.times) >= self.currentQuery and self.nameConnection in self.times[self.currentQuery]:
@@ -894,11 +894,11 @@ class dataframehelper():
 		#logging.basicConfig(level=logging.ERROR)
 		return d, title
 	@staticmethod
-	def totalTimes(benchmarker):
+	def totalTimes(benchmarker, dbms_filter=[]):
 		# find position of execution timer
 		e = [i for i,t in enumerate(benchmarker.timers) if t.name=="execution"]
 		# list of active queries for timer e[0] = execution
-		qs = findSuccessfulQueriesAllDBMS(benchmarker, None, benchmarker.timers)[e[0]]
+		qs = findSuccessfulQueriesAllDBMS(benchmarker, None, benchmarker.timers, dbms_filter)[e[0]]
 		if len(qs) == 0:
 			return None, ""
 		# list of active dbms
