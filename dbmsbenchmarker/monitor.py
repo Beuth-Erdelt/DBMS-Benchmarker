@@ -232,7 +232,7 @@ class metrics():
             #df_all = clean_dataframe(df_all.T).T
             # plot lines
             ax = df_all.plot(title=title, color=[tools.dbms.dbmscolors.get(x, '#333333') for x in df_all.columns], legend=False)
-            ax.set_ylim(bottom=0, top=df_all.max().max()*1.10)
+            ax.set_ylim(bottom=0, top=df_all.max().max()*1.10+0.00001)
             #plt.legend(title="Metric")
             # show start line
             plt.axvline(x=int(queryObject.delay_connect), linestyle="--", color="black")
