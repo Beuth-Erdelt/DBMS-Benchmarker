@@ -99,6 +99,7 @@ if __name__ == '__main__':
 	if args.metrics:
 		# collect hardware metrics
 		experiments.reporter.append(benchmarker.reporter.metricer(experiments))
+		experiments.generateReportsAll()
 	if args.generate_output == 'yes':
 		experiments.overwrite = True
 		# store measures ans statistics in separate files
