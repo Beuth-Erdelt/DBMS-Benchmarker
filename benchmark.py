@@ -46,6 +46,7 @@ if __name__ == '__main__':
 	parser.add_argument('-vq', '--verbose-queries', help='print every query that is sent', action='store_true', default=False)
 	parser.add_argument('-vs', '--verbose-statistics', help='print statistics about query that have been sent', action='store_true', default=False)
 	parser.add_argument('-pn', '--num-run', help='Parameter: Number of executions per query', default=0)
+	parser.add_argument('-m', '--metrics', help='collect hardware metrics', action='store_true', default=False)
 	#parser.add_argument('-pt', '--timeout', help='Parameter: Timeout in seconds', default=0)
 	args = parser.parse_args()
 	# evaluate args
@@ -95,6 +96,9 @@ if __name__ == '__main__':
 			experiments.continueBenchmarks(overwrite = False)
 		else:
 			print("Continue needs result folder")
+	if args.metrics:
+		# collect hardware metrics
+		experiments.reporter.append(benchmarker.reporter.metricer(experiments))
 	if args.generate_output == 'yes':
 		experiments.overwrite = True
 		# store measures ans statistics in separate files
