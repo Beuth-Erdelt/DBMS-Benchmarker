@@ -377,7 +377,11 @@ class benchmarker():
 						self.continuing = True
 				else:
 					# result path is not the result folder
-					self.code = str(round(time.time()))
+					if code is None:
+						self.code = str(round(time.time()))
+					else:
+						self.code = str(int(code))
+					#self.code = str(round(time.time()))
 					self.path = result_path+"/"+self.code
 					makedirs(self.path)
 			else:
