@@ -65,30 +65,32 @@ class inspector():
     def get_experiments_preview(self):
         workload_preview = {}
         for code in self.list_experiments:
-            filename = self.result_path+'/'+code+'/queries.config'
-            try:
-                with open(filename,'r') as inp:
-                    workload_properties = ast.literal_eval(inp.read())
-                filename = self.result_path+'/'+code+'/connections.config'
-                with open(filename,'r') as inp:
-                    connection_properties = ast.literal_eval(inp.read())
-                workload_preview[code] = {}
-                workload_preview[code]['name'] = workload_properties['name']
-                workload_preview[code]['info'] = workload_properties.get('info', '')
-                workload_preview[code]['intro'] = workload_properties.get('intro', '')
-                l = [q for q in workload_properties['queries'] if q['active'] == True]
-                workload_preview[code]['queries'] = len(l)
-                l = [c for c in connection_properties if c['active'] == True]
-                workload_preview[code]['connections'] = len(l)
-                filename = self.result_path+'/'+code+'/protocol.json'
-                statbuf = stat(filename)
-                #print("Modification time: {}".format(statbuf.st_mtime))
-                modified = datetime.fromtimestamp(statbuf.st_mtime).isoformat(sep=' ', timespec='seconds')#, tz=timezone.utc)
-                workload_preview[code]['time'] = modified
-            except Exception as e:
-                raise e
-            finally:
-                pass
+            filename_query = self.result_path+'/'+code+'/queries.config'
+            filename_connections = self.result_path+'/'+code+'/connections.config'
+            filename_protocol = self.result_path+'/'+code+'/protocol.json'
+            # skip incomplete result folders
+            if isfile(filename_query) and isfile(filename_connections) and isfile(filename_protocol):
+                try:
+                    with open(filename,'r') as inp:
+                        workload_properties = ast.literal_eval(inp.read())
+                    with open(filename_connections,'r') as inp:
+                        connection_properties = ast.literal_eval(inp.read())
+                    workload_preview[code] = {}
+                    workload_preview[code]['name'] = workload_properties['name']
+                    workload_preview[code]['info'] = workload_properties.get('info', '')
+                    workload_preview[code]['intro'] = workload_properties.get('intro', '')
+                    l = [q for q in workload_properties['queries'] if q['active'] == True]
+                    workload_preview[code]['queries'] = len(l)
+                    l = [c for c in connection_properties if c['active'] == True]
+                    workload_preview[code]['connections'] = len(l)
+                    statbuf = stat(filename_protocol)
+                    #print("Modification time: {}".format(statbuf.st_mtime))
+                    modified = datetime.fromtimestamp(statbuf.st_mtime).isoformat(sep=' ', timespec='seconds')#, tz=timezone.utc)
+                    workload_preview[code]['time'] = modified
+                except Exception as e:
+                    raise e
+                finally:
+                    pass
         return pd.DataFrame(workload_preview).T
     def load_experiment(self, code, anonymize=None, load=True):
         if anonymize is not None:
