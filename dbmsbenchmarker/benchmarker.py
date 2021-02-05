@@ -383,7 +383,8 @@ class benchmarker():
 						self.code = str(int(code))
 					#self.code = str(round(time.time()))
 					self.path = result_path+"/"+self.code
-					makedirs(self.path)
+					if not path.isdir(self.path):
+						makedirs(self.path)
 			else:
 				logging.exception("Path does not exist: "+result_path)
 			#self.path = str(int(path))
