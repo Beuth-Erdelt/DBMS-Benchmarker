@@ -71,7 +71,7 @@ class inspector():
             # skip incomplete result folders
             if isfile(filename_query) and isfile(filename_connections) and isfile(filename_protocol):
                 try:
-                    with open(filename,'r') as inp:
+                    with open(filename_query,'r') as inp:
                         workload_properties = ast.literal_eval(inp.read())
                     with open(filename_connections,'r') as inp:
                         connection_properties = ast.literal_eval(inp.read())
