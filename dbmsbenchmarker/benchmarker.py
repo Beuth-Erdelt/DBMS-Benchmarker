@@ -388,8 +388,12 @@ class benchmarker():
 			else:
 				logging.exception("Path does not exist: "+result_path)
 			#self.path = str(int(path))
+		self.resultfolder_base = None
+		self.resultfolder_subfolder = None
 		if subfolder is not None:# and fixedConnection is not None:
-			self.path = self.path+"/"+self.subfolder
+			self.resultfolder_base = self.path
+			self.resultfolder_subfolder = subfolder
+			self.path = self.resultfolder_base+"/"+self.resultfolder_subfolder
 			if not path.isdir(self.path):
 				makedirs(self.path)			
 		print("Benchmarking in folder "+self.path)
@@ -436,6 +440,9 @@ class benchmarker():
 		if configfolder is not None:
 			self.getConnectionsFromFile(configfolder+'/connections.config')
 			self.getQueriesFromFile(configfolder+'/queries.config')
+		#elif self.resultfolder_base is not None:
+		#	self.getConnectionsFromFile(self.resultfolder_base+'/connections.config')
+		#	self.getQueriesFromFile(self.resultfolder_base+'/queries.config')
 		else:
 			self.getConnectionsFromFile(connectionfile)
 			self.getQueriesFromFile(queryfile)
