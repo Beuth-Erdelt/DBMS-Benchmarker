@@ -43,6 +43,7 @@ if __name__ == '__main__':
 	parser.add_argument('-p', '--numProcesses', help='Number of parallel client processes. Global setting, can be overwritten by connection. If None given, half of all available processes is taken', default=None)
 	parser.add_argument('-s', '--seed', help='random seed', default=None)
 	parser.add_argument('-sl', '--sleep', help='sleep SLEEP seconds before going to work', default=0)
+	parser.add_argument('-sf', '--subfolder', help='stores results in a SUBFOLDER of the result folder', default=None)
 	parser.add_argument('-vq', '--verbose-queries', help='print every query that is sent', action='store_true', default=False)
 	parser.add_argument('-vs', '--verbose-statistics', help='print statistics about query that have been sent', action='store_true', default=False)
 	parser.add_argument('-pn', '--num-run', help='Parameter: Number of executions per query', default=0)
@@ -75,6 +76,7 @@ if __name__ == '__main__':
 		result_path=args.result_folder,
 		working=args.working,
 		batch=bBatch,
+		subfolder=args.subfolder,
 		fixedQuery=args.query,
 		fixedConnection=args.connection,
 		anonymize=args.anonymize,

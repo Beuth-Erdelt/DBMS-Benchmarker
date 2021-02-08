@@ -311,7 +311,7 @@ class benchmarker():
 	"""
 	Class for running benchmarks
 	"""
-	def __init__(self, result_path=None, working='query', batch=False, fixedQuery=None, fixedConnection=None, anonymize=False, unanonymize=[], numProcesses=None, seed=None, code=None):
+	def __init__(self, result_path=None, working='query', batch=False, fixedQuery=None, fixedConnection=None, anonymize=False, unanonymize=[], numProcesses=None, seed=None, code=None, subfolder=None):
 		"""
 		Construct a new 'benchmarker' object.
 		Allocated the reporters store (always called) and printer (if reports are to be generated).
@@ -388,7 +388,11 @@ class benchmarker():
 			else:
 				logging.exception("Path does not exist: "+result_path)
 			#self.path = str(int(path))
-		logging.debug("Benchmarking in folder "+self.path)
+		if subfolder is not None:# and fixedConnection is not None:
+			self.path = self.path+"/"+self.subfolder
+			if not path.isdir(self.path):
+				makedirs(self.path)			
+		print("Benchmarking in folder "+self.path)
 		# querywise or connectionwise
 		self.working = working
 		# batch mode, different output
