@@ -95,14 +95,21 @@ class metrics():
         self.step = 1
         self.benchmarker = benchmarks
     def getMetrics(self, metric,time_start, time_end, step=1):
-        query = 'query_range?query='+metric['query']+'&start='+str(time_start)+'&end='+str(time_end)+'&step='+str(self.step)
-        logging.debug("Querying metrics: "+self.url+query)
+        query = 'query_range'#?query='+metric['query']+'&start='+str(time_start)+'&end='+str(time_end)+'&step='+str(self.step)
+        params = {
+            'query': metric['query'],
+            'start': str(time_start),
+            'end': str(time_end),
+            'step': str(self.step),
+        }
+        logging.debug("Querying metrics: "+self.url+query, params)
         #headers = {'Authorization': self.token}
         l = [(t,0) for t in range(time_start, time_end+1)]#[(time_start,0)]
         #return l
         #print(self.url+query)
         try:
-            r = requests.post(self.url+query)#, headers=headers)
+            #r = requests.post(self.url+query)#, headers=headers)
+            r = requests.get(self.url+query, params=params)#, headers=headers)
             #print(r.json())
             if isinstance(r.json(), dict) and 'data' in r.json() and 'result' in r.json()['data'] and len(r.json()['data']['result']) > 0:
                 l = r.json()['data']['result'][0]['values']
