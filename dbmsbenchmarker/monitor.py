@@ -103,6 +103,7 @@ class metrics():
             'step': str(self.step),
         }
         logging.debug("Querying metrics: "+self.url+query, params)
+        logging.debug(params)
         #headers = {'Authorization': self.token}
         l = [(t,0) for t in range(time_start, time_end+1)]#[(time_start,0)]
         #return l
