@@ -1429,3 +1429,82 @@ def anonymize_dataframe(dataframe_dbms):
         elif dataframe_dbms.columns[0] in dbms.anonymizer:
             dataframe_dbms.columns = dataframe_dbms.columns.map(dbms.anonymizer)
             #dataframe_dbms.columns = anonymize_list(dataframe_dbms.columns)
+
+
+import json
+from os.path import isdir, isfile, join
+from os import listdir, stat
+import pandas as pd
+from shutil import copyfile
+#import os
+
+#result_path = '/results/'
+#code = '1613110870'
+
+def merge_partial_results(result_path, code):
+	# result folder
+	folder = result_path+code
+	# connection subfolders 
+	list_connections = [f for f in listdir(folder) if isdir(join(folder, f))]
+	def joinDicts(d1, d2):
+		result = d1.copy()
+		for k, v in d2.items():
+			if (k in d1 and isinstance(d1[k], dict)):
+				result[k] = joinDicts(d1[k], d2[k])
+			else:
+				result[k] = d2[k]
+		return result
+	# merging protocols
+	# load partial protocols
+	protocols = []
+	for connection in list_connections:
+		filename = '{folder}/{connection}/protocol.json'.format(folder=folder, connection=connection)
+		with open(filename, 'r') as f:
+			protocols.append(json.load(f))
+	# merged protocol
+	protocol = {}
+	protocol['query'] = {}
+	protocol['connection'] = {}
+	for k,v in protocols[0]['query'].items():
+		if isinstance(v, dict):
+			protocol['query'][k] = {}
+			for p in protocols:
+				protocol['query'][k] = joinDicts(protocol['query'][k], p['query'][k])
+	filename = '{folder}/protocol.json'.format(folder=folder)
+	with open(filename, 'w') as f:
+		json.dump(protocol, f)
+	# merge timers
+	# load partial timers, join and save
+	timer = ['connection', 'execution', 'datatransfer']
+	numQuery = 1
+	for numQuery, query in protocols[0]['query'].items():
+		for t in timer:
+			connection = list_connections[0]
+			d = {}
+			for connection in list_connections:
+				# load execution benchmarks
+				filename = '{folder}/{connection}/query_{numQuery}_{timer}.csv'.format(folder=folder, connection=connection, numQuery=numQuery, timer=t)
+				if isfile(filename):
+					df1 = pd.read_csv(filename)
+					df1_t = df1.transpose()
+					d1 = df1.to_dict(orient="list")
+				else:
+					continue
+				d = joinDicts(d,d1)
+			if len(d) > 0:
+				df = pd.DataFrame(d)
+				# convert to csv
+				csv = df.to_csv(index_label=False,index=False,line_terminator='\n')
+				# save
+				filename = '{folder}/query_{numQuery}_{timer}.csv'.format(folder=folder, numQuery=numQuery, timer=t)
+				csv_file = open(filename, "w")
+				csv_file.write(csv)
+				csv_file.close()
+	# merge metrics
+	# copy partial metrics
+	for connection in list_connections:
+		folder_connection = folder+'/'+connection
+		files_metrics = [f for f in listdir(folder_connection) if isfile(join(folder_connection, f)) and 'metric' in f]
+		print(folder_connection, files_metrics)
+		for file in files_metrics:
+			copyfile(folder_connection+'/'+file, folder+'/'+file)
