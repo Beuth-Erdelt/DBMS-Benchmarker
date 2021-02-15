@@ -1502,7 +1502,7 @@ def merge_partial_results(result_path, code):
 						else:
 							print("OK")
 			except Exception as e:
-				#print(e)
+				print(e)
 				print("missing")
 				protocol['query'][numQuery]['warnings'][connection] = 'Missing'
 			finally:
