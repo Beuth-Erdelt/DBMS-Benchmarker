@@ -1480,7 +1480,7 @@ def merge_partial_results(result_path, code):
 		for connection in list_connections:
 			try:
 				filename = '{folder}/{connection}/query_{numQuery}_resultset_{connection}.pickle'.format(folder=folder, connection=connection, numQuery=numQuery)
-				print(connection+": "+filename, end='')#, df)
+				print(connection+": ", end='')#, df)
 				with open(filename, 'r') as f:
 					df = pd.read_pickle(filename)
 					#print(connection)#, df)
@@ -1503,7 +1503,7 @@ def merge_partial_results(result_path, code):
 							print("OK")
 			except Exception as e:
 				#print(e)
-				#print("missing")
+				print("missing")
 				protocol['query'][numQuery]['warnings'][connection] = 'Missing'
 			finally:
 				pass
