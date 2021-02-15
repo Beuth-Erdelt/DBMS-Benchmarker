@@ -27,6 +27,7 @@ import ast
 from os import path
 import matplotlib.pyplot as plt
 
+from dbmsbenchmarker import inspector
 
 
 class timer():
