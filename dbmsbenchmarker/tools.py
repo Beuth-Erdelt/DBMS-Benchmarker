@@ -1473,6 +1473,42 @@ def merge_partial_results(result_path, code):
 	filename = '{folder}/protocol.json'.format(folder=folder)
 	with open(filename, 'w') as f:
 		json.dump(protocol, f)
+	# compare result sets
+	for numQuery, query in protocol['query'].items():
+		#print(query)
+		df_first = None
+		for connection in list_connections:
+			try:
+				filename = '{folder}/{connection}/query_{numQuery}_resultset_{connection}.pickle'.format(folder=folder, connection=connection, numQuery=numQuery)
+				print(connection+": ", end='')#, df)
+				with open(filename, 'r') as f:
+					df = pd.read_pickle(filename)
+					#print(connection)#, df)
+					if df_first is None:
+						df_first = df.copy()
+						print("first\n", df_first)
+						result_as_list = [[i[0] for i in list(df_first.columns)]]
+						result_as_list.extend(df_first.values.tolist())
+						protocol['query'][numQuery]['dataStorage'] = [result_as_list] # list, because this is (only) first run
+					else:
+						df_1 = inspector.getDifference12(df_first, df)
+						df_2 = inspector.getDifference12(df, df_first)
+						if not df_1.empty or not df_2.empty:
+							print("different\n", df)
+							protocol['query'][numQuery]['warnings'][connection] = 'Different'
+							result_as_list = [[i[0] for i in list(df.columns)]]
+							result_as_list.extend(df.values.tolist())
+							protocol['query'][numQuery]['resultSets'][connection] = [result_as_list] # list, because this is (only) first run
+						else:
+							print("OK")
+			except Exception as e:
+				#print(e)
+				#print("missing")
+				protocol['query'][numQuery]['warnings'][connection] = 'Missing'
+			finally:
+				pass
+	with open(filename_protocol, 'w') as f:
+		json.dump(protocol, f)
 	# merge timers
 	# load partial timers, join and save
 	timer = ['connection', 'execution', 'datatransfer']
