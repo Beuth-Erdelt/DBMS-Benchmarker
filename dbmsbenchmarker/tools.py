@@ -1470,8 +1470,8 @@ def merge_partial_results(result_path, code):
 			protocol['query'][k] = {}
 			for p in protocols:
 				protocol['query'][k] = joinDicts(protocol['query'][k], p['query'][k])
-	filename = '{folder}/protocol.json'.format(folder=folder)
-	with open(filename, 'w') as f:
+	filename_protocol = '{folder}/protocol.json'.format(folder=folder)
+	with open(filename_protocol, 'w') as f:
 		json.dump(protocol, f)
 	# compare result sets
 	for numQuery, query in protocol['query'].items():
