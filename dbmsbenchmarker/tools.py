@@ -1491,6 +1491,7 @@ def merge_partial_results(result_path, code):
 						result_as_list = [[i[0] for i in list(df_first.columns)]]
 						result_as_list.extend(df_first.values.tolist())
 						protocol['query'][numQuery]['dataStorage'] = [result_as_list] # list, because this is (only) first run
+						protocol['query'][numQuery]['warnings'][connection] = ""
 					else:
 						df_1 = inspector.getDifference12(df_first, df)
 						df_2 = inspector.getDifference12(df, df_first)
@@ -1502,6 +1503,8 @@ def merge_partial_results(result_path, code):
 							protocol['query'][numQuery]['resultSets'][connection] = [result_as_list] # list, because this is (only) first run
 						else:
 							print("OK")
+							protocol['query'][numQuery]['resultSets'][connection] = []
+							protocol['query'][numQuery]['warnings'][connection] = ""
 			except Exception as e:
 				print(e)
 				print("missing")
