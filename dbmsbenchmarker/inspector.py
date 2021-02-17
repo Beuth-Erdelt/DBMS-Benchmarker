@@ -448,7 +448,10 @@ class inspector():
     def dfCleanMonitoring(self, dataframe):
         # remove grafanaextend for statistics
         for c, connection in self.benchmarks.dbms.items():
-            add_interval = int(connection.connectiondata['monitoring']['grafanaextend'])
+            if 'monitoring' in connection.connectiondata and 'grafanaextend' in connection.connectiondata['monitoring']:
+                add_interval = int(connection.connectiondata['monitoring']['grafanaextend'])
+            else:
+                add_interval = 0
             #print(c)
             #print(add_interval)
             if c in dataframe.index:
