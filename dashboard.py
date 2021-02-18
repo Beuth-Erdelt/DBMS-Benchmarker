@@ -40,8 +40,12 @@ import re
 import logging
 import base64
 
+import dash_auth
+
+
 logging.basicConfig(level=logging.DEBUG)
 #logging.basicConfig(level=logging.ERROR)
+
 
 
 if __name__ == '__main__':
@@ -53,6 +57,12 @@ if __name__ == '__main__':
                         help='Anonymize all dbms.',
                         action='store_true',
                         default=False)
+    parser.add_argument('-u', '--user',
+                        help='User name for auth protected access.',
+                        default=None)
+    parser.add_argument('-p', '--password',
+                        help='Password for auth protected access.',
+                        default=None)
     args = parser.parse_args()
     result_path = args.result_folder
     # verify that result path was given
@@ -69,6 +79,16 @@ external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
 # Create Dash App instance
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets, suppress_callback_exceptions=True)
+
+# Create Dash App Auth instance
+if args.user is not None and args.password is not None:
+    VALID_USERNAME_PASSWORD_PAIRS = { # Keep this out of source code repository - save in a file or a database
+        args.user: args.password
+    }
+    auth = dash_auth.BasicAuth(
+        app,
+        VALID_USERNAME_PASSWORD_PAIRS
+    )
 
 # Assign layout to app
 app.layout = layout.serve_layout(preview)

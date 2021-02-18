@@ -311,7 +311,7 @@ class benchmarker():
 	"""
 	Class for running benchmarks
 	"""
-	def __init__(self, result_path=None, working='query', batch=False, fixedQuery=None, fixedConnection=None, anonymize=False, unanonymize=[], numProcesses=None, seed=None, code=None):
+	def __init__(self, result_path=None, working='query', batch=False, fixedQuery=None, fixedConnection=None, anonymize=False, unanonymize=[], numProcesses=None, seed=None, code=None, subfolder=None):
 		"""
 		Construct a new 'benchmarker' object.
 		Allocated the reporters store (always called) and printer (if reports are to be generated).
@@ -377,13 +377,26 @@ class benchmarker():
 						self.continuing = True
 				else:
 					# result path is not the result folder
-					self.code = str(round(time.time()))
+					if code is None:
+						self.code = str(round(time.time()))
+					else:
+						self.code = str(int(code))
+					#self.code = str(round(time.time()))
 					self.path = result_path+"/"+self.code
-					makedirs(self.path)
+					if not path.isdir(self.path):
+						makedirs(self.path)
 			else:
 				logging.exception("Path does not exist: "+result_path)
 			#self.path = str(int(path))
-		logging.debug("Benchmarking in folder "+self.path)
+		self.resultfolder_base = None
+		self.resultfolder_subfolder = None
+		if subfolder is not None:# and fixedConnection is not None:
+			self.resultfolder_base = self.path
+			self.resultfolder_subfolder = subfolder
+			self.path = self.resultfolder_base+"/"+self.resultfolder_subfolder
+			if not path.isdir(self.path):
+				makedirs(self.path)			
+		print("Benchmarking in folder "+self.path)
 		# querywise or connectionwise
 		self.working = working
 		# batch mode, different output
@@ -427,6 +440,9 @@ class benchmarker():
 		if configfolder is not None:
 			self.getConnectionsFromFile(configfolder+'/connections.config')
 			self.getQueriesFromFile(configfolder+'/queries.config')
+		#elif self.resultfolder_base is not None:
+		#	self.getConnectionsFromFile(self.resultfolder_base+'/connections.config')
+		#	self.getQueriesFromFile(self.resultfolder_base+'/queries.config')
 		else:
 			self.getConnectionsFromFile(connectionfile)
 			self.getQueriesFromFile(queryfile)
