@@ -106,10 +106,25 @@ app.layout = layout.serve_layout(preview)
 # })
 
 
-# TODO activate caching
+# TODO activate caching by replacing load_experiment function
 # @cache.memoize(50)
-def load_experiment(code: str, session_id: str) -> inspector.inspector:
+# def load_experiment(code: str, session_id: str) -> inspector.inspector:
+#     """
+#     :return: evaluate object with the desired experiment loaded
+#     """
+#     e = inspector.inspector(result_path)
+#     e.load_experiment(code)
+#     return e
+
+
+def load_experiment(code: str) -> inspector.inspector:
     """
+    Loads the experiment with given code for global evaluate object.
+    This doesn't work well with multiple users exploring different experiments,
+    because experiments will reload constantly.
+    The advantage of changing the global evaluate variable is the memoization of at least one experiment.
+    If the evaluate object works independently, use above load_experiment function.
+
     :return: evaluate object with the desired experiment loaded
     """
 
@@ -416,7 +431,6 @@ class Graph:
         df = e.get_aggregated_by_connection(dataframe=df,
                                             list_connections=connections_by_filter_filtered,
                                             connection_aggregate=self.connection_aggregate)
-
         return df
 
     def calculate_df(self, e: inspector.inspector) -> pd.DataFrame:
@@ -927,6 +941,8 @@ class Graph:
 
                 if self.query_id:
                     df = df[[f'Q{self.query_id}']]
+                if self.connection_ids:
+                    df = df[df.index.isin(self.connection_ids)]
 
                 if self.connection_aggregate is not None:
                     df = self.calculate_connection_aggregate(df, e)
@@ -1186,7 +1202,7 @@ class Graph:
         """
 
         df = self.calculate_df(e)
-        
+
         tools.anonymize_dbms(df)
 
         style_data_conditional = []
@@ -1293,7 +1309,7 @@ class Graph:
         """
 
         # get evaluate object
-        e = load_experiment(code, session_id)
+        e = load_experiment(code)
 
         if 'Table' in (self.graph_type or ''):
             graph, df = self.render_table(e, index)
@@ -1361,7 +1377,7 @@ def load_selected_experiment(selected_rows, table_data, session_id):
 
     code = table_data[selected_rows[0]]['id']
 
-    e = load_experiment(code, session_id)
+    e = load_experiment(code)
     return code
 
 
@@ -1422,7 +1438,7 @@ def show_workflow_name(code, session_id):
     """
     Show workflow name in navbar after an experiment is loaded.
     """
-    e = load_experiment(code, session_id)
+    e = load_experiment(code)
     workload_properties = e.get_experiment_workload_properties()
     return workload_properties.get('name', '')
 
@@ -1449,7 +1465,7 @@ def render_query_table(code, session_id):
         raise PreventUpdate
 
     # load evaluate object
-    e = load_experiment(code, session_id)
+    e = load_experiment(code)
 
     # gather query data and create a DataFrame with the columns numQuery and title
     list_queries = e.get_experiment_list_queries()
@@ -1483,8 +1499,12 @@ def filter_query(btn_deselect_query, active_graph, code, store_dashboard_config,
     if callback_context == ['store_active_graph.data']:
         if active_graph:
             if len(active_graph) > 1:  # multiple active graphs -> select none
-                # todo when all the active graphs share the same query update could be prevented.
-                return []
+                combined_dict = {**signal_add_graph.get('add', dict()), **store_dashboard_config.get(code, dict())}
+                selected_queries = [combined_dict[str(index)]['query_index'] for index in active_graph]
+                if all(el == selected_queries[0] for el in selected_queries):
+                    return selected_queries[0]
+                else:
+                    return []
             else:  # single active graph -> load query selection from dashboard config or signal_add_graph
                 combined_dict = {**signal_add_graph.get('add', dict()), **store_dashboard_config.get(code, dict())}
                 return combined_dict[str(active_graph[0])]['query_index']
@@ -1512,7 +1532,7 @@ def render_connection_table(code, session_id):
         raise PreventUpdate
 
     # load evaluate object
-    e = load_experiment(code, session_id)
+    e = load_experiment(code)
 
     # example for tooltip_data
     # tooltip_data = [{'connection': {'type': 'markdown', 'value': 'some tooltip', 'delay': 50, 'duration': 300000}}
@@ -1520,7 +1540,6 @@ def render_connection_table(code, session_id):
 
     columns = [{'name': 'connection', "id": 'connection'}]
     data = [{'connection': tools.anonymize_dbms(x), 'id': x} for x in e.get_experiment_list_connections()]
-
     return columns, data
 
 
@@ -1546,7 +1565,7 @@ def set_connection_table_filter_options(code, session_id):
     if code is None:
         raise PreventUpdate
 
-    e = load_experiment(code, session_id)
+    e = load_experiment(code)
 
     lists = [e.get_experiment_list_dbms(),
              e.get_experiment_list_nodes(),
@@ -1599,28 +1618,36 @@ def filter_connections(nc1, nc2, nc3, active_graph, store_dashboard_config, dbms
     logging.debug('** filter_connections**')
     logging.debug(callback_context)
 
+    # no actual trigger -> prevent update
     if callback_context == ['.']:
         raise PreventUpdate
 
+    # active graphs changed -> load connections according to them
     elif callback_context == ['store_active_graph.data']:
         if active_graph:
+            combined_dict = {**signal_add_graph.get('add', dict()), **store_dashboard_config.get(code, dict())}
             if len(active_graph) > 1:  # multiple active graphs -> select all
-                # todo when all the active graphs share the same connections update could be prevented.
-                return [list(range(len(table_data)))] + [no_update] * 5
+                selected_connections = [combined_dict[str(index)]['connection_indices'] for index in active_graph]
+                if all(el == selected_connections[0] for el in selected_connections):
+                    return [selected_connections[0]] + [no_update] * 5
+                else:
+                    return [[]] + [no_update] * 5
 
             else:  # single active graph -> load connection selection from config or signal_add_graph
-                combined_dict = {**signal_add_graph.get('add', dict()), **store_dashboard_config.get(code, dict())}
                 return [combined_dict[str(active_graph[0])]['connection_indices']] + [no_update] * 5
 
+    # select all button clicked -> select all and don't update filter dropdowns
     elif callback_context == ['btn_select_all_connections.n_clicks']:
         return [list(range(len(table_data)))] + [no_update] * 5
 
+    # deselect all button clicked -> deselect all and don't update filter dropdowns
     elif callback_context == ['btn_deselect_all_connections.n_clicks']:
         return [[]] + [no_update] * 5
 
+    # apply filter button clicked -> apply chosen filters to connections and reset filter dropdowns
     elif callback_context == ['btn_apply_filter.n_clicks']:
 
-        e = load_experiment(code, session_id)
+        e = load_experiment(code)
 
         # all connections
         connections_filtered = set(e.get_experiment_list_connections())
@@ -1650,7 +1677,6 @@ def filter_connections(nc1, nc2, nc3, active_graph, store_dashboard_config, dbms
 
         # intersection of current selected rows and filter
         result = list(set(table_selected_rows or []).intersection(set(selected_rows)))
-
         return [result] + [None] * 5  # reset filter dropdowns after apply filter
 
     raise PreventUpdate
@@ -2424,7 +2450,7 @@ def toggle_info_modal(nc1, nc2, nc3, nc4, nc5, code, session_id, query_active_ce
             if connection_active_cell is None:
                 raise PreventUpdate
 
-            e = load_experiment(code, session_id)
+            e = load_experiment(code)
             connection = connection_active_cell['row_id']
             content = [
                 get_modal_item(heading='Connection Properties',
@@ -2440,7 +2466,7 @@ def toggle_info_modal(nc1, nc2, nc3, nc4, nc5, code, session_id, query_active_ce
             if query_active_cell is None:
                 raise PreventUpdate
 
-            e = load_experiment(code, session_id)
+            e = load_experiment(code)
             num_query = query_active_cell['row_id']
 
             # ************************************** Query Properties *************************************************
@@ -2607,7 +2633,7 @@ def toggle_info_modal(nc1, nc2, nc3, nc4, nc5, code, session_id, query_active_ce
             if code is None:
                 raise PreventUpdate
 
-            e = load_experiment(code, session_id)
+            e = load_experiment(code)
 
             workload_properties = copy.deepcopy(e.get_experiment_workload_properties())
             workload_properties['numQueries'] = preview.loc[code]['queries']
