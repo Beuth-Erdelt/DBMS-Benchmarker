@@ -1119,6 +1119,13 @@ class benchmarker():
 							keepResultsets = True
 							break
 							#raise ValueError('Received differing result set')
+			#if len(self.resultfolder_subfolder) > 0:
+			# always store complete resultset for subfolders
+			filename = self.path+"/query_"+str(numQuery)+"_resultset_complete_"+connectionname+".pickle"
+			print(workername+"Store pickle of complete result set to "+filename)
+			f = open(filename, "wb")
+			pickle.dump(data, f)
+			f.close()
 		except Exception as e:
 			logging.exception('Caught an error: %s' % str(e))
 			self.protocol['query'][str(numQuery)]['errors'][c] = 'ERROR ({}) - {}'.format(type(e).__name__, e)
@@ -1156,6 +1163,13 @@ class benchmarker():
 		#	metricsReporter = monitor.metrics(self)
 		#	metricsReporter.generatePlotForQuery(numQuery)
 		return True
+	def generateAllParameters(self):
+		for numQuery in range(1, len(self.queries)+1):
+			q = self.queries[numQuery-1]
+			query = tools.query(q)
+			if len(query.parameter) > 0 and len(self.protocol['query'][str(numQuery)]['parameter']) == 0:
+				params = parameter.generateParameters(query.parameter, query.numRun)
+				self.protocol['query'][str(numQuery)]['parameter'] = params
 	def startBenchmarkingQuery(self, numQuery):
 		"""
 		Starts protocol for that specific query.
