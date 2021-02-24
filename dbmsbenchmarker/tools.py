@@ -1491,11 +1491,6 @@ def merge_partial_results(result_path, code):
 						data = pickle.load( open( filename, "rb" ) )
 						if data_first is None:
 							data_first = data.copy()
-							df_first = pd.DataFrame(data_first[numRun])
-							new_header = df_first.iloc[0] #grab the first row for the header
-							df_first = df_first[1:] #take the data less the header row
-							df_first.columns = new_header #set the header row as the df header
-							df_first.reset_index(inplace=True, drop=True)
 						else:
 							different = False
 							for numRun, resultset in enumerate(data):
@@ -1506,18 +1501,24 @@ def merge_partial_results(result_path, code):
 								#print(df)
 								df.reset_index(inplace=True, drop=True)
 								#print(df)
+								df_first = pd.DataFrame(data_first[numRun])
+								new_header = df_first.iloc[0] #grab the first row for the header
+								df_first = df_first[1:] #take the data less the header row
+								df_first.columns = new_header #set the header row as the df header
+								df_first.reset_index(inplace=True, drop=True)
 								df_1 = inspector.getDifference12(df_first, df)
 								df_2 = inspector.getDifference12(df, df_first)
 								if not df_1.empty or not df_2.empty:
 									print("different\n", df)
 									#exit()
-									protocol['query'][numQuery]['warnings'][connection] = 'Different at run #'+str(numRun)
+									protocol['query'][numQuery]['warnings'][connection] = 'Different at run #'+str(numRun+1)
 									#result_as_list = [[i for i in list(df.columns)]]
 									#result_as_list.extend(df.values.tolist())
 									#print(result_as_list)
 									#exit()
 									protocol['query'][numQuery]['resultSets'][connection] = data
 									different = True
+									break
 							if not different:
 								print("OK")
 								protocol['query'][numQuery]['resultSets'][connection] = []
