@@ -395,7 +395,9 @@ class benchmarker():
 			self.resultfolder_subfolder = subfolder
 			self.path = self.resultfolder_base+"/"+self.resultfolder_subfolder
 			if not path.isdir(self.path):
-				makedirs(self.path)			
+				makedirs(self.path)
+			if path.isfile(self.resultfolder_base+'/protocol.json'):
+				copyfile(self.resultfolder_base+'/protocol.json', self.path+'/protocol.json')
 		print("Benchmarking in folder "+self.path)
 		# querywise or connectionwise
 		self.working = working

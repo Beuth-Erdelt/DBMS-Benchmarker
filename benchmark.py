@@ -89,6 +89,7 @@ if __name__ == '__main__':
 		experiments.readBenchmarks()
 	elif args.mode == 'run':
 		if experiments.continuing:
+			experiments.generateAllParameters()
 			experiments.continueBenchmarks(overwrite = True)
 		else:
 			experiments.generateAllParameters()
