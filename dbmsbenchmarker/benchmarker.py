@@ -1170,6 +1170,7 @@ class benchmarker():
 		for numQuery in range(1, len(self.queries)+1):
 			q = self.queries[numQuery-1]
 			query = tools.query(q)
+			print(numQuery, query.parameter, self.protocol['query'][str(numQuery)]['parameter'])
 			if len(query.parameter) > 0 and len(self.protocol['query'][str(numQuery)]['parameter']) == 0:
 				params = parameter.generateParameters(query.parameter, query.numRun)
 				self.protocol['query'][str(numQuery)]['parameter'] = params
