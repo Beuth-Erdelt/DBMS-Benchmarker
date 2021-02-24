@@ -1122,7 +1122,7 @@ class benchmarker():
 			#if len(self.resultfolder_subfolder) > 0:
 			# always store complete resultset for subfolders
 			filename = self.path+"/query_"+str(numQuery)+"_resultset_complete_"+connectionname+".pickle"
-			print(workername+"Store pickle of complete result set to "+filename)
+			print("Store pickle of complete result set to "+filename)
 			f = open(filename, "wb")
 			pickle.dump(data, f)
 			f.close()
