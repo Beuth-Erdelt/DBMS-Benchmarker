@@ -89,10 +89,10 @@ if __name__ == '__main__':
 		experiments.readBenchmarks()
 	elif args.mode == 'run':
 		if experiments.continuing:
-			experiments.generateAllParameters()
+			#experiments.generateAllParameters()
 			experiments.continueBenchmarks(overwrite = True)
 		else:
-			experiments.generateAllParameters()
+			#experiments.generateAllParameters()
 			experiments.runBenchmarks()
 		print('Experiment {} has been finished'.format(experiments.code))
 	elif args.mode == 'continue':
