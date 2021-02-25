@@ -80,13 +80,14 @@ if __name__ == '__main__':
             numRun=0
             df = evaluate.get_datastorage_df(numQuery, numRun)
             data = df.values
-            if len(data) > 0 and sum([len(v) for k,v in list_warnings.items()]) > 0:
+            if len(data) > 0:
+                # there are warnings: and sum([len(v) for k,v in list_warnings.items()]) > 0:
                 print("\n===Q{}: {}===".format(numQuery, query.title))
                 print(list_warnings)
                 pd.set_option('display.max_colwidth', None)
                 pd.set_option('display.max_rows', None)
-                print("Storage:", df)
                 if not args.diff:
+                    print("Storage:", df)
                     df = pd.DataFrame(sorted(data, key=itemgetter(*list(range(0,len(data[0]))))), columns=df.columns)
                 #print(df)
                 for c in list_connections:
@@ -96,7 +97,7 @@ if __name__ == '__main__':
                         #print(r[c])
                         #print(r[c][numRun][0])
                         #print(s[numRun][0])
-                        print(s)
+                        #print(s)
                         #exit()
                         for numRun, result in enumerate(s):
                             if args.num_run is not None and int(args.num_run) != numRun:
@@ -133,10 +134,15 @@ if __name__ == '__main__':
                             # convert datatypes
                             s2 = [[round(float(item), int(query.restrict_precision)) if tools.convertToFloat(item) == float else convertToInt(item) if convertToInt(item) == item else item for item in sublist] for sublist in s2]
                             r2 = [[round(float(item), int(query.restrict_precision)) if tools.convertToFloat(item) == float else convertToInt(item) if convertToInt(item) == item else item for item in sublist] for sublist in r2]
-                            #print(s2)
-                            #print(r2)
+                            #print("storage", s2)
+                            #print("result", r2)
                             #print(len(s2[0]), titles_storage)
                             if len(s2) > 0:
+                                #print(s2)
+                                #print(itemgetter(*list(range(0,len(s2[0])))))
+                                #for x in s2:
+                                #    for y in x:
+                                #        print(y,type(y))
                                 df = pd.DataFrame(sorted(s2, key=itemgetter(*list(range(0,len(s2[0]))))), columns=titles_storage)#df_tmp.columns)
                             #print(df)
                             if len(r2) > 0 and r2 != s2:
@@ -149,15 +155,23 @@ if __name__ == '__main__':
                                     df2[c] = pd.DataFrame(sorted(data, key=itemgetter(*list(range(0,len(data[0]))))), columns=titles_resultset)#df_tmp.columns)
                                 else:
                                     df2[c] = pd.DataFrame()
+                            diff = False
                             for c,d in df2.items():
                                 if not inspector.getDifference12(df,d).empty:
                                     print("Storage has more than {}:".format(c))
                                     print(inspector.getDifference12(df,d))
+                                    diff = True
                                 if not inspector.getDifference12(d,df).empty:
                                     print("{} has more than storage".format(c))
                                     print(inspector.getDifference12(d,df))
+                                    diff = True
+                            #print("data", df,df2)
+                            if not diff:
+                                print("same")
                             if len(df2) > 0:
                                 break
+            else:
+                print("no data")
     elif args.mode == 'errors':
         print(evaluate.get_total_errors())
         for numQuery in list_queries:

@@ -1351,6 +1351,22 @@ def convertToFloat(var):
 		#print(var)
 		return str
 
+def convertToInt(var):
+    """
+    Converts variable to float.
+
+    :param var: Some variable
+    :return: returns float converted variable
+    """
+    #print(var)
+    #print(type(var))
+    try:
+        return int(var)
+    except Exception as e:
+        #print(str(e))
+        #print("Not convertible")
+        #print(var)
+        return var
 
 
 def sizeof_fmt(num, suffix='B'):
@@ -1438,7 +1454,7 @@ from os.path import isdir, isfile, join
 from os import listdir, stat
 import pandas as pd
 from shutil import copyfile
-#import os
+from operator import itemgetter
 
 #result_path = '/results/'
 #code = '1613110870'
@@ -1477,9 +1493,12 @@ def merge_partial_results(result_path, code):
 		json.dump(protocol, f)
 	# compare result sets
 	for numQuery, query in protocol['query'].items():
+		#if int(numQuery) > 3:
+		#	exit()
 		#print(query)
 		data_first = None
 		df_first = None
+		connection_first = None
 		for connection in list_connections:
 			try:
 				filename = '{folder}/{connection}/query_{numQuery}_resultset_complete_{connection}.pickle'.format(folder=folder, connection=connection, numQuery=numQuery)
@@ -1491,25 +1510,59 @@ def merge_partial_results(result_path, code):
 						data = pickle.load( open( filename, "rb" ) )
 						if data_first is None:
 							data_first = data.copy()
+							connection_first = connection
+							protocol['query'][numQuery]['dataStorage'] = data_first
+							protocol['query'][numQuery]['warnings'][connection_first] = ''
 						else:
 							different = False
 							for numRun, resultset in enumerate(data):
-								df = pd.DataFrame(data[numRun])
-								new_header = df.iloc[0] #grab the first row for the header
-								df = df[1:] #take the data less the header row
-								df.columns = new_header #set the header row as the df header
+								print("numRun", numRun)
+								result = data[numRun].copy()
+								# remove titles
+								titles_result = data[numRun][0]#list(range(len(result[0])))
+								#print(titles_result)
+								result.pop(0)
+								# convert datatypes
+								#precision = query.restrict_precision
+								precision = 2
+								result = [[round(float(item), int(precision)) if convertToFloat(item) == float else convertToInt(item) if convertToInt(item) == item else item for item in sublist] for sublist in result]
+								df = pd.DataFrame(sorted(result, key=itemgetter(*list(range(0,len(result[0]))))), columns=titles_result)
+								#df = pd.DataFrame(result)
+								#new_header = df.iloc[0] #grab the first row for the header
+								#df = df[1:] #take the data less the header row
+								#df.columns = new_header #set the header row as the df header
 								#print(df)
-								df.reset_index(inplace=True, drop=True)
+								#df.reset_index(inplace=True, drop=True)
 								#print(df)
-								df_first = pd.DataFrame(data_first[numRun])
-								new_header = df_first.iloc[0] #grab the first row for the header
-								df_first = df_first[1:] #take the data less the header row
-								df_first.columns = new_header #set the header row as the df header
-								df_first.reset_index(inplace=True, drop=True)
+								storage = data_first[numRun].copy()
+								# remove titles
+								titles_storage = data_first[numRun][0]#list(range(len(storage[0])))
+								#print(titles_storage)
+								storage.pop(0)
+								# convert datatypes
+								#precision = query.restrict_precision
+								precision = 2
+								storage = [[round(float(item), int(precision)) if convertToFloat(item) == float else convertToInt(item) if convertToInt(item) == item else item for item in sublist] for sublist in storage]
+								df_first = pd.DataFrame(sorted(storage, key=itemgetter(*list(range(0,len(storage[0]))))), columns=titles_storage)
+								#df_first = pd.DataFrame(data_first[numRun])
+								#new_header = df_first.iloc[0] #grab the first row for the header
+								#df_first = df_first[1:] #take the data less the header row
+								#df_first.columns = new_header #set the header row as the df header
+								#df_first.reset_index(inplace=True, drop=True)
 								df_1 = inspector.getDifference12(df_first, df)
 								df_2 = inspector.getDifference12(df, df_first)
+								#print("result", result)
+								#print("storage", storage)
+								if result == storage:
+									print("same")
+								#	#exit()
+								#if numQuery=='3':
+								#	print(df_first)
+								#	print(df)
 								if not df_1.empty or not df_2.empty:
-									print("different\n", df)
+									print("different\n")#, df_1, df_2)
+									#print("result", result)
+									#print("storage", storage)
 									#exit()
 									protocol['query'][numQuery]['warnings'][connection] = 'Different at run #'+str(numRun+1)
 									#result_as_list = [[i for i in list(df.columns)]]
@@ -1517,6 +1570,7 @@ def merge_partial_results(result_path, code):
 									#print(result_as_list)
 									#exit()
 									protocol['query'][numQuery]['resultSets'][connection] = data
+									protocol['query'][numQuery]['resultSets'][connection_first] = data_first
 									different = True
 									break
 							if not different:
@@ -1556,6 +1610,10 @@ def merge_partial_results(result_path, code):
 				protocol['query'][numQuery]['warnings'][connection] = 'Missing'
 			finally:
 				pass
+	#print("warnings", protocol['query']['3']['warnings'])
+	#print("storage", protocol['query']['3']['dataStorage'])
+	#print("result", protocol['query']['3']['resultSets']['MySQL'])
+	#print("result", protocol['query']['3']['resultSets']['MonetDBNew'])
 	with open(filename_protocol, 'w') as f:
 		json.dump(protocol, f)
 	# merge timers
