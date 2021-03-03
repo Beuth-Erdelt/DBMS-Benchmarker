@@ -548,9 +548,12 @@ class benchmarker():
 				if len(self.fixedConnection) > 0 and len(self.rename_connection):
 					with open(self.path+'/connections.config', "r") as connections_file:
 						connections_content = connections_file.read()
-					connections_content.replace("'name': '{}'".format(self.fixedConnection), "'name': '{}'".format(self.rename_connection))
+					print(connections_content)
+					connections_content = connections_content.replace("'name': '{}'".format(self.fixedConnection), "'name': '{}'".format(self.rename_connection))
+					print(connections_content)
 					with open(self.path+'/connections.config', "w") as connections_file:
 						connections_file.write(connections_content)
+					self.fixedConnection = self.rename_connection
 			else:
 				logging.exception('Caught an error: Connection file not found')
 				exit()
