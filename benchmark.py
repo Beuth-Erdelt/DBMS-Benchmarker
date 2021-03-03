@@ -18,6 +18,7 @@
 import logging
 import argparse
 import time
+from os import path
 
 from dbmsbenchmarker import *
 
@@ -25,7 +26,7 @@ from dbmsbenchmarker import *
 if __name__ == '__main__':
 	# argparse
 	parser = argparse.ArgumentParser(description='A benchmark tool for RDBMS. It connects to a given list of RDBMS via JDBC and runs a given list benchmark queries. Optionally some reports are generated.')
-	parser.add_argument('mode', help='run benchmarks and save results, or just read benchmark results from folder, or continue with missing benchmarks only', choices=['run','read', 'continue'])
+	parser.add_argument('mode', help='run benchmarks and save results, or just read benchmark results from folder, or continue with missing benchmarks only', choices=['run', 'read', 'continue'])
 	parser.add_argument('-d', '--debug', help='dump debug informations', action='store_true')
 	parser.add_argument('-b', '--batch', help='batch mode (more protocol-like output), automatically on for debug mode', action='store_true')
 	parser.add_argument('-qf', '--query-file', help='name of query config file', default='queries.config')
@@ -42,6 +43,7 @@ if __name__ == '__main__':
 	parser.add_argument('-u', '--unanonymize', help='unanonymize some dbms, only sensible in combination with anonymize', nargs='*', default=[])
 	parser.add_argument('-p', '--numProcesses', help='Number of parallel client processes. Global setting, can be overwritten by connection. If None given, half of all available processes is taken', default=None)
 	parser.add_argument('-s', '--seed', help='random seed', default=None)
+	parser.add_argument('-cs', '--copy-subfolder', help='copy subfolder of result folder', action='store_true')
 	parser.add_argument('-sl', '--sleep', help='sleep SLEEP seconds before going to work', default=0)
 	parser.add_argument('-sf', '--subfolder', help='stores results in a SUBFOLDER of the result folder', default=None)
 	parser.add_argument('-vq', '--verbose-queries', help='print every query that is sent', action='store_true', default=False)
@@ -61,7 +63,20 @@ if __name__ == '__main__':
 	if int(args.sleep) > 0:
 		print("Sleeping ", int(args.sleep), "seconds")
 		time.sleep(int(args.sleep))
-	# set verbose lebvel
+	# make a copy of result folder
+	subfolder = args.subfolder
+	rename_connection = ''
+	if args.copy_subfolder and len(subfolder) > 0:
+		client = 1
+		while True:
+			resultpath = args.result_folder+'/'+subfolder+'-'+str(client)
+			if path.isdir(resultpath):
+				client = client + 1
+			else:
+				break
+		subfolder = subfolder+'-'+str(client)
+		rename_connection = args.connection+'-'+str(client)
+	# set verbose level
 	if args.verbose_queries:
 		benchmarker.BENCHMARKER_VERBOSE_QUERIES = True
 	if args.verbose_statistics:
@@ -76,9 +91,10 @@ if __name__ == '__main__':
 		result_path=args.result_folder,
 		working=args.working,
 		batch=bBatch,
-		subfolder=args.subfolder,
+		subfolder=subfolder,#args.subfolder,
 		fixedQuery=args.query,
 		fixedConnection=args.connection,
+		rename_connection=rename_connection,
 		anonymize=args.anonymize,
 		unanonymize=args.unanonymize,
 		numProcesses=args.numProcesses,
