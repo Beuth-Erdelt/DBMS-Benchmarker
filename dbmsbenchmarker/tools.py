@@ -1472,6 +1472,37 @@ def merge_partial_results(result_path, code):
 			else:
 				result[k] = d2[k]
 		return result
+	# merging connection configs
+	# list of content of connection config files
+	connections = []
+	for connection in list_connections:
+		filename = '{folder}/{connection}/connections.config'.format(folder=folder, connection=connection)
+		#print(filename)
+		try:
+			if isfile(filename):
+				with open(filename,'r') as inf:
+					content=ast.literal_eval(inf.read())
+					#print(content)
+					connections.append(content)
+		except Exception as e:
+			print(e)
+	# join to single list
+	# no connection name must be doubled
+	connection_config = []
+	connection_names = []
+	for connection in connections:
+		#print(len(connection))
+		for c in connection:
+			#print(c['name'])
+			if not c['name'] in connection_names:
+				connection_config.append(c)
+				connection_names.append(c['name'])
+	for connection in connection_config:
+		print("merged connection: ", connection['name'])
+	# store merged config
+	filename = './connections.config'
+	with open(filename,'w') as inf:
+		inf.write(str(connection_config))
 	# merging protocols
 	# load partial protocols
 	protocols = []
