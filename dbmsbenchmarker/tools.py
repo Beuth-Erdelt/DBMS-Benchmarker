@@ -1500,7 +1500,7 @@ def merge_partial_results(result_path, code):
 	for connection in connection_config:
 		print("merged connection: ", connection['name'])
 	# store merged config
-	filename = './connections.config'
+	filename = folder+'/connections.config'
 	with open(filename,'w') as inf:
 		inf.write(str(connection_config))
 	# merging protocols
