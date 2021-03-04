@@ -456,9 +456,13 @@ class benchmarker():
 		:param queryfile: Name of the file containing query data
 		:return: returns nothing
 		"""
+		if connectionfile is None:
+			connectionfile = 'connections.config'
+		if queryfile is None:
+			queryfile = 'queries.config'
 		if configfolder is not None:
-			self.getConnectionsFromFile(configfolder+'/connections.config')
-			self.getQueriesFromFile(configfolder+'/queries.config')
+			self.getConnectionsFromFile(configfolder+'/'+connectionfile)
+			self.getQueriesFromFile(configfolder+'/'+queryfile)
 		#elif self.resultfolder_base is not None:
 		#	self.getConnectionsFromFile(self.resultfolder_base+'/connections.config')
 		#	self.getQueriesFromFile(self.resultfolder_base+'/queries.config')
@@ -544,6 +548,7 @@ class benchmarker():
 		if not filename == self.path+'/connections.config':
 			if path.isfile(filename):
 				copyfile(filename, self.path+'/connections.config')
+				print("copied connection file {} to {}".format(filename, self.path+'/connections.config'))
 				# 'name': 'MemSQL-5' replace by 'MemSQL-5-1' in connections.config? self.rename_connection
 				if len(self.fixedConnection) > 0 and len(self.rename_connection) > 0:
 					with open(self.path+'/connections.config', "r") as connections_file:
