@@ -61,7 +61,7 @@ if __name__ == '__main__':
 		bBatch = args.batch
 	# sleep before going to work
 	if int(args.sleep) > 0:
-		print("Sleeping ", int(args.sleep), "seconds")
+		logging.debug("Sleeping ", int(args.sleep), "seconds")
 		time.sleep(int(args.sleep))
 	# make a copy of result folder
 	subfolder = args.subfolder
@@ -76,7 +76,7 @@ if __name__ == '__main__':
 				break
 		subfolder = subfolder+'-'+str(client)
 		rename_connection = args.connection+'-'+str(client)
-		print("Rename connection {} to {}".format(args.connection, rename_connection))
+		logging.debug("Rename connection {} to {}".format(args.connection, rename_connection))
 	# set verbose level
 	if args.verbose_queries:
 		benchmarker.BENCHMARKER_VERBOSE_QUERIES = True

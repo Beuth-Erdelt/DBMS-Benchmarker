@@ -548,17 +548,17 @@ class benchmarker():
 		if not filename == self.path+'/connections.config':
 			if path.isfile(filename):
 				copyfile(filename, self.path+'/connections.config')
-				print("copied connection file {} to {}".format(filename, self.path+'/connections.config'))
+				logging.debug("copied connection file {} to {}".format(filename, self.path+'/connections.config'))
 				# 'name': 'MemSQL-5' replace by 'MemSQL-5-1' in connections.config? self.rename_connection
 				if len(self.fixedConnection) > 0 and len(self.rename_connection) > 0:
 					with open(self.path+'/connections.config', "r") as connections_file:
 						connections_content = connections_file.read()
-					print(connections_content)
+					#print(connections_content)
 					connections_content = connections_content.replace("'name': '{}'".format(self.fixedConnection), "'name': '{}'".format(self.rename_connection))
-					print(connections_content)
+					#print(connections_content)
 					with open(self.path+'/connections.config', "w") as connections_file:
 						connections_file.write(connections_content)
-					print("Renamed connection {} to {}".format(self.fixedConnection, self.rename_connection))
+					logging.debug("Renamed connection {} to {}".format(self.fixedConnection, self.rename_connection))
 					self.fixedConnection = self.rename_connection
 					filename = self.path+'/connections.config'
 			else:
