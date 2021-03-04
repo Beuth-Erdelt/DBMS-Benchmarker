@@ -71,7 +71,7 @@ if __name__ == '__main__':
 	if args.copy_subfolder and len(subfolder) > 0:
 		client = 1
 		while True:
-			if args.max_subfolders is not None and client > args.max_subfolders:
+			if args.max_subfolders is not None and client > int(args.max_subfolders):
 				exit()
 			resultpath = args.result_folder+'/'+subfolder+'-'+str(client)
 			logging.debug("Checking if {} is suitable folder for free job number".format(resultpath))
