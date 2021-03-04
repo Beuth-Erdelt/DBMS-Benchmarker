@@ -45,6 +45,7 @@ if __name__ == '__main__':
 	parser.add_argument('-p', '--numProcesses', help='Number of parallel client processes. Global setting, can be overwritten by connection. If None given, half of all available processes is taken', default=None)
 	parser.add_argument('-s', '--seed', help='random seed', default=None)
 	parser.add_argument('-cs', '--copy-subfolder', help='copy subfolder of result folder', action='store_true')
+	parser.add_argument('-ms', '--max-subfolders', help='maximum number of subfolders of result folder', default=None)
 	parser.add_argument('-sl', '--sleep', help='sleep SLEEP seconds before going to work', default=0)
 	parser.add_argument('-sf', '--subfolder', help='stores results in a SUBFOLDER of the result folder', default=None)
 	parser.add_argument('-vq', '--verbose-queries', help='print every query that is sent', action='store_true', default=False)
@@ -70,6 +71,8 @@ if __name__ == '__main__':
 	if args.copy_subfolder and len(subfolder) > 0:
 		client = 1
 		while True:
+			if args.max_subfolders is not None and client > args.max_subfolders:
+				exit()
 			resultpath = args.result_folder+'/'+subfolder+'-'+str(client)
 			logging.debug("Checking if {} is suitable folder for free job number".format(resultpath))
 			if path.isdir(resultpath):
