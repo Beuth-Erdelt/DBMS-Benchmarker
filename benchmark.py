@@ -62,7 +62,7 @@ if __name__ == '__main__':
 		bBatch = args.batch
 	# sleep before going to work
 	if int(args.sleep) > 0:
-		logging.debug("Sleeping ", int(args.sleep), "seconds")
+		logging.debug("Sleeping {} seconds before going to work".format(int(args.sleep)))
 		time.sleep(int(args.sleep))
 	# make a copy of result folder
 	subfolder = args.subfolder
@@ -71,9 +71,11 @@ if __name__ == '__main__':
 		client = 1
 		while True:
 			resultpath = args.result_folder+'/'+subfolder+'-'+str(client)
+			logging.debug("Checking if {} is suitable folder for free job number".format(resultpath))
 			if path.isdir(resultpath):
 				client = client + 1
 				waiting = random.randint(1, 10)
+				logging.debug("Sleeping {} seconds before checking for next free job number".format(waiting))
 				time.sleep(waiting)
 			else:
 				makedirs(resultpath)
