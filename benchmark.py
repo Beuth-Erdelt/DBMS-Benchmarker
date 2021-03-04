@@ -18,7 +18,8 @@
 import logging
 import argparse
 import time
-from os import path
+from os import makedirs, path
+import random
 
 from dbmsbenchmarker import *
 
@@ -72,7 +73,10 @@ if __name__ == '__main__':
 			resultpath = args.result_folder+'/'+subfolder+'-'+str(client)
 			if path.isdir(resultpath):
 				client = client + 1
+				waiting = random.randint(1, 10)
+				time.sleep(waiting)
 			else:
+				makedirs(resultpath)
 				break
 		subfolder = subfolder+'-'+str(client)
 		rename_connection = args.connection+'-'+str(client)
