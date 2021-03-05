@@ -20,6 +20,7 @@ import argparse
 import time
 from os import makedirs, path
 import random
+from datetime import datetime, timedelta
 
 from dbmsbenchmarker import *
 
@@ -47,6 +48,7 @@ if __name__ == '__main__':
 	parser.add_argument('-cs', '--copy-subfolder', help='copy subfolder of result folder', action='store_true')
 	parser.add_argument('-ms', '--max-subfolders', help='maximum number of subfolders of result folder', default=None)
 	parser.add_argument('-sl', '--sleep', help='sleep SLEEP seconds before going to work', default=0)
+	parser.add_argument('-st', '--start-time', help='sleep until START-TIME before beginning benchmarking', default=None)
 	parser.add_argument('-sf', '--subfolder', help='stores results in a SUBFOLDER of the result folder', default=None)
 	parser.add_argument('-vq', '--verbose-queries', help='print every query that is sent', action='store_true', default=False)
 	parser.add_argument('-vs', '--verbose-statistics', help='print statistics about query that have been sent', action='store_true', default=False)
@@ -86,6 +88,15 @@ if __name__ == '__main__':
 		subfolder = subfolder+'-'+str(client)
 		rename_connection = args.connection+'-'+str(client)
 		logging.debug("Rename connection {} to {}".format(args.connection, rename_connection))
+	# sleep before going to work
+	if args.start_time is not None:
+		now = datetime.now()
+		start = datetime.strptime(args.start_time, '%Y-%m-%d %H:%M:%S')
+		if start > now:
+			wait = (start-now).seconds
+			now_string = now.strftime('%Y-%m-%d %H:%M:%S')
+			logging.debug("Sleeping until {} before going to work ({} seconds, it is {} now)".format(args.start_time, wait, now_string))
+			time.sleep(int(wait))
 	# set verbose level
 	if args.verbose_queries:
 		benchmarker.BENCHMARKER_VERBOSE_QUERIES = True
