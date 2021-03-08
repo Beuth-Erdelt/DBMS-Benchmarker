@@ -90,7 +90,7 @@ if __name__ == '__main__':
 		logging.debug("Rename connection {} to {}".format(args.connection, rename_connection))
 	# sleep before going to work
 	if args.start_time is not None:
-		logging.debug(args.start_time)
+		#logging.debug(args.start_time)
 		now = datetime.utcnow()
 		try:
 			start = datetime.strptime(args.start_time, '%Y-%m-%d %H:%M:%S')
