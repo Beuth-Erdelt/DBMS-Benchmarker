@@ -385,8 +385,8 @@ class metrics():
         if df_all is None:
             return pd.DataFrame()
         # remove connection delay (metrics are collected, but nothing happens here)
-        query = tools.query(self.benchmarker.queries[numQuery-1])
-        df_all = df_all.iloc[int(query.delay_connect):]
+        #query = tools.query(self.benchmarker.queries[numQuery-1])
+        #df_all = df_all.iloc[int(query.delay_connect):]
         #print(df_all)
         # remove extend
         #for c, connection in self.benchmarker.dbms.items():
