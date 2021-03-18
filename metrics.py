@@ -40,8 +40,8 @@ if __name__ == '__main__':
 	# evaluate args
 	result_path = args.result_folder#'/results'
 	code = args.code#'1616083097'
-	time_start = args.time_start#1616083225
-	time_end = args.time_end#1616083310
+	time_start = int(args.time_start)#1616083225
+	time_end = int(args.time_end)#1616083310
 	print(time_end-time_start)
 	#url = 'http://bexhoma-monitoring-omnisci-{code}.perdelt.svc.cluster.local:9090/api/v1/'.format(code=code)
 	#metric = {'query': 'container_memory_working_set_bytes{job="monitor-node", container_label_io_kubernetes_container_name="dbms"}/1024/1024', 'title': 'CPU Memory [MiB]'}
