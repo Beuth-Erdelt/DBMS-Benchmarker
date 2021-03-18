@@ -174,7 +174,7 @@ class metrics():
     def fetchMetric(query, metric_code, connection, connectiondata, time_start, time_end, path):
         intervals = {}
         #for m, metric in metrics.metrics.items():
-        logging.debug("Metric "+metric)
+        logging.debug("Metric "+metric_code)
         df_all = None
         #for c,t in times["starts"].items():
         if 'monitoring' in connectiondata:
