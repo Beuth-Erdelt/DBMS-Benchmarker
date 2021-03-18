@@ -191,6 +191,10 @@ class evaluator():
 						if 'total_gpu_power' in hardwareAverages[c]:
 							# basis: per second average power, total time in ms
 							evaluation['dbms'][c]['hardwaremetrics']['total_gpu_energy'] = hardwareAverages[c]['total_gpu_power']*times[c]/3600000
+						# load test metrics
+						for m, avg in hardwareAverages[c].items():
+							df = metricsReporter.dfHardwareMetricsLoading(m)
+							evaluation['dbms'][c]['loadingmetrics'][m] = df.to_dict(orient='index')
 		# appendix start: query survey
 		evaluation['query'] = {}
 		for i in range(1, len(self.benchmarker.queries)+1):
