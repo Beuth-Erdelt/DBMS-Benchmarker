@@ -65,7 +65,7 @@ if __name__ == '__main__':
 		for m, metric in connection.connectiondata['monitoring']['metrics'].items():
 			print(m)
 			monitor.metrics.fetchMetric(query, m, c, connection.connectiondata, time_start, time_end, '{result_path}/{code}/'.format(result_path=result_path, code=code))
-			metrics = monitor.metrics(experiments)
-			df = metrics.dfHardwareMetricsLoading(m)
-			print(df)
+			#metrics = monitor.metrics(experiments)
+			#df = metrics.dfHardwareMetricsLoading(m)
+			#print(df)
 
