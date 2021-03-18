@@ -183,6 +183,7 @@ class evaluator():
 						evaluation['dbms'][c]['prices']['benchmark_usd'] = self.benchmarker.dbms[c].connectiondata['priceperhourdollar']*time/3600000
 				if self.benchmarker.dbms[c].hasHardwareMetrics():
 					evaluation['dbms'][c]['hardwaremetrics'] = {}
+					evaluation['dbms'][c]['loadingmetrics'] = {}
 					metricsReporter = monitor.metrics(self.benchmarker)
 					hardwareAverages = metricsReporter.computeAverages()
 					if c in hardwareAverages:
