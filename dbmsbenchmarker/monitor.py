@@ -172,7 +172,6 @@ class metrics():
             return ""
     @staticmethod
     def fetchMetric(query, metric_code, connection, connectiondata, time_start, time_end, path):
-        intervals = {}
         #for m, metric in metrics.metrics.items():
         logging.debug("Metric "+metric_code)
         df_all = None
@@ -196,7 +195,6 @@ class metrics():
                     time_shift = 0
                 time_start = time_start + time_shift
                 time_end = time_end + time_shift
-                intervals[connection] = time_end-time_start #+1# because of ceil()
                 add_interval = int(connectiondata['monitoring']['grafanaextend'])
                 time_start = time_start - add_interval
                 time_end = time_end + add_interval
@@ -219,12 +217,14 @@ class metrics():
     def generatePlotForQuery(self, query):
         times = self.benchmarker.protocol['query'][str(query)]
         for m, metric in metrics.metrics.items():
+            intervals = {}
             df_all = None
             logging.debug("Metric "+m)
             for c,t in times["starts"].items():
                 time_start = int(datetime.timestamp(datetime.strptime(times["starts"][c],'%Y-%m-%d %H:%M:%S.%f')))
                 time_end = int(datetime.timestamp(datetime.strptime(times["ends"][c],'%Y-%m-%d %H:%M:%S.%f')))
                 add_interval = int(self.benchmarker.dbms[c].connectiondata['monitoring']['grafanaextend'])
+                intervals[c] = time_end-time_start #+1# because of ceil()
                 df = metrics.fetchMetric(query, m, c, self.benchmarker.dbms[c].connectiondata, time_start, time_end, self.benchmarker.path)
                 if df.empty or len(df.index)==1:
                     continue
