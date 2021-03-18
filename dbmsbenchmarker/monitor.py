@@ -400,6 +400,7 @@ class metrics():
         # take last extend value
         #df_all = df_all.iloc[add_interval:-add_interval]
         #print(df_all)
+        print(df_all)
         return df_all.T
 
 def clean_dataframe(dataframe):
