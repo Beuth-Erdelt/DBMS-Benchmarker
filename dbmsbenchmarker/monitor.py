@@ -94,13 +94,14 @@ class metrics():
     def __init__(self, benchmarks):
         self.step = 1
         self.benchmarker = benchmarks
-    def getMetrics(self, url, metric,time_start, time_end, step=1):
+    @staticmethod
+    def getMetrics(url, metric,time_start, time_end, step=1):
         query = 'query_range'#?query='+metric['query']+'&start='+str(time_start)+'&end='+str(time_end)+'&step='+str(self.step)
         params = {
             'query': metric['query'],
             'start': str(time_start),
             'end': str(time_end),
-            'step': str(self.step),
+            'step': str(step),
         }
         logging.debug("Querying metrics: "+url+query, params)
         logging.debug(params)
@@ -124,7 +125,8 @@ class metrics():
         except Exception as e:
             logging.exception('Caught an error: %s' % str(e))
         return l
-    def metricsToDataframe(self, metric, values):
+    @staticmethod
+    def metricsToDataframe(metric, values):
         df = pd.DataFrame.from_records(values)
         df.columns = ['time [s]', metric['title']]
         df.iloc[0:,0] = df.iloc[0:,0].map(int)
@@ -133,14 +135,16 @@ class metrics():
         df = df.set_index(df.columns[0])
         df.iloc[0:,0] = df.iloc[0:,0].map(float)
         return df
-    def saveMetricsDataframe(self, filename, df):
+    @staticmethod
+    def saveMetricsDataframe(filename, df):
         if df is not None:
             csv = df.to_csv(index_label=False,index=False)
             # save
             csv_file = open(filename, "w")
             csv_file.write(csv)
             csv_file.close()
-    def loadMetricsDataframe(self, filename):
+    @staticmethod
+    def loadMetricsDataframe(filename):
         if os.path.isfile(filename):
             df = pd.read_csv(filename)
             return df
@@ -166,7 +170,8 @@ class metrics():
             return latex.format(**parameter)
         else:
             return ""
-    def fetchMetric(self, query, metric, connection, connectiondata, time_start, time_end):
+    @staticmethod
+    def fetchMetric(query, metric_code, connection, connectiondata, time_start, time_end, path):
         intervals = {}
         #for m, metric in metrics.metrics.items():
         logging.debug("Metric "+metric)
@@ -175,13 +180,13 @@ class metrics():
         if 'monitoring' in connectiondata:
             #self.token = self.benchmarker.dbms[c].connectiondata['monitoring']['grafanatoken']
             #self.url = self.benchmarker.dbms[c].connectiondata['monitoring']['grafanaurl']
-            self.url = connectiondata['monitoring']['prometheus_url']
+            #self.url = connectiondata['monitoring']['prometheus_url']
             url = connectiondata['monitoring']['prometheus_url']
             if connectiondata['active'] and url: #
                 logging.debug("Connection "+connection)
                 # is there a custom query for this metric and dbms?
-                if 'metrics' in connectiondata['monitoring'] and metric in connectiondata['monitoring']['metrics']:
-                    metric = connectiondata['monitoring']['metrics'][metric].copy()
+                if 'metrics' in connectiondata['monitoring'] and metric_code in connectiondata['monitoring']['metrics']:
+                    metric = connectiondata['monitoring']['metrics'][metric_code].copy()
                 #print(metric)
                 # this yields seconds
                 # is there a global timeshift
@@ -196,17 +201,17 @@ class metrics():
                 time_start = time_start - add_interval
                 time_end = time_end + add_interval
                 #print(time_end-time_start)
-                csvfile = self.benchmarker.path+'/query_'+str(query)+'_metric_'+str(metric)+'_'+connection+'.csv'
+                csvfile = path+'/query_'+str(query)+'_metric_'+str(metric_code)+'_'+connection+'.csv'
                 #print(csvfile)
                 if os.path.isfile(csvfile):# and not self.benchmarker.overwrite:
                     logging.debug("Data exists")
-                    df = self.loadMetricsDataframe(csvfile)
+                    df = metrics.loadMetricsDataframe(csvfile)
                     df.columns=[connection]
                 else:
-                    values = self.getMetrics(url, metric,time_start, time_end)
-                    df = self.metricsToDataframe(metric, values)
+                    values = metrics.getMetrics(url, metric, time_start, time_end)
+                    df = metrics.metricsToDataframe(metric, values)
                     df.columns=[connection]
-                    self.saveMetricsDataframe(csvfile, df)
+                    metrics.saveMetricsDataframe(csvfile, df)
                 #print(df)
                 return df
         df = pd.DataFrame()
@@ -219,7 +224,7 @@ class metrics():
             for c,t in times["starts"].items():
                 time_start = int(datetime.timestamp(datetime.strptime(times["starts"][c],'%Y-%m-%d %H:%M:%S.%f')))
                 time_end = int(datetime.timestamp(datetime.strptime(times["ends"][c],'%Y-%m-%d %H:%M:%S.%f')))
-                df = self.fetchMetric(query, m, c, self.benchmarker.dbms[c].connectiondata, time_start, time_end)
+                df = metrics.fetchMetric(query, m, c, self.benchmarker.dbms[c].connectiondata, time_start, time_end, self.benchmarker.path)
                 if df.empty or len(df.index)==1:
                     continue
                 if df_all is None:
@@ -321,14 +326,14 @@ class metrics():
         filename = self.benchmarker.path+'/query_'+str(numQuery)+'_metric_'+str(metric)+'.csv'
         #print(filename)
         if os.path.isfile(filename) and not self.benchmarker.overwrite:
-            df_all = self.loadMetricsDataframe(filename)
+            df_all = metrics.loadMetricsDataframe(filename)
         else:
             df_all = None
         if df_all is None:
             dbms_filter = self.benchmarker.protocol['query'][str(numQuery)]["starts"].keys()
             for c in dbms_filter:
                 filename = self.benchmarker.path+'/query_'+str(numQuery)+'_metric_'+str(metric)+'_'+c+'.csv'
-                df = self.loadMetricsDataframe(filename)
+                df = metrics.loadMetricsDataframe(filename)
                 if df is None:
                     continue
                 df.columns=[c]
@@ -337,7 +342,7 @@ class metrics():
                 else:
                     df_all = df_all.merge(df,how='outer', left_index=True,right_index=True)
             filename = self.benchmarker.path+'/query_'+str(numQuery)+'_metric_'+str(metric)+'.csv'
-            self.saveMetricsDataframe(filename, df_all)
+            metrics.saveMetricsDataframe(filename, df_all)
         if df_all is None:
             return pd.DataFrame()
         # remove connection delay (metrics are collected, but nothing happens here)
