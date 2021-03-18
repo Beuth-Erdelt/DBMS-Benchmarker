@@ -95,7 +95,7 @@ class metrics():
         self.step = 1
         self.benchmarker = benchmarks
     @staticmethod
-    def getMetrics(url, metric,time_start, time_end, step=1):
+    def getMetrics(url, metric, time_start, time_end, step=1):
         query = 'query_range'#?query='+metric['query']+'&start='+str(time_start)+'&end='+str(time_end)+'&step='+str(self.step)
         params = {
             'query': metric['query'],
@@ -270,7 +270,7 @@ class metrics():
             if show_end_line:
                 list_of_colors = plt.rcParams['axes.prop_cycle'].by_key()['color']
                 i = 0
-                for c,end in intervals.items():
+                for c, end in intervals.items():
                     if self.benchmarker.dbms[c].getName() in df_all.columns:
                         plt.axvline(x=end, linestyle="--", color=tools.dbms.dbmscolors[self.benchmarker.dbms[c].getName()])#list_of_colors[i])
                         i = i + 1
@@ -343,6 +343,44 @@ class metrics():
                 else:
                     df_all = df_all.merge(df,how='outer', left_index=True,right_index=True)
             filename = self.benchmarker.path+'/query_'+str(numQuery)+'_metric_'+str(metric)+'.csv'
+            metrics.saveMetricsDataframe(filename, df_all)
+        if df_all is None:
+            return pd.DataFrame()
+        # remove connection delay (metrics are collected, but nothing happens here)
+        query = tools.query(self.benchmarker.queries[numQuery-1])
+        df_all = df_all.iloc[int(query.delay_connect):]
+        #print(df_all)
+        # remove extend
+        #for c, connection in self.benchmarker.dbms.items():
+        #    add_interval = int(connection.connectiondata['monitoring']['grafanaextend'])
+        #    #print(add_interval)
+        #    #print(c)
+        #    #print(df_all[c])
+        #    #df_all[c] = list(df_all[c])[add_interval:-add_interval].extend([0]*(2*add_interval))
+        # take last extend value
+        #df_all = df_all.iloc[add_interval:-add_interval]
+        #print(df_all)
+        return df_all.T
+    def dfHardwareMetricsLoading(self, metric):
+        filename = self.benchmarker.path+'/query_loading_metric_'+str(metric)+'.csv'
+        #print(filename)
+        if os.path.isfile(filename) and not self.benchmarker.overwrite:
+            df_all = metrics.loadMetricsDataframe(filename)
+        else:
+            df_all = None
+        if df_all is None:
+            dbms_filter = self.benchmarker.dbms.keys()#self.benchmarker.protocol['query'][str(numQuery)]["starts"].keys()
+            for c in dbms_filter:
+                filename = self.benchmarker.path+'/query_loading_metric_'+str(metric)+'_'+c+'.csv'
+                df = metrics.loadMetricsDataframe(filename)
+                if df is None:
+                    continue
+                df.columns=[c]
+                if df_all is None:
+                    df_all = df
+                else:
+                    df_all = df_all.merge(df,how='outer', left_index=True,right_index=True)
+            filename = self.benchmarker.path+'/query_loading_metric_'+str(metric)+'.csv'
             metrics.saveMetricsDataframe(filename, df_all)
         if df_all is None:
             return pd.DataFrame()
