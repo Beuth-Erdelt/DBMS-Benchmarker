@@ -208,13 +208,9 @@ class metrics():
                     df.columns=[connection]
                     self.saveMetricsDataframe(csvfile, df)
                 #print(df)
-                if df.empty or len(df.index)==1:
-                    continue
-                if df_all is None:
-                    df_all = df
-                else:
-                    df_all = df_all.merge(df,how='outer', left_index=True,right_index=True)
-                #print(df_all)
+                return df
+        df = pd.DataFrame()
+        return df
     def generatePlotForQuery(self, query):
         times = self.benchmarker.protocol['query'][str(query)]
         for m, metric in metrics.metrics.items():
