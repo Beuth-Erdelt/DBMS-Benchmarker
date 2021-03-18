@@ -224,6 +224,7 @@ class metrics():
             for c,t in times["starts"].items():
                 time_start = int(datetime.timestamp(datetime.strptime(times["starts"][c],'%Y-%m-%d %H:%M:%S.%f')))
                 time_end = int(datetime.timestamp(datetime.strptime(times["ends"][c],'%Y-%m-%d %H:%M:%S.%f')))
+                add_interval = int(self.benchmarker.dbms[c].connectiondata['monitoring']['grafanaextend'])
                 df = metrics.fetchMetric(query, m, c, self.benchmarker.dbms[c].connectiondata, time_start, time_end, self.benchmarker.path)
                 if df.empty or len(df.index)==1:
                     continue
