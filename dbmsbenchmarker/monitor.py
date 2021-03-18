@@ -343,7 +343,7 @@ class metrics():
                 if df_all is None:
                     df_all = df
                 else:
-                    df_all = df_all.merge(df,how='outer', left_index=True,right_index=True)
+                    df_all = df_all.merge(df, how='outer', left_index=True,right_index=True)
             filename = self.benchmarker.path+'/query_'+str(numQuery)+'_metric_'+str(metric)+'.csv'
             metrics.saveMetricsDataframe(filename, df_all)
         if df_all is None:
@@ -373,6 +373,7 @@ class metrics():
         if df_all is None:
             dbms_filter = self.benchmarker.dbms.keys()#self.benchmarker.protocol['query'][str(numQuery)]["starts"].keys()
             for c in dbms_filter:
+                print(c, df_all)
                 filename = self.benchmarker.path+'/query_loading_metric_'+str(metric)+'_'+c+'.csv'
                 df = metrics.loadMetricsDataframe(filename)
                 if df is None:
@@ -381,7 +382,7 @@ class metrics():
                 if df_all is None:
                     df_all = df
                 else:
-                    df_all = df_all.merge(df,how='outer', left_index=True,right_index=True)
+                    df_all = df_all.merge(df, how='outer', left_index=True,right_index=True)
             filename = self.benchmarker.path+'/query_loading_metric_'+str(metric)+'.csv'
             metrics.saveMetricsDataframe(filename, df_all)
         if df_all is None:
@@ -400,7 +401,7 @@ class metrics():
         # take last extend value
         #df_all = df_all.iloc[add_interval:-add_interval]
         #print(df_all)
-        print(df_all)
+        #print(df_all)
         return df_all.T
 
 def clean_dataframe(dataframe):
