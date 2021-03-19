@@ -546,6 +546,7 @@ def dfSubRows(dataframe, l):
 def dfLoadingMetric(evaluation, metric):
 	if 'loadingmetrics' in evaluation['general'] and metric in evaluation['general']['loadingmetrics']:
 		df = pd.DataFrame.from_dict(evaluation['general']['loadingmetrics'][metric]).transpose()
+		df.index.name = 'DBMS'
 	else:
 		df = pd.DataFrame()
 	return df
