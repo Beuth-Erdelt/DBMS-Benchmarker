@@ -155,6 +155,9 @@ evaluate.get_total_times()
 evaluate.get_total_times_normalized()
 # same, normed to relative to best per query, show as heatmap
 evaluate.get_total_times_relative()
+# get hardware metrics for loading test
+evaluate.get_loading_metrics('total_cpu_memory')
+
 
 # some dataframes
 # showing metrics per dbms by aggregation
