@@ -543,3 +543,8 @@ def dfSubRows(dataframe, l):
 		return dataframe[dataframe.index.isin(l)]
 	else:
 		return dataframe
+def dfLoadingMetric(evaluation, metric):
+	if 'loadingmetrics' in evaluation['general'] and metric in evaluation['general']['loadingmetrics']:
+		df = pd.DataFrame.from_dict(evaluation['general']['loadingmetrics'][metric]).transpose()
+	else:
+		df = pd.DataFrame()
