@@ -548,3 +548,4 @@ def dfLoadingMetric(evaluation, metric):
 		df = pd.DataFrame.from_dict(evaluation['general']['loadingmetrics'][metric]).transpose()
 	else:
 		df = pd.DataFrame()
+	return df
