@@ -25,6 +25,8 @@ import os.path
 import logging
 from dbmsbenchmarker import benchmarker, tools
 from numpy import nan
+import glob
+
 # https://www.robustperception.io/productive-prometheus-python-parsing
 
 class metrics():
@@ -364,26 +366,28 @@ class metrics():
         #print(df_all)
         return df_all.T
     def dfHardwareMetricsLoading(self, metric):
-        filename = self.benchmarker.path+'/query_loading_metric_'+str(metric)+'.csv'
+        filename = self.benchmarker.path+'/query_loading_metric_{}.csv'.format(metric)
+        filename_pattern = self.benchmarker.path+'/query_loading_metric_{}_*.csv'.format(metric)
+        files = glob.glob(filename_pattern)
         #print(filename)
         if os.path.isfile(filename) and not self.benchmarker.overwrite:
             df_all = metrics.loadMetricsDataframe(filename)
         else:
             df_all = None
         if df_all is None:
-            dbms_filter = self.benchmarker.dbms.keys()#self.benchmarker.protocol['query'][str(numQuery)]["starts"].keys()
-            for c in dbms_filter:
-                print(c, df_all)
-                filename = self.benchmarker.path+'/query_loading_metric_'+str(metric)+'_'+c+'.csv'
-                df = metrics.loadMetricsDataframe(filename)
+            #dbms_filter = self.benchmarker.dbms.keys()#self.benchmarker.protocol['query'][str(numQuery)]["starts"].keys()
+            for file in files:#c in dbms_filter:
+                print(file, df_all)
+                #filename = self.benchmarker.path+'/query_loading_metric_'+str(metric)+'_'+c+'.csv'
+                df = metrics.loadMetricsDataframe(file)
                 if df is None:
                     continue
                 df.columns=[c]
                 if df_all is None:
                     df_all = df
                 else:
-                    df_all = df_all.merge(df, how='outer', left_index=True,right_index=True)
-            filename = self.benchmarker.path+'/query_loading_metric_'+str(metric)+'.csv'
+                    df_all = df_all.merge(df, how='outer', left_index=True, right_index=True)
+            #filename = self.benchmarker.path+'/query_loading_metric_'+str(metric)+'.csv'
             metrics.saveMetricsDataframe(filename, df_all)
         if df_all is None:
             return pd.DataFrame()

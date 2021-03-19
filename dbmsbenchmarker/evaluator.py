@@ -183,7 +183,7 @@ class evaluator():
 						evaluation['dbms'][c]['prices']['benchmark_usd'] = self.benchmarker.dbms[c].connectiondata['priceperhourdollar']*time/3600000
 				if self.benchmarker.dbms[c].hasHardwareMetrics():
 					evaluation['dbms'][c]['hardwaremetrics'] = {}
-					evaluation['dbms'][c]['loadingmetrics'] = {}
+					evaluation['general']['loadingmetrics'] = {}
 					metricsReporter = monitor.metrics(self.benchmarker)
 					hardwareAverages = metricsReporter.computeAverages()
 					if c in hardwareAverages:
@@ -195,7 +195,7 @@ class evaluator():
 						# load test metrics
 						for m, avg in hardwareAverages[c].items():
 							df = metricsReporter.dfHardwareMetricsLoading(m)
-							evaluation['dbms'][c]['loadingmetrics'][m] = df.to_dict(orient='index')
+							evaluation['general']['loadingmetrics'][m] = df.to_dict(orient='index')
 		# appendix start: query survey
 		evaluation['query'] = {}
 		for i in range(1, len(self.benchmarker.queries)+1):
