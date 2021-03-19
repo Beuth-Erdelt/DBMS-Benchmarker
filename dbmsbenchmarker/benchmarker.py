@@ -554,7 +554,7 @@ class benchmarker():
 					with open(self.path+'/connections.config', "r") as connections_file:
 						connections_content = connections_file.read()
 					#print(connections_content)
-					connections_content = connections_content.replace("'name': '{}'".format(self.fixedConnection), "'name': '{}'".format(self.rename_connection))
+					connections_content = connections_content.replace("'name': '{}'".format(self.fixedConnection), "'name': '{}', 'orig_name': '{}'".format(self.rename_connection, self.fixedConnection))
 					#print(connections_content)
 					with open(self.path+'/connections.config', "w") as connections_file:
 						connections_file.write(connections_content)
