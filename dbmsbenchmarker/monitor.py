@@ -137,7 +137,7 @@ class metrics():
         return df
     @staticmethod
     def saveMetricsDataframe(filename, df):
-        print("saveMetricsDataframe", filename)
+        logging.debug("saveMetricsDataframe "+filename)
         if df is not None:
             csv = df.to_csv(index_label=False,index=False)
             # save
@@ -146,7 +146,7 @@ class metrics():
             csv_file.close()
     @staticmethod
     def loadMetricsDataframe(filename):
-        print("loadMetricsDataframe", filename)
+        logging.debug("loadMetricsDataframe "+filename)
         if os.path.isfile(filename):
             df = pd.read_csv(filename)
             return df
@@ -154,7 +154,7 @@ class metrics():
             return None
     def generatePlots(self):
         for q,d in self.benchmarker.protocol['query'].items():
-            print("Hardware metrics for Q"+str(q))
+            logging.debug("Hardware metrics for Q"+str(q))
             self.generatePlotForQuery(q)
     def generateLatexForQuery(self, parameter):
         latex = "\\subsubsection{{Hardware Metrics}}\n\\begin{{figure}}[ht]\n\\centering\n"
