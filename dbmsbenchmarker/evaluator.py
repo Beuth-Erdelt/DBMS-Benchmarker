@@ -455,6 +455,7 @@ def addStatistics(dataframe, drop_nan=True, drop_measures=False):
 	df.loc['qcod [%]']=(stat_q3-stat_q1)/(stat_q3+stat_q1)*100.0
 	df.loc['Min'] = stat_min
 	df.loc['Max'] = stat_max
+	df.loc['Range'] = stat_max - stat_min
 	df.loc['Geo'] = stat_geo
 	df.loc['1st'] = stat_first
 	df.loc['Last'] = stat_last
