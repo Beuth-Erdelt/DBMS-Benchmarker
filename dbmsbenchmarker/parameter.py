@@ -80,6 +80,7 @@ class randomizer():
 	def __init__(self, parameter):
 		f = getattr(self, parameter['type'])
 		self.value = f(parameter)
+		logging.debug(parameter)
 	def integer(self, parameter):
 		l = parameter['range']
 		size = parameter['size']

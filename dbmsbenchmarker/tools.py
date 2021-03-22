@@ -26,6 +26,7 @@ import re
 import ast
 from os import path
 import matplotlib.pyplot as plt
+import pickle
 
 from dbmsbenchmarker import inspector
 
@@ -1350,6 +1351,22 @@ def convertToFloat(var):
 		#print(var)
 		return str
 
+def convertToInt(var):
+    """
+    Converts variable to float.
+
+    :param var: Some variable
+    :return: returns float converted variable
+    """
+    #print(var)
+    #print(type(var))
+    try:
+        return int(var)
+    except Exception as e:
+        #print(str(e))
+        #print("Not convertible")
+        #print(var)
+        return var
 
 
 def sizeof_fmt(num, suffix='B'):
@@ -1437,7 +1454,7 @@ from os.path import isdir, isfile, join
 from os import listdir, stat
 import pandas as pd
 from shutil import copyfile
-#import os
+from operator import itemgetter
 
 #result_path = '/results/'
 #code = '1613110870'
@@ -1455,6 +1472,37 @@ def merge_partial_results(result_path, code):
 			else:
 				result[k] = d2[k]
 		return result
+	# merging connection configs
+	# list of content of connection config files
+	connections = []
+	for connection in list_connections:
+		filename = '{folder}/{connection}/connections.config'.format(folder=folder, connection=connection)
+		#print(filename)
+		try:
+			if isfile(filename):
+				with open(filename,'r') as inf:
+					content=ast.literal_eval(inf.read())
+					#print(content)
+					connections.append(content)
+		except Exception as e:
+			print(e)
+	# join to single list
+	# no connection name must be doubled
+	connection_config = []
+	connection_names = []
+	for connection in connections:
+		#print(len(connection))
+		for c in connection:
+			#print(c['name'])
+			if not c['name'] in connection_names:
+				connection_config.append(c)
+				connection_names.append(c['name'])
+	for connection in connection_config:
+		print("merged connection: ", connection['name'])
+	# store merged config
+	filename = folder+'/connections.config'
+	with open(filename,'w') as inf:
+		inf.write(str(connection_config))
 	# merging protocols
 	# load partial protocols
 	protocols = []
@@ -1476,41 +1524,127 @@ def merge_partial_results(result_path, code):
 		json.dump(protocol, f)
 	# compare result sets
 	for numQuery, query in protocol['query'].items():
+		#if int(numQuery) > 3:
+		#	exit()
 		#print(query)
+		data_first = None
 		df_first = None
+		connection_first = None
 		for connection in list_connections:
 			try:
-				filename = '{folder}/{connection}/query_{numQuery}_resultset_{connection}.pickle'.format(folder=folder, connection=connection, numQuery=numQuery)
-				print(connection+": ", end='')#, df)
-				with open(filename, 'r') as f:
-					df = pd.read_pickle(filename)
-					#print(connection)#, df)
-					if df_first is None:
-						df_first = df.copy()
-						print("first\n", df_first)
-						result_as_list = [[i[0] for i in list(df_first.columns)]]
-						result_as_list.extend(df_first.values.tolist())
-						protocol['query'][numQuery]['dataStorage'] = [result_as_list] # list, because this is (only) first run
-						protocol['query'][numQuery]['warnings'][connection] = ""
-					else:
-						df_1 = inspector.getDifference12(df_first, df)
-						df_2 = inspector.getDifference12(df, df_first)
-						if not df_1.empty or not df_2.empty:
-							print("different\n", df)
-							protocol['query'][numQuery]['warnings'][connection] = 'Different'
-							result_as_list = [[i[0] for i in list(df.columns)]]
-							result_as_list.extend(df.values.tolist())
-							protocol['query'][numQuery]['resultSets'][connection] = [result_as_list] # list, because this is (only) first run
+				filename = '{folder}/{connection}/query_{numQuery}_resultset_complete_{connection}.pickle'.format(folder=folder, connection=connection, numQuery=numQuery)
+				print("Looking for", filename)
+				if isfile(filename):
+					# result set of all runs
+					print(connection+": ", end='')#, df)
+					with open(filename, 'r') as f:
+						data = pickle.load( open( filename, "rb" ) )
+						if data_first is None:
+							data_first = data.copy()
+							connection_first = connection
+							protocol['query'][numQuery]['dataStorage'] = data_first
+							protocol['query'][numQuery]['warnings'][connection_first] = ''
 						else:
-							print("OK")
-							protocol['query'][numQuery]['resultSets'][connection] = []
+							different = False
+							for numRun, resultset in enumerate(data):
+								print("numRun", numRun)
+								result = data[numRun].copy()
+								# remove titles
+								titles_result = data[numRun][0]#list(range(len(result[0])))
+								#print(titles_result)
+								result.pop(0)
+								# convert datatypes
+								#precision = query.restrict_precision
+								precision = 2
+								result = [[round(float(item), int(precision)) if convertToFloat(item) == float else convertToInt(item) if convertToInt(item) == item else item for item in sublist] for sublist in result]
+								df = pd.DataFrame(sorted(result, key=itemgetter(*list(range(0,len(result[0]))))), columns=titles_result)
+								#df = pd.DataFrame(result)
+								#new_header = df.iloc[0] #grab the first row for the header
+								#df = df[1:] #take the data less the header row
+								#df.columns = new_header #set the header row as the df header
+								#print(df)
+								#df.reset_index(inplace=True, drop=True)
+								#print(df)
+								storage = data_first[numRun].copy()
+								# remove titles
+								titles_storage = data_first[numRun][0]#list(range(len(storage[0])))
+								#print(titles_storage)
+								storage.pop(0)
+								# convert datatypes
+								#precision = query.restrict_precision
+								precision = 2
+								storage = [[round(float(item), int(precision)) if convertToFloat(item) == float else convertToInt(item) if convertToInt(item) == item else item for item in sublist] for sublist in storage]
+								df_first = pd.DataFrame(sorted(storage, key=itemgetter(*list(range(0,len(storage[0]))))), columns=titles_storage)
+								#df_first = pd.DataFrame(data_first[numRun])
+								#new_header = df_first.iloc[0] #grab the first row for the header
+								#df_first = df_first[1:] #take the data less the header row
+								#df_first.columns = new_header #set the header row as the df header
+								#df_first.reset_index(inplace=True, drop=True)
+								df_1 = inspector.getDifference12(df_first, df)
+								df_2 = inspector.getDifference12(df, df_first)
+								#print("result", result)
+								#print("storage", storage)
+								if result == storage:
+									print("same")
+								#	#exit()
+								#if numQuery=='3':
+								#	print(df_first)
+								#	print(df)
+								if not df_1.empty or not df_2.empty:
+									print("different\n")#, df_1, df_2)
+									#print("result", result)
+									#print("storage", storage)
+									#exit()
+									protocol['query'][numQuery]['warnings'][connection] = 'Different at run #'+str(numRun+1)
+									#result_as_list = [[i for i in list(df.columns)]]
+									#result_as_list.extend(df.values.tolist())
+									#print(result_as_list)
+									#exit()
+									protocol['query'][numQuery]['resultSets'][connection] = data
+									protocol['query'][numQuery]['resultSets'][connection_first] = data_first
+									different = True
+									break
+							if not different:
+								print("OK")
+								protocol['query'][numQuery]['resultSets'][connection] = []
+								protocol['query'][numQuery]['warnings'][connection] = ""
+				else:
+					# result set of first run only
+					filename = '{folder}/{connection}/query_{numQuery}_resultset_{connection}.pickle'.format(folder=folder, connection=connection, numQuery=numQuery)
+					print(connection+": ", end='')#, df)
+					with open(filename, 'r') as f:
+						df = pd.read_pickle(filename)
+						#print(connection)#, df)
+						if df_first is None:
+							df_first = df.copy()
+							print("first\n", df_first)
+							result_as_list = [[i[0] for i in list(df_first.columns)]]
+							result_as_list.extend(df_first.values.tolist())
+							protocol['query'][numQuery]['dataStorage'] = [result_as_list] # list, because this is (only) first run
 							protocol['query'][numQuery]['warnings'][connection] = ""
+						else:
+							df_1 = inspector.getDifference12(df_first, df)
+							df_2 = inspector.getDifference12(df, df_first)
+							if not df_1.empty or not df_2.empty:
+								print("different\n", df)
+								protocol['query'][numQuery]['warnings'][connection] = 'Different'
+								result_as_list = [[i[0] for i in list(df.columns)]]
+								result_as_list.extend(df.values.tolist())
+								protocol['query'][numQuery]['resultSets'][connection] = [result_as_list] # list, because this is (only) first run
+							else:
+								print("OK")
+								protocol['query'][numQuery]['resultSets'][connection] = []
+								protocol['query'][numQuery]['warnings'][connection] = ""
 			except Exception as e:
 				print(e)
 				print("missing")
 				protocol['query'][numQuery]['warnings'][connection] = 'Missing'
 			finally:
 				pass
+	#print("warnings", protocol['query']['3']['warnings'])
+	#print("storage", protocol['query']['3']['dataStorage'])
+	#print("result", protocol['query']['3']['resultSets']['MySQL'])
+	#print("result", protocol['query']['3']['resultSets']['MonetDBNew'])
 	with open(filename_protocol, 'w') as f:
 		json.dump(protocol, f)
 	# merge timers

@@ -311,7 +311,7 @@ class benchmarker():
 	"""
 	Class for running benchmarks
 	"""
-	def __init__(self, result_path=None, working='query', batch=False, fixedQuery=None, fixedConnection=None, anonymize=False, unanonymize=[], numProcesses=None, seed=None, code=None, subfolder=None):
+	def __init__(self, result_path=None, working='query', batch=False, fixedQuery=None, fixedConnection=None, rename_connection='', anonymize=False, unanonymize=[], numProcesses=None, seed=None, code=None, subfolder=None):
 		"""
 		Construct a new 'benchmarker' object.
 		Allocated the reporters store (always called) and printer (if reports are to be generated).
@@ -339,6 +339,8 @@ class benchmarker():
 			self.connectionmanagement['numProcesses'] = 1#math.ceil(mp.cpu_count()/2) #If None, half of all available processes is taken
 		else:
 			self.connectionmanagement['numProcesses'] = int(self.numProcesses)
+		# connection should be renamed (because of copy to subfolder and parallel processing)
+		self.rename_connection = rename_connection
 		# for connections staying active for all benchmarks
 		self.activeConnections = []
 		#self.runsPerConnection = 4
@@ -376,7 +378,7 @@ class benchmarker():
 					if path.isfile(result_path+'/protocol.json'):
 						self.continuing = True
 				else:
-					# result path is not the result folder
+					# result path is not a folder for existing results
 					if code is None:
 						self.code = str(round(time.time()))
 					else:
@@ -395,7 +397,24 @@ class benchmarker():
 			self.resultfolder_subfolder = subfolder
 			self.path = self.resultfolder_base+"/"+self.resultfolder_subfolder
 			if not path.isdir(self.path):
-				makedirs(self.path)			
+				makedirs(self.path)
+			"""
+			else:
+				# TODO: 'name': 'MemSQL-5' replace by 'MemSQL-5-1' in connections.config? self.rename_connection
+				client = 1
+				while True:
+					self.resultfolder_base = self.path
+					self.resultfolder_subfolder = subfolder+'-'+str(client)
+					self.path = self.resultfolder_base+"/"+self.resultfolder_subfolder				
+					if not path.isdir(self.path):
+						makedirs(self.path)
+						break
+					else:
+						client = client + 1
+			"""
+			if path.isfile(self.resultfolder_base+'/protocol.json'):
+				copyfile(self.resultfolder_base+'/protocol.json', self.path+'/protocol.json')
+				self.continuing = True
 		print("Benchmarking in folder "+self.path)
 		# querywise or connectionwise
 		self.working = working
@@ -437,9 +456,13 @@ class benchmarker():
 		:param queryfile: Name of the file containing query data
 		:return: returns nothing
 		"""
+		if connectionfile is None:
+			connectionfile = 'connections.config'
+		if queryfile is None:
+			queryfile = 'queries.config'
 		if configfolder is not None:
-			self.getConnectionsFromFile(configfolder+'/connections.config')
-			self.getQueriesFromFile(configfolder+'/queries.config')
+			self.getConnectionsFromFile(configfolder+'/'+connectionfile)
+			self.getQueriesFromFile(configfolder+'/'+queryfile)
 		#elif self.resultfolder_base is not None:
 		#	self.getConnectionsFromFile(self.resultfolder_base+'/connections.config')
 		#	self.getQueriesFromFile(self.resultfolder_base+'/queries.config')
@@ -525,6 +548,19 @@ class benchmarker():
 		if not filename == self.path+'/connections.config':
 			if path.isfile(filename):
 				copyfile(filename, self.path+'/connections.config')
+				logging.debug("copied connection file {} to {}".format(filename, self.path+'/connections.config'))
+				# 'name': 'MemSQL-5' replace by 'MemSQL-5-1' in connections.config? self.rename_connection
+				if self.fixedConnection is not None and len(self.fixedConnection) > 0 and len(self.rename_connection) > 0:
+					with open(self.path+'/connections.config', "r") as connections_file:
+						connections_content = connections_file.read()
+					#print(connections_content)
+					connections_content = connections_content.replace("'name': '{}'".format(self.fixedConnection), "'name': '{}', 'orig_name': '{}'".format(self.rename_connection, self.fixedConnection))
+					#print(connections_content)
+					with open(self.path+'/connections.config', "w") as connections_file:
+						connections_file.write(connections_content)
+					logging.debug("Renamed connection {} to {}".format(self.fixedConnection, self.rename_connection))
+					self.fixedConnection = self.rename_connection
+					filename = self.path+'/connections.config'
 			else:
 				logging.exception('Caught an error: Connection file not found')
 				exit()
@@ -1119,6 +1155,13 @@ class benchmarker():
 							keepResultsets = True
 							break
 							#raise ValueError('Received differing result set')
+			#if len(self.resultfolder_subfolder) > 0:
+			# always store complete resultset for subfolders
+			filename = self.path+"/query_"+str(numQuery)+"_resultset_complete_"+connectionname+".pickle"
+			print("Store pickle of complete result set to "+filename)
+			f = open(filename, "wb")
+			pickle.dump(data, f)
+			f.close()
 		except Exception as e:
 			logging.exception('Caught an error: %s' % str(e))
 			self.protocol['query'][str(numQuery)]['errors'][c] = 'ERROR ({}) - {}'.format(type(e).__name__, e)
@@ -1156,6 +1199,14 @@ class benchmarker():
 		#	metricsReporter = monitor.metrics(self)
 		#	metricsReporter.generatePlotForQuery(numQuery)
 		return True
+	def generateAllParameters(self):
+		for numQuery in range(1, len(self.queries)+1):
+			q = self.queries[numQuery-1]
+			query = tools.query(q)
+			logging.debug("generateAllParameters", numQuery, query.parameter, self.protocol['query'][str(numQuery)]['parameter'])
+			if len(query.parameter) > 0 and len(self.protocol['query'][str(numQuery)]['parameter']) == 0:
+				params = parameter.generateParameters(query.parameter, query.numRun)
+				self.protocol['query'][str(numQuery)]['parameter'] = params
 	def startBenchmarkingQuery(self, numQuery):
 		"""
 		Starts protocol for that specific query.
@@ -1170,6 +1221,7 @@ class benchmarker():
 		q = self.queries[numQuery-1]
 		query = tools.query(q)
 		if len(query.parameter) > 0 and len(self.protocol['query'][str(numQuery)]['parameter']) == 0:
+			logging.debug("generateParameters", numQuery, query.parameter, self.protocol['query'][str(numQuery)])
 			params = parameter.generateParameters(query.parameter, query.numRun)
 			self.protocol['query'][str(numQuery)]['parameter'] = params
 		if len(query.queryList) > 0:

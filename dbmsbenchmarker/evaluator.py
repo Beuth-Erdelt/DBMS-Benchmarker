@@ -183,6 +183,7 @@ class evaluator():
 						evaluation['dbms'][c]['prices']['benchmark_usd'] = self.benchmarker.dbms[c].connectiondata['priceperhourdollar']*time/3600000
 				if self.benchmarker.dbms[c].hasHardwareMetrics():
 					evaluation['dbms'][c]['hardwaremetrics'] = {}
+					evaluation['general']['loadingmetrics'] = {}
 					metricsReporter = monitor.metrics(self.benchmarker)
 					hardwareAverages = metricsReporter.computeAverages()
 					if c in hardwareAverages:
@@ -191,6 +192,10 @@ class evaluator():
 						if 'total_gpu_power' in hardwareAverages[c]:
 							# basis: per second average power, total time in ms
 							evaluation['dbms'][c]['hardwaremetrics']['total_gpu_energy'] = hardwareAverages[c]['total_gpu_power']*times[c]/3600000
+						# load test metrics
+						for m, avg in hardwareAverages[c].items():
+							df = metricsReporter.dfHardwareMetricsLoading(m)
+							evaluation['general']['loadingmetrics'][m] = df.to_dict(orient='index')
 		# appendix start: query survey
 		evaluation['query'] = {}
 		for i in range(1, len(self.benchmarker.queries)+1):
@@ -450,6 +455,7 @@ def addStatistics(dataframe, drop_nan=True, drop_measures=False):
 	df.loc['qcod [%]']=(stat_q3-stat_q1)/(stat_q3+stat_q1)*100.0
 	df.loc['Min'] = stat_min
 	df.loc['Max'] = stat_max
+	df.loc['Range'] = stat_max - stat_min
 	df.loc['Geo'] = stat_geo
 	df.loc['1st'] = stat_first
 	df.loc['Last'] = stat_last
@@ -538,3 +544,10 @@ def dfSubRows(dataframe, l):
 		return dataframe[dataframe.index.isin(l)]
 	else:
 		return dataframe
+def dfLoadingMetric(evaluation, metric):
+	if 'loadingmetrics' in evaluation['general'] and metric in evaluation['general']['loadingmetrics']:
+		df = pd.DataFrame.from_dict(evaluation['general']['loadingmetrics'][metric]).transpose()
+		df.index.name = 'DBMS'
+	else:
+		df = pd.DataFrame()
+	return df

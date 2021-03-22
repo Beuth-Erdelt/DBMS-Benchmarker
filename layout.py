@@ -352,7 +352,7 @@ def serve_layout(preview) -> html.Div:
                         id='dd_query_aggregate',
                         options=[
                             {'label': x, 'value': x} for x in
-                            ['factor', 'Mean', 'Std Dev', 'cv [%]', 'Median', 'iqr', 'qcod [%]', 'Min', 'Max', 'Geo', '1st', 'Last', 'Sum', 'P25', 'P75', 'P90', 'P95']
+                            ['factor', 'Mean', 'Std Dev', 'cv [%]', 'Median', 'iqr', 'qcod [%]', 'Min', 'Max', 'Range', 'Geo', '1st', 'Last', 'Sum', 'P25', 'P75', 'P90', 'P95']
                         ],
                     ),
 
@@ -361,7 +361,7 @@ def serve_layout(preview) -> html.Div:
                         id='dd_total_aggregate',
                         options=[
                             {'label': x, 'value': x} for x in
-                            ['factor', 'Mean', 'Std Dev', 'cv [%]', 'Median', 'iqr', 'qcod [%]', 'Min', 'Max', 'Geo', '1st', 'Last', 'Sum', 'P95', 'P25', 'P75', 'P90', 'P95']
+                            ['factor', 'Mean', 'Std Dev', 'cv [%]', 'Median', 'iqr', 'qcod [%]', 'Min', 'Max', 'Range', 'Geo', '1st', 'Last', 'Sum', 'P95', 'P25', 'P75', 'P90', 'P95']
                         ],
                     ),
 
@@ -370,7 +370,7 @@ def serve_layout(preview) -> html.Div:
                         id='dd_connection_aggregate',
                         options=[
                             {'label': x, 'value': x} for x in
-                            ['factor', 'Mean', 'Std Dev', 'cv [%]', 'Median', 'iqr', 'qcod [%]', 'Min', 'Max', 'Geo', '1st', 'Last', 'Sum', 'P95', 'P25', 'P75', 'P90', 'P95']
+                            ['factor', 'Mean', 'Std Dev', 'cv [%]', 'Median', 'iqr', 'qcod [%]', 'Min', 'Max', 'Range', 'Geo', '1st', 'Last', 'Sum', 'P95', 'P25', 'P75', 'P90', 'P95']
                         ],
                     ),
 
