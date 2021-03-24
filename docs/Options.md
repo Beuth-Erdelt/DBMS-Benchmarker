@@ -36,22 +36,21 @@ usage: benchmark.py [-h] [-d] [-b] [-qf QUERY_FILE] [-cf CONNECTION_FILE]
                     [-f CONFIG_FOLDER] [-r RESULT_FOLDER] [-g {no,yes}]
                     [-e {no,yes}] [-w {query,connection}] [-a]
                     [-u [UNANONYMIZE [UNANONYMIZE ...]]] [-p NUMPROCESSES]
-                    [-s SEED] [-vq] [-vs] [-pn NUM_RUN]
+                    [-s SEED] [-cs] [-ms MAX_SUBFOLDERS] [-sl SLEEP]
+                    [-st START_TIME] [-sf SUBFOLDER] [-vq] [-vs] [-pn NUM_RUN]
+                    [-m]
                     {run,read,continue}
 
 A benchmark tool for RDBMS. It connects to a given list of RDBMS via JDBC and
 runs a given list benchmark queries. Optionally some reports are generated.
 
 positional arguments:
-  {run,read,continue}   run benchmarks and save results, or just read
-                        benchmark results from folder, or continue with
-                        missing benchmarks only
+  {run,read,continue}   run benchmarks and save results, or just read benchmark results from folder, or continue with missing benchmarks only
 
 optional arguments:
   -h, --help            show this help message and exit
   -d, --debug           dump debug informations
-  -b, --batch           batch mode (more protocol-like output), automatically
-                        on for debug mode
+  -b, --batch           batch mode (more protocol-like output), automatically on for debug mode
   -qf QUERY_FILE, --query-file QUERY_FILE
                         name of query config file
   -cf CONNECTION_FILE, --connection-file CONNECTION_FILE
@@ -63,12 +62,9 @@ optional arguments:
   -l LATEX_TEMPLATE, --latex-template LATEX_TEMPLATE
                         name of latex template for reporting
   -f CONFIG_FOLDER, --config-folder CONFIG_FOLDER
-                        folder containing query and connection config files.
-                        If set, the names connections.config and
-                        queries.config are assumed automatically.
+                        folder containing query and connection config files. If set, the names connections.config and queries.config are assumed automatically.
   -r RESULT_FOLDER, --result-folder RESULT_FOLDER
-                        folder for storing benchmark result files, default is
-                        given by timestamp
+                        folder for storing benchmark result files, default is given by timestamp
   -g {no,yes}, --generate-output {no,yes}
                         generate new report files
   -e {no,yes}, --generate-evaluation {no,yes}
@@ -77,21 +73,27 @@ optional arguments:
                         working per query or connection
   -a, --anonymize       anonymize all dbms
   -u [UNANONYMIZE [UNANONYMIZE ...]], --unanonymize [UNANONYMIZE [UNANONYMIZE ...]]
-                        unanonymize some dbms, only sensible in combination
-                        with anonymize
+                        unanonymize some dbms, only sensible in combination with anonymize
   -p NUMPROCESSES, --numProcesses NUMPROCESSES
-                        Number of parallel client processes. Global setting,
-                        can be overwritten by connection. If None given, half
-                        of all available processes is taken
+                        Number of parallel client processes. Global setting, can be overwritten by connection. If None given, half of all available processes is taken
+  -s SEED, --seed SEED  random seed
+  -cs, --copy-subfolder
+                        copy subfolder of result folder
+  -ms MAX_SUBFOLDERS, --max-subfolders MAX_SUBFOLDERS
+                        maximum number of subfolders of result folder
   -sl SLEEP, --sleep SLEEP
                         sleep SLEEP seconds before going to work
-  -s SEED, --seed SEED  random seed
+  -st START_TIME, --start-time START_TIME
+                        sleep until START-TIME before beginning benchmarking
+  -sf SUBFOLDER, --subfolder SUBFOLDER
+                        stores results in a SUBFOLDER of the result folder
   -vq, --verbose-queries
                         print every query that is sent
   -vs, --verbose-statistics
                         print statistics about query that have been sent
   -pn NUM_RUN, --num-run NUM_RUN
                         Parameter: Number of executions per query
+  -m, --metrics         collect hardware metrics
 ```
 
 ### Result folder

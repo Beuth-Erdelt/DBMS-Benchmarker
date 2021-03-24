@@ -45,7 +45,7 @@ In the end this tool provides metrics that can be analyzed by [aggregation](docs
 For more informations, see a [basic example](#basic-usage), take a look at help for a full list of [options](docs/Options.md#command-line-options-and-configuration) or take a look at a [demo report](docs/Report-example-tpch.pdf).
 
 The code uses several Python modules, in particular <a href="https://github.com/baztian/jaydebeapi" target="_blank">jaydebeapi</a> for handling DBMS.
-This module has been tested with Brytlyt, Exasol, Kinetica, MariaDB, MemSQL, Mariadb, MonetDB, OmniSci and PostgreSQL.
+This module has been tested with Brytlyt, Citus, Clickhouse, DB2, Exasol, Kinetica, MariaDB, MariaDB Columnstore, MemSQL, Mariadb, MonetDB, MySQL, OmniSci, Oracle DB, PostgreSQL, SQL Server and SAP HANA.
 
 
 ## Basic Usage
