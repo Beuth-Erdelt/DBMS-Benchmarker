@@ -106,8 +106,9 @@ Example: `-r /tmp/dbmsresults/1234/` contains benchmarks of code `1234`.
 If this folder does not contain results, a new subfolder is generated.
 It's name is set automatically to some number derived from current timestamp.
 Results and reports are stored there.
-Input files for connections and queries are copied to this folder.
+Input files for connections and queries are copied to this folder.  
 Example: `-r /tmp/dbmsresults/`, and a subfolder, say `1234`, will be generated containing results.
+
 
 ### Config folder
 
@@ -531,3 +532,24 @@ If nothing is specified, the default value is used, which is half of the number 
 The option `-s` can be used to specify a random seed.
 This should guarantee reproducible results for randomized queries.
 
+### Subfolders
+
+If the flag `--copy-subfolder` is set, connection and query configuration will be copied from an existing result folder to a subfolder.
+The name of the subfolder can be set via `--subfolder`.
+These flags can be used to allow parallel quering of independent dbmsbenchmarker:
+Each will write in an own subfolder.
+These partial results can be merged using the `merge.py` command line tool.
+The normal behaviour is: If we run the same connection twice, the results of the first run will be overwritten.
+Since we might query the same connection in these instances, the subfolders will be numbered automatically.
+Using `MAX_SUBFOLDERS` we can limit the number of subfolders that are allowed.  
+Example: `-r /tmp/dbmsresults/1234/ -cs -sf MySQL` will continue the benchmarks of folder `/tmp/dbmsresults/1234/` by creating a folder `/tmp/dbmsresults/1234/MySQL-1`.
+If that folder already exists, `/tmp/dbmsresults/1234/MySQL-2` will be used etc.
+
+This is in particular used by https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager for jobs of parallel benchmarker.
+
+### Delay start
+
+The parameter `--sleep` can be used to set a start time.
+DBMSBenchmarker will wait until the given time is reached.
+
+This is in particular used by https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager for synching jobs of parallel benchmarker.
