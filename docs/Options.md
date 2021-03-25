@@ -133,11 +133,6 @@ Example for `CONNECTION_FILE`:
     'dialect': "MySQL",
     'timeload': 100,
     'priceperhourdollar': 1.0,
-    `monitoring`: {
-      'grafanatoken': 'Bearer 46363756756756476754756745',
-      'grafanaurl': 'http://127.0.0.1:3000/api/datasources/proxy/1/api/v1/',
-      `grafanaextend`: 5
-    },
     'JDBC': {
       'driver': "com.mysql.cj.jdbc.Driver",
       'url': "jdbc:mysql://localhost:3306/database",
@@ -174,8 +169,6 @@ Example for `CONNECTION_FILE`:
 * Additional information useful for reporting and also used for computations
   * `timeload`: Time for ingest (in milliseconds), because not part of the benchmark
   * `priceperhourdollar`: Used to compute total cost based on total time (optional)
-  * `grafanatoken`, `grafanaurl`, `grafanaextend`: To fetch hardware metrics from Grafana API. `grafanaextend` extends the fetched interval by `n` seconds at both ends.
-  More information about monitoring and metrics can be found here: https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/docs/Monitoring.md
 * `connectionmanagement`: Parameter for connection management. This overwrites general settings made in the [query config](#extended-query-file) and can be overwritten by query-wise settings made there.
   * `timeout`: Maximum lifespan of a connection. Default is None, i.e. no limit.
   * `numProcesses`: Number of parallel client processes. Default is 1.
@@ -183,6 +176,7 @@ Example for `CONNECTION_FILE`:
 * `hostsystem`: Describing information for report in particular about the host system.
   This can be written automatically by https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager
 
+We might also add information about fetching [monitoring](#monitoring) metrics.
 ### Query File
 
 Contains the queries to benchmark.
@@ -553,3 +547,27 @@ The parameter `--sleep` can be used to set a start time.
 DBMSBenchmarker will wait until the given time is reached.
 
 This is in particular used by https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager for synching jobs of parallel benchmarker.
+
+### Monitoring
+
+The parameter `--metrics` can be used to activate fetching metrics from a Prometheus server.
+In the `connection.config` we may insert a section per connection about where to fetch these metrics from and which metrics we want to obtain.  
+Example:
+```
+'monitoring': {
+  'grafanashift': 0,
+  'grafanaextend': 20,
+  'prometheus_url': 'http://127.0.0.1:9090/api/v1/',
+  'metrics': {
+    'total_cpu_memory': {
+      'query': 'container_memory_working_set_bytes{job="monitor-node"}/1024/1024',
+      'title': 'CPU Memory [MiB]'
+    }
+  }
+}
+```
+
+* `grafanashift` shifts the fetched interval by `n` seconds to the future.
+* `grafanaextend` extends the fetched interval by `n` seconds at both ends.
+
+More information about monitoring and metrics can be found here: https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/docs/Monitoring.md
