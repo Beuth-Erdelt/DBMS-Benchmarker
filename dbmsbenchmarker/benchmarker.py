@@ -70,7 +70,7 @@ class singleRunOutput:
 
 
 
-def singleRun(connectiondata, inputConfig, numRuns, connectionname, numQuery, path=None, activeConnections = [], BENCHMARKER_VERBOSE_QUERIES=False):
+def singleRun(connectiondata, inputConfig, numRuns, connectionname, numQuery, path=None, activeConnections = [], BENCHMARKER_VERBOSE_QUERIES=False, BENCHMARKER_VERBOSE_RESULTS=False):
 	"""
 	Function for running an actual benchmark run
 
@@ -842,7 +842,7 @@ class benchmarker():
 		"""
 		queryString = self.getQueryString(numQuery, connectionname=connectionname, numRun=numRun)
 		inputConfig = [singleRunInput(0, queryString, self.queries[numQuery-1])]
-		output = singleRun(self.dbms[connectionname].connectiondata, inputConfig, [0], connectionname, numQuery, None, BENCHMARKER_VERBOSE_QUERIES=BENCHMARKER_VERBOSE_QUERIES)
+		output = singleRun(self.dbms[connectionname].connectiondata, inputConfig, [0], connectionname, numQuery, None, BENCHMARKER_VERBOSE_QUERIES=BENCHMARKER_VERBOSE_QUERIES, BENCHMARKER_VERBOSE_RESULTS=BENCHMARKER_VERBOSE_RESULTS)
 		return output[0]
 	def runSingleBenchmarkRunMultiple(self, numQuery, connectionname, numRun=0, times=1):
 		"""
@@ -1060,13 +1060,13 @@ class benchmarker():
 			# pooling
 			if self.pool is not None:
 				#multiple_results = [self.pool.apply_async(singleRun, (self.dbms[c].connectiondata, inputConfig, runs[i*batchsize:(i+1)*batchsize], connectionname, numQuery, self.path, JPickler.dumps(self.activeConnections))) for i in range(numBatches)]
-				multiple_results = [self.pool.apply_async(singleRun, (self.dbms[c].connectiondata, inputConfig, runs[i*batchsize:(i+1)*batchsize], connectionname, numQuery, self.path, [], BENCHMARKER_VERBOSE_QUERIES)) for i in range(numBatches)]
+				multiple_results = [self.pool.apply_async(singleRun, (self.dbms[c].connectiondata, inputConfig, runs[i*batchsize:(i+1)*batchsize], connectionname, numQuery, self.path, [], BENCHMARKER_VERBOSE_QUERIES, BENCHMARKER_VERBOSE_RESULTS)) for i in range(numBatches)]
 				lists = [res.get(timeout=timeout) for res in multiple_results]
 				lists = [i for j in lists for i in j]
 			else:
 				with mp.Pool(processes=numProcesses) as pool:
 					#multiple_results = [pool.apply_async(singleRun, (self.dbms[c].connectiondata, inputConfig, runs[i*batchsize:(i+1)*batchsize], connectionname, numQuery, self.path, JPickler.dumps(self.activeConnections))) for i in range(numBatches)]
-					multiple_results = [pool.apply_async(singleRun, (self.dbms[c].connectiondata, inputConfig, runs[i*batchsize:(i+1)*batchsize], connectionname, numQuery, self.path, [], BENCHMARKER_VERBOSE_QUERIES)) for i in range(numBatches)]
+					multiple_results = [pool.apply_async(singleRun, (self.dbms[c].connectiondata, inputConfig, runs[i*batchsize:(i+1)*batchsize], connectionname, numQuery, self.path, [], BENCHMARKER_VERBOSE_QUERIES, BENCHMARKER_VERBOSE_RESULTS)) for i in range(numBatches)]
 					lists = [res.get(timeout=timeout) for res in multiple_results]
 					lists = [i for j in lists for i in j]
 			# store end time for query / connection
@@ -1583,7 +1583,8 @@ class benchmarker():
 			connectionname=connectionname,
 			numQuery=0,
 			path=None,
-			BENCHMARKER_VERBOSE_QUERIES=BENCHMARKER_VERBOSE_QUERIES)
+			BENCHMARKER_VERBOSE_QUERIES=BENCHMARKER_VERBOSE_QUERIES,
+			BENCHMARKER_VERBOSE_RESULTS=BENCHMARKER_VERBOSE_RESULTS)
 		output = output[0]
 		return output
 	def runAndStoreIsolatedQuery(self, connectionname, queryString, queryName=None):
