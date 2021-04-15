@@ -48,7 +48,7 @@ import pprint
 
 BENCHMARKER_VERBOSE_QUERIES = False
 BENCHMARKER_VERBOSE_STATISTICS = False
-
+BENCHMARKER_VERBOSE_RESULTS = False
 
 class singleRunInput:
 	"""
@@ -156,6 +156,12 @@ def singleRun(connectiondata, inputConfig, numRuns, connectionname, numQuery, pa
 					durationTransfer = 1000.0*(end - start)
 					print(workername+"transfer [ms]: "+str(durationTransfer))
 					data = [[str(item).strip() for item in sublist] for sublist in data]
+					if BENCHMARKER_VERBOSE_RESULTS:
+						s = [[str(e) for e in row] for row in data]
+						lens = [max(map(len, col)) for col in zip(*s)]
+						fmt = '\t'.join('{{:{}}}'.format(x) for x in lens)
+						table = [fmt.format(*row) for row in s]
+						print('\n'.join(table))
 					size = sys.getsizeof(data)
 					print(workername+"Size of result list retrieved: "+str(size)+" bytes")
 					#logging.debug(data)

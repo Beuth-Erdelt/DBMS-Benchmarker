@@ -52,6 +52,7 @@ if __name__ == '__main__':
 	parser.add_argument('-sf', '--subfolder', help='stores results in a SUBFOLDER of the result folder', default=None)
 	parser.add_argument('-vq', '--verbose-queries', help='print every query that is sent', action='store_true', default=False)
 	parser.add_argument('-vs', '--verbose-statistics', help='print statistics about query that have been sent', action='store_true', default=False)
+	parser.add_argument('-vr', '--verbose-results', help='print result sets of every query that have been sent', action='store_true', default=False)
 	parser.add_argument('-pn', '--num-run', help='Parameter: Number of executions per query', default=0)
 	parser.add_argument('-m', '--metrics', help='collect hardware metrics', action='store_true', default=False)
 	#parser.add_argument('-pt', '--timeout', help='Parameter: Timeout in seconds', default=0)
@@ -106,6 +107,8 @@ if __name__ == '__main__':
 		benchmarker.BENCHMARKER_VERBOSE_QUERIES = True
 	if args.verbose_statistics:
 		benchmarker.BENCHMARKER_VERBOSE_STATISTICS = True
+	if args.verbose_results:
+		benchmarker.BENCHMARKER_VERBOSE_RESULTS = True
 	if int(args.num_run) > 0:
 		querymanagement = {
  			'numRun': int(args.num_run),
