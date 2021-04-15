@@ -3356,4 +3356,4 @@ def change_favorites(add_n_clicks, remove_n_clicks, upload_contents, code, selec
 ########################################################################################
 
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    app.run_server(debug=True,,host='0.0.0.0')
