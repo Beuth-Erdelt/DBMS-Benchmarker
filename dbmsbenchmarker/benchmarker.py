@@ -1337,11 +1337,6 @@ class benchmarker():
 				bBenchmarkDone = self.runBenchmark(numQuery, c)
 				# if benchmark has been done: store and generate reports
 				if bBenchmarkDone:
-					# close global connection
-					if singleConnection:
-						print("Closed connection for", connectionname)
-						self.activeConnections[i].disconnect()
-						self.activeConnections = []
 					# store results
 					self.reporterStore.generate(numQuery, [self.timerExecution, self.timerTransfer, self.timerConnect])
 					if not self.bBatch:
@@ -1349,6 +1344,11 @@ class benchmarker():
 						for r in self.reporter:
 							r.init()
 							r.generate(numQuery, [self.timerExecution, self.timerTransfer, self.timerConnect])
+			# close global connection
+			if singleConnection:
+				print("Closed connection for", connectionname)
+				self.activeConnections[i].disconnect()
+				self.activeConnections = []
 	def runBenchmarks(self):
 		"""
 		Runs benchmarks or possibly reruns specific benchmarks.
