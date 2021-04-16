@@ -19,6 +19,7 @@ from tabulate import tabulate
 import logging
 import pandas as pd
 import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import os
 import csv
@@ -231,8 +232,8 @@ class printer(reporter):
 			header_times = list(map(lambda h: str(h)+"", list(range(query.warmup+1,query.numRun+1))))
 			header.extend(header_times)
 		# format stats and times
-		stats_output = {k: [list(map(lambda x: '{:.{prec}f}'.format(x, prec=2), sublist)) for sublist in [stat_q]] for k,stat_q in stats.items()}
-		times_output = {k: [list(map(lambda x: '{:.{prec}f}'.format(x, prec=2), sublist)) for sublist in [time_q]] for k,time_q in times.items()}
+		stats_output = {k: [list(map(lambda x: '{:.{prec}f}'.format(x, prec=2) if x is not None else 0, sublist)) for sublist in [stat_q]] for k,stat_q in stats.items()}
+		times_output = {k: [list(map(lambda x: '{:.{prec}f}'.format(x, prec=2) if x is not None else 0, sublist)) for sublist in [time_q]] for k,time_q in times.items()}
 		# add connection names
 		data = []
 		for c in sorted(self.benchmarker.dbms.keys()):

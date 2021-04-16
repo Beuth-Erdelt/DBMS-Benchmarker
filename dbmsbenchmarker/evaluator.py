@@ -439,10 +439,10 @@ def addStatistics(dataframe, drop_nan=True, drop_measures=False):
 	stat_min = df.min()
 	stat_max = df.max()
 	stat_first = df.iloc[0]
-	stat_last = df.iloc[len(df.index)-1]
+	stat_last = df.iloc[len(df.dropna().index)-1]
 	stat_sum = df.sum()
 	#stat_geo = np.exp(np.log(df.prod(axis=0))/df.notna().sum(1))
-	stat_geo = stats.gmean(df,axis=0)
+	stat_geo = stats.gmean(df.dropna(), axis=0)
 	stat_n = df.count(axis=0).array
 	#df.loc['n']= len(df.index)
 	df.loc['n']= stat_n

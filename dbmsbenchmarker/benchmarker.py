@@ -1084,6 +1084,7 @@ class benchmarker():
 			else:
 				# no parallel processes because JVM does not parallize
 				# time the queries and stop early if maxTime is reached
+				print("We have {} active connections".format(len(self.activeConnections)))
 				start_time_queries = default_timer()
 				lists = []
 				for i in range(numBatches):
@@ -1098,6 +1099,9 @@ class benchmarker():
 						lists_empty = [singleRunOutput() for i in range(query.numRun-len(lists))]
 						lists.extend(lists_empty)
 						break
+				for con in self.activeConnections:
+					print("Closed connection")
+					con.disconnect()
 			# store end time for query / connection
 			end = default_timer()
 			durationBenchmark = 1000.0*(end - start)
@@ -1431,11 +1435,15 @@ class benchmarker():
 				connectionmanagement = self.getConnectionManager(q+1, c)
 				batchsize = connectionmanagement['runsPerConnection']#self.runsPerConnection
 				numBatches = math.ceil(query.numRun/batchsize)
+				singleConnection = connectionmanagement['singleConnection']
+				if singleConnection:
+					batchsize = len(l)
+					numBatches = 1
 				#print(l)
 				#print(batchsize)
 				#print(numBatches)
 				# aggregation changes number of results (warmup!)
-				l_agg = [sum(l[i*batchsize:(i+1)*batchsize]) for i in range(numBatches)]
+				l_agg = [sum(filter(None,l[i*batchsize:(i+1)*batchsize])) for i in range(numBatches)]
 				self.timerSession.times[q][c] = l_agg
 				self.timerSession.stats[q][c] = self.timerSession.getStats(l_agg)
 		#self.timers = [self.timerSession] + self.timers#, self.timerExecution, self.timerTransfer, self.timerConnect]
