@@ -828,7 +828,7 @@ class benchmarker():
 			batchsize = math.ceil(query.numRun/numProcesses)
 		# unless pickling of java objects is possible
 		# we cannot have global connections
-		singleConnection = False
+		#singleConnection = False
 		return {'numProcesses': numProcesses, 'runsPerConnection': batchsize, 'timeout': timeout, 'singleConnection': singleConnection}
 	def runSingleBenchmarkRun(self, numQuery, connectionname, numRun=0):
 		"""
@@ -941,6 +941,9 @@ class benchmarker():
 		batchsize = connectionmanagement['runsPerConnection']#self.runsPerConnection
 		timeout = connectionmanagement['timeout']#self.timeout
 		singleConnection = connectionmanagement['singleConnection']
+		# Patch: if singleConnection only with single process
+		if singleConnection:
+			numProcesses = 1
 		if singleConnection and len(self.activeConnections) < numProcesses:
 			print("More active connections from {} to {}".format(len(self.activeConnections), numProcesses))
 			for i in range(len(self.activeConnections), numProcesses):
@@ -1058,17 +1061,22 @@ class benchmarker():
 			# store start time for query / connection
 			self.protocol['query'][str(numQuery)]['starts'][c] = str(datetime.datetime.now())
 			# pooling
-			if self.pool is not None:
-				#multiple_results = [self.pool.apply_async(singleRun, (self.dbms[c].connectiondata, inputConfig, runs[i*batchsize:(i+1)*batchsize], connectionname, numQuery, self.path, JPickler.dumps(self.activeConnections))) for i in range(numBatches)]
-				multiple_results = [self.pool.apply_async(singleRun, (self.dbms[c].connectiondata, inputConfig, runs[i*batchsize:(i+1)*batchsize], connectionname, numQuery, self.path, [], BENCHMARKER_VERBOSE_QUERIES, BENCHMARKER_VERBOSE_RESULTS)) for i in range(numBatches)]
-				lists = [res.get(timeout=timeout) for res in multiple_results]
-				lists = [i for j in lists for i in j]
-			else:
-				with mp.Pool(processes=numProcesses) as pool:
-					#multiple_results = [pool.apply_async(singleRun, (self.dbms[c].connectiondata, inputConfig, runs[i*batchsize:(i+1)*batchsize], connectionname, numQuery, self.path, JPickler.dumps(self.activeConnections))) for i in range(numBatches)]
-					multiple_results = [pool.apply_async(singleRun, (self.dbms[c].connectiondata, inputConfig, runs[i*batchsize:(i+1)*batchsize], connectionname, numQuery, self.path, [], BENCHMARKER_VERBOSE_QUERIES, BENCHMARKER_VERBOSE_RESULTS)) for i in range(numBatches)]
+			if not singleConnection:
+				if self.pool is not None:
+					#multiple_results = [self.pool.apply_async(singleRun, (self.dbms[c].connectiondata, inputConfig, runs[i*batchsize:(i+1)*batchsize], connectionname, numQuery, self.path, JPickler.dumps(self.activeConnections))) for i in range(numBatches)]
+					multiple_results = [self.pool.apply_async(singleRun, (self.dbms[c].connectiondata, inputConfig, runs[i*batchsize:(i+1)*batchsize], connectionname, numQuery, self.path, [], BENCHMARKER_VERBOSE_QUERIES, BENCHMARKER_VERBOSE_RESULTS)) for i in range(numBatches)]
 					lists = [res.get(timeout=timeout) for res in multiple_results]
 					lists = [i for j in lists for i in j]
+				else:
+					with mp.Pool(processes=numProcesses) as pool:
+						#multiple_results = [pool.apply_async(singleRun, (self.dbms[c].connectiondata, inputConfig, runs[i*batchsize:(i+1)*batchsize], connectionname, numQuery, self.path, JPickler.dumps(self.activeConnections))) for i in range(numBatches)]
+						multiple_results = [pool.apply_async(singleRun, (self.dbms[c].connectiondata, inputConfig, runs[i*batchsize:(i+1)*batchsize], connectionname, numQuery, self.path, [], BENCHMARKER_VERBOSE_QUERIES, BENCHMARKER_VERBOSE_RESULTS)) for i in range(numBatches)]
+						lists = [res.get(timeout=timeout) for res in multiple_results]
+						lists = [i for j in lists for i in j]
+			else:
+				# no parallel processes because JVM does not parallize
+				for i in range(numProcesses):
+					lists = singleRun(self.dbms[c].connectiondata, inputConfig, runs[i*batchsize:(i+1)*batchsize], connectionname, numQuery, self.path, self.activeConnections, BENCHMARKER_VERBOSE_QUERIES, BENCHMARKER_VERBOSE_RESULTS)
 			# store end time for query / connection
 			end = default_timer()
 			durationBenchmark = 1000.0*(end - start)
