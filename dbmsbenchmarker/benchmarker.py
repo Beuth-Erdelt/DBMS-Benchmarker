@@ -1101,10 +1101,11 @@ class benchmarker():
 						lists_empty = [singleRunOutput() for i in range(query.numRun-len(lists))]
 						lists.extend(lists_empty)
 						break
-				for con in self.activeConnections:
-					print("Closed connection")
-					con.disconnect()
-				self.activeConnections = []
+				# we do not close connections per query but per workload
+				#for con in self.activeConnections:
+				#	print("Closed connection")
+				#	con.disconnect()
+				#self.activeConnections = []
 			# store end time for query / connection
 			end = default_timer()
 			durationBenchmark = 1000.0*(end - start)
@@ -1316,10 +1317,31 @@ class benchmarker():
 		:return: returns nothing
 		"""
 		for c in sorted(self.dbms.keys()):
+			# check if we need a global connection
+			singleConnection = False
+			if 'connectionmanagement' in self.queryconfig:
+				connectionmanagement = self.queryconfig['connectionmanagement']
+				if('singleConnection' in connectionmanagement):# and connectionmanagement['timeout'] != 0):
+					singleConnection = connectionmanagement['singleConnection']
+					if singleConnection:
+						# we assume all queries should share a connection
+						numProcesses = 1
+						i = 0
+						connectionname = c
+						print("More active connections from {} to {}".format(len(self.activeConnections), numProcesses))
+						self.activeConnections.append(tools.dbms(self.dbms[connectionname].connectiondata))
+						print("Establish global connection #"+str(i))
+						self.activeConnections[i].connect()
+			# work queries
 			for numQuery in range(1, len(self.queries)+1):
 				bBenchmarkDone = self.runBenchmark(numQuery, c)
 				# if benchmark has been done: store and generate reports
 				if bBenchmarkDone:
+					# close global connection
+					if singleConnection:
+						print("Closed connection for", connectionname)
+						self.activeConnections[i].disconnect()
+						self.activeConnections = []
 					# store results
 					self.reporterStore.generate(numQuery, [self.timerExecution, self.timerTransfer, self.timerConnect])
 					if not self.bBatch:
