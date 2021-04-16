@@ -1075,8 +1075,10 @@ class benchmarker():
 						lists = [i for j in lists for i in j]
 			else:
 				# no parallel processes because JVM does not parallize
-				for i in range(numProcesses):
-					lists = singleRun(self.dbms[c].connectiondata, inputConfig, runs[i*batchsize:(i+1)*batchsize], connectionname, numQuery, self.path, self.activeConnections, BENCHMARKER_VERBOSE_QUERIES, BENCHMARKER_VERBOSE_RESULTS)
+				lists = []
+				for i in range(numBatches):
+					lists_batch = singleRun(self.dbms[c].connectiondata, inputConfig, runs[i*batchsize:(i+1)*batchsize], connectionname, numQuery, self.path, self.activeConnections, BENCHMARKER_VERBOSE_QUERIES, BENCHMARKER_VERBOSE_RESULTS)
+					lists.extend(lists_batch)
 			# store end time for query / connection
 			end = default_timer()
 			durationBenchmark = 1000.0*(end - start)
