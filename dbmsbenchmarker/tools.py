@@ -75,6 +75,8 @@ class timer():
 		:param data: List of numbers
 		:return: returns 6 statistical numbers as a list
 		"""
+		# remove Nones for all statistics
+		data = [x for x in data if x is not None]
 		# remove zeros for some statistics
 		data_no_zeros = list(filter((0.0).__ne__, data))
 		if len(data_no_zeros) == 0:
@@ -357,6 +359,7 @@ class query():
 		:param query: Dict containing query infos - query, numRun, numParallel, withData, warmup, cooldown, title
 		:return: returns nothing
 		"""
+		self.maxTime = None
 		self.numRunStd = 5
 		self.numRun = 0
 		self.numParallel = 1
@@ -398,6 +401,8 @@ class query():
 	def dictToObject(self, query):
 		if 'query' in query:
 			self.query = query['query']
+		if 'maxTime' in query:
+			self.maxTime = float(query['maxTime'])
 		if 'numRun' in query:
 			self.numRun = int(query['numRun'])
 		if 'numParallel' in query:

@@ -66,6 +66,13 @@ class singleRunOutput:
 	Class for collecting info about a benchmark run
 	"""
 	def __init__(self):
+		self.durationConnect = 0.0
+		self.durationExecute = None#0.0
+		self.durationTransfer = None#0.0
+		self.error = ''
+		self.data = []
+		self.columnnames = []
+		self.size = 0
 		pass
 
 
@@ -1008,6 +1015,7 @@ class benchmarker():
 		self.protocol['query'][str(numQuery)]['warnings'][c] = ""
 		# dump settings
 		print("runsPerConnection: "+str(batchsize))
+		print("numBatches: "+str(numBatches))
 		print("numProcesses: "+str(numProcesses))
 		print("timeout: "+str(timeout))
 		print("singleConnection: "+str(singleConnection))
@@ -1075,10 +1083,21 @@ class benchmarker():
 						lists = [i for j in lists for i in j]
 			else:
 				# no parallel processes because JVM does not parallize
+				# time the queries and stop early if maxTime is reached
+				start_time_queries = default_timer()
 				lists = []
 				for i in range(numBatches):
 					lists_batch = singleRun(self.dbms[c].connectiondata, inputConfig, runs[i*batchsize:(i+1)*batchsize], connectionname, numQuery, self.path, self.activeConnections, BENCHMARKER_VERBOSE_QUERIES, BENCHMARKER_VERBOSE_RESULTS)
 					lists.extend(lists_batch)
+					end_time_queries = default_timer()
+					duration_queries = (end_time_queries - start_time_queries)
+					if query.maxTime is not None and query.maxTime < duration_queries:
+						# fill with zero? affects statistics
+						print("Reached maxTime={}s after {}s".format(query.maxTime, duration_queries))
+						print("We have received {} query results, so {} are missing and will be filled up".format(len(lists), query.numRun-len(lists)))
+						lists_empty = [singleRunOutput() for i in range(query.numRun-len(lists))]
+						lists.extend(lists_empty)
+						break
 			# store end time for query / connection
 			end = default_timer()
 			durationBenchmark = 1000.0*(end - start)
@@ -1369,10 +1388,12 @@ class benchmarker():
 				#print(self.timerTransfer.times[q][c])
 				#print(self.timerConnect.times[q][c])
 				l = self.timerExecution.times[q][c]
+				def addition_no_null(x,y):
+					return x+y if x is not None and y is not None else None
 				if c in self.timerTransfer.times[q]:
-					l = list(map(add, l, self.timerTransfer.times[q][c]))
+					l = list(map(addition_no_null, l, self.timerTransfer.times[q][c]))
 				if c in self.timerConnect.times[q]:
-					l = list(map(add, l, self.timerConnect.times[q][c]))
+					l = list(map(addition_no_null, l, self.timerConnect.times[q][c]))
 				#l = list(map(add, list(map(add, self.timerExecution.times[q][c], self.timerTransfer.times[q][c])), self.timerConnect.times[q][c]))
 				#print(l)
 				self.timerRun.times[q][c] = l
@@ -1399,11 +1420,13 @@ class benchmarker():
 				#print(self.timerExecution.times[q][c])
 				#print(self.timerTransfer.times[q][c])
 				#print(self.timerConnect.times[q][c])
+				def addition_no_null(x,y):
+					return x+y if x is not None and y is not None else None
 				l = self.timerExecution.times[q][c]
 				if c in self.timerTransfer.times[q]:
-					l = list(map(add, l, self.timerTransfer.times[q][c]))
+					l = list(map(addition_no_null, l, self.timerTransfer.times[q][c]))
 				if c in self.timerConnect.times[q]:
-					l = list(map(add, l, self.timerConnect.times[q][c]))
+					l = list(map(addition_no_null, l, self.timerConnect.times[q][c]))
 				#print(l)
 				connectionmanagement = self.getConnectionManager(q+1, c)
 				batchsize = connectionmanagement['runsPerConnection']#self.runsPerConnection
