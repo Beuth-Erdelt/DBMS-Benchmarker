@@ -97,7 +97,9 @@ def singleRun(connectiondata, inputConfig, numRuns, connectionname, numQuery, pa
 	results = []
 	# compute number of (parallel) connection
 	# example: 5/6/7/8 yields number 1 (i.e. the second one)
+	# this is working, but requires a connection per batch
 	numActiveConnection = math.floor(numRuns[0]/len(numRuns))
+	numActiveConnection = 0
 	#activeConnections = JUnpickler.loads(activeConnections)
 	#print(numActiveConnection)
 	#print(len(activeConnections))
@@ -1102,6 +1104,7 @@ class benchmarker():
 				for con in self.activeConnections:
 					print("Closed connection")
 					con.disconnect()
+				self.activeConnections = []
 			# store end time for query / connection
 			end = default_timer()
 			durationBenchmark = 1000.0*(end - start)
