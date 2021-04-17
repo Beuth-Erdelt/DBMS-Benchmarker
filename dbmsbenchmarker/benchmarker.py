@@ -347,7 +347,7 @@ class benchmarker():
 		if seed is not None:
 			random.seed(seed)
 		## connection management:
-		self.connectionmanagement = {'numProcesses': numProcesses, 'runsPerConnection': None, 'timeout': None, 'singleConnection': False}
+		self.connectionmanagement = {'numProcesses': numProcesses, 'runsPerConnection': None, 'timeout': None, 'singleConnection': True}
 		# set number of parallel client processes
 		#self.connectionmanagement['numProcesses'] = numProcesses
 		if self.connectionmanagement['numProcesses'] is None:
