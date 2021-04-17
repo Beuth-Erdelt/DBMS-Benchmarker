@@ -1130,10 +1130,11 @@ class benchmarker():
 			for i in range(query.numRun):
 				inputConfig.append(singleResultInput(i, l_data[i], l_columnnames[i], self.queries[numQuery-1]))
 			lists = []
-			numProcesses_data = mp.cpu_count()
+			numProcesses_cpu = mp.cpu_count()
 			batchsize_data = 1
 			numBatches_data = math.ceil(query.numRun/batchsize_data)
 			runs_data = list(range(0,query.numRun))
+			numProcesses_data = min(numProcesses_cpu, numBatches_data)
 			if query.storeData != False:
 				with mp.Pool(processes=numProcesses_data) as pool:
 					multiple_results = [pool.apply_async(singleResult, (self.dbms[c].connectiondata, inputConfig, runs[i*batchsize_data:(i+1)*batchsize_data], connectionname, numQuery, self.path)) for i in range(numBatches_data)]
