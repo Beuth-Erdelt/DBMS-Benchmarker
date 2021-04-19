@@ -244,6 +244,7 @@ def singleResult(connectiondata, inputConfig, numRuns, connectionname, numQuery,
 	import logging
 	logger = logging.getLogger()
 	logger.setLevel(logging.DEBUG)
+	logging.debug(workername+"Processing result sets of {} runs for query {}".format(len(numRuns), numQuery))
 	# init list of results
 	results = []
 	# info about dbms
@@ -271,6 +272,7 @@ def singleResult(connectiondata, inputConfig, numRuns, connectionname, numQuery,
 			# convert to dataframe
 			#columnnames = [[i[0].upper() for i in connection.cursor.description]]
 			df = pd.DataFrame.from_records(data)
+			logging.debug(workername+'Data {}'.format(data))
 			logging.debug(workername+'DataFrame generated')
 			if not df.empty:
 				df.columns = columnnames
