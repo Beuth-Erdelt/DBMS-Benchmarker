@@ -243,7 +243,7 @@ def singleResult(connectiondata, inputConfig, numRuns, connectionname, numQuery,
 	"""
 	import logging
 	logger = logging.getLogger()
-	logger.setLevel(logging.ERROR)
+	logger.setLevel(logging.DEBUG)
 	# init list of results
 	results = []
 	# info about dbms
