@@ -1129,6 +1129,7 @@ class benchmarker():
 			inputConfig = []
 			for i in range(query.numRun):
 				inputConfig.append(singleResultInput(i, l_data[i], l_columnnames[i], self.queries[numQuery-1]))
+			print(inputConfig)
 			lists = []
 			numProcesses_cpu = mp.cpu_count()
 			batchsize_data = 1
