@@ -244,7 +244,7 @@ def singleResult(connectiondata, inputConfig, numRuns, connectionname, numQuery,
 	import logging
 	logger = logging.getLogger()
 	logger.setLevel(logging.DEBUG)
-	logging.debug(workername+"Processing result sets of {} runs for query {}".format(len(numRuns), numQuery))
+	logging.debug("Processing result sets of {} runs for query {}".format(len(numRuns), numQuery))
 	# init list of results
 	results = []
 	# info about dbms
