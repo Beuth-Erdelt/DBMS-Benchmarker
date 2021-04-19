@@ -282,13 +282,13 @@ def singleResult(connectiondata, inputConfig, numRuns, connectionname, numQuery,
 				if path is not None:
 					if 'dataframe' in query.storeResultSetFormat:
 						filename = path+"/query_"+str(numQuery)+"_resultset_"+connectionname+".pickle"
-						print(workername+"Store pickle of result set to "+filename)
+						logging.debug(workername+"Store pickle of result set to "+filename)
 						f = open(filename, "wb")
 						pickle.dump(df, f)
 						f.close()
 					if 'csv' in query.storeResultSetFormat:
 						filename = path+"/query_"+str(numQuery)+"_resultset_"+connectionname+".csv"
-						print(workername+"Store csv of result set to "+filename)
+						logging.debug(workername+"Store csv of result set to "+filename)
 						f = open(filename, "w")
 						f.write(df.to_csv(index_label=False,index=False))
 						f.close()
@@ -307,6 +307,7 @@ def singleResult(connectiondata, inputConfig, numRuns, connectionname, numQuery,
 			else:
 				#columnnames = [[n[0].upper() for n in connection.cursor.description]]
 				data = columnnames + data
+				logging.debug(workername+"Uncompressed")
 			logging.debug(workername+"Size of sorted result list stored: "+str(sys.getsizeof(data))+" bytes")
 		except Exception as e:
 			logging.exception(workername+'Caught an error: %s' % str(e))
