@@ -271,9 +271,11 @@ def singleResult(connectiondata, inputConfig, numRuns, connectionname, numQuery,
 			# convert to dataframe
 			#columnnames = [[i[0].upper() for i in connection.cursor.description]]
 			df = pd.DataFrame.from_records(data)
+			logging.debug(workername+'DataFrame generated')
 			if not df.empty:
 				df.columns = columnnames
 			size = int(df.memory_usage(index=True).sum())
+			logging.debug(workername+'DataFrame size: %s' %str(size))
 			# store result set for connection and query
 			storeResultSet = query.storeResultSet
 			if storeResultSet and numRun==0:
@@ -313,6 +315,7 @@ def singleResult(connectiondata, inputConfig, numRuns, connectionname, numQuery,
 			size = 0
 		finally:
 			pass
+		logging.debug(workername+'Done processing result')
 		result = singleRunOutput()
 		result.error = error
 		result.data = data
