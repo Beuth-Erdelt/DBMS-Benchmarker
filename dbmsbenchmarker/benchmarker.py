@@ -104,14 +104,14 @@ def singleRun(connectiondata, inputConfig, numRuns, connectionname, numQuery, pa
 	#print(numActiveConnection)
 	#print(len(activeConnections))
 	if len(activeConnections) > numActiveConnection:
-		print("Found active connection #"+str(numActiveConnection))
+		logger.info("Found active connection #"+str(numActiveConnection))
 		connection = activeConnections[numActiveConnection]
 		durationConnect = 0.0
 	else:
 		# look at first run to determine of there should be sleeping
 		query = tools.query(inputConfig[numRuns[0]].queryConfig)
 		if query.delay_connect > 0:
-			print("Delay Connection by "+str(query.delay_connect)+" seconds")
+			logger.info("Delay Connection by "+str(query.delay_connect)+" seconds")
 			time.sleep(query.delay_connect)
 		# connect to dbms
 		connection = tools.dbms(connectiondata)
@@ -119,8 +119,8 @@ def singleRun(connectiondata, inputConfig, numRuns, connectionname, numQuery, pa
 		connection.connect()
 		end = default_timer()
 		durationConnect = 1000.0*(end - start)
-	print(("singleRun batch size %i: " % len(numRuns)))
-	print(("numRun %s: " % ("/".join([str(i+1) for i in numRuns])))+"connection [ms]: "+str(durationConnect))
+	logger.info(("singleRun batch size %i: " % len(numRuns)))
+	logger.info(("numRun %s: " % ("/".join([str(i+1) for i in numRuns])))+"connection [ms]: "+str(durationConnect))
 	# perform runs for this connection
 	for numRun in numRuns:
 		workername = "numRun %i: " % (numRun+1)
@@ -128,7 +128,7 @@ def singleRun(connectiondata, inputConfig, numRuns, connectionname, numQuery, pa
 		#print(workername+queryString)
 		query = tools.query(inputConfig[numRun].queryConfig)
 		if query.delay_run > 0:
-			print(workername+"Delay Run by "+str(query.delay_run)+" seconds")
+			logger.info(workername+"Delay Run by "+str(query.delay_run)+" seconds")
 			time.sleep(query.delay_run)
 		error = ""
 		try:
@@ -136,9 +136,9 @@ def singleRun(connectiondata, inputConfig, numRuns, connectionname, numQuery, pa
 			if BENCHMARKER_VERBOSE_QUERIES:
 				if isinstance(queryString, list):
 					for queryPart in queryString:
-						print(workername+queryPart)
+						logger.info(workername+queryPart)
 				else:
-					print(workername+queryString)
+					logger.info(workername+queryString)
 			connection.openCursor()
 			#end = default_timer()
 			#durationConnect += 1000.0*(end - start)
@@ -151,7 +151,7 @@ def singleRun(connectiondata, inputConfig, numRuns, connectionname, numQuery, pa
 				connection.executeQuery(queryString)
 			end = default_timer()
 			durationExecute = 1000.0*(end - start)
-			print(workername+"execution [ms]: "+str(durationExecute))
+			logger.info(workername+"execution [ms]: "+str(durationExecute))
 			# transfer
 			data = []
 			columnnames = []
@@ -163,10 +163,10 @@ def singleRun(connectiondata, inputConfig, numRuns, connectionname, numQuery, pa
 					data=connection.fetchResult()
 					end = default_timer()
 					durationTransfer = 1000.0*(end - start)
-					print(workername+"transfer [ms]: "+str(durationTransfer))
+					logger.info(workername+"transfer [ms]: "+str(durationTransfer))
 					data = [[str(item).strip() for item in sublist] for sublist in data]
 					size = sys.getsizeof(data)
-					print(workername+"Size of result list retrieved: "+str(size)+" bytes")
+					logger.info(workername+"Size of result list retrieved: "+str(size)+" bytes")
 					#logging.debug(data)
 					columnnames = [[i[0].upper() for i in connection.cursor.description]]
 					if BENCHMARKER_VERBOSE_RESULTS:
@@ -174,9 +174,9 @@ def singleRun(connectiondata, inputConfig, numRuns, connectionname, numQuery, pa
 						lens = [max(map(len, col)) for col in zip(*s)]
 						fmt = '\t'.join('{{:{}}}'.format(x) for x in lens)
 						table = [fmt.format(*row) for row in s]
-						print('\n'.join(table))
+						logger.info('\n'.join(table))
 					if not query.storeData:
-						print(workername+"Forget result set")
+						logger.info(workername+"Forget result set")
 						data = []
 						columnnames = []
 					#logging.debug(columnnames)
