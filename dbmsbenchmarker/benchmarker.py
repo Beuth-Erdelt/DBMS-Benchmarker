@@ -1144,15 +1144,26 @@ class benchmarker():
 			numProcesses_data = min(numProcesses_cpu, numBatches_data)
 			if query.storeData != False:
 				if numProcesses_data == 1:
+					# single result set
 					print("Process {} runs in {} batches of size {} within this processes".format(query.numRun, numBatches_data, batchsize_data, numProcesses_data))
 					i = 0
 					lists = singleResult(self.dbms[c].connectiondata, inputConfig, runs[i*batchsize_data:(i+1)*batchsize_data], connectionname, numQuery, self.path)
 				else:
+					# several result sets
+					# process sequentially
+					print("Process {} runs in {} batches of size {} within this processes sequentially".format(query.numRun, numBatches_data, batchsize_data))
+					lists = []
+					for i in range(numBatches_data):
+						lists_batch = singleResult(self.dbms[c].connectiondata, inputConfig, runs[i*batchsize_data:(i+1)*batchsize_data], connectionname, numQuery, self.path)
+						lists.extend(lists_batch)
+					# process in parallel
+					"""
 					print("Process {} runs in {} batches of size {} with a pool of {} processes".format(query.numRun, numBatches_data, batchsize_data, numProcesses_data))
 					with mp.Pool(processes=numProcesses_data) as pool:
 						multiple_results = [pool.apply_async(singleResult, (self.dbms[c].connectiondata, inputConfig, runs[i*batchsize_data:(i+1)*batchsize_data], connectionname, numQuery, self.path)) for i in range(numBatches_data)]
 						lists = [res.get(timeout=timeout) for res in multiple_results]
 						lists = [i for j in lists for i in j]
+					"""
 				l_data = [l.data for l in lists]
 				l_size = [l.size for l in lists]
 			#print("Size:")
