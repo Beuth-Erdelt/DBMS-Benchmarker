@@ -92,7 +92,7 @@ def singleRun(connectiondata, inputConfig, numRuns, connectionname, numQuery, pa
 	#global activeConnections
 	import logging
 	logger = logging.getLogger()
-	logger.setLevel(logging.ERROR)
+	logger.setLevel(logging.DEBUG)
 	# init list of results
 	results = []
 	# compute number of (parallel) connection
@@ -944,10 +944,10 @@ class benchmarker():
 		self.startBenchmarkingQuery(numQuery)
 		q = self.queries[numQuery-1]
 		c = connectionname
-		print("Connection: "+connectionname)
+		logging.info("Connection: "+connectionname)
 		# prepare multiprocessing
 		logger = mp.log_to_stderr()
-		logger.setLevel(logging.ERROR)
+		logger.setLevel(logging.INFO)
 		# prepare query object
 		query = tools.query(q)
 		# connection management for parallel connections
@@ -960,10 +960,10 @@ class benchmarker():
 		if singleConnection:
 			numProcesses = 1
 		if singleConnection and len(self.activeConnections) < numProcesses:
-			print("More active connections from {} to {}".format(len(self.activeConnections), numProcesses))
+			logging.info("More active connections from {} to {}".format(len(self.activeConnections), numProcesses))
 			for i in range(len(self.activeConnections), numProcesses):
 				self.activeConnections.append(tools.dbms(self.dbms[connectionname].connectiondata))
-				print("Establish global connection #"+str(i))
+				logging.info("Establish global connection #"+str(i))
 				self.activeConnections[i].connect()
 		# overwrite by connection
 		#if 'connectionmanagement' in self.dbms[c].connectiondata:
@@ -1001,7 +1001,7 @@ class benchmarker():
 			self.protocol['query'][str(numQuery)]['sizes'][c] = 0.0
 		# skip query if not active
 		if not query.active:
-			print("Benchmarks of Q"+str(numQuery)+" at dbms "+connectionname+" is not active")
+			logging.info("Benchmarks of Q"+str(numQuery)+" at dbms "+connectionname+" is not active")
 			# this stores empty values as placeholder - query list is a "list"
 			self.timerExecution.skipTimer(numQuery, query, connectionname)
 			self.timerTransfer.skipTimer(numQuery, query, connectionname)
@@ -1010,7 +1010,7 @@ class benchmarker():
 			return False
 		# skip connection if not active
 		if not self.dbms[c].connectiondata['active']:
-			print("Benchmarks of Q"+str(numQuery)+" at dbms "+connectionname+" is not active")
+			logging.info("Benchmarks of Q"+str(numQuery)+" at dbms "+connectionname+" is not active")
 			# this stores empty values as placeholder
 			self.timerExecution.skipTimer(numQuery, query, connectionname)
 			self.timerTransfer.skipTimer(numQuery, query, connectionname)
@@ -1022,11 +1022,11 @@ class benchmarker():
 		self.protocol['query'][str(numQuery)]['errors'][c] = ""
 		self.protocol['query'][str(numQuery)]['warnings'][c] = ""
 		# dump settings
-		print("runsPerConnection: "+str(batchsize))
-		print("numBatches: "+str(numBatches))
-		print("numProcesses: "+str(numProcesses))
-		print("timeout: "+str(timeout))
-		print("singleConnection: "+str(singleConnection))
+		logging.info("runsPerConnection: "+str(batchsize))
+		logging.info("numBatches: "+str(numBatches))
+		logging.info("numProcesses: "+str(numProcesses))
+		logging.info("timeout: "+str(timeout))
+		logging.info("singleConnection: "+str(singleConnection))
 		# do we want to keep result sets? (because of mismatch)
 		keepResultsets = False
 		# do we want to cancel / abort loop over benchmarks?
@@ -1092,7 +1092,7 @@ class benchmarker():
 			else:
 				# no parallel processes because JVM does not parallize
 				# time the queries and stop early if maxTime is reached
-				print("We have {} active connections".format(len(self.activeConnections)))
+				logging.info("We have {} active connections".format(len(self.activeConnections)))
 				start_time_queries = default_timer()
 				lists = []
 				for i in range(numBatches):
@@ -1102,8 +1102,8 @@ class benchmarker():
 					duration_queries = (end_time_queries - start_time_queries)
 					if query.maxTime is not None and query.maxTime < duration_queries:
 						# fill with zero? affects statistics
-						print("Reached maxTime={}s after {}s".format(query.maxTime, duration_queries))
-						print("We have received {} query results, so {} are missing and will be filled up".format(len(lists), query.numRun-len(lists)))
+						logging.info("Reached maxTime={}s after {}s".format(query.maxTime, duration_queries))
+						logging.info("We have received {} query results, so {} are missing and will be filled up".format(len(lists), query.numRun-len(lists)))
 						lists_empty = [singleRunOutput() for i in range(query.numRun-len(lists))]
 						lists.extend(lists_empty)
 						break
@@ -1125,7 +1125,7 @@ class benchmarker():
 				if len(l_error[i]) > 0:
 					error = l_error[i]
 					break
-			print(error)
+			logging.info(error)
 			self.timerConnect.time_c = l_connect
 			self.timerExecution.time_c = l_execute
 			self.timerTransfer.time_c = l_transfer
@@ -1135,7 +1135,7 @@ class benchmarker():
 			inputConfig = []
 			for i in range(query.numRun):
 				inputConfig.append(singleResultInput(i, l_data[i], l_columnnames[i], self.queries[numQuery-1]))
-			print(inputConfig)
+			#print(inputConfig)
 			lists = []
 			numProcesses_cpu = mp.cpu_count()
 			batchsize_data = 1
@@ -1145,20 +1145,20 @@ class benchmarker():
 			if query.storeData != False:
 				if numProcesses_data == 1:
 					# single result set
-					print("Process {} runs in {} batches of size {} within this processes".format(query.numRun, numBatches_data, batchsize_data, numProcesses_data))
+					logging.info("Process {} runs in {} batches of size {} within this processes".format(query.numRun, numBatches_data, batchsize_data, numProcesses_data))
 					i = 0
 					lists = singleResult(self.dbms[c].connectiondata, inputConfig, runs[i*batchsize_data:(i+1)*batchsize_data], connectionname, numQuery, self.path)
 				else:
 					# several result sets
 					# process sequentially
-					print("Process {} runs in {} batches of size {} within this processes sequentially".format(query.numRun, numBatches_data, batchsize_data))
+					logging.info("Process {} runs in {} batches of size {} within this processes sequentially".format(query.numRun, numBatches_data, batchsize_data))
 					lists = []
 					for i in range(numBatches_data):
 						lists_batch = singleResult(self.dbms[c].connectiondata, inputConfig, runs[i*batchsize_data:(i+1)*batchsize_data], connectionname, numQuery, self.path)
 						lists.extend(lists_batch)
 					# process in parallel
 					"""
-					print("Process {} runs in {} batches of size {} with a pool of {} processes".format(query.numRun, numBatches_data, batchsize_data, numProcesses_data))
+					logging.info("Process {} runs in {} batches of size {} with a pool of {} processes".format(query.numRun, numBatches_data, batchsize_data, numProcesses_data))
 					with mp.Pool(processes=numProcesses_data) as pool:
 						multiple_results = [pool.apply_async(singleResult, (self.dbms[c].connectiondata, inputConfig, runs[i*batchsize_data:(i+1)*batchsize_data], connectionname, numQuery, self.path)) for i in range(numBatches_data)]
 						lists = [res.get(timeout=timeout) for res in multiple_results]
@@ -1171,7 +1171,7 @@ class benchmarker():
 			#print("Data:")
 			#print(l_data)
 			size = int(sum(l_size))
-			print("Size of data storage: "+str(size))
+			logging.info("Size of data storage: "+str(size))
 			self.protocol['query'][str(numQuery)]['sizes'][c] = size
 			# result set of query / connection
 			# only for comparion
@@ -1207,8 +1207,8 @@ class benchmarker():
 				numRunStorage = len(self.protocol['query'][str(numQuery)]['dataStorage'])
 				numRunReceived = len(l_data)
 				if BENCHMARKER_VERBOSE_STATISTICS:
-					print("NumRuns in Storage: "+str(numRunStorage))
-					print("NumRuns received: "+str(numRunReceived))
+					logging.info("NumRuns in Storage: "+str(numRunStorage))
+					logging.info("NumRuns received: "+str(numRunReceived))
 				if len(self.protocol['query'][str(numQuery)]['errors'][c]) == 0:
 					if BENCHMARKER_VERBOSE_STATISTICS:
 						print("NumRuns to compare: "+str(dataIndex))
@@ -1226,7 +1226,7 @@ class benchmarker():
 			#if len(self.resultfolder_subfolder) > 0:
 			# always store complete resultset for subfolders
 			filename = self.path+"/query_"+str(numQuery)+"_resultset_complete_"+connectionname+".pickle"
-			print("Store pickle of complete result set to "+filename)
+			logging.info("Store pickle of complete result set to "+filename)
 			f = open(filename, "wb")
 			pickle.dump(data, f)
 			f.close()
