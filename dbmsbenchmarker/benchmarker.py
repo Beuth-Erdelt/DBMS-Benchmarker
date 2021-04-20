@@ -1143,11 +1143,12 @@ class benchmarker():
 			runs_data = list(range(0,query.numRun))
 			numProcesses_data = min(numProcesses_cpu, numBatches_data)
 			if query.storeData != False:
-				print("Process {} runs in {} batches of size {} with a pool of {} processes".format(query.numRun, numBatches_data, batchsize_data, numProcesses_data))
 				if numProcesses_data == 1:
+					print("Process {} runs in {} batches of size {} within this processes".format(query.numRun, numBatches_data, batchsize_data, numProcesses_data))
 					i = 0
 					lists = singleResult(self.dbms[c].connectiondata, inputConfig, runs[i*batchsize_data:(i+1)*batchsize_data], connectionname, numQuery, self.path)
 				else:
+					print("Process {} runs in {} batches of size {} with a pool of {} processes".format(query.numRun, numBatches_data, batchsize_data, numProcesses_data))
 					with mp.Pool(processes=numProcesses_data) as pool:
 						multiple_results = [pool.apply_async(singleResult, (self.dbms[c].connectiondata, inputConfig, runs[i*batchsize_data:(i+1)*batchsize_data], connectionname, numQuery, self.path)) for i in range(numBatches_data)]
 						lists = [res.get(timeout=timeout) for res in multiple_results]
