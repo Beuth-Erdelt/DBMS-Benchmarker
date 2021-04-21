@@ -35,6 +35,7 @@ if __name__ == '__main__':
 	parser.add_argument('-cf', '--connection-file', help='name of connection config file', default='connections.config')
 	parser.add_argument('-q', '--query', help='number of query to benchmark', default=None)
 	parser.add_argument('-c', '--connection', help='name of connection to benchmark', default=None)
+	parser.add_argument('-ca', '--connection-alias', help='alias of connection to benchmark', default='')
 	parser.add_argument('-l', '--latex-template', help='name of latex template for reporting', default='pagePerQuery')
 	parser.add_argument('-f', '--config-folder', help='folder containing query and connection config files. If set, the names connections.config and queries.config are assumed automatically.', default=None)
 	parser.add_argument('-r', '--result-folder', help='folder for storing benchmark result files, default is given by timestamp', default=None)
@@ -71,6 +72,7 @@ if __name__ == '__main__':
 	# make a copy of result folder
 	subfolder = args.subfolder
 	rename_connection = ''
+	rename_alias = ''
 	if args.copy_subfolder and len(subfolder) > 0:
 		client = 1
 		while True:
@@ -89,6 +91,8 @@ if __name__ == '__main__':
 		subfolder = subfolder+'-'+str(client)
 		rename_connection = args.connection+'-'+str(client)
 		logging.debug("Rename connection {} to {}".format(args.connection, rename_connection))
+		rename_alias = args.connection_alias+'-'+str(client)
+		logging.debug("Rename alias {} to {}".format(args.connection_alias, rename_alias))
 	# sleep before going to work
 	if args.start_time is not None:
 		#logging.debug(args.start_time)
@@ -122,7 +126,9 @@ if __name__ == '__main__':
 		subfolder=subfolder,#args.subfolder,
 		fixedQuery=args.query,
 		fixedConnection=args.connection,
+		fixedAlias=args.connection_alias,
 		rename_connection=rename_connection,
+		rename_alias=rename_alias,
 		anonymize=args.anonymize,
 		unanonymize=args.unanonymize,
 		numProcesses=args.numProcesses,

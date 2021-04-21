@@ -332,7 +332,7 @@ class benchmarker():
 	"""
 	Class for running benchmarks
 	"""
-	def __init__(self, result_path=None, working='query', batch=False, fixedQuery=None, fixedConnection=None, rename_connection='', anonymize=False, unanonymize=[], numProcesses=None, seed=None, code=None, subfolder=None):
+	def __init__(self, result_path=None, working='query', batch=False, fixedQuery=None, fixedConnection=None, rename_connection='', rename_alias='', fixedAlias='', anonymize=False, unanonymize=[], numProcesses=None, seed=None, code=None, subfolder=None):
 		"""
 		Construct a new 'benchmarker' object.
 		Allocated the reporters store (always called) and printer (if reports are to be generated).
@@ -361,7 +361,10 @@ class benchmarker():
 		else:
 			self.connectionmanagement['numProcesses'] = int(self.numProcesses)
 		# connection should be renamed (because of copy to subfolder and parallel processing)
+		# also rename alias
 		self.rename_connection = rename_connection
+		self.rename_alias = rename_alias	# what alias is supposed to be renamed to
+		self.fixedAlias = fixedAlias		# what alias is in connection file
 		# for connections staying active for all benchmarks
 		self.activeConnections = []
 		#self.runsPerConnection = 4
@@ -576,6 +579,7 @@ class benchmarker():
 						connections_content = connections_file.read()
 					#print(connections_content)
 					connections_content = connections_content.replace("'name': '{}'".format(self.fixedConnection), "'name': '{}', 'orig_name': '{}'".format(self.rename_connection, self.fixedConnection))
+					connections_content = connections_content.replace("'alias': '{}'".format(self.fixedAlias), "'alias': '{}', 'orig_alias': '{}'".format(self.rename_alias, self.fixedAlias))
 					#print(connections_content)
 					with open(self.path+'/connections.config', "w") as connections_file:
 						connections_file.write(connections_content)
