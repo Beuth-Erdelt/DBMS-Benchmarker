@@ -584,6 +584,7 @@ class benchmarker():
 					with open(self.path+'/connections.config', "w") as connections_file:
 						connections_file.write(connections_content)
 					logging.debug("Renamed connection {} to {}".format(self.fixedConnection, self.rename_connection))
+					logging.debug("Renamed alias {} to {}".format(self.fixedAlias, self.rename_alias))
 					self.fixedConnection = self.rename_connection
 					filename = self.path+'/connections.config'
 			else:
