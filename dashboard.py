@@ -43,8 +43,8 @@ import base64
 import dash_auth
 
 
-logging.basicConfig(level=logging.DEBUG)
-#logging.basicConfig(level=logging.ERROR)
+#logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.ERROR)
 
 
 
@@ -63,6 +63,11 @@ if __name__ == '__main__':
     parser.add_argument('-p', '--password',
                         help='Password for auth protected access.',
                         default=None)
+    parser.add_argument('-d', '--debug',
+                        help='Show debug information.',
+                        action='store_true',
+                        default=False)
+
     args = parser.parse_args()
     result_path = args.result_folder
     # verify that result path was given
@@ -73,6 +78,9 @@ if __name__ == '__main__':
     evaluate = inspector.inspector(result_path, anonymize=args.anonymize)
     # preview of all available experiments in result path
     preview = evaluate.get_experiments_preview()
+
+if args.debug:
+    logging.basicConfig(level=logging.DEBUG)
 
 # Dash's basic stylesheet
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
@@ -3356,4 +3364,4 @@ def change_favorites(add_n_clicks, remove_n_clicks, upload_contents, code, selec
 ########################################################################################
 
 if __name__ == '__main__':
-    app.run_server(debug=True,host='0.0.0.0')
+    app.run_server(debug=args.debug, host='0.0.0.0', threaded=True, processes=1)
