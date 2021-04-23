@@ -228,6 +228,7 @@ Currently the following statistics may be computed per dimension:
 * Last
 * Minimum
 * Maximum
+* Range (Maximum - Minimum)
 * Sum
 * Geometric Mean
 * percentile 25 (Q1)

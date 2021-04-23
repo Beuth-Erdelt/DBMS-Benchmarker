@@ -36,22 +36,21 @@ usage: benchmark.py [-h] [-d] [-b] [-qf QUERY_FILE] [-cf CONNECTION_FILE]
                     [-f CONFIG_FOLDER] [-r RESULT_FOLDER] [-g {no,yes}]
                     [-e {no,yes}] [-w {query,connection}] [-a]
                     [-u [UNANONYMIZE [UNANONYMIZE ...]]] [-p NUMPROCESSES]
-                    [-s SEED] [-vq] [-vs] [-pn NUM_RUN]
+                    [-s SEED] [-cs] [-ms MAX_SUBFOLDERS] [-sl SLEEP]
+                    [-st START_TIME] [-sf SUBFOLDER] [-vq] [-vs] [-pn NUM_RUN]
+                    [-m]
                     {run,read,continue}
 
 A benchmark tool for RDBMS. It connects to a given list of RDBMS via JDBC and
 runs a given list benchmark queries. Optionally some reports are generated.
 
 positional arguments:
-  {run,read,continue}   run benchmarks and save results, or just read
-                        benchmark results from folder, or continue with
-                        missing benchmarks only
+  {run,read,continue}   run benchmarks and save results, or just read benchmark results from folder, or continue with missing benchmarks only
 
 optional arguments:
   -h, --help            show this help message and exit
   -d, --debug           dump debug informations
-  -b, --batch           batch mode (more protocol-like output), automatically
-                        on for debug mode
+  -b, --batch           batch mode (more protocol-like output), automatically on for debug mode
   -qf QUERY_FILE, --query-file QUERY_FILE
                         name of query config file
   -cf CONNECTION_FILE, --connection-file CONNECTION_FILE
@@ -63,12 +62,9 @@ optional arguments:
   -l LATEX_TEMPLATE, --latex-template LATEX_TEMPLATE
                         name of latex template for reporting
   -f CONFIG_FOLDER, --config-folder CONFIG_FOLDER
-                        folder containing query and connection config files.
-                        If set, the names connections.config and
-                        queries.config are assumed automatically.
+                        folder containing query and connection config files. If set, the names connections.config and queries.config are assumed automatically.
   -r RESULT_FOLDER, --result-folder RESULT_FOLDER
-                        folder for storing benchmark result files, default is
-                        given by timestamp
+                        folder for storing benchmark result files, default is given by timestamp
   -g {no,yes}, --generate-output {no,yes}
                         generate new report files
   -e {no,yes}, --generate-evaluation {no,yes}
@@ -77,21 +73,27 @@ optional arguments:
                         working per query or connection
   -a, --anonymize       anonymize all dbms
   -u [UNANONYMIZE [UNANONYMIZE ...]], --unanonymize [UNANONYMIZE [UNANONYMIZE ...]]
-                        unanonymize some dbms, only sensible in combination
-                        with anonymize
+                        unanonymize some dbms, only sensible in combination with anonymize
   -p NUMPROCESSES, --numProcesses NUMPROCESSES
-                        Number of parallel client processes. Global setting,
-                        can be overwritten by connection. If None given, half
-                        of all available processes is taken
+                        Number of parallel client processes. Global setting, can be overwritten by connection. If None given, half of all available processes is taken
+  -s SEED, --seed SEED  random seed
+  -cs, --copy-subfolder
+                        copy subfolder of result folder
+  -ms MAX_SUBFOLDERS, --max-subfolders MAX_SUBFOLDERS
+                        maximum number of subfolders of result folder
   -sl SLEEP, --sleep SLEEP
                         sleep SLEEP seconds before going to work
-  -s SEED, --seed SEED  random seed
+  -st START_TIME, --start-time START_TIME
+                        sleep until START-TIME before beginning benchmarking
+  -sf SUBFOLDER, --subfolder SUBFOLDER
+                        stores results in a SUBFOLDER of the result folder
   -vq, --verbose-queries
                         print every query that is sent
   -vs, --verbose-statistics
                         print statistics about query that have been sent
   -pn NUM_RUN, --num-run NUM_RUN
                         Parameter: Number of executions per query
+  -m, --metrics         collect hardware metrics
 ```
 
 ### Result folder
@@ -104,8 +106,9 @@ Example: `-r /tmp/dbmsresults/1234/` contains benchmarks of code `1234`.
 If this folder does not contain results, a new subfolder is generated.
 It's name is set automatically to some number derived from current timestamp.
 Results and reports are stored there.
-Input files for connections and queries are copied to this folder.
+Input files for connections and queries are copied to this folder.  
 Example: `-r /tmp/dbmsresults/`, and a subfolder, say `1234`, will be generated containing results.
+
 
 ### Config folder
 
@@ -130,11 +133,6 @@ Example for `CONNECTION_FILE`:
     'dialect': "MySQL",
     'timeload': 100,
     'priceperhourdollar': 1.0,
-    `monitoring`: {
-      'grafanatoken': 'Bearer 46363756756756476754756745',
-      'grafanaurl': 'http://127.0.0.1:3000/api/datasources/proxy/1/api/v1/',
-      `grafanaextend`: 5
-    },
     'JDBC': {
       'driver': "com.mysql.cj.jdbc.Driver",
       'url': "jdbc:mysql://localhost:3306/database",
@@ -171,8 +169,6 @@ Example for `CONNECTION_FILE`:
 * Additional information useful for reporting and also used for computations
   * `timeload`: Time for ingest (in milliseconds), because not part of the benchmark
   * `priceperhourdollar`: Used to compute total cost based on total time (optional)
-  * `grafanatoken`, `grafanaurl`, `grafanaextend`: To fetch hardware metrics from Grafana API. `grafanaextend` extends the fetched interval by `n` seconds at both ends.
-  More information about monitoring and metrics can be found here: https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/docs/Monitoring.md
 * `connectionmanagement`: Parameter for connection management. This overwrites general settings made in the [query config](#extended-query-file) and can be overwritten by query-wise settings made there.
   * `timeout`: Maximum lifespan of a connection. Default is None, i.e. no limit.
   * `numProcesses`: Number of parallel client processes. Default is 1.
@@ -180,6 +176,7 @@ Example for `CONNECTION_FILE`:
 * `hostsystem`: Describing information for report in particular about the host system.
   This can be written automatically by https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager
 
+We might also add information about fetching [monitoring](#monitoring) metrics.
 ### Query File
 
 Contains the queries to benchmark.
@@ -529,3 +526,48 @@ If nothing is specified, the default value is used, which is half of the number 
 The option `-s` can be used to specify a random seed.
 This should guarantee reproducible results for randomized queries.
 
+### Subfolders
+
+If the flag `--copy-subfolder` is set, connection and query configuration will be copied from an existing result folder to a subfolder.
+The name of the subfolder can be set via `--subfolder`.
+These flags can be used to allow parallel quering of independent dbmsbenchmarker:
+Each will write in an own subfolder.
+These partial results can be merged using the `merge.py` command line tool.
+The normal behaviour is: If we run the same connection twice, the results of the first run will be overwritten.
+Since we might query the same connection in these instances, the subfolders will be numbered automatically.
+Using `MAX_SUBFOLDERS` we can limit the number of subfolders that are allowed.  
+Example: `-r /tmp/dbmsresults/1234/ -cs -sf MySQL` will continue the benchmarks of folder `/tmp/dbmsresults/1234/` by creating a folder `/tmp/dbmsresults/1234/MySQL-1`.
+If that folder already exists, `/tmp/dbmsresults/1234/MySQL-2` will be used etc.
+
+This is in particular used by https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager for jobs of parallel benchmarker.
+
+### Delay start
+
+The parameter `--sleep` can be used to set a start time.
+DBMSBenchmarker will wait until the given time is reached.
+
+This is in particular used by https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager for synching jobs of parallel benchmarker.
+
+### Monitoring
+
+The parameter `--metrics` can be used to activate fetching metrics from a Prometheus server.
+In the `connection.config` we may insert a section per connection about where to fetch these metrics from and which metrics we want to obtain.  
+Example:
+```
+'monitoring': {
+  'grafanashift': 0,
+  'grafanaextend': 20,
+  'prometheus_url': 'http://127.0.0.1:9090/api/v1/',
+  'metrics': {
+    'total_cpu_memory': {
+      'query': 'container_memory_working_set_bytes{job="monitor-node"}/1024/1024',
+      'title': 'CPU Memory [MiB]'
+    }
+  }
+}
+```
+
+* `grafanashift` shifts the fetched interval by `n` seconds to the future.
+* `grafanaextend` extends the fetched interval by `n` seconds at both ends.
+
+More information about monitoring and metrics can be found here: https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/docs/Monitoring.md

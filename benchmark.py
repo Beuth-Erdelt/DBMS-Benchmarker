@@ -35,6 +35,7 @@ if __name__ == '__main__':
 	parser.add_argument('-cf', '--connection-file', help='name of connection config file', default='connections.config')
 	parser.add_argument('-q', '--query', help='number of query to benchmark', default=None)
 	parser.add_argument('-c', '--connection', help='name of connection to benchmark', default=None)
+	parser.add_argument('-ca', '--connection-alias', help='alias of connection to benchmark', default='')
 	parser.add_argument('-l', '--latex-template', help='name of latex template for reporting', default='pagePerQuery')
 	parser.add_argument('-f', '--config-folder', help='folder containing query and connection config files. If set, the names connections.config and queries.config are assumed automatically.', default=None)
 	parser.add_argument('-r', '--result-folder', help='folder for storing benchmark result files, default is given by timestamp', default=None)
@@ -52,6 +53,7 @@ if __name__ == '__main__':
 	parser.add_argument('-sf', '--subfolder', help='stores results in a SUBFOLDER of the result folder', default=None)
 	parser.add_argument('-vq', '--verbose-queries', help='print every query that is sent', action='store_true', default=False)
 	parser.add_argument('-vs', '--verbose-statistics', help='print statistics about query that have been sent', action='store_true', default=False)
+	parser.add_argument('-vr', '--verbose-results', help='print result sets of every query that have been sent', action='store_true', default=False)
 	parser.add_argument('-pn', '--num-run', help='Parameter: Number of executions per query', default=0)
 	parser.add_argument('-m', '--metrics', help='collect hardware metrics', action='store_true', default=False)
 	#parser.add_argument('-pt', '--timeout', help='Parameter: Timeout in seconds', default=0)
@@ -70,6 +72,7 @@ if __name__ == '__main__':
 	# make a copy of result folder
 	subfolder = args.subfolder
 	rename_connection = ''
+	rename_alias = ''
 	if args.copy_subfolder and len(subfolder) > 0:
 		client = 1
 		while True:
@@ -88,6 +91,8 @@ if __name__ == '__main__':
 		subfolder = subfolder+'-'+str(client)
 		rename_connection = args.connection+'-'+str(client)
 		logging.debug("Rename connection {} to {}".format(args.connection, rename_connection))
+		rename_alias = args.connection_alias+'-'+str(client)
+		logging.debug("Rename alias {} to {}".format(args.connection_alias, rename_alias))
 	# sleep before going to work
 	if args.start_time is not None:
 		#logging.debug(args.start_time)
@@ -106,6 +111,8 @@ if __name__ == '__main__':
 		benchmarker.BENCHMARKER_VERBOSE_QUERIES = True
 	if args.verbose_statistics:
 		benchmarker.BENCHMARKER_VERBOSE_STATISTICS = True
+	if args.verbose_results:
+		benchmarker.BENCHMARKER_VERBOSE_RESULTS = True
 	if int(args.num_run) > 0:
 		querymanagement = {
  			'numRun': int(args.num_run),
@@ -119,7 +126,9 @@ if __name__ == '__main__':
 		subfolder=subfolder,#args.subfolder,
 		fixedQuery=args.query,
 		fixedConnection=args.connection,
+		fixedAlias=args.connection_alias,
 		rename_connection=rename_connection,
+		rename_alias=rename_alias,
 		anonymize=args.anonymize,
 		unanonymize=args.unanonymize,
 		numProcesses=args.numProcesses,
