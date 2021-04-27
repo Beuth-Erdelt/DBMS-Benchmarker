@@ -165,7 +165,8 @@ class storer(reporter):
 				logging.debug("Read "+filename)
 			else:
 				t.appendTimes({}, query)#.warmup)
-				logging.debug(filename + " not found")
+				# timer is missing
+				#logging.debug(filename + " not found")
 				#return False
 		return True
 	def writeProtocol(self):

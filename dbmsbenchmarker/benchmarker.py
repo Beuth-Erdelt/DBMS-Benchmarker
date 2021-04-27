@@ -1411,6 +1411,7 @@ class benchmarker():
 			if not loaded:
 				break
 		# show finished benchmarks
+		"""
 		for numQuery,q in enumerate(self.timerExecution.times):
 			logging.debug("Q"+str(numQuery+1))
 			numConnection = 1
@@ -1418,6 +1419,7 @@ class benchmarker():
 			for c, v in q.items():
 				logging.debug("C"+str(numConnection)+" "+c+"="+str(len(v))+" runs")
 				numConnection = numConnection + 1
+		"""
 	def readBenchmarks(self):
 		"""
 		Reads data of previous benchmark from folder.
