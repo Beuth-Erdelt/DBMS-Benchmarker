@@ -1552,7 +1552,7 @@ def merge_partial_results(result_path, code):
 						else:
 							different = False
 							for numRun, resultset in enumerate(data):
-								print("numRun", numRun)
+								print("numRun {}".format(numRun), end='')
 								result = data[numRun].copy()
 								# remove titles
 								titles_result = data[numRun][0]#list(range(len(result[0])))
@@ -1590,7 +1590,7 @@ def merge_partial_results(result_path, code):
 								#print("result", result)
 								#print("storage", storage)
 								if result == storage:
-									print("same")
+									print("same\n")
 								#	#exit()
 								#if numQuery=='3':
 								#	print(df_first)
@@ -1610,7 +1610,7 @@ def merge_partial_results(result_path, code):
 									different = True
 									break
 							if not different:
-								print("OK")
+								#print("OK")
 								protocol['query'][numQuery]['resultSets'][connection] = []
 								protocol['query'][numQuery]['warnings'][connection] = ""
 				else:
@@ -1679,11 +1679,13 @@ def merge_partial_results(result_path, code):
 				csv_file = open(filename, "w")
 				csv_file.write(csv)
 				csv_file.close()
+				print("Merged timer", filename)
 	# merge metrics
 	# copy partial metrics
 	for connection in list_connections:
 		folder_connection = folder+'/'+connection
 		files_metrics = [f for f in listdir(folder_connection) if isfile(join(folder_connection, f)) and 'metric' in f]
-		print(folder_connection, files_metrics)
+		#print(folder_connection, files_metrics)
+		print("Copy Metrics", folder_connection)
 		for file in files_metrics:
 			copyfile(folder_connection+'/'+file, folder+'/'+file)
