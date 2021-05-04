@@ -120,7 +120,7 @@ class metrics():
                 l2 = [(t+len(l)+time_start, 0) for t in range(n)]
                 l = l + l2
             else:
-                print(metric, url+query, r.json())
+                #print(metric, url+query, r.json())
                 l = [(t,0) for t in range(time_start, time_end+1)]#[(time_start,0)]
         except Exception as e:
             logging.exception('Caught an error: %s' % str(e))
