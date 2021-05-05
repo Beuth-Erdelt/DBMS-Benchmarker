@@ -65,6 +65,14 @@ class metrics():
             'query': 'sum(container_cpu_usage_seconds_total{{job="monitor-node", container_label_io_kubernetes_container_name="dbms"}})',
             'title': 'CPU Util [s]'
         },
+        'total_cpu_util_user_s': {
+            'query': 'sum(container_cpu_user_seconds_total{{job="monitor-node", container_label_io_kubernetes_container_name="dbms"}})',
+            'title': 'CPU Util User [s]'
+        },
+        'total_cpu_util_sys_s': {
+            'query': 'sum(container_cpu_system_seconds_total{{job="monitor-node", container_label_io_kubernetes_container_name="dbms"}})',
+            'title': 'CPU Util Sys [s]'
+        },
         'total_cpu_throttled_s': {
             'query': 'sum(container_cpu_cfs_throttled_seconds_total{{job="monitor-node", container_label_io_kubernetes_container_name="dbms"}})',
             'title': 'CPU Throttle [s]'
@@ -410,7 +418,7 @@ class metrics():
         return df_all.T
     def dfHardwareMetricsStreaming(self, metric):
         filename = self.benchmarker.path+'/query_stream_metric_'+str(metric)+'.csv'
-        print(filename)
+        #print(filename)
         if os.path.isfile(filename) and not self.benchmarker.overwrite:
             df_all = metrics.loadMetricsDataframe(filename)
         else:
@@ -419,7 +427,7 @@ class metrics():
             dbms_filter = self.benchmarker.dbms.keys()#self.benchmarker.protocol['query'][str(numQuery)]["starts"].keys()
             for c in dbms_filter:
                 connectionname = c
-                print(connectionname, df_all)
+                #print(connectionname, df_all)
                 filename = self.benchmarker.path+'/query_stream_metric_'+str(metric)+'_'+connectionname+'.csv'
                 df = metrics.loadMetricsDataframe(filename)
                 if df is None:
