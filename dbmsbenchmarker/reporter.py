@@ -1050,6 +1050,8 @@ class metricer(reporter):
 		:param timer: Timer object
 		:return: returns nothing
 		"""
+		# per query
+		"""
 		if self.benchmarker.bBatch:
 			range_runs = self.benchmarker.protocol['query'].items()
 		else:
@@ -1059,12 +1061,14 @@ class metricer(reporter):
 			if not query.active:
 				continue
 			self.generate(numQuery, [])
+		"""
 		#for q, d in self.benchmarker.protocol['query'].items():
 		#	query = tools.query(self.benchmarker.queries[int(q)-1])
 		#	# is query active?
 		#	if not query.active:
 		#		continue
 		#	self.generate(q, [])
+		# per stream
 		number_of_queries = len(self.benchmarker.protocol['query'].items())
 		for c, connection in self.benchmarker.dbms.items():
 			times = self.benchmarker.protocol['query'][str(1)]
