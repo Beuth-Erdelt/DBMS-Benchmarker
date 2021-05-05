@@ -1075,7 +1075,7 @@ class metricer(reporter):
 			query='stream'
 			for m, metric in connection.connectiondata['monitoring']['metrics'].items():
 				print(m)
-				monitor.metrics.fetchMetric(query, m, c, connection.connectiondata, time_start, time_end, '{result_path}/{code}/'.format(result_path=self.benchmarker.result_path, code=self.benchmarker.code))
+				monitor.metrics.fetchMetric(query, m, c, connection.connectiondata, time_start, time_end, '{result_path}/{code}/'.format(result_path=self.benchmarker.path, code=self.benchmarker.code))
 
 
 
