@@ -1011,8 +1011,9 @@ class metricer(reporter):
 	Class for generating reports.
 	Generates a plot of the benchmarks as a time series and saves it to disk.
 	"""
-	def __init__(self, benchmarker):
+	def __init__(self, benchmarker, per_stream=False):
 		reporter.__init__(self, benchmarker)
+		self.per_stream = per_stream
 	def save(self, dataframe, title, subtitle, filename):
 		"""
 		Saves report of a given query as plot image per timer.
@@ -1051,17 +1052,16 @@ class metricer(reporter):
 		:return: returns nothing
 		"""
 		# per query
-		"""
-		if self.benchmarker.bBatch:
-			range_runs = self.benchmarker.protocol['query'].items()
-		else:
-			range_runs = tqdm(self.benchmarker.protocol['query'].items())
-		for numQuery, protocol in range_runs:
-			query = tools.query(self.benchmarker.queries[int(numQuery)-1])
-			if not query.active:
-				continue
-			self.generate(numQuery, [])
-		"""
+		if not self.per_stream:
+			if self.benchmarker.bBatch:
+				range_runs = self.benchmarker.protocol['query'].items()
+			else:
+				range_runs = tqdm(self.benchmarker.protocol['query'].items())
+			for numQuery, protocol in range_runs:
+				query = tools.query(self.benchmarker.queries[int(numQuery)-1])
+				if not query.active:
+					continue
+				self.generate(numQuery, [])
 		#for q, d in self.benchmarker.protocol['query'].items():
 		#	query = tools.query(self.benchmarker.queries[int(q)-1])
 		#	# is query active?
@@ -1069,17 +1069,18 @@ class metricer(reporter):
 		#		continue
 		#	self.generate(q, [])
 		# per stream
-		number_of_queries = len(self.benchmarker.protocol['query'].items())
-		for c, connection in self.benchmarker.dbms.items():
-			times = self.benchmarker.protocol['query'][str(1)]
-			time_start = int(datetime.timestamp(datetime.strptime(times["starts"][c],'%Y-%m-%d %H:%M:%S.%f')))
-			times = self.benchmarker.protocol['query'][str(number_of_queries)]
-			time_end = int(datetime.timestamp(datetime.strptime(times["ends"][c],'%Y-%m-%d %H:%M:%S.%f')))
-			print(connection.connectiondata['monitoring']['prometheus_url'])
-			query='stream'
-			for m, metric in connection.connectiondata['monitoring']['metrics'].items():
-				print(m)
-				monitor.metrics.fetchMetric(query, m, c, connection.connectiondata, time_start, time_end, '{result_path}/'.format(result_path=self.benchmarker.path))
+		if self.per_stream:
+			number_of_queries = len(self.benchmarker.protocol['query'].items())
+			for c, connection in self.benchmarker.dbms.items():
+				times = self.benchmarker.protocol['query'][str(1)]
+				time_start = int(datetime.timestamp(datetime.strptime(times["starts"][c],'%Y-%m-%d %H:%M:%S.%f')))
+				times = self.benchmarker.protocol['query'][str(number_of_queries)]
+				time_end = int(datetime.timestamp(datetime.strptime(times["ends"][c],'%Y-%m-%d %H:%M:%S.%f')))
+				print(connection.connectiondata['monitoring']['prometheus_url'])
+				query='stream'
+				for m, metric in connection.connectiondata['monitoring']['metrics'].items():
+					print(m)
+					monitor.metrics.fetchMetric(query, m, c, connection.connectiondata, time_start, time_end, '{result_path}/'.format(result_path=self.benchmarker.path))
 
 
 
