@@ -1064,6 +1064,17 @@ class metricer(reporter):
 		#	if not query.active:
 		#		continue
 		#	self.generate(q, [])
+		number_of_queries = len(self.benchmarker.protocol['query'].items())
+		for c, connection in self.benchmarker.dbms.items():
+	        times = self.benchmarker.protocol['query'][str(1)]
+	        time_start = int(datetime.timestamp(datetime.strptime(times["starts"][c],'%Y-%m-%d %H:%M:%S.%f')))
+	        times = self.benchmarker.protocol['query'][str(number_of_queries)]
+	        time_end = int(datetime.timestamp(datetime.strptime(times["ends"][c],'%Y-%m-%d %H:%M:%S.%f')))
+			print(connection.connectiondata['monitoring']['prometheus_url'])
+			query='stream'
+			for m, metric in connection.connectiondata['monitoring']['metrics'].items():
+				print(m)
+				monitor.metrics.fetchMetric(query, m, c, connection.connectiondata, time_start, time_end, '{result_path}/{code}/'.format(result_path=self.benchmarker.result_path, code=self.benchmarker.code))
 
 
 
