@@ -25,7 +25,8 @@ import os
 import csv
 import json
 from dbmsbenchmarker import tools, monitor, evaluator
-import datetime
+#import datetime
+from datetime import datetime
 from tqdm import tqdm
 import pickle
 import sys
