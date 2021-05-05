@@ -410,7 +410,7 @@ class metrics():
         return df_all.T
     def dfHardwareMetricsStreaming(self, metric):
         filename = self.benchmarker.path+'/query_stream_metric_'+str(metric)+'.csv'
-        #print(filename)
+        print(filename)
         if os.path.isfile(filename) and not self.benchmarker.overwrite:
             df_all = metrics.loadMetricsDataframe(filename)
         else:
@@ -423,7 +423,7 @@ class metrics():
                     connectionname = self.benchmarker.dbms[c].connectiondata['orig_name']
                 else:
                     connectionname = c
-                #print(connectionname, df_all)
+                print(connectionname, df_all)
                 filename = self.benchmarker.path+'/query_stream_metric_'+str(metric)+'_'+connectionname+'.csv'
                 df = metrics.loadMetricsDataframe(filename)
                 if df is None:
