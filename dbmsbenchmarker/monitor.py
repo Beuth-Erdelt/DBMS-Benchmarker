@@ -418,11 +418,7 @@ class metrics():
         if df_all is None:
             dbms_filter = self.benchmarker.dbms.keys()#self.benchmarker.protocol['query'][str(numQuery)]["starts"].keys()
             for c in dbms_filter:
-                # load metrics are fetched before possibly renaming connection
-                if 'orig_name' in self.benchmarker.dbms[c].connectiondata:
-                    connectionname = self.benchmarker.dbms[c].connectiondata['orig_name']
-                else:
-                    connectionname = c
+                connectionname = c
                 print(connectionname, df_all)
                 filename = self.benchmarker.path+'/query_stream_metric_'+str(metric)+'_'+connectionname+'.csv'
                 df = metrics.loadMetricsDataframe(filename)
