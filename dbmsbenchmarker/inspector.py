@@ -377,6 +377,8 @@ class inspector():
         return script
     def get_loading_metrics(self, metric):
         return evaluator.dfLoadingMetric(self.e.evaluation, metric)
+    def get_streaming_metrics(self, metric):
+        return evaluator.dfStreamingMetric(self.e.evaluation, metric)
     def get_total_resultsize_normalized(self):
         return tools.dataframehelper.evaluateNormalizedResultsizeToDataFrame(self.e.evaluation).T
     def get_total_resultsize(self):
