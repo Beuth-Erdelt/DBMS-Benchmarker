@@ -1072,15 +1072,17 @@ class metricer(reporter):
 		if self.per_stream:
 			number_of_queries = len(self.benchmarker.protocol['query'].items())
 			for c, connection in self.benchmarker.dbms.items():
-				times = self.benchmarker.protocol['query'][str(1)]
-				time_start = int(datetime.timestamp(datetime.strptime(times["starts"][c],'%Y-%m-%d %H:%M:%S.%f')))
-				times = self.benchmarker.protocol['query'][str(number_of_queries)]
-				time_end = int(datetime.timestamp(datetime.strptime(times["ends"][c],'%Y-%m-%d %H:%M:%S.%f')))
-				print(connection.connectiondata['monitoring']['prometheus_url'])
-				query='stream'
-				for m, metric in connection.connectiondata['monitoring']['metrics'].items():
-					print(m)
-					monitor.metrics.fetchMetric(query, m, c, connection.connectiondata, time_start, time_end, '{result_path}/'.format(result_path=self.benchmarker.path))
+				if connection.hasHardwareMetrics():
+					logging.info("Hardware metrics for stream of connection {}".format(c))
+					times = self.benchmarker.protocol['query'][str(1)]
+					time_start = int(datetime.timestamp(datetime.strptime(times["starts"][c],'%Y-%m-%d %H:%M:%S.%f')))
+					times = self.benchmarker.protocol['query'][str(number_of_queries)]
+					time_end = int(datetime.timestamp(datetime.strptime(times["ends"][c],'%Y-%m-%d %H:%M:%S.%f')))
+					logging.debug(connection.connectiondata['monitoring']['prometheus_url'])
+					query='stream'
+					for m, metric in connection.connectiondata['monitoring']['metrics'].items():
+						logging.debug("Metric {}".format(m))
+						monitor.metrics.fetchMetric(query, m, c, connection.connectiondata, time_start, time_end, '{result_path}/'.format(result_path=self.benchmarker.path))
 
 
 
