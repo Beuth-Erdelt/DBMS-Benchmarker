@@ -337,6 +337,9 @@ class evaluator():
 				evaluation['dbms'][c]['metrics'][m] = tps[c][m]
 				if '_ps' in m:
 					evaluation['dbms'][c]['metrics'][m.replace('_ps', '_ph')] = tps[c][m]*3600.0
+		evaluation['general']['results'] = {}
+		# total diagrams
+		"""
 		reporterBar = reporter.barer(self.benchmarker)
 		dfTotalSum = reporterBar.generate(numQuery=None, timer=self.benchmarker.timers, ensembler='sum')
 		dfTotalProd = reporterBar.generate(numQuery=None, timer=self.benchmarker.timers, ensembler='product')
@@ -345,7 +348,6 @@ class evaluator():
 		dfTotalTime = reporterArea.generate(numQuery=None, timer=self.benchmarker.timers)
 		# generate barh plot of total ranking
 		dfTotalRank, timers = self.benchmarker.generateSortedTotalRanking()
-		evaluation['general']['results'] = {}
 		if dfTotalSum is not None:
 			evaluation['general']['results']['totalSum'] = dfTotalSum.to_dict(orient='index')
 		if dfTotalProd is not None:
@@ -354,6 +356,7 @@ class evaluator():
 			evaluation['general']['results']['totalTime'] = dfTotalTime.to_dict()
 		if dfTotalRank is not None:
 			evaluation['general']['results']['totalRank'] = dfTotalRank.to_dict(orient='index')
+		"""
 		filename = self.benchmarker.path+'/evaluation.dict'
 		with open(filename, 'w') as f:
 			f.write(str(evaluation))
