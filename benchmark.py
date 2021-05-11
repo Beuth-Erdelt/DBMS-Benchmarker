@@ -55,7 +55,8 @@ if __name__ == '__main__':
 	parser.add_argument('-vs', '--verbose-statistics', help='print statistics about query that have been sent', action='store_true', default=False)
 	parser.add_argument('-vr', '--verbose-results', help='print result sets of every query that have been sent', action='store_true', default=False)
 	parser.add_argument('-pn', '--num-run', help='Parameter: Number of executions per query', default=0)
-	parser.add_argument('-m', '--metrics', help='collect hardware metrics', action='store_true', default=False)
+	parser.add_argument('-m', '--metrics', help='collect hardware metrics per query', action='store_true', default=False)
+	parser.add_argument('-mps', '--metrics-per-stream', help='collect hardware metrics per stream', action='store_true', default=False)
 	#parser.add_argument('-pt', '--timeout', help='Parameter: Timeout in seconds', default=0)
 	args = parser.parse_args()
 	# evaluate args
@@ -153,6 +154,10 @@ if __name__ == '__main__':
 	if args.metrics:
 		# collect hardware metrics
 		experiments.reporter.append(benchmarker.reporter.metricer(experiments))
+		experiments.generateReportsAll()
+	if args.metrics_per_stream:
+		# collect hardware metrics
+		experiments.reporter.append(benchmarker.reporter.metricer(experiments, per_stream=True))
 		experiments.generateReportsAll()
 	if args.generate_output == 'yes':
 		experiments.overwrite = True

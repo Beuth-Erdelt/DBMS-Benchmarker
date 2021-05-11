@@ -65,6 +65,14 @@ class metrics():
             'query': 'sum(container_cpu_usage_seconds_total{{job="monitor-node", container_label_io_kubernetes_container_name="dbms"}})',
             'title': 'CPU Util [s]'
         },
+        'total_cpu_util_user_s': {
+            'query': 'sum(container_cpu_user_seconds_total{{job="monitor-node", container_label_io_kubernetes_container_name="dbms"}})',
+            'title': 'CPU Util User [s]'
+        },
+        'total_cpu_util_sys_s': {
+            'query': 'sum(container_cpu_system_seconds_total{{job="monitor-node", container_label_io_kubernetes_container_name="dbms"}})',
+            'title': 'CPU Util Sys [s]'
+        },
         'total_cpu_throttled_s': {
             'query': 'sum(container_cpu_cfs_throttled_seconds_total{{job="monitor-node", container_label_io_kubernetes_container_name="dbms"}})',
             'title': 'CPU Throttle [s]'
@@ -120,7 +128,7 @@ class metrics():
                 l2 = [(t+len(l)+time_start, 0) for t in range(n)]
                 l = l + l2
             else:
-                print(metric, url+query, r.json())
+                #print(metric, url+query, r.json())
                 l = [(t,0) for t in range(time_start, time_end+1)]#[(time_start,0)]
         except Exception as e:
             logging.exception('Caught an error: %s' % str(e))
@@ -389,6 +397,47 @@ class metrics():
                 else:
                     df_all = df_all.merge(df, how='outer', left_index=True,right_index=True)
             filename = self.benchmarker.path+'/query_loading_metric_'+str(metric)+'.csv'
+            metrics.saveMetricsDataframe(filename, df_all)
+        if df_all is None:
+            return pd.DataFrame()
+        # remove connection delay (metrics are collected, but nothing happens here)
+        #query = tools.query(self.benchmarker.queries[numQuery-1])
+        #df_all = df_all.iloc[int(query.delay_connect):]
+        #print(df_all)
+        # remove extend
+        #for c, connection in self.benchmarker.dbms.items():
+        #    add_interval = int(connection.connectiondata['monitoring']['grafanaextend'])
+        #    #print(add_interval)
+        #    #print(c)
+        #    #print(df_all[c])
+        #    #df_all[c] = list(df_all[c])[add_interval:-add_interval].extend([0]*(2*add_interval))
+        # take last extend value
+        #df_all = df_all.iloc[add_interval:-add_interval]
+        #print(df_all)
+        #print(df_all)
+        return df_all.T
+    def dfHardwareMetricsStreaming(self, metric):
+        filename = self.benchmarker.path+'/query_stream_metric_'+str(metric)+'.csv'
+        #print(filename)
+        if os.path.isfile(filename) and not self.benchmarker.overwrite:
+            df_all = metrics.loadMetricsDataframe(filename)
+        else:
+            df_all = None
+        if df_all is None:
+            dbms_filter = self.benchmarker.dbms.keys()#self.benchmarker.protocol['query'][str(numQuery)]["starts"].keys()
+            for c in dbms_filter:
+                connectionname = c
+                #print(connectionname, df_all)
+                filename = self.benchmarker.path+'/query_stream_metric_'+str(metric)+'_'+connectionname+'.csv'
+                df = metrics.loadMetricsDataframe(filename)
+                if df is None:
+                    continue
+                df.columns=[connectionname]
+                if df_all is None:
+                    df_all = df
+                else:
+                    df_all = df_all.merge(df, how='outer', left_index=True,right_index=True)
+            filename = self.benchmarker.path+'/query_stream_metric_'+str(metric)+'.csv'
             metrics.saveMetricsDataframe(filename, df_all)
         if df_all is None:
             return pd.DataFrame()

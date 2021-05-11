@@ -184,6 +184,7 @@ class evaluator():
 				if self.benchmarker.dbms[c].hasHardwareMetrics():
 					evaluation['dbms'][c]['hardwaremetrics'] = {}
 					evaluation['general']['loadingmetrics'] = {}
+					evaluation['general']['streamingmetrics'] = {}
 					metricsReporter = monitor.metrics(self.benchmarker)
 					hardwareAverages = metricsReporter.computeAverages()
 					if c in hardwareAverages:
@@ -196,6 +197,10 @@ class evaluator():
 						for m, avg in hardwareAverages[c].items():
 							df = metricsReporter.dfHardwareMetricsLoading(m)
 							evaluation['general']['loadingmetrics'][m] = df.to_dict(orient='index')
+						# load streaming metrics
+						for m, avg in hardwareAverages[c].items():
+							df = metricsReporter.dfHardwareMetricsStreaming(m)
+							evaluation['general']['streamingmetrics'][m] = df.to_dict(orient='index')
 		# appendix start: query survey
 		evaluation['query'] = {}
 		for i in range(1, len(self.benchmarker.queries)+1):
@@ -332,6 +337,9 @@ class evaluator():
 				evaluation['dbms'][c]['metrics'][m] = tps[c][m]
 				if '_ps' in m:
 					evaluation['dbms'][c]['metrics'][m.replace('_ps', '_ph')] = tps[c][m]*3600.0
+		evaluation['general']['results'] = {}
+		# total diagrams
+		"""
 		reporterBar = reporter.barer(self.benchmarker)
 		dfTotalSum = reporterBar.generate(numQuery=None, timer=self.benchmarker.timers, ensembler='sum')
 		dfTotalProd = reporterBar.generate(numQuery=None, timer=self.benchmarker.timers, ensembler='product')
@@ -340,7 +348,6 @@ class evaluator():
 		dfTotalTime = reporterArea.generate(numQuery=None, timer=self.benchmarker.timers)
 		# generate barh plot of total ranking
 		dfTotalRank, timers = self.benchmarker.generateSortedTotalRanking()
-		evaluation['general']['results'] = {}
 		if dfTotalSum is not None:
 			evaluation['general']['results']['totalSum'] = dfTotalSum.to_dict(orient='index')
 		if dfTotalProd is not None:
@@ -349,6 +356,7 @@ class evaluator():
 			evaluation['general']['results']['totalTime'] = dfTotalTime.to_dict()
 		if dfTotalRank is not None:
 			evaluation['general']['results']['totalRank'] = dfTotalRank.to_dict(orient='index')
+		"""
 		filename = self.benchmarker.path+'/evaluation.dict'
 		with open(filename, 'w') as f:
 			f.write(str(evaluation))
@@ -547,6 +555,13 @@ def dfSubRows(dataframe, l):
 def dfLoadingMetric(evaluation, metric):
 	if 'loadingmetrics' in evaluation['general'] and metric in evaluation['general']['loadingmetrics']:
 		df = pd.DataFrame.from_dict(evaluation['general']['loadingmetrics'][metric]).transpose()
+		df.index.name = 'DBMS'
+	else:
+		df = pd.DataFrame()
+	return df
+def dfStreamingMetric(evaluation, metric):
+	if 'streamingmetrics' in evaluation['general'] and metric in evaluation['general']['streamingmetrics']:
+		df = pd.DataFrame.from_dict(evaluation['general']['streamingmetrics'][metric]).transpose()
 		df.index.name = 'DBMS'
 	else:
 		df = pd.DataFrame()
