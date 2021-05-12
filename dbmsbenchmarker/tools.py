@@ -1552,7 +1552,7 @@ def merge_partial_results(result_path, code):
 						else:
 							different = False
 							for numRun, resultset in enumerate(data):
-								print("numRun {}".format(numRun), end='')
+								#print("numRun {}".format(numRun), end='')
 								result = data[numRun].copy()
 								# remove titles
 								titles_result = data[numRun][0]#list(range(len(result[0])))
@@ -1616,13 +1616,13 @@ def merge_partial_results(result_path, code):
 				else:
 					# result set of first run only
 					filename = '{folder}/{connection}/query_{numQuery}_resultset_{connection}.pickle'.format(folder=folder, connection=connection, numQuery=numQuery)
-					print(connection+": ", end='')#, df)
+					#print(connection+": ", end='')#, df)
 					with open(filename, 'r') as f:
 						df = pd.read_pickle(filename)
 						#print(connection)#, df)
 						if df_first is None:
 							df_first = df.copy()
-							print("first\n", df_first)
+							#print("first\n", df_first)
 							result_as_list = [[i[0] for i in list(df_first.columns)]]
 							result_as_list.extend(df_first.values.tolist())
 							protocol['query'][numQuery]['dataStorage'] = [result_as_list] # list, because this is (only) first run
@@ -1631,18 +1631,18 @@ def merge_partial_results(result_path, code):
 							df_1 = inspector.getDifference12(df_first, df)
 							df_2 = inspector.getDifference12(df, df_first)
 							if not df_1.empty or not df_2.empty:
-								print("different\n", df)
+								#print("different\n", df)
 								protocol['query'][numQuery]['warnings'][connection] = 'Different'
 								result_as_list = [[i[0] for i in list(df.columns)]]
 								result_as_list.extend(df.values.tolist())
 								protocol['query'][numQuery]['resultSets'][connection] = [result_as_list] # list, because this is (only) first run
 							else:
-								print("OK")
+								#print("OK")
 								protocol['query'][numQuery]['resultSets'][connection] = []
 								protocol['query'][numQuery]['warnings'][connection] = ""
 			except Exception as e:
 				print(e)
-				print("missing")
+				#print("missing")
 				protocol['query'][numQuery]['warnings'][connection] = 'Missing'
 			finally:
 				pass
