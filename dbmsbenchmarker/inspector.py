@@ -115,7 +115,8 @@ class inspector():
         return self.benchmarks.listQueries()
     def get_experiment_list_connections(self):
         # list of connections
-        return self.benchmarks.listConnections()
+        #print(sorted(self.benchmarks.listConnections()))
+        return sorted(self.benchmarks.listConnections())
     def get_experiment_list_dbms(self):
         # list all different dbms
         return list(self.get_experiment_list_connections_by_dbms().keys())
