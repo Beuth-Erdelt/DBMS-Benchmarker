@@ -30,6 +30,16 @@ import pickle
 
 from dbmsbenchmarker import inspector
 
+# Set query timeout
+jaydebeapi.QUERY_TIMEOUT = 0
+
+def _set_stmt_parms(self, prep_stmt, parameters):
+        for i in range(len(parameters)):
+            prep_stmt.setObject(i + 1, parameters[i])
+        prep_stmt.setQueryTimeout(jaydebeapi.QUERY_TIMEOUT)
+
+jaydebeapi.Cursor._set_stmt_parms = _set_stmt_parms
+
 
 class timer():
 	"""

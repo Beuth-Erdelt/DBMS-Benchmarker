@@ -960,6 +960,7 @@ class benchmarker():
 		numProcesses = connectionmanagement['numProcesses']#self.numProcesses
 		batchsize = connectionmanagement['runsPerConnection']#self.runsPerConnection
 		timeout = connectionmanagement['timeout']#self.timeout
+		jaydebeapi.QUERY_TIMEOUT = timeout
 		singleConnection = connectionmanagement['singleConnection']
 		# Patch: if singleConnection only with single process
 		if singleConnection:
