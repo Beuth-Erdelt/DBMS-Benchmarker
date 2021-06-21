@@ -132,7 +132,6 @@ def singleRun(connectiondata, inputConfig, numRuns, connectionname, numQuery, pa
 			time.sleep(query.delay_run)
 		error = ""
 		try:
-			logger.info(isinstance(queryString, list))
 			#start = default_timer()
 			if BENCHMARKER_VERBOSE_QUERIES:
 				logger.info(type(queryString))
@@ -162,7 +161,10 @@ def singleRun(connectiondata, inputConfig, numRuns, connectionname, numQuery, pa
 			if query.withData:
 				if len(queryString) != 0:
 					start = default_timer()
-					data=connection.fetchResult()
+					if isinstance(queryString, list):
+						data = []
+					else:
+						data=connection.fetchResult()
 					end = default_timer()
 					durationTransfer = 1000.0*(end - start)
 					logger.info(workername+"transfer [ms]: "+str(durationTransfer))
