@@ -132,6 +132,7 @@ def singleRun(connectiondata, inputConfig, numRuns, connectionname, numQuery, pa
 			time.sleep(query.delay_run)
 		error = ""
 		try:
+			logger.info(isinstance(queryString, list))
 			#start = default_timer()
 			if BENCHMARKER_VERBOSE_QUERIES:
 				logger.info(type(queryString))
