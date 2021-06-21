@@ -134,6 +134,7 @@ def singleRun(connectiondata, inputConfig, numRuns, connectionname, numQuery, pa
 		try:
 			#start = default_timer()
 			if BENCHMARKER_VERBOSE_QUERIES:
+				logger.info(type(queryString))
 				if isinstance(queryString, list):
 					for queryPart in queryString:
 						logger.info(workername+queryPart)
