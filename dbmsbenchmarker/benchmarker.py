@@ -163,6 +163,8 @@ def singleRun(connectiondata, inputConfig, numRuns, connectionname, numQuery, pa
 					start = default_timer()
 					if isinstance(queryString, list):
 						data = []
+						columnnames = []
+						size = 0
 					else:
 						data=connection.fetchResult()
 					end = default_timer()
