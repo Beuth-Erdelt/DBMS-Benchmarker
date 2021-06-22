@@ -43,8 +43,9 @@ def convertToInt(var):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='A benchmark tool for RDBMS. It connects to a given list of RDBMS via JDBC and runs a given list benchmark queries. Optionally some reports are generated.')
     parser.add_argument('-r', '--result-folder', help='folder for storing benchmark result files, default is given by timestamp', default="./")
-    parser.add_argument('-c', '--code', help='code of experiment', default="")
+    parser.add_argument('-e', '--experiment', help='code of experiment', default="")
     parser.add_argument('-q', '--query', help='number of query to inspect', default=None)
+    parser.add_argument('-c', '--connection', help='name of DBMS to inspect', default=None)
     parser.add_argument('-n', '--num-run', help='number of run to inspect', default=None)
     parser.add_argument('-d', '--diff', help='show differences in result sets', action='store_true', default=False)
     parser.add_argument('-rt', '--remove-titles', help='remove titles when comparing result sets', action='store_true', default=False)
@@ -58,11 +59,11 @@ if __name__ == '__main__':
     evaluate.list_experiments
     # dataframe of experiments
     evaluate.get_experiments_preview()
-    if not len(args.code) > 0:
+    if not len(args.experiment) > 0:
         # pick last experiment
         code = evaluate.list_experiments[len(evaluate.list_experiments)-1]
     else:
-        code = args.code
+        code = args.experiment
     # load it
     evaluate.load_experiment(code)
     list_connections = evaluate.get_experiment_list_connections()
@@ -202,6 +203,7 @@ if __name__ == '__main__':
             if not df2_warnings.empty:
                 print("===Q{}: {}===".format(numQuery, query.title))
                 print(df2_warnings)
-
-
+    elif args.mode == 'query':
+        query = evaluate.get_querystring(args.query, args.connection, args.num_run)
+        print(query)
 
