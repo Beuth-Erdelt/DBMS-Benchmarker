@@ -204,6 +204,6 @@ if __name__ == '__main__':
                 print("===Q{}: {}===".format(numQuery, query.title))
                 print(df2_warnings)
     elif args.mode == 'query':
-        query = evaluate.get_querystring(int(args.query), args.connection, args.num_run)
+        query = evaluate.get_querystring(int(args.query), args.connection, int(args.num_run))
         print(query)
 
