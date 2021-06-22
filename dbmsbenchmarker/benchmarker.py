@@ -165,27 +165,28 @@ def singleRun(connectiondata, inputConfig, numRuns, connectionname, numQuery, pa
 						data = []
 						columnnames = []
 						size = 0
+						durationTransfer = 0
 					else:
 						data=connection.fetchResult()
-					end = default_timer()
-					durationTransfer = 1000.0*(end - start)
-					logger.info(workername+"transfer [ms]: "+str(durationTransfer))
-					data = [[str(item).strip() for item in sublist] for sublist in data]
-					size = sys.getsizeof(data)
-					logger.info(workername+"Size of result list retrieved: "+str(size)+" bytes")
-					#logging.debug(data)
-					columnnames = [[i[0].upper() for i in connection.cursor.description]]
-					if BENCHMARKER_VERBOSE_RESULTS:
-						s = columnnames + [[str(e) for e in row] for row in data]
-						lens = [max(map(len, col)) for col in zip(*s)]
-						fmt = '\t'.join('{{:{}}}'.format(x) for x in lens)
-						table = [fmt.format(*row) for row in s]
-						logger.info('\n'.join(table))
-					if not query.storeData:
-						logger.info(workername+"Forget result set")
-						data = []
-						columnnames = []
-					#logging.debug(columnnames)
+						end = default_timer()
+						durationTransfer = 1000.0*(end - start)
+						logger.info(workername+"transfer [ms]: "+str(durationTransfer))
+						data = [[str(item).strip() for item in sublist] for sublist in data]
+						size = sys.getsizeof(data)
+						logger.info(workername+"Size of result list retrieved: "+str(size)+" bytes")
+						#logging.debug(data)
+						columnnames = [[i[0].upper() for i in connection.cursor.description]]
+						if BENCHMARKER_VERBOSE_RESULTS:
+							s = columnnames + [[str(e) for e in row] for row in data]
+							lens = [max(map(len, col)) for col in zip(*s)]
+							fmt = '\t'.join('{{:{}}}'.format(x) for x in lens)
+							table = [fmt.format(*row) for row in s]
+							logger.info('\n'.join(table))
+						if not query.storeData:
+							logger.info(workername+"Forget result set")
+							data = []
+							columnnames = []
+						#logging.debug(columnnames)
 		except Exception as e:
 			logging.exception(workername+'Caught an error: %s' % str(e))
 			error = '{workername}: {exception}'.format(workername=workername, exception=e)
