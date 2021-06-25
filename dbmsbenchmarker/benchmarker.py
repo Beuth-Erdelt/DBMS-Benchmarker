@@ -548,6 +548,8 @@ class benchmarker():
 			#		self.runsPerConnection = self.queryconfig["connectionmanagement"]["runsPerConnection"]
 			if not "reporting" in self.queryconfig:
 				self.queryconfig["reporting"] = {'resultsetPerQuery': False, 'resultsetPerQueryConnection': False, 'queryparameter': False, 'rowsPerResultset': False}
+			if 'defaultParameters' in self.queryconfig:
+				parameter.defaultParameters = self.queryconfig['defaultParameters']
 		for numQuery in range(1, len(self.queries)+1):
 			self.protocol['query'][str(numQuery)] = {'errors':{}, 'warnings':{}, 'durations':{}, 'duration':0.0, 'start':'', 'end':'', 'dataStorage': [], 'resultSets': {}, 'parameter': [], 'sizes': {}, 'starts': {}, 'ends': {}, 'runs': []}
 	def cleanProtocol(self, numQuery):
