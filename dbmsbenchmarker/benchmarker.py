@@ -250,7 +250,7 @@ def singleResult(connectiondata, inputConfig, numRuns, connectionname, numQuery,
 	"""
 	import logging
 	logger = logging.getLogger()
-	logger.setLevel(logging.DEBUG)
+	logger.setLevel(logging.INFO)
 	logging.debug("Processing result sets of {} runs for query {}".format(len(numRuns), numQuery))
 	# init list of results
 	results = []
@@ -275,7 +275,7 @@ def singleResult(connectiondata, inputConfig, numRuns, connectionname, numQuery,
 					logging.debug(workername+"Begin sorting")
 					data = sorted(data, key=itemgetter(*list(range(0,len(data[0])))))
 					logging.debug(workername+"Finished sorting")
-			logging.debug(workername+"Size of sorted result list retrieved: "+str(sys.getsizeof(data))+" bytes")
+			logging.info(workername+"Size of sorted result list retrieved: "+str(sys.getsizeof(data))+" bytes")
 			# convert to dataframe
 			#columnnames = [[i[0].upper() for i in connection.cursor.description]]
 			df = pd.DataFrame.from_records(data)
@@ -954,7 +954,7 @@ class benchmarker():
 					logging.debug("Benchmarks of Q"+str(numQuery)+" at dbms "+connectionname+" not wanted right now")
 					return False
 		# prepare basic setting
-		logging.debug("Starting benchmarks of Q"+str(numQuery)+" at dbms "+connectionname)
+		logging.info("Starting benchmarks of Q"+str(numQuery)+" at dbms "+connectionname)
 		self.startBenchmarkingQuery(numQuery)
 		q = self.queries[numQuery-1]
 		c = connectionname
