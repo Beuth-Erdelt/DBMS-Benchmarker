@@ -1245,7 +1245,7 @@ class dataframehelper():
 			return df
 	@staticmethod
 	def getWorkflow(benchmarker):
-		print("getWorkflow")
+		#print("getWorkflow")
 		filename = benchmarker.path+'/experiments.config'
 		if path.isfile(filename):
 			print("config found")
