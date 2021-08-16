@@ -149,6 +149,10 @@ class evaluator():
 					evaluation['dbms'][c]['alias'] = evaluation['dbms'][c]['name']
 				evaluation['dbms'][c]['version'] = self.benchmarker.dbms[c].connectiondata["version"]
 				evaluation['dbms'][c]['info'] = self.benchmarker.dbms[c].connectiondata["info"]
+				if 'parameter' in self.benchmarker.dbms[c].connectiondata:
+					evaluation['dbms'][c]['parameter'] = self.benchmarker.dbms[c].connectiondata['parameter']
+				else:
+					evaluation['dbms'][c]['parameter'] = {}
 				if 'connectionmanagement' in self.benchmarker.dbms[c].connectiondata:
 					# settings of connection
 					connectionmanagement = self.benchmarker.dbms[c].connectiondata['connectionmanagement']
