@@ -532,6 +532,10 @@ class dbms():
 		# anonymous dbms get ascending char as name
 		if self.anonymous:
 			if 'alias' in self.connectiondata and len(self.connectiondata['alias']) > 0:
+				# rename using docker alias names
+				self.name = connectiondata['name'].replace(connectiondata['docker'], connectiondata['docker_alias'])
+				print("Alias for "+self.connectiondata['name']+" is "+self.name)
+				"""
 				if self.connectiondata['alias'] in dbms.anonymizer.values():
 					# rename first occurance of alias
 					old_origin = dbms.deanonymizer[self.connectiondata['alias']]
@@ -546,6 +550,7 @@ class dbms():
 					dbms.currentAnonymChar = dbms.currentAnonymChar + 1
 				else:
 					self.name = self.connectiondata['alias']
+				"""
 			else:
 				self.name = "DBMS "+chr(dbms.currentAnonymChar)
 				dbms.currentAnonymChar = dbms.currentAnonymChar + 1

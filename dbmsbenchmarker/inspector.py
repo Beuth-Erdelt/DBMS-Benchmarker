@@ -285,6 +285,8 @@ class inspector():
     def get_aggregated_experiment_statistics(self, type='timer', name='run', dbms_filter=[], warmup=0, cooldown=0, factor_base='Mean', query_aggregate='Mean', total_aggregate='Mean'):
         if query_aggregate is not None:
             df = self.get_aggregated_query_statistics(type, name, dbms_filter, warmup, cooldown, factor_base, query_aggregate)
+            if df is None:
+                return pd.DataFrame()
             if df.empty:
                 return df
             df_stat = evaluator.addStatistics(df, drop_nan=False, drop_measures=True)
