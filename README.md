@@ -8,20 +8,6 @@ Results and evaluations are available via a Python interface.
 Optionally some reports are generated.
 An interactive dashboard assists in multi-dimensional analysis of the results.
 
-## Overview
-
-This documentation contains
-* an example of how to perform a [TPC-H-like Benchmark](docs/Example-TPC-H.md) from a command line
-* a list of the [key features](#key-features)
-* an example of the [basic usage](#basic-usage) in Python
-* an illustration of the [concepts](docs/Concept.md)
-* an illustration of the [evaluations](docs/Evaluations.md)
-* a description of the [options and configurations](docs/Options.md)
-* more extensive [examples](docs/Usage.md) of using the [cli tool](docs/Options.md#command-line-options-and-configuration)
-* some [use-cases](docs/Usecases.md#use-cases) and [test scenarios](docs/Usecases.md#scenarios)
-* examples of how to use the interactive [inspector](docs/Inspection.md)
-* examples of how to use the interactive [dashboard](docs/Dashboard.md)
-
 ## Key Features
 
 DBMS-Benchmarker
@@ -45,13 +31,15 @@ In the end this tool provides metrics that can be analyzed by [aggregation](docs
 For more informations, see a [basic example](#basic-usage), take a look at help for a full list of [options](docs/Options.md#command-line-options-and-configuration) or take a look at a [demo report](docs/Report-example-tpch.pdf).
 
 The code uses several Python modules, in particular <a href="https://github.com/baztian/jaydebeapi" target="_blank">jaydebeapi</a> for handling DBMS.
-This module has been tested with Brytlyt, Citus, Clickhouse, DB2, Exasol, Kinetica, MariaDB, MariaDB Columnstore, MemSQL, Mariadb, MonetDB, MySQL, OmniSci, Oracle DB, PostgreSQL, SQL Server and SAP HANA.
+This module has been tested with Brytlyt, Citus, Clickhouse, DB2, Exasol, Kinetica, MariaDB, MariaDB Columnstore, MemSQL, Mariadb, MonetDB, MySQL, OmniSci, Oracle DB, PostgreSQL, SingleStore, SQL Server and SAP HANA.
 
 
 ## Basic Usage
 
 The following very simple use case runs the query `SELECT COUNT(*) FROM test` 10 times against one local MySQL installation.
-As a result we obtain the execution times as a csv file, as a series plot and as a bloxplot.
+As a result we obtain an interactive dashboard to inspect timing aspects.
+
+### Configuration
 
 We need to provide
 * a [DBMS configuration file](docs/Options.md#connection-file), e.g. in `./config/connections.config`  
@@ -69,6 +57,7 @@ We need to provide
   }
 ]
 ```
+* the required JDBC driver, e.g. `mysql-connector-java-8.0.13.jar`
 * a [Queries configuration file](docs/Options.md#query-file), e.g. in `./config/queries.config`  
 ```
 {
@@ -84,42 +73,43 @@ We need to provide
 }
 ```
 
-In Python we basically use the benchmarker as follows:
+
+### Perform Benchmark
+
+Run the command:
+
+`python benchmark.py run -e yes -b -f ./config`
+
+* `-e yes`: This will precompile some evaluations and generate the timer cube.
+* `-b`: This will suppress some output
+* `-f`: This points to a folder having the configuration files.
+
+For more options, see the [documentation](Options.md#command-line-options-and-configuration)
+
+After benchmarking has been finished will see a message like
 ```
-from dbmsbenchmarker import *
-
-# tell the benchmarker where to find the config files
-configfolder = "./config"
-# tell the benchmarker where to put results
-resultfolder = "/results"
-
-# get a benchmarker object
-dbms = benchmarker.benchmarker(result_path=resultfolder)
-dbms.getConfig(configfolder)
-
-# tell the benchmarker which fixed evaluations we want to have (line plot and box plot per query)
-dbms.reporter.append(benchmarker.reporter.ploter(dbms))
-dbms.reporter.append(benchmarker.reporter.boxploter(dbms))
-
-# start benchmarking
-dbms.runBenchmarks()
-
-# print collected errors
-dbms.printErrors()
-
-# get unique code of this experiment
-code = dbms.code
-
-# generate inspection object
-evaluate = inspector.inspector(resultfolder)
-
-# load this experiment into inspector
-evaluate.load_experiment(code)
-
-# get latency of run (measures and statistics) of first query
-df_measure, df_statistics = evaluate.get_measures_and_statistics(1, type='latency', name='run')
+Experiment <code> has been finished
 ```
-There also is a [command line interface](docs/Options.md#command-line-options-and-configuration) for running benchmarks and generation of reports.
+
+The script has created a result folder in the current directory containing the results. `<code>` is the name of the folder.
+
+
+### Evaluate Results in Dashboard
+
+Run the command:
+
+`python dashboard.py`
+
+This will start the evaluation dashboard at `localhost:8050`.
+Visit the address in a browser and select the experiment `<code>`.
+
+## Benchmarking in a Kubernetes Cloud
+
+This module can serve as the **query executor** [2] and **evaluator** [1] for distributed parallel benchmarking experiments in a Kubernetes Cloud.
+
+<p align="center">
+    <img src="docs/experiment-with-orchestrator.png" width="800">
+</p>
 
 
 ## Limitations
@@ -141,6 +131,20 @@ Other comparable products you might like
 
 
 
+## References
+
+[1] [A Framework for Supporting Repetition and Evaluation in the Process of Cloud-Based DBMS Performance Benchmarking](https://doi.org/10.1007/978-3-030-84924-5_6)
+```
+Erdelt P.K. (2021)
+A Framework for Supporting Repetition and Evaluation in the Process of Cloud-Based DBMS Performance Benchmarking.
+In: Nambiar R., Poess M. (eds) Performance Evaluation and Benchmarking. TPCTC 2020.
+Lecture Notes in Computer Science, vol 12752. Springer, Cham.
+https://doi.org/10.1007/978-3-030-84924-5_6
+```
+
+[2] [Orchestrating DBMS Benchmarking in the Cloud with Kubernetes](https://www.researchgate.net/publication/353236865_Orchestrating_DBMS_Benchmarking_in_the_Cloud_with_Kubernetes)
+
+(old, slightly outdated [docs](docs/Docs_old.md))
 
 
 
