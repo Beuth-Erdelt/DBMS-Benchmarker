@@ -1,2 +1,3 @@
 include LICENSE
 include dbmsbenchmarker/latex/pagePerQuery/*
+recursive-include dbmsbenchmarker/scripts/assets *

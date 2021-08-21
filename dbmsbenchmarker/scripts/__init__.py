@@ -1,4 +1,4 @@
 """
 The dbmsbenchmarker scripts
 """
-__all__ = ["cli"]
+__all__ = ["cli","dashboardcli"]

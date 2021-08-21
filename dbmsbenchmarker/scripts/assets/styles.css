@@ -1,0 +1,371 @@
+/*
+"""
+    CSS Style for the Dashboard of the Python Package DBMS Benchmarker
+    Copyright (C) 2020  Jascha Jestel
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as
+    published by the Free Software Foundation, either version 3 of the
+    License, or (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+"""
+*/
+body {
+  background-color: #f2f2f2;
+  margin: 0px;
+}
+
+/* Reserve space for navbar above main content */
+#content {
+    margin-top: 70px;
+}
+
+/* disabled dash buttons have this class */
+.is-disabled {
+  opacity: 0.6;
+}
+
+/* Highlight active graphs */
+.active-graph {
+  border-color: lightcoral !important;
+}
+
+/* Full height for DataTable container */
+.dash-table-container {
+  height: 100%;
+}
+
+/* can't assign class to dash_table.DataTable ->
+   workaround using id like selector */
+[id^='datatable_graph_'] {
+  height: calc(100% - 45px);
+}
+
+
+/* **************************************************** */
+/* Navigation Bar */
+/* **************************************************** */
+#navbar {
+  position: fixed; /* Set the navbar to fixed position */
+  top: 0; /* Position the navbar at the top of the page */
+  width: 100%; /* Full width */
+  z-index: 2;
+  box-shadow: 2px 2px 2px lightgrey;
+  background-color: #f9f9f9;
+  border-radius: 4px;
+  height: 40px;
+  opacity: 0.95;
+  padding: 10px;
+}
+#navbar > * {
+  margin-right: 8px;
+}
+
+
+/* **************************************************** */
+/* Favorites Dropdown */
+/* **************************************************** */
+#favorites_container {
+  position: relative;
+  display: inline-block;
+}
+/* Dropdown Content (Hidden by Default) */
+#favorites_content {
+  display: none;
+  position: absolute;
+  background-color: #f9f9f9;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+}
+/* Show the favorites content on hover */
+#favorites_container:hover #favorites_content {
+  display: block;
+}
+/* Change the background color of the favorites button when the dropdown content is shown */
+#favorites_container:hover #btn_favorites {
+  background-color: #3e8e41;
+}
+
+
+/* **************************************************** */
+/* Add Graph Dropdown */
+/* **************************************************** */
+#add_graph_container {
+  position: relative;
+  display: inline-block;
+}
+#add_graph_content {
+  display: none;
+  position: absolute;
+  background-color: #f1f1f1;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  padding: 10px;
+}
+#add_graph_container:hover #add_graph_content {
+  display: block;
+}
+#add_graph_container:hover #add_graph_button {
+  background-color: lightgray;
+}
+
+
+/* **************************************************** */
+/* Side Menus */
+/* **************************************************** */
+.sidenav {
+  height: calc(100vh - 100px); /* 100% Full-height */
+  width: 0px; /* 0 width - change this with JavaScript */
+  position: fixed; /* Stay in place */
+  overflow-x: hidden; /* Disable horizontal scroll */
+  z-index: 1; /* Stay on top */
+  transition: 0.1s; /* 0.5 second transition effect to slide in the sidenav */
+  top: 70px; /* Stay at the top */
+
+  box-shadow: 2px 2px 2px lightgrey;
+  background-color: #f9f9f9;
+  border-radius: 4px;
+  border: solid 1px #f9f9f9;
+}
+#filter_side {
+  left: 0;
+}
+#settings_side {
+  right: 0;
+}
+#filter_side.open{
+  width: 300px;
+  padding: 10px;
+  left: 10px;
+  margin-bottom:10px;
+}
+#settings_side.open {
+  width: 220px;
+  padding: 10px;
+  margin-right: 10px;
+  margin-bottom:10px;
+}
+
+
+/* **************************************************** */
+/* Experiment Overlay */
+/* **************************************************** */
+#experiment_overlay {
+  height: 0%;
+  width: 100%;
+  position: fixed;
+  z-index: 3;
+  top: 0;
+  left: 0;
+  background-color: rgba(249,249,249,0.95);
+  overflow-y: hidden;
+  transition: 0.5s;
+}
+#experiment_overlay_content {
+  width: 90%;
+  margin: 50px 5%;
+  opacity: 1;
+}
+
+
+/* **************************************************** */
+/* Graph Grid */
+/* **************************************************** */
+#graph_grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 10px 10px;
+  grid-auto-rows: calc((100vh - 100px)/3);
+  transition: margin-left .1s;
+  transition: margin-right .1s;
+  padding: 0px 20px 0px 20px;
+}
+#graph_grid > div {
+    box-shadow: 2px 2px 2px lightgrey;
+    background-color: #f9f9f9;
+    padding: 10px;
+    border-radius: 4px;
+    border: solid 1px #f9f9f9;
+    position: relative; /* For position of buttons */
+}
+/* These classes are added to graph_grid when side menus open */
+.m-l {
+  margin-left: 330px;
+}
+.m-r {
+  margin-right: 250px;
+}
+.graph_container {
+  width: 100%;
+}
+
+
+/* **************************************************** */
+/* Icons on Widget */
+/* **************************************************** */
+.input_size {
+  position: absolute;
+  z-index: 1;
+  bottom: 0;
+}
+input[type="number"].input_size {
+  padding:1px 1px 1px 5px;
+  height:30px;
+  width: 40px;
+}
+.input_gridRow{
+  right: 175px;
+}
+.input_gridColumn{
+  right: 215px;
+}
+.checklist_active{
+  right:54px;
+}
+.icon{
+  width: 24px;
+  height: 24px;
+  position: absolute;
+  z-index: 1;
+}
+.icon_download {
+  bottom: 0;
+  right: 0;
+  background: url(icons/get_app-black-24dp.svg);
+}
+.icon_activate {
+  bottom: 0;
+  right: 27px;
+  background: url(icons/tune-black-24dp.svg);
+}
+.icon_delete {
+  top: -6px;
+  right: -6px;
+  background: url(icons/clear-black-24dp.svg);
+}
+.icon_move_up {
+  bottom: 0;
+  right: 145px;
+  width: 20px;
+  background: url(icons/chevron_up.svg);
+}
+.icon_move_down {
+  bottom: 0;
+  right: 118px;
+  width: 20px;
+  background: url(icons/chevron_down.svg);
+}
+.icon:hover {
+ border: solid 1px grey;
+}
+
+
+/* **************************************************** */
+/* Information Modal */
+/* **************************************************** */
+#info_modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 3; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 48%;
+  padding: 10px;
+  height: calc(100% - 40px); /* Full height */
+  overflow: hidden;
+  background-color: rgba(254,254,254,0.97);
+  border: 10px outset;
+}
+#info_modal_body {
+  height: calc(100% - 70px);
+  width: 100%;
+
+  overflow-y: scroll;
+  display: flex;
+  justify-content: center;
+  flex-flow: row wrap;
+}
+.modal-item {
+  padding: 10px;
+  flex: 1 0 auto;
+  min-width: 250px;
+  max-width: 100%;
+}
+/* The Close Button */
+#span_close_modal {
+  color: #aaa;
+  float: right;
+  margin-right: 10px;
+  font-size: 40px;
+}
+#span_close_modal:hover,
+#span_close_modal:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+
+/**********************************/
+/* Icon Buttons in filter sidenav */
+/**********************************/
+.icon-btn {
+  width: 24px;
+  height: 24px;
+  margin: 15px 10px 5px 10px;
+  outline: 2px outset gainsboro;
+  outline-offset: 5px;
+  display: inline-block;
+}
+.icon-btn:hover{
+  outline-color: grey;
+}
+#btn_select_all_connections {
+  background: url(icons/check_box-24px.svg);
+}
+#btn_deselect_all_connections {
+  background: url(icons/check_box_outline_blank-24px.svg);
+}
+#btn_connection_info {
+  background: url(icons/info-24px.svg);
+}
+#btn_apply_filter {
+  margin-top: 8px;
+}
+#btn_deselect_query {
+  background: url(icons/radio_button_unchecked-24px.svg);
+}
+#btn_query_info{
+  background: url(icons/info-24px.svg);
+}
+
+
+/* **************************************************** */
+/* Scrollbar */
+/* **************************************************** */
+/* width */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+/* Track */
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 5px;
+}
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}

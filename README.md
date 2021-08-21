@@ -33,6 +33,9 @@ For more informations, see a [basic example](#basic-usage), take a look at help 
 The code uses several Python modules, in particular <a href="https://github.com/baztian/jaydebeapi" target="_blank">jaydebeapi</a> for handling DBMS.
 This module has been tested with Brytlyt, Citus, Clickhouse, DB2, Exasol, Kinetica, MariaDB, MariaDB Columnstore, MemSQL, Mariadb, MonetDB, MySQL, OmniSci, Oracle DB, PostgreSQL, SingleStore, SQL Server and SAP HANA.
 
+## Installation
+
+Run `pip install dbmsbenchmarker`
 
 ## Basic Usage
 
@@ -76,9 +79,9 @@ We need to provide
 
 ### Perform Benchmark
 
-Run the command:
+Run the CLI command:
 
-`python benchmark.py run -e yes -b -f ./config`
+`dbmsbenchmarker run -e yes -b -f ./config`
 
 * `-e yes`: This will precompile some evaluations and generate the timer cube.
 * `-b`: This will suppress some output
