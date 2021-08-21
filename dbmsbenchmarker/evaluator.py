@@ -143,8 +143,16 @@ class evaluator():
 					evaluation['dbms'][c]['docker_alias'] = self.benchmarker.dbms[c].connectiondata["docker_alias"]
 				else:
 					evaluation['dbms'][c]['docker_alias'] = evaluation['dbms'][c]['docker']
+				if 'alias' in self.benchmarker.dbms[c].connectiondata:
+					evaluation['dbms'][c]['alias'] = self.benchmarker.dbms[c].connectiondata["alias"]
+				else:
+					evaluation['dbms'][c]['alias'] = evaluation['dbms'][c]['name']
 				evaluation['dbms'][c]['version'] = self.benchmarker.dbms[c].connectiondata["version"]
 				evaluation['dbms'][c]['info'] = self.benchmarker.dbms[c].connectiondata["info"]
+				if 'parameter' in self.benchmarker.dbms[c].connectiondata:
+					evaluation['dbms'][c]['parameter'] = self.benchmarker.dbms[c].connectiondata['parameter']
+				else:
+					evaluation['dbms'][c]['parameter'] = {}
 				if 'connectionmanagement' in self.benchmarker.dbms[c].connectiondata:
 					# settings of connection
 					connectionmanagement = self.benchmarker.dbms[c].connectiondata['connectionmanagement']
@@ -165,7 +173,9 @@ class evaluator():
 					else:
 						evaluation['dbms'][c]['connectionmanagement']["timeout"] = "Unlimited"
 				if "hostsystem" in self.benchmarker.dbms[c].connectiondata:
-					evaluation['dbms'][c]['hostsystem'] = self.benchmarker.dbms[c].connectiondata["hostsystem"]
+					evaluation['dbms'][c]['hostsystem'] = self.benchmarker.dbms[c].connectiondata["hostsystem"].copy()
+				if "worker" in self.benchmarker.dbms[c].connectiondata:
+					evaluation['dbms'][c]['worker'] = self.benchmarker.dbms[c].connectiondata["worker"].copy()
 				evaluation['dbms'][c]['times'] = {}
 				evaluation['dbms'][c]['prices'] = {}
 				if "timeLoad" in self.benchmarker.dbms[c].connectiondata:

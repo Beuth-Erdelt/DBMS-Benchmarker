@@ -157,6 +157,17 @@ class inspector():
         if len(dbms_list) == 0:
             dbms_list = {'': self.get_experiment_list_connections()}
         return dbms_list
+    def get_experiment_list_connections_by_parameter(self, property):
+        # dict of lists of node
+        dbms_list = {}
+        for c,d in self.e.evaluation['dbms'].items():
+            if 'parameter' in d and property in d['parameter']:
+                if not d['parameter'][property] in dbms_list:
+                    dbms_list[d['parameter'][property]] = []
+                dbms_list[d['parameter'][property]].append(str(c))
+        if len(dbms_list) == 0:
+            dbms_list = {'': self.get_experiment_list_connections()}
+        return dbms_list
     def get_experiment_list_connections_by_hostsystem(self, property):
         # dict of lists of node
         dbms_list = {}
@@ -285,6 +296,8 @@ class inspector():
     def get_aggregated_experiment_statistics(self, type='timer', name='run', dbms_filter=[], warmup=0, cooldown=0, factor_base='Mean', query_aggregate='Mean', total_aggregate='Mean'):
         if query_aggregate is not None:
             df = self.get_aggregated_query_statistics(type, name, dbms_filter, warmup, cooldown, factor_base, query_aggregate)
+            if df is None:
+                return pd.DataFrame()
             if df.empty:
                 return df
             df_stat = evaluator.addStatistics(df, drop_nan=False, drop_measures=True)

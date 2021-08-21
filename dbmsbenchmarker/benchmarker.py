@@ -40,8 +40,8 @@ import random
 from operator import add
 from dbmsbenchmarker import tools, reporter, parameter, monitor, evaluator
 import pprint
-#import dill
-#from jpype.pickle import JPickler, JUnpickler
+# for query timeout
+import jaydebeapi
 
 #activeConnections = []
 
@@ -134,6 +134,7 @@ def singleRun(connectiondata, inputConfig, numRuns, connectionname, numQuery, pa
 		try:
 			#start = default_timer()
 			if BENCHMARKER_VERBOSE_QUERIES:
+				logger.info(type(queryString))
 				if isinstance(queryString, list):
 					for queryPart in queryString:
 						logger.info(workername+queryPart)
@@ -160,26 +161,32 @@ def singleRun(connectiondata, inputConfig, numRuns, connectionname, numQuery, pa
 			if query.withData:
 				if len(queryString) != 0:
 					start = default_timer()
-					data=connection.fetchResult()
-					end = default_timer()
-					durationTransfer = 1000.0*(end - start)
-					logger.info(workername+"transfer [ms]: "+str(durationTransfer))
-					data = [[str(item).strip() for item in sublist] for sublist in data]
-					size = sys.getsizeof(data)
-					logger.info(workername+"Size of result list retrieved: "+str(size)+" bytes")
-					#logging.debug(data)
-					columnnames = [[i[0].upper() for i in connection.cursor.description]]
-					if BENCHMARKER_VERBOSE_RESULTS:
-						s = columnnames + [[str(e) for e in row] for row in data]
-						lens = [max(map(len, col)) for col in zip(*s)]
-						fmt = '\t'.join('{{:{}}}'.format(x) for x in lens)
-						table = [fmt.format(*row) for row in s]
-						logger.info('\n'.join(table))
-					if not query.storeData:
-						logger.info(workername+"Forget result set")
+					if isinstance(queryString, list):
 						data = []
 						columnnames = []
-					#logging.debug(columnnames)
+						size = 0
+						durationTransfer = 0
+					else:
+						data=connection.fetchResult()
+						end = default_timer()
+						durationTransfer = 1000.0*(end - start)
+						logger.info(workername+"transfer [ms]: "+str(durationTransfer))
+						data = [[str(item).strip() for item in sublist] for sublist in data]
+						size = sys.getsizeof(data)
+						logger.info(workername+"Size of result list retrieved: "+str(size)+" bytes")
+						#logging.debug(data)
+						columnnames = [[i[0].upper() for i in connection.cursor.description]]
+						if BENCHMARKER_VERBOSE_RESULTS:
+							s = columnnames + [[str(e) for e in row] for row in data]
+							lens = [max(map(len, col)) for col in zip(*s)]
+							fmt = '\t'.join('{{:{}}}'.format(x) for x in lens)
+							table = [fmt.format(*row) for row in s]
+							logger.info('\n'.join(table))
+						if not query.storeData:
+							logger.info(workername+"Forget result set")
+							data = []
+							columnnames = []
+						#logging.debug(columnnames)
 		except Exception as e:
 			logging.exception(workername+'Caught an error: %s' % str(e))
 			error = '{workername}: {exception}'.format(workername=workername, exception=e)
@@ -243,7 +250,7 @@ def singleResult(connectiondata, inputConfig, numRuns, connectionname, numQuery,
 	"""
 	import logging
 	logger = logging.getLogger()
-	logger.setLevel(logging.DEBUG)
+	logger.setLevel(logging.INFO)
 	logging.debug("Processing result sets of {} runs for query {}".format(len(numRuns), numQuery))
 	# init list of results
 	results = []
@@ -268,7 +275,7 @@ def singleResult(connectiondata, inputConfig, numRuns, connectionname, numQuery,
 					logging.debug(workername+"Begin sorting")
 					data = sorted(data, key=itemgetter(*list(range(0,len(data[0])))))
 					logging.debug(workername+"Finished sorting")
-			logging.debug(workername+"Size of sorted result list retrieved: "+str(sys.getsizeof(data))+" bytes")
+			logging.info(workername+"Size of sorted result list retrieved: "+str(sys.getsizeof(data))+" bytes")
 			# convert to dataframe
 			#columnnames = [[i[0].upper() for i in connection.cursor.description]]
 			df = pd.DataFrame.from_records(data)
@@ -541,6 +548,8 @@ class benchmarker():
 			#		self.runsPerConnection = self.queryconfig["connectionmanagement"]["runsPerConnection"]
 			if not "reporting" in self.queryconfig:
 				self.queryconfig["reporting"] = {'resultsetPerQuery': False, 'resultsetPerQueryConnection': False, 'queryparameter': False, 'rowsPerResultset': False}
+			if 'defaultParameters' in self.queryconfig:
+				parameter.defaultParameters = self.queryconfig['defaultParameters']
 		for numQuery in range(1, len(self.queries)+1):
 			self.protocol['query'][str(numQuery)] = {'errors':{}, 'warnings':{}, 'durations':{}, 'duration':0.0, 'start':'', 'end':'', 'dataStorage': [], 'resultSets': {}, 'parameter': [], 'sizes': {}, 'starts': {}, 'ends': {}, 'runs': []}
 	def cleanProtocol(self, numQuery):
@@ -945,7 +954,7 @@ class benchmarker():
 					logging.debug("Benchmarks of Q"+str(numQuery)+" at dbms "+connectionname+" not wanted right now")
 					return False
 		# prepare basic setting
-		logging.debug("Starting benchmarks of Q"+str(numQuery)+" at dbms "+connectionname)
+		logging.info("Starting benchmarks of Q"+str(numQuery)+" at dbms "+connectionname)
 		self.startBenchmarkingQuery(numQuery)
 		q = self.queries[numQuery-1]
 		c = connectionname
@@ -960,6 +969,7 @@ class benchmarker():
 		numProcesses = connectionmanagement['numProcesses']#self.numProcesses
 		batchsize = connectionmanagement['runsPerConnection']#self.runsPerConnection
 		timeout = connectionmanagement['timeout']#self.timeout
+		jaydebeapi.QUERY_TIMEOUT = timeout
 		singleConnection = connectionmanagement['singleConnection']
 		# Patch: if singleConnection only with single process
 		if singleConnection:

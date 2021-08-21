@@ -30,6 +30,17 @@ import pickle
 
 from dbmsbenchmarker import inspector
 
+# Set query timeout
+jaydebeapi.QUERY_TIMEOUT = 0
+
+def _set_stmt_parms(self, prep_stmt, parameters):
+        for i in range(len(parameters)):
+            prep_stmt.setObject(i + 1, parameters[i])
+        #print("jaydebeapi.QUERY_TIMEOUT", jaydebeapi.QUERY_TIMEOUT)
+        prep_stmt.setQueryTimeout(jaydebeapi.QUERY_TIMEOUT)
+
+jaydebeapi.Cursor._set_stmt_parms = _set_stmt_parms
+
 
 class timer():
 	"""
@@ -521,6 +532,10 @@ class dbms():
 		# anonymous dbms get ascending char as name
 		if self.anonymous:
 			if 'alias' in self.connectiondata and len(self.connectiondata['alias']) > 0:
+				# rename using docker alias names
+				self.name = connectiondata['name'].replace(connectiondata['docker'], connectiondata['docker_alias'])
+				print("Alias for "+self.connectiondata['name']+" is "+self.name)
+				"""
 				if self.connectiondata['alias'] in dbms.anonymizer.values():
 					# rename first occurance of alias
 					old_origin = dbms.deanonymizer[self.connectiondata['alias']]
@@ -535,6 +550,7 @@ class dbms():
 					dbms.currentAnonymChar = dbms.currentAnonymChar + 1
 				else:
 					self.name = self.connectiondata['alias']
+				"""
 			else:
 				self.name = "DBMS "+chr(dbms.currentAnonymChar)
 				dbms.currentAnonymChar = dbms.currentAnonymChar + 1
@@ -1234,7 +1250,7 @@ class dataframehelper():
 			return df
 	@staticmethod
 	def getWorkflow(benchmarker):
-		print("getWorkflow")
+		#print("getWorkflow")
 		filename = benchmarker.path+'/experiments.config'
 		if path.isfile(filename):
 			print("config found")
