@@ -27,4 +27,9 @@ setuptools.setup(
     install_requires=requirements,
     package_dir={'dbmsbenchmarker': 'dbmsbenchmarker'},
     package_data={'dbmsbenchmarker': ['dbmsbenchmarker/latex/*']},
+    py_modules=['cli'],
+    entry_points='''
+        [console_scripts]
+        dbmsbenchmarker=dbmsbenchmarker.scripts.cli:benchmarker
+    ''',
 )
