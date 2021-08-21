@@ -101,7 +101,7 @@ The script has created a result folder in the current directory containing the r
 
 Run the command:
 
-`python dashboard.py`
+`dbmsdashboard`
 
 This will start the evaluation dashboard at `localhost:8050`.
 Visit the address in a browser and select the experiment `<code>`.
@@ -111,7 +111,7 @@ Visit the address in a browser and select the experiment `<code>`.
 This module can serve as the **query executor** [2] and **evaluator** [1] for distributed parallel benchmarking experiments in a Kubernetes Cloud.
 
 <p align="center">
-    <img src="docs/experiment-with-orchestrator.png" width="800">
+    <img src="https://raw.githubusercontent.com/Beuth-Erdelt/DBMS-Benchmarker/v0.11.4/docs/experiment-with-orchestrator.png" width="800">
 </p>
 
 
