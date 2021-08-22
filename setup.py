@@ -11,7 +11,7 @@ setuptools.setup(
     version="0.11.5",
     author="Patrick Erdelt",
     author_email="perdelt@beuth-hochschule.de",
-    description="DBMS-Benchmarker is an application-level blackbox benchmark tool for Database Management Systems (DBMS). It aims at easily measuring and evaluation of the performance the user receives even in complex benchmark situations.",
+    description="DBMS-Benchmarker is a Python-based application-level blackbox benchmark tool for Database Management Systems (DBMS). It connects to a given list of DBMS (via JDBC) and runs a given list of parametrized and randomized (SQL) benchmark queries. Evaluations are available via Python interface, in reports and at an interactive multi-dimensional dashboard.",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/Beuth-Erdelt/DBMS-Benchmarker",
