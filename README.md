@@ -8,6 +8,8 @@ Results and evaluations are available via a Python interface.
 Optionally some reports are generated.
 An interactive dashboard assists in multi-dimensional analysis of the results.
 
+See the [homepage](https://github.com/Beuth-Erdelt/DBMS-Benchmarker) for more documentation.
+
 ## Key Features
 
 DBMS-Benchmarker
@@ -87,9 +89,11 @@ Run the CLI command:
 * `-b`: This will suppress some output
 * `-f`: This points to a folder having the configuration files.
 
+This is equivalent to `python benchmark.py run -e yes -b -f ./config`
+
 For more options, see the [documentation](Options.md#command-line-options-and-configuration)
 
-After benchmarking has been finished will see a message like
+After benchmarking has been finished we will see a message like
 ```
 Experiment <code> has been finished
 ```
@@ -105,6 +109,8 @@ Run the command:
 
 This will start the evaluation dashboard at `localhost:8050`.
 Visit the address in a browser and select the experiment `<code>`.
+
+This is equivalent to `python dashboard.py`.
 
 ## Benchmarking in a Kubernetes Cloud
 
@@ -137,13 +143,12 @@ Other comparable products you might like
 ## References
 
 [1] [A Framework for Supporting Repetition and Evaluation in the Process of Cloud-Based DBMS Performance Benchmarking](https://doi.org/10.1007/978-3-030-84924-5_6)
-```
-Erdelt P.K. (2021)
-A Framework for Supporting Repetition and Evaluation in the Process of Cloud-Based DBMS Performance Benchmarking.
-In: Nambiar R., Poess M. (eds) Performance Evaluation and Benchmarking. TPCTC 2020.
-Lecture Notes in Computer Science, vol 12752. Springer, Cham.
-https://doi.org/10.1007/978-3-030-84924-5_6
-```
+
+> Erdelt P.K. (2021)
+> A Framework for Supporting Repetition and Evaluation in the Process of Cloud-Based DBMS Performance Benchmarking.
+> In: Nambiar R., Poess M. (eds) Performance Evaluation and Benchmarking. TPCTC 2020.
+> Lecture Notes in Computer Science, vol 12752. Springer, Cham.
+> https://doi.org/10.1007/978-3-030-84924-5_6
 
 [2] [Orchestrating DBMS Benchmarking in the Cloud with Kubernetes](https://www.researchgate.net/publication/353236865_Orchestrating_DBMS_Benchmarking_in_the_Cloud_with_Kubernetes)
 
