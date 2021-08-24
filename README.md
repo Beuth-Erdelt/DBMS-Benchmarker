@@ -112,6 +112,8 @@ Visit the address in a browser and select the experiment `<code>`.
 
 This is equivalent to `python dashboard.py`.
 
+Alternatively you may use a [Jupyter notebook](Evaluation-Demo.ipynb).
+
 ## Benchmarking in a Kubernetes Cloud
 
 This module can serve as the **query executor** [2] and **evaluator** [1] for distributed parallel benchmarking experiments in a Kubernetes Cloud.
