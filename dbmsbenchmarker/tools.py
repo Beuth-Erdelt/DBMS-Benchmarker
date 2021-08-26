@@ -1565,6 +1565,7 @@ def merge_partial_results(result_path, code):
 							connection_first = connection
 							protocol['query'][numQuery]['dataStorage'] = data_first
 							protocol['query'][numQuery]['warnings'][connection_first] = ''
+							titles_result = data_first[0][0]#list(range(len(result[0])))
 						else:
 							different = False
 							for numRun, resultset in enumerate(data):
