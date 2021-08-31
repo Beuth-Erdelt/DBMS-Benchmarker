@@ -2,7 +2,7 @@
 
 # -- Project information
 
-project = 'Bexhoma'
+project = 'DBMSBenchmarker'
 copyright = '2021, Patrick Erdelt'
 author = 'Patrick Erdelt'
 
