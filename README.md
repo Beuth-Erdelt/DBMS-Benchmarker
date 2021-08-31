@@ -8,7 +8,7 @@ Results and evaluations are available via a Python interface.
 Optionally some reports are generated.
 An interactive dashboard assists in multi-dimensional analysis of the results.
 
-See the [homepage](https://github.com/Beuth-Erdelt/DBMS-Benchmarker) for more documentation.
+See the [homepage](https://github.com/Beuth-Erdelt/DBMS-Benchmarker) and the [documentation](https://dbmsbenchmarker.readthedocs.io/en/latest/).
 
 ## Key Features
 
