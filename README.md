@@ -1,3 +1,8 @@
+[![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://GitHub.com/Beuth-Erdelt/DBMS-Benchmarker/graphs/commit-activity)
+
+[![GitHub release](https://img.shields.io/github/release/Beuth-Erdelt/DBMS-Benchmarker.svg)](https://GitHub.com/Beuth-Erdelt/DBMS-Benchmarker/releases/)
+
+
 # DBMS-Benchmarker
 
 DBMS-Benchmarker is a Python-based application-level blackbox benchmark tool for Database Management Systems (DBMS).
