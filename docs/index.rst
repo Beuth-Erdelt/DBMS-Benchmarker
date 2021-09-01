@@ -12,7 +12,7 @@
     :collapse_navigation: false
     :globaltoc_collapse: false
 
-    Docs.md
+    ./Docs.md
     ...
 .. mdinclude:: ../README.md
 
