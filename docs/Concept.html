@@ -1,0 +1,449 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Concepts &mdash; DBMSBenchmarker 0.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> DBMSBenchmarker
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">Concepts</a><ul>
+<li><a class="reference internal" href="#experiment">Experiment</a></li>
+<li><a class="reference internal" href="#single-query">Single Query</a></li>
+<li><a class="reference internal" href="#basic-parameters">Basic Parameters</a></li>
+<li><a class="reference internal" href="#basic-metrics">Basic Metrics</a></li>
+<li><a class="reference internal" href="#comparison">Comparison</a></li>
+<li><a class="reference internal" href="#monitoring-hardware-metrics">Monitoring Hardware Metrics</a></li>
+<li><a class="reference internal" href="#evaluation">Evaluation</a><ul>
+<li><a class="reference internal" href="#aggregation-functions">Aggregation Functions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">DBMSBenchmarker</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Concepts</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/Concept.md.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="concepts">
+<h1>Concepts<a class="headerlink" href="#concepts" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="experiment">
+<h2>Experiment<a class="headerlink" href="#experiment" title="Permalink to this headline">¶</a></h2>
+<p>An <strong>experiment</strong> is organized in <em>queries</em>.
+A <strong>query</strong> is a statement, that is understood by a Database Management System (DBMS).</p>
+</div>
+<div class="section" id="single-query">
+<h2>Single Query<a class="headerlink" href="#single-query" title="Permalink to this headline">¶</a></h2>
+<p>A <strong>benchmark</strong> of a query consists of these steps:</p>
+<p align="center">
+<img src="https://raw.githubusercontent.com/Beuth-Erdelt/DBMS-Benchmarker/master/docs/Concept-Query.png" width="320">
+</p><ol class="arabic simple">
+<li><p>Establish a <strong>connection</strong> between client and server<span class="raw-html-m2r"><br></span>
+This uses <code class="docutils literal notranslate"><span class="pre">jaydebeapi.connect()</span></code> (and also creates a cursor - time not measured)</p></li>
+<li><p>Send the query from client to server and</p></li>
+<li><p><strong>Execute</strong> the query on server<span class="raw-html-m2r"><br></span>
+These two steps use <code class="docutils literal notranslate"><span class="pre">execute()</span></code> on a cursor of the JDBC connection</p></li>
+<li><p><strong>Transfer</strong> the result back to client<span class="raw-html-m2r"><br></span>
+This uses <code class="docutils literal notranslate"><span class="pre">fetchall()</span></code> on a cursor of the JDBC connection</p></li>
+<li><p>Close the connection<span class="raw-html-m2r"><br></span>
+This uses <code class="docutils literal notranslate"><span class="pre">close()</span></code> on the cursor and the connection</p></li>
+</ol>
+<p>The times needed for steps connection (1.), execution (2. and 3.) and transfer (4.) are measured on the client side.
+A unit of connect, send, execute and transfer is called a <strong>run</strong>. Connection time will be zero if an existing connection is reused.
+A sequence of runs between establishing and discarding a connection is called a <strong>session</strong>.</p>
+</div>
+<div class="section" id="basic-parameters">
+<h2>Basic Parameters<a class="headerlink" href="#basic-parameters" title="Permalink to this headline">¶</a></h2>
+<p>A basic parameter of a query is the <strong>number of runs</strong> (units of send, execute, transfer).
+To configure sessions it is also possible to adjust</p>
+<ul class="simple">
+<li><p>the <strong>number of runs per connection</strong> (session length, to have several sequential connections) and</p></li>
+<li><p>the <strong>number of parallel connections</strong> (to simulate several simultanious clients)</p></li>
+<li><p>a <strong>timeout</strong> (maximum lifespan of a connection)</p></li>
+<li><p>a <strong>delay</strong> for throttling (waiting time before each connection or execution)</p></li>
+</ul>
+<p>for the same query.</p>
+<p align="center">
+<img src="https://raw.githubusercontent.com/Beuth-Erdelt/DBMS-Benchmarker/master/docs/Concept-Basic.png" width="320">
+</p><p>Parallel clients are simulated using the <code class="docutils literal notranslate"><span class="pre">pool.apply_async()</span></code> method of a <code class="docutils literal notranslate"><span class="pre">Pool</span></code> object of the module <a class="reference external" href="https://docs.python.org/3/library/multiprocessing.html">multiprocessing</a>.
+Runs and their benchmark times are ordered by numbering.</p>
+<p>We can specify a <strong>number of warmup runs</strong> and a <strong>number of cooldown runs</strong>.
+This means the first n runs resp. the last n runs are ignored in evaluation.
+<strong>Note</strong> this is only reliable for non-parallel connections.</p>
+<p>Moreover we can <strong>randomize</strong> a query, such that each run will look slightly different.
+This means we exchange a part of the query for a random value.</p>
+</div>
+<div class="section" id="basic-metrics">
+<h2>Basic Metrics<a class="headerlink" href="#basic-metrics" title="Permalink to this headline">¶</a></h2>
+<p>We have several <strong>timers</strong> to collect timing information:</p>
+<p align="center">
+<img src="https://raw.githubusercontent.com/Beuth-Erdelt/DBMS-Benchmarker/master/docs/Concept-Benchmarking.png" width="320">
+</p><ul class="simple">
+<li><p><strong>timerConnection</strong><span class="raw-html-m2r"><br></span>
+This timer gives the time in ms and per run.<span class="raw-html-m2r"><br></span>
+It measures the time it takes to establish a JDBC connection.<span class="raw-html-m2r"><br></span>
+<strong>Note</strong> that if a run reuses an established connection, this timer will be 0 for that run.</p></li>
+<li><p><strong>timerExecution</strong><span class="raw-html-m2r"><br></span>
+This timer gives the time in ms and per run.<span class="raw-html-m2r"><br></span>
+It measures the time between sending a SQL command and receiving a result code via JDBC.</p></li>
+<li><p><strong>timerTransfer</strong><span class="raw-html-m2r"><br></span>
+This timer gives the time in ms and per run.<span class="raw-html-m2r"><br></span>
+<strong>Note</strong> that if a run does not transfer any result set (a writing query or if we suspend the result set), this timer will be 0 for that run.</p></li>
+<li><p><strong>timerRun</strong><span class="raw-html-m2r"><br></span>
+This timer gives the time in ms and per run.<span class="raw-html-m2r"><br></span>
+That is the sum of <em>timerConnection</em>, <em>timerExecution</em> and <em>timerTransfer</em>.<span class="raw-html-m2r"><br></span>
+<strong>Note</strong> that connection time is 0, if we reuse an established session, and transfer time is 0, if we do not transfer any result set.</p></li>
+<li><p><strong>timerSession</strong><span class="raw-html-m2r"><br></span>
+This timer gives the time in ms and per session.<span class="raw-html-m2r"><br></span>
+It aggregates all runs of a session and sums up their <em>timerRun</em>s.<span class="raw-html-m2r"><br></span>
+A session starts with establishing a connection and ends when the connection is disconnected.<span class="raw-html-m2r"><br></span>
+This timer ignores warmup / cooldown phases, since they are only valid for runs.</p></li>
+</ul>
+<p>The benchmark times of a query are stored in csv files (optional pickeled pandas dataframe): For connection, execution and transfer.
+The columns represent DBMS and each row contains a run.</p>
+<p>We also measure and store the <strong>total time</strong> of the benchmark of the query, since for parallel execution this differs from the <strong>sum of times</strong> based on <em>timerRun</em>. Total time means measurement starts before first benchmark run and stops after the last benchmark run has been finished. Thus total time also includes some overhead (for spawning a pool of subprocesses, compute size of result sets and joining results of subprocesses). Additionally total time always spans all benchmarks. The sum of times on the other hand ignores warmup and cooldown phase.</p>
+<p>We think</p>
+<ul class="simple">
+<li><p>the sum of times is more of an indicator for performance of the server system</p></li>
+<li><p>the total time is more of an indicator for the performance the client user receives.</p></li>
+</ul>
+<p>We also compute for each query and DBMS</p>
+<ul class="simple">
+<li><p><strong>Latency</strong>: Mean time (without warmup / cooldown)</p></li>
+<li><p><strong>Throughput</strong>:</p>
+<ul>
+<li><p>Number of runs per total time (including warmup / cooldown phase)</p></li>
+<li><p>Number of parallel clients per mean time (without warmup / cooldown)</p></li>
+</ul>
+</li>
+</ul>
+<p>In the end we have</p>
+<ul class="simple">
+<li><p>Per DBMS: Total time of experiment</p></li>
+<li><p>Per DBMS and Query:</p>
+<ul>
+<li><p>Time per session</p></li>
+<li><p>Time per run</p></li>
+<li><p>Time per run, split up in: connection / execution / data transfer</p></li>
+<li><p>Latency and Throughputs per run</p></li>
+<li><p>Latency and Throughputs per session</p></li>
+</ul>
+</li>
+</ul>
+<p>Additionally error messages and timestamps of begin and end of benchmarking a query are stored.</p>
+</div>
+<div class="section" id="comparison">
+<h2>Comparison<a class="headerlink" href="#comparison" title="Permalink to this headline">¶</a></h2>
+<p>We can specify a dict of DBMS.
+Each query will be sent to every DBMS in the same number of runs.</p>
+<p align="center">
+<img src="https://raw.githubusercontent.com/Beuth-Erdelt/DBMS-Benchmarker/master/docs/Concept-Compare.png" width="320">
+</p><p>This also respects randomization, i.e. every DBMS receives exactly the same versions of the query in the same order.</p>
+<p>We assume all DBMS will give us the same result sets.
+Without randomization, each run should yield the same result set.
+This tool automatically can check these assumptions by <strong>comparison</strong>.
+The resulting data table is handled as a list of lists and treated by this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># restrict precision</span>
+<span class="n">data</span> <span class="o">=</span> <span class="p">[[</span><span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">item</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">query</span><span class="o">.</span><span class="n">restrict_precision</span><span class="p">))</span> <span class="k">if</span> <span class="n">tools</span><span class="o">.</span><span class="n">convertToFloat</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="o">==</span> <span class="nb">float</span> <span class="k">else</span> <span class="n">item</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">sublist</span><span class="p">]</span> <span class="k">for</span> <span class="n">sublist</span> <span class="ow">in</span> <span class="n">data</span><span class="p">]</span>
+<span class="c1"># sort by all columns</span>
+<span class="n">data</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">itemgetter</span><span class="p">(</span><span class="o">*</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">])))))</span>
+<span class="c1"># size of result</span>
+<span class="n">size</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">memory_usage</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span>
+<span class="c1"># hash of result</span>
+<span class="n">columnnames</span> <span class="o">=</span> <span class="p">[[</span><span class="n">i</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">connection</span><span class="o">.</span><span class="n">cursor</span><span class="o">.</span><span class="n">description</span><span class="p">]]</span>
+<span class="n">hashed</span> <span class="o">=</span> <span class="n">columnnames</span> <span class="o">+</span> <span class="p">[[</span><span class="n">hashlib</span><span class="o">.</span><span class="n">sha224</span><span class="p">(</span><span class="n">pickle</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">data</span><span class="p">))</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()]]</span>
+</pre></div>
+</div>
+<p>Result sets of different runs (not randomized) and different DBMS can be compared by their sorted table (small data sets) or their hash value or size (bigger data sets).</p>
+<p>In order to do so, result sets (or their hash value or size) are stored as lists of lists and additionally can be saved as csv files or pickled pandas dataframes.</p>
+</div>
+<div class="section" id="monitoring-hardware-metrics">
+<h2>Monitoring Hardware Metrics<a class="headerlink" href="#monitoring-hardware-metrics" title="Permalink to this headline">¶</a></h2>
+<p>To make hardware metrics available, we must <a class="reference external" href="Options.html#connection-file">provide</a> an API URL and an API Access Token for a Grafana Server.
+The tool collects metrics from the Grafana server with a step size of 1 second.</p>
+<p align="center">
+<img src="https://raw.githubusercontent.com/Beuth-Erdelt/DBMS-Benchmarker/master/docs/Concept-Monitoring.png" width="320">
+</p><p>The requested interval matches the interval a specific DBMS is queried.
+To increase expressiveness, it is possible to extend the scraping interval by n seconds at both ends.
+In the end we have a list of per second values for each query and DBMS.
+We may define the metrics in terms of promql.
+Metrics can be defined per connection.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;title&#39;</span><span class="p">:</span> <span class="s1">&#39;CPU Memory [MB]&#39;</span>
+<span class="s1">&#39;query&#39;</span><span class="p">:</span> <span class="s1">&#39;container_memory_working_set_bytes{container_label_io_kubernetes_container_name=&quot;dbms&quot;}&#39;</span>
+
+<span class="s1">&#39;title&#39;</span><span class="p">:</span> <span class="s1">&#39;CPU Memory Cached [MB]&#39;</span>
+<span class="s1">&#39;query&#39;</span><span class="p">:</span> <span class="s1">&#39;container_memory_usage_bytes{container_label_io_kubernetes_container_name=&quot;dbms&quot;}&#39;</span>
+
+<span class="s1">&#39;title&#39;</span><span class="p">:</span> <span class="s1">&#39;CPU Util [%]&#39;</span>
+<span class="s1">&#39;query&#39;</span><span class="p">:</span> <span class="s1">&#39;sum(irate(container_cpu_usage_seconds_total{container_label_io_kubernetes_container_name=&quot;dbms&quot;}[1m]))&#39;</span>
+
+<span class="s1">&#39;title&#39;</span><span class="p">:</span> <span class="s1">&#39;CPU Throttle [%]&#39;</span>
+<span class="s1">&#39;query&#39;</span><span class="p">:</span> <span class="s1">&#39;sum(irate(container_cpu_cfs_throttled_seconds_total{container_label_io_kubernetes_container_name=&quot;dbms&quot;}[1m]))&#39;</span>
+
+<span class="s1">&#39;title&#39;</span><span class="p">:</span> <span class="s1">&#39;CPU Util Others [%]&#39;</span>
+<span class="s1">&#39;query&#39;</span><span class="p">:</span> <span class="s1">&#39;sum(irate(container_cpu_usage_seconds_total{container_label_io_kubernetes_container_name!=&quot;dbms&quot;,id!=&quot;/&quot;}[1m]))&#39;</span>
+
+<span class="s1">&#39;title&#39;</span><span class="p">:</span> <span class="s1">&#39;Net Rx [b]&#39;</span>
+<span class="s1">&#39;query&#39;</span><span class="p">:</span> <span class="s1">&#39;sum(container_network_receive_bytes_total{container_label_app=&quot;dbmsbenchmarker&quot;})&#39;</span>
+
+<span class="s1">&#39;title&#39;</span><span class="p">:</span> <span class="s1">&#39;Net Tx [b]&#39;</span>
+<span class="s1">&#39;query&#39;</span><span class="p">:</span> <span class="s1">&#39;sum(container_network_transmit_bytes_total{container_label_app=&quot;dbmsbenchmarker&quot;})&#39;</span>
+
+<span class="s1">&#39;title&#39;</span><span class="p">:</span> <span class="s1">&#39;FS Read [b]&#39;</span>
+<span class="s1">&#39;query&#39;</span><span class="p">:</span> <span class="s1">&#39;sum(container_fs_reads_bytes_total{container_label_io_kubernetes_container_name=&quot;dbms&quot;})&#39;</span>
+
+<span class="s1">&#39;title&#39;</span><span class="p">:</span> <span class="s1">&#39;FS Write [b]&#39;</span>
+<span class="s1">&#39;query&#39;</span><span class="p">:</span> <span class="s1">&#39;sum(container_fs_writes_bytes_total{container_label_io_kubernetes_container_name=&quot;dbms&quot;})&#39;</span>
+
+<span class="s1">&#39;title&#39;</span><span class="p">:</span> <span class="s1">&#39;GPU Util [%]&#39;</span>
+<span class="s1">&#39;query&#39;</span><span class="p">:</span> <span class="s1">&#39;DCGM_FI_DEV_GPU_UTIL{UUID=~&quot;GPU-4d1c2617-649d-40f1-9430-2c9ab3297b79&quot;}&#39;</span>
+
+<span class="s1">&#39;title&#39;</span><span class="p">:</span> <span class="s1">&#39;GPU Power Usage [W]&#39;</span>
+<span class="s1">&#39;query&#39;</span><span class="p">:</span> <span class="s1">&#39;DCGM_FI_DEV_POWER_USAGE{UUID=~&quot;GPU-4d1c2617-&quot;}&#39;</span>
+
+<span class="s1">&#39;title&#39;</span><span class="p">:</span> <span class="s1">&#39;GPU Memory [MiB]&#39;</span>
+<span class="s1">&#39;query&#39;</span><span class="p">:</span> <span class="s1">&#39;DCGM_FI_DEV_FB_USED{UUID=~&quot;GPU-4d1c2617-&quot;}&#39;</span>
+</pre></div>
+</div>
+<p><strong>Note</strong> this expects monitoring to be installed properly and naming to be appropriate. See <a class="reference external" href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager">https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager</a> for a working example and more details.</p>
+<p><strong>Note</strong> this has limited validity, since metrics are typically scraped only on a basis of several seconds. It works best with a high repetition of the same query.</p>
+</div>
+<div class="section" id="evaluation">
+<h2>Evaluation<a class="headerlink" href="#evaluation" title="Permalink to this headline">¶</a></h2>
+<p>As a result we obtain measured times in milliseconds for the query processing parts: connection, execution, data transfer.</p>
+<p align="center">
+<img src="https://raw.githubusercontent.com/Beuth-Erdelt/DBMS-Benchmarker/master/docs/Evaluation-Cubes.png">
+</p><p>These are described in three dimensions:
+number of run, number of query and configuration.
+The configuration dimension can consist of various nominal attributes like DBMS, selected processor, assigned cluster node, number of clients and execution order.
+We also can have various hardware metrics like CPU and GPU utilization, CPU throttling, memory caching and working set.
+These are also described in three dimensions:
+Second of query execution time, number of query and number of configuration.</p>
+<p>All these metrics can be sliced or diced, rolled-up or drilled-down into the various dimensions using several aggregation functions for <a class="reference external" href="Evaluations.html">evaluation</a>.</p>
+<div class="section" id="aggregation-functions">
+<h3>Aggregation Functions<a class="headerlink" href="#aggregation-functions" title="Permalink to this headline">¶</a></h3>
+<p>Currently the following statistics may be computed per dimension:</p>
+<ul class="simple">
+<li><p>Sensitive to outliers</p>
+<ul>
+<li><p>Arithmetic mean</p></li>
+<li><p>Standard deviation</p></li>
+<li><p>Coefficient of variation</p></li>
+</ul>
+</li>
+<li><p>Insensitive to outliers</p>
+<ul>
+<li><p>Median - percentile 50 (Q2)</p></li>
+<li><p>Interquartile range - Q3-Q1</p></li>
+<li><p>Quartile coefficient of dispersion</p></li>
+</ul>
+</li>
+<li><p>First</p></li>
+<li><p>Last</p></li>
+<li><p>Minimum</p></li>
+<li><p>Maximum</p></li>
+<li><p>Range (Maximum - Minimum)</p></li>
+<li><p>Sum</p></li>
+<li><p>Geometric Mean</p></li>
+<li><p>percentile 25 (Q1)</p></li>
+<li><p>percentile 75 (Q3)</p></li>
+<li><p>percentile 90 - leave out highest 10%</p></li>
+<li><p>percentile 95 - leave out highest 5%</p></li>
+</ul>
+<p>In the complex configuration dimension it can be interesting to aggregate to groups like same DBMS or CPU type.</p>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Patrick Erdelt.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
