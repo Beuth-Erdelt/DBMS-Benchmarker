@@ -6,3 +6,7 @@
     ../README.md
     ...
 .. mdinclude:: ../README.md
+
+.. image:: dbms.png
+  :width: 400
+  :alt: Alternative text
