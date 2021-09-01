@@ -4,7 +4,7 @@
     :collapse_navigation: false
     :globaltoc_collapse: false
 
-    ../README.md
+    ../README
     ...
 .. toctree::
     :maxdepth: -1
@@ -12,7 +12,7 @@
     :collapse_navigation: false
     :globaltoc_collapse: false
 
-    ./Docs.md
+    ./Docs
     ...
 .. mdinclude:: ../README.md
 
