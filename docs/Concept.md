@@ -11,7 +11,7 @@ A **query** is a statement, that is understood by a Database Management System (
 
 A **benchmark** of a query consists of these steps:
 <p align="center">
-<img src="Concept-Query.png" width="320">
+<img src="https://raw.githubusercontent.com/Beuth-Erdelt/DBMS-Benchmarker/master/docs/Concept-Query.png" width="320">
 </p>
 
 1. Establish a **connection** between client and server  
@@ -40,7 +40,7 @@ To configure sessions it is also possible to adjust
 for the same query.
 
 <p align="center">
-<img src="Concept-Basic.png" width="320">
+<img src="https://raw.githubusercontent.com/Beuth-Erdelt/DBMS-Benchmarker/master/docs/Concept-Basic.png" width="320">
 </p>
 
 Parallel clients are simulated using the `pool.apply_async()` method of a `Pool` object of the module [multiprocessing](https://docs.python.org/3/library/multiprocessing.html).
@@ -58,7 +58,7 @@ This means we exchange a part of the query for a random value.
 We have several **timers** to collect timing information:
 
 <p align="center">
-<img src="Concept-Benchmarking.png" width="320">
+<img src="https://raw.githubusercontent.com/Beuth-Erdelt/DBMS-Benchmarker/master/docs/Concept-Benchmarking.png" width="320">
 </p>
 
 * **timerConnection**  
@@ -114,7 +114,7 @@ We can specify a dict of DBMS.
 Each query will be sent to every DBMS in the same number of runs.
 
 <p align="center">
-<img src="Concept-Compare.png" width="320">
+<img src="https://raw.githubusercontent.com/Beuth-Erdelt/DBMS-Benchmarker/master/docs/Concept-Compare.png" width="320">
 </p>
 
 This also respects randomization, i.e. every DBMS receives exactly the same versions of the query in the same order.
@@ -140,11 +140,11 @@ In order to do so, result sets (or their hash value or size) are stored as lists
 
 ## Monitoring Hardware Metrics
 
-To make hardware metrics available, we must [provide](Options.md#connection-file) an API URL and an API Access Token for a Grafana Server.
+To make hardware metrics available, we must [provide](Options.html#connection-file) an API URL and an API Access Token for a Grafana Server.
 The tool collects metrics from the Grafana server with a step size of 1 second.
 
 <p align="center">
-<img src="Concept-Monitoring.png" width="320">
+<img src="https://raw.githubusercontent.com/Beuth-Erdelt/DBMS-Benchmarker/master/docs/Concept-Monitoring.png" width="320">
 </p>
 
 The requested interval matches the interval a specific DBMS is queried.
@@ -201,7 +201,7 @@ Example:
 As a result we obtain measured times in milliseconds for the query processing parts: connection, execution, data transfer.
 
 <p align="center">
-<img src="Evaluation-Cubes.png">
+<img src="https://raw.githubusercontent.com/Beuth-Erdelt/DBMS-Benchmarker/master/docs/Evaluation-Cubes.png">
 </p>
 
 These are described in three dimensions:
@@ -211,7 +211,7 @@ We also can have various hardware metrics like CPU and GPU utilization, CPU thro
 These are also described in three dimensions:
 Second of query execution time, number of query and number of configuration.
 
-All these metrics can be sliced or diced, rolled-up or drilled-down into the various dimensions using several aggregation functions for [evaluation](Evaluations.md).
+All these metrics can be sliced or diced, rolled-up or drilled-down into the various dimensions using several aggregation functions for [evaluation](Evaluations.html).
 
 ### Aggregation Functions
 

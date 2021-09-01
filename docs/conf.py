@@ -17,7 +17,7 @@ extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.autosummary',
     'sphinx.ext.intersphinx',
-    "myst_parser",
+    'm2r2',
 ]
 
 intersphinx_mapping = {
@@ -35,3 +35,12 @@ html_static_path = ['_static']
 
 # -- Options for EPUB output
 epub_show_urls = 'footnote'
+
+html_theme_options = {
+    # Toc options
+    'collapse_navigation': False,
+    'sticky_navigation': False,
+    'navigation_depth': 4,
+    'includehidden': True,
+    'titles_only': False
+}

@@ -445,20 +445,20 @@ Connections are called by name.
 
 If set to yes, some reports are generated each time a benchmark of a single connection and query is finished.
 Currently this means
-* [bar charts](Evaluations.md#timers-per-query) as png files
-* [plots](Evaluations.md#plot-of-values) as png files
-* [boxplots](Evaluations.md#boxplot-of-values) as png files
-* [dataframer](Evaluations.md#all-benchmark-times) - benchmark times as pickled dataframe files
-* [pickler](Evaluations.md#statistics-table) - statistics as pickled dataframe files
-* [metricer](Evaluations.md#hardware-metrics-per-query) - hardware metrics as png and csv files
+* [bar charts](Evaluations.html#timers-per-query) as png files
+* [plots](Evaluations.html#plot-of-values) as png files
+* [boxplots](Evaluations.html#boxplot-of-values) as png files
+* [dataframer](Evaluations.html#all-benchmark-times) - benchmark times as pickled dataframe files
+* [pickler](Evaluations.html#statistics-table) - statistics as pickled dataframe files
+* [metricer](Evaluations.html#hardware-metrics-per-query) - hardware metrics as png and csv files
 * latexer, see an [example report](Report-example-tpch.pdf), also containing all plots and charts, and possibly error messages and fetched result tables. The latex reporter demands all other reporters to be active.
 
 Reports are generated per query, that is one for each entry in the list in the `QUERY_FILE`.
-The latex survey file contains all latex reports, that is all [evaluations](Evaluations.md) for all queries.
+The latex survey file contains all latex reports, that is all [evaluations](Evaluations.html) for all queries.
 
 ### Generate evaluation
 
-If set to yes, an evaluation file is generated. This is a JSON file containing most of the [evaluations](Evaluations.md).
+If set to yes, an evaluation file is generated. This is a JSON file containing most of the [evaluations](Evaluations.html).
 It can be accessed most easily using the inspection class or the interactive dashboard.
 
 ### Debug
@@ -570,4 +570,4 @@ Example:
 * `grafanashift` shifts the fetched interval by `n` seconds to the future.
 * `grafanaextend` extends the fetched interval by `n` seconds at both ends.
 
-More information about monitoring and metrics can be found here: https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/docs/Monitoring.md
+More information about monitoring and metrics can be found here: https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/docs/Monitoring.html

@@ -3,7 +3,7 @@
 The dashboard helps in interactive evaluation of experiment results.
 
 <p align="center">
-<img src="dashboard.png" width="960">
+<img src="https://raw.githubusercontent.com/Beuth-Erdelt/DBMS-Benchmarker/master/docs/dashboard.png" width="960">
 </p>
 
 ## Start
@@ -12,7 +12,8 @@ The dashboard is started using a Python script:
 
 `python dashboard.py -h`
 
-```usage: aio-app.py [-h] [-r RESULT_FOLDER] [-a]
+```
+usage: dashboard.py [-h] [-r RESULT_FOLDER] [-a] [-u USER] [-p PASSWORD] [-d]
 
 Dashboard for interactive inspection of dbmsbenchmarker results.
 
@@ -21,11 +22,15 @@ optional arguments:
   -r RESULT_FOLDER, --result-folder RESULT_FOLDER
                         Folder storing benchmark result files.
   -a, --anonymize       Anonymize all dbms.
+  -u USER, --user USER  User name for auth protected access.
+  -p PASSWORD, --password PASSWORD
+                        Password for auth protected access.
+  -d, --debug           Show debug information.
 ```
 
 It has two options:
 * `--result-folder`: Path of a local folder containing result folders. This parameter is the same as for `benchmark.py`
-* `--anonymize`: If this flag is set, all DBMS are anonymized following the parameters in their [configuration](Options.md#connection-file).
+* `--anonymize`: If this flag is set, all DBMS are anonymized following the parameters in their [configuration](Options.html#connection-file).
 
 When you start the dashboard it is available at `localhost:8050`.
 
@@ -37,9 +42,9 @@ Optionally you can activate to have some default panels opened to you.
 
 ## Concept
 
-The dashboard analyzes the data in [three dimensions](Concept.md#evaluation) using various [aggregation functions](Concept.md#aggregation-functions):
+The dashboard analyzes the data in [three dimensions](Concept.html#evaluation) using various [aggregation functions](Concept.html#aggregation-functions):
 <p align="center">
-<img src="Evaluation-Cubes.png">
+<img src="https://raw.githubusercontent.com/Beuth-Erdelt/DBMS-Benchmarker/master/docs/Evaluation-Cubes.png">
 </p>
 
 ### Data
@@ -109,12 +114,12 @@ The favorites menu allows you to
 
 ## Settings
 
-<img align="right" src="dashboard-settings.png">
+<img align="right" src="https://raw.githubusercontent.com/Beuth-Erdelt/DBMS-Benchmarker/master/docs/dashboard-settings.png">
 
 In the settings panel you can select the
 * [Kind of measure](#data) you want to inspect (kind, name)
 * [Type](#graph-panels) of plot (graph type, x-axis, annotate)
-* [Aggregation functions](Concept.md#aggregation-functions).
+* [Aggregation functions](Concept.html#aggregation-functions).
   The order of aggregation is
   1. Query (run dimension)
   1. Total (query dimension)
@@ -124,7 +129,7 @@ In the settings panel you can select the
 
 ## Filter
 
-<img align="right" src="dashboard-filter.png">
+<img align="right" src="https://raw.githubusercontent.com/Beuth-Erdelt/DBMS-Benchmarker/master/docs/dashboard-filter.png">
 
 In the filter panel you can filter
 * one or more connections (configurations) using
@@ -139,11 +144,11 @@ In the filter panel you can filter
 
 Moreover you can receive details about
 * the connections (configurations)
-  * [Configuration](Options.md#connection-file)
+  * [Configuration](Options.html#connection-file)
   * DBMS
   * Resources
 * and the queries like
-  * [Configuration](Options.md#query-file)
+  * [Configuration](Options.html#query-file)
   * Number of runs
   * Result sets 
 
