@@ -3,7 +3,7 @@
 After an experiment has finished, the results can be evaluated
 * with an interactive [dashboard](Dashboard.html)
 * in a Latex report containing most of the results
-* with an interactive [inspection module](Inspector.html)
+* with an interactive [inspection module](Inspection.html)
 
 There is an *evaluator class*, which collects most of the (numerical) evaluations and provides them as an **evaluation dict**.
 

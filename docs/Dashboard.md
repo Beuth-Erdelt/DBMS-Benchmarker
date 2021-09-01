@@ -12,7 +12,8 @@ The dashboard is started using a Python script:
 
 `python dashboard.py -h`
 
-```usage: aio-app.py [-h] [-r RESULT_FOLDER] [-a]
+```
+usage: dashboard.py [-h] [-r RESULT_FOLDER] [-a] [-u USER] [-p PASSWORD] [-d]
 
 Dashboard for interactive inspection of dbmsbenchmarker results.
 
@@ -21,6 +22,10 @@ optional arguments:
   -r RESULT_FOLDER, --result-folder RESULT_FOLDER
                         Folder storing benchmark result files.
   -a, --anonymize       Anonymize all dbms.
+  -u USER, --user USER  User name for auth protected access.
+  -p PASSWORD, --password PASSWORD
+                        Password for auth protected access.
+  -d, --debug           Show debug information.
 ```
 
 It has two options:
