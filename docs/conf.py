@@ -46,3 +46,5 @@ html_theme_options = {
     'includehidden': True,
     'titles_only': False
 }
+
+source_suffix = ['.rst', '.md']
