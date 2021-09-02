@@ -3,6 +3,8 @@
 ================
 
 .. toctree::
+    :maxdepth: 2
+    :caption: Table of Contents:
 
     ../README.md
     ./Docs.md
@@ -16,5 +18,5 @@
     ./Usecases.md
     ...
 
-.. mdinclude:: ../README.md
 
+.. mdinclude:: ../README.md
