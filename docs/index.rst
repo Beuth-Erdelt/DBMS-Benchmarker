@@ -1,3 +1,7 @@
+================
+ DBMS Benchmarker Python Package
+================
+
 .. toctree::
 
     ../README.md
@@ -11,5 +15,6 @@
     ./Usage.md
     ./Usecases.md
     ...
+
 .. mdinclude:: ../README.md
 
