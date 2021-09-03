@@ -16,7 +16,6 @@
     ./Evaluations.md
     ./Dashboard.md
     ./Inspection.md
-    ./Usage.md
     ./Usecases.md
     ...
 
