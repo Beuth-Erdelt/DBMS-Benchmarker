@@ -71,6 +71,9 @@ We need to provide
 ```
 {
   'name': 'Some simple queries',
+  'connectionmanagement': {
+        'timeout': 5 # in seconds
+    },
   'queries':
   [
     {
