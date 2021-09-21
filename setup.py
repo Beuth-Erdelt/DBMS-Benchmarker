@@ -32,7 +32,7 @@ setuptools.setup(
     py_modules=['cli'],
     entry_points='''
         [console_scripts]
-        dbmsbenchmarker=dbmsbenchmarker.scripts.cli:benchmarker
+        dbmsbenchmarker=dbmsbenchmarker.scripts.cli:run_benchmarker
         dbmsdashboard=dbmsbenchmarker.scripts.dashboardcli:startup
     ''',
 )

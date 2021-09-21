@@ -94,8 +94,10 @@ class timer():
 			# we do not want to have an empty list
 			data_no_zeros = data
 		result = []
-		t_mean = mean(data)
 		numRun = len(data)
+		if numRun == 0:
+			return [0, 0, 0, 0, 0, 0, 0, 0, 0]
+		t_mean = mean(data)
 		#print("statistics for n runs: "+str(numRun))
 		if numRun > 1:
 			t_stdev = stdev(data)
@@ -1318,7 +1320,7 @@ def findSuccessfulQueriesAllDBMS(benchmarker, numQuery, timer, dbms_filter=[]):
 				continue
 			queryObject = query(benchmarker.queries[i])
 			# is timer active for this query?
-			if not queryObject.timer[t.name]['active']:
+			if not t.name in queryObject.timer or not queryObject.timer[t.name]['active']:
 				continue
 			bIgnoreQuery = False
 			if numQuery is None or (numQuery > 0 and numQuery-1 == i):

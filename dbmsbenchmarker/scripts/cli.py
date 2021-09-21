@@ -25,7 +25,7 @@ from datetime import datetime, timedelta
 from dbmsbenchmarker import *
 
 
-def benchmarker():
+def run_benchmarker():
 	# argparse
 	parser = argparse.ArgumentParser(description='A benchmark tool for RDBMS. It connects to a given list of RDBMS via JDBC and runs a given list benchmark queries. Optionally some reports are generated.')
 	parser.add_argument('mode', help='run benchmarks and save results, or just read benchmark results from folder, or continue with missing benchmarks only', choices=['run', 'read', 'continue'])
