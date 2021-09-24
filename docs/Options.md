@@ -162,18 +162,11 @@ How to configure the benchmarker can be illustrated best by looking at the sourc
 `python3 benchmark.py -h`
 
 ```
-usage: benchmark.py [-h] [-d] [-b] [-qf QUERY_FILE] [-cf CONNECTION_FILE]
-                    [-q QUERY] [-c CONNECTION] [-l LATEX_TEMPLATE]
-                    [-f CONFIG_FOLDER] [-r RESULT_FOLDER] [-g {no,yes}]
-                    [-e {no,yes}] [-w {query,connection}] [-a]
-                    [-u [UNANONYMIZE [UNANONYMIZE ...]]] [-p NUMPROCESSES]
-                    [-s SEED] [-cs] [-ms MAX_SUBFOLDERS] [-sl SLEEP]
-                    [-st START_TIME] [-sf SUBFOLDER] [-vq] [-vs] [-pn NUM_RUN]
-                    [-m]
+usage: benchmark.py [-h] [-d] [-b] [-qf QUERY_FILE] [-cf CONNECTION_FILE] [-q QUERY] [-c CONNECTION] [-ca CONNECTION_ALIAS] [-l LATEX_TEMPLATE] [-f CONFIG_FOLDER] [-r RESULT_FOLDER] [-g {no,yes}] [-e {no,yes}] [-w {query,connection}] [-a] [-u [UNANONYMIZE [UNANONYMIZE ...]]] [-p NUMPROCESSES] [-s SEED] [-cs] [-ms MAX_SUBFOLDERS] [-sl SLEEP]
+                    [-st START_TIME] [-sf SUBFOLDER] [-vq] [-vs] [-vr] [-pn NUM_RUN] [-m] [-mps]
                     {run,read,continue}
 
-A benchmark tool for RDBMS. It connects to a given list of RDBMS via JDBC and
-runs a given list benchmark queries. Optionally some reports are generated.
+A benchmark tool for RDBMS. It connects to a given list of RDBMS via JDBC and runs a given list benchmark queries. Optionally some reports are generated.
 
 positional arguments:
   {run,read,continue}   run benchmarks and save results, or just read benchmark results from folder, or continue with missing benchmarks only
@@ -190,6 +183,8 @@ optional arguments:
                         number of query to benchmark
   -c CONNECTION, --connection CONNECTION
                         name of connection to benchmark
+  -ca CONNECTION_ALIAS, --connection-alias CONNECTION_ALIAS
+                        alias of connection to benchmark
   -l LATEX_TEMPLATE, --latex-template LATEX_TEMPLATE
                         name of latex template for reporting
   -f CONFIG_FOLDER, --config-folder CONFIG_FOLDER
@@ -222,9 +217,13 @@ optional arguments:
                         print every query that is sent
   -vs, --verbose-statistics
                         print statistics about query that have been sent
+  -vr, --verbose-results
+                        print result sets of every query that have been sent
   -pn NUM_RUN, --num-run NUM_RUN
                         Parameter: Number of executions per query
-  -m, --metrics         collect hardware metrics
+  -m, --metrics         collect hardware metrics per query
+  -mps, --metrics-per-stream
+                        collect hardware metrics per stream
 ```
 
 ### Result folder
@@ -702,3 +701,6 @@ Example:
 * `grafanaextend` extends the fetched interval by `n` seconds at both ends.
 
 More information about monitoring and metrics can be found here: https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/docs/Monitoring.html
+
+The parameter `--metrics-per-stream` does the same, but collects the metrics per stream - not per query.
+This is useful when queries are very fast.
