@@ -92,6 +92,8 @@ class evaluator():
 			evaluation['general']['intro'] = self.benchmarker.queryconfig["intro"]
 		if "info" in self.benchmarker.queryconfig and len(self.benchmarker.queryconfig["info"]) > 0:
 			evaluation['general']['info'] = self.benchmarker.queryconfig["info"]
+		if "defaultParameters" in self.benchmarker.queryconfig:
+			evaluation['general']['defaultParameters'] = self.benchmarker.queryconfig["defaultParameters"]
 		# general connectionmanagement
 		evaluation['general']['connectionmanagement'] = {}
 		if self.benchmarker.connectionmanagement['timeout'] is None:
