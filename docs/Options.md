@@ -470,6 +470,7 @@ Example for `QUERY_FILE` with randomized parameters:
 ```
 {
   'name': 'Some simple queries',
+  'defaultParameters': {'SF': '10'},
   'queries':
   [
     {
@@ -525,6 +526,8 @@ in a query with `numWarmup=5` and `numRun=10` will generate a random list of 10 
 These pairs will replace `{NAME1}` and `{NAME2}` in the query.
 Both elements of each pair will be different from eachother.
 Each time the benchmark for this query is done, the same 10 pairs are used.
+
+`defaultParameters` can be used to set parameters that hold for the complete workload.
 
 ### Query List
 
