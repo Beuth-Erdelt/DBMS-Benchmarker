@@ -1,3 +1,7 @@
+[![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://GitHub.com/Beuth-Erdelt/DBMS-Benchmarker/graphs/commit-activity)
+[![GitHub release](https://img.shields.io/github/release/Beuth-Erdelt/DBMS-Benchmarker.svg)](https://GitHub.com/Beuth-Erdelt/DBMS-Benchmarker/releases/)
+
+
 # DBMS-Benchmarker
 
 DBMS-Benchmarker is a Python-based application-level blackbox benchmark tool for Database Management Systems (DBMS).
@@ -8,7 +12,7 @@ Results and evaluations are available via a Python interface.
 Optionally some reports are generated.
 An interactive dashboard assists in multi-dimensional analysis of the results.
 
-See the [homepage](https://github.com/Beuth-Erdelt/DBMS-Benchmarker) and the [documentation](https://dbmsbenchmarker.readthedocs.io/en/latest/).
+See the [homepage](https://github.com/Beuth-Erdelt/DBMS-Benchmarker) and the [documentation](https://dbmsbenchmarker.readthedocs.io/en/latest/Docs.html).
 
 ## Key Features
 
@@ -67,6 +71,9 @@ We need to provide
 ```
 {
   'name': 'Some simple queries',
+  'connectionmanagement': {
+        'timeout': 5 # in seconds
+    },
   'queries':
   [
     {

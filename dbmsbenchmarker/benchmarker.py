@@ -548,6 +548,11 @@ class benchmarker():
 			#		self.runsPerConnection = self.queryconfig["connectionmanagement"]["runsPerConnection"]
 			if not "reporting" in self.queryconfig:
 				self.queryconfig["reporting"] = {'resultsetPerQuery': False, 'resultsetPerQueryConnection': False, 'queryparameter': False, 'rowsPerResultset': False}
+			if len(parameter.defaultParameters) > 0:
+				if 'defaultParameters' in self.queryconfig:
+					self.queryconfig['defaultParameters'] = {**self.queryconfig['defaultParameters'], **parameter.defaultParameters}
+				else:
+					self.queryconfig['defaultParameters'] = parameter.defaultParameters.copy()
 			if 'defaultParameters' in self.queryconfig:
 				parameter.defaultParameters = self.queryconfig['defaultParameters']
 		for numQuery in range(1, len(self.queries)+1):
@@ -969,7 +974,8 @@ class benchmarker():
 		numProcesses = connectionmanagement['numProcesses']#self.numProcesses
 		batchsize = connectionmanagement['runsPerConnection']#self.runsPerConnection
 		timeout = connectionmanagement['timeout']#self.timeout
-		jaydebeapi.QUERY_TIMEOUT = timeout
+		if timeout is not None:
+			jaydebeapi.QUERY_TIMEOUT = timeout
 		singleConnection = connectionmanagement['singleConnection']
 		# Patch: if singleConnection only with single process
 		if singleConnection:
