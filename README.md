@@ -160,6 +160,10 @@ Other comparable products you might like
 > https://doi.org/10.1007/978-3-030-84924-5_6
 
 [2] [Orchestrating DBMS Benchmarking in the Cloud with Kubernetes](https://www.researchgate.net/publication/353236865_Orchestrating_DBMS_Benchmarking_in_the_Cloud_with_Kubernetes)
+> Erdelt P.K. (2022)
+> Orchestrating DBMS Benchmarking in the Cloud with Kubernetes.
+> In: Nambiar R., Poess M. (eds) Performance Evaluation and Benchmarking. TPCTC 2021.
+> Lecture Notes in Computer Science, vol 13169. Springer, Cham.
 
 (old, slightly outdated [docs](Docs_old.html))
 
