@@ -1,5 +1,5 @@
 ---
-title: 'DBMS-Benchmarker is a Python-based application-level blackbox benchmark tool for Database Management Systems (DBMS)'
+title: 'DBMS-Benchmarker: A Python-based application-level blackbox benchmark tool for Database Management Systems (DBMS)'
 tags:
   - Python
   - DBMS
@@ -17,7 +17,7 @@ bibliography: paper.bib
 
 # Summary
 
-DBMS-Benchmarker is a Python-based application-level blackbox benchmark tool for Database Management Systems (DBMS). It aims at reproducible measuring and easy evaluation of the performance the user receives even in complex benchmark situations. It connects to a given list of DBMS (via JDBC) and runs a given list of (SQL) benchmark queries. Queries can be parametrized and randomized. Results and evaluations are available via a Python interface. Optionally some reports are generated. An interactive dashboard assists in multi-dimensional analysis of the results.
+DBMS-Benchmarker is a Python-based application-level blackbox benchmark tool for Database Management Systems (DBMS). It aims at reproducible measuring and easy evaluation of the performance the user receives even in complex benchmark situations. It connects to a given list of DBMS (via JDBC) and runs a given list of (SQL) benchmark queries. Queries can be parametrized and randomized. Results and evaluations are available via a Python interface. Optionally some reports are generated. An interactive dashboard assists in multi-dimensional analysis of the results. @Erdelt20
 
 
 ## Key Features
