@@ -46,7 +46,7 @@ The code uses several Python modules, in particular <a href="https://github.com/
 This module has been tested with Brytlyt, Citus, Clickhouse, DB2, Exasol, Kinetica, MariaDB, MariaDB Columnstore, MemSQL, Mariadb, MonetDB, MySQL, OmniSci, Oracle DB, PostgreSQL, SingleStore, SQL Server and SAP HANA.
 
 Figures can be included like this:
-![Caption for example figure.\label{fig:example}](docs/conceptquery.png)
+![Caption for example figure.\label{fig:example}](docs/conceptquery.png){ width=320 }
 and referenced from text using \autoref{fig:example}.
 
 
