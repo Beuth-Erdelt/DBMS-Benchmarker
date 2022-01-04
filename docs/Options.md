@@ -9,125 +9,8 @@ This tool can be [used](#usage) to
 * [compare](#extended-query-file) result sets obtained from different runs and dbms
 * add benchmarks for more [queries](#continue-benchmarks-for-more-queries) or for more [DBMS](#continue-benchmarks-for-more-connections)
 * [read](#read-stored-benchmarks) finished benchmarks
-* fetch hardware metrics from a [grafana](#monitoring-hardware-metrics) server for monitoring
-* generate reports [during](#run-benchmarks-and-generate-reports) or [after](#generate-reports-of-stored-benchmarks) benchmarking, with real names or [anonymized](#anonymize) DBMS
-* interactively [inspect](#inspector) results
 
-## Run benchmarks
-
-`python3 benchmark.py run -f test` generates a folder containing result files: csv of benchmarks per query.
-The example uses `test/connections.config` and `test/queries.config` as config files.
-
-Example: This produces a folder containing
-```
-connections.config
-queries.config
-protocol.json
-query_1_connection.csv
-query_1_execution.csv
-query_1_transfer.csv
-query_2_connection.csv
-query_2_execution.csv
-query_2_transfer.csv
-query_3_connection.csv
-query_3_execution.csv
-query_3_transfer.csv
-```
-where
-- `connections.config` is a copy of the input file
-- `queries.config` is a copy of the input file
-- `protocol.json`: JSON file containing error messages (up to one per query and connection), durations (per query) and retried data (per query)
-- `query_n_connection.csv`: CSV containing times (columns) for each dbms (rows) for query n - duration of establishing JDBC connection
-- `query_n_execution.csv`: CSV containing times (columns) for each dbms (rows) for query n - duration of execution
-- `query_n_transfer.csv`: CSV containing times (columns) for each dbms (rows) for query n - duration of data transfer
-
-## Run benchmarks and generate reports
-
-`python3 benchmark.py run -g yes -f test` is the same as above, and additionally generates plots of benchmarks per query, latex file for survey
-
-Example: This produces a folder containing
-```
-connections.config
-queries.config
-benchmarks.tex
-protocol.json
-query_1_bar.png
-query_1_connection.csv
-query_1_connection_plot.png
-query_1_connection_boxplot.png
-query_1_execution.csv
-query_1_execution_plot.png
-query_1_execution_boxplot.png
-query_1_transfer.csv
-query_1_transfer_plot.png
-query_1_transfer_boxplot.png
-query_2_bar.png
-query_2_connection.csv
-query_2_execution.csv
-query_2_execution_plot.png
-query_2_execution_boxplot.png
-query_2_transfer.csv
-query_2_transfer_plot.png
-query_2_transfer_boxplot.png
-query_3_bar.png
-query_3_connection.csv
-query_3_execution.csv
-query_3_execution_plot.png
-query_3_execution_boxplot.png
-query_3_transfer.csv
-total_bar.png
-total_barh.png
-```
-so this is the same as just run benchmarks, but also generates plots and boxplots for each benchmark and a latex file giving a survey.
-It can be restricted to specific queries or connections using `-q` and `c` resp.
-
-## Read stored benchmarks
-
-`python3 benchmark.py read  -r 12345` reads files from folder `12345`containing result files and shows summaries of the results.       
-
-## Generate reports of stored benchmarks
-
-`python3 benchmark.py read -r 12345 -g yes` reads files from folder `12345`  containing result files, and generates plots of benchmarks per query and latex file for survey.
-The example uses `12345/connections.config` and `12345/queries.config` as config files.
-
-## Continue benchmarks
-
-`python3 benchmark.py continue -r 12345 -g yes` reads files from folder `12345` containing result files, continues to perform possibly missing benchmarks and generates plots of benchmarks per query and latex file for survey.
-This is useful if a run had to be stopped. It continues automatically at the first missing query.
-It can be restricted to specific queries or connections using `-q` and `c` resp.
-The example uses `12345/connections.config` and `12345/queries.config` as config files.
-
-### Continue benchmarks for more queries
-You would go to a result folder, say `12345`, and add queries to the query file.
-`python3 benchmark.py continue -r 12345 -g yes` then reads files from folder `12345` and continue benchmarking the new (missing) queries.
-
-**Do not remove existing queries, since results are mapped to queries via their number (position). Use `active` instead.**
-
-### Continue benchmarks for more connections
-You would go to a result folder, say `12345`, and add connections to the connection file.
-`python3 benchmark.py continue -r 12345 -g yes` then reads files from folder `12345` and continue benchmarking the new (missing) connections.
-
-**Do not remove existing connections, since their results would not make any sense anymore. Use `active` instead.**
-
-## Rerun benchmarks
-
-`python3 benchmark.py run -r 12345 -g yes` reads files from folder `12345` containing result files, performs benchmarks again and generates plots of benchmarks per query and latex file for survey.
-It also performs benchmarks of missing queries.
-It can be restricted to specific queries or connections using `-q` and `c` resp.
-The example uses `12345/connections.config` and `12345/queries.config` as config files.
-
-### Rerun benchmarks for one query
-
-`python3 benchmark.py run -r 12345 -g yes -q 5` reads files from folder `12345`containing result files, performs benchmarks again and generates plots of benchmarks per query and latex file for survey.
-The example uses `12345/connections.config` and `12345/queries.config` as config files.
-In this example, query number 5 is benchmarked (again) in any case.
-
-### Rerun benchmarks for one connection
-
-`python3 benchmark.py run -r 12345 -g yes -c MySQL` reads files from folder `12345`containing result files, performs benchmarks again and generates plots of benchmarks per query and latex file for survey.
-The example uses `12345/connections.config` and `12345/queries.config` as config files.
-In this example, the connection named MySQL is benchmarked (again) in any case.
-
+Basically this can be done running `dbmsbenchmarker run` or `dbmsbenchmarker continue` with additional parameters.
 
 # Options
 
@@ -185,21 +68,14 @@ optional arguments:
                         name of connection to benchmark
   -ca CONNECTION_ALIAS, --connection-alias CONNECTION_ALIAS
                         alias of connection to benchmark
-  -l LATEX_TEMPLATE, --latex-template LATEX_TEMPLATE
-                        name of latex template for reporting
   -f CONFIG_FOLDER, --config-folder CONFIG_FOLDER
                         folder containing query and connection config files. If set, the names connections.config and queries.config are assumed automatically.
   -r RESULT_FOLDER, --result-folder RESULT_FOLDER
                         folder for storing benchmark result files, default is given by timestamp
-  -g {no,yes}, --generate-output {no,yes}
-                        generate new report files
   -e {no,yes}, --generate-evaluation {no,yes}
                         generate new evaluation file
   -w {query,connection}, --working {query,connection}
                         working per query or connection
-  -a, --anonymize       anonymize all dbms
-  -u [UNANONYMIZE [UNANONYMIZE ...]], --unanonymize [UNANONYMIZE [UNANONYMIZE ...]]
-                        unanonymize some dbms, only sensible in combination with anonymize
   -p NUMPROCESSES, --numProcesses NUMPROCESSES
                         Number of parallel client processes. Global setting, can be overwritten by connection. If None given, half of all available processes is taken
   -s SEED, --seed SEED  random seed
@@ -282,6 +158,17 @@ Example for `CONNECTION_FILE`:
       'disk': '82G\n',
       'CUDA': ' NVIDIA-SMI 410.79       Driver Version: 410.79       CUDA Version: 10.0',
       'instance': 'p3.2xlarge'
+    },
+    'monitoring': {
+      'shift': 0,
+      'extend': 20,
+      'prometheus_url': 'http://127.0.0.1:9090/api/v1/',
+      'metrics': {
+        'total_cpu_memory': {
+          'query': 'container_memory_working_set_bytes{job="monitor-node"}/1024/1024',
+          'title': 'CPU Memory [MiB]'
+        }
+      }
     }
 },
 ]
@@ -305,8 +192,21 @@ Example for `CONNECTION_FILE`:
   * `runsPerConnection`: Number of runs performed before connection is closed. Default is None, i.e. no limit.
 * `hostsystem`: Describing information for report in particular about the host system.
   This can be written automatically by https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager
+* `monitoring`: We might also add information about fetching [monitoring](#monitoring) metrics.
+  * `prometheus_url`: URL to API of Prometheus instance monitoring the system under test
+  * `shift`: Shifts the fetched interval by `n` seconds to the future.
+  * `extend`: Extends the fetched interval by `n` seconds at both ends.
 
-We might also add information about fetching [monitoring](#monitoring) metrics.
+### Monitoring
+
+The parameter `--metrics` can be used to activate fetching metrics from a Prometheus server.
+In the `connection.config` we may insert a section per connection about where to fetch these metrics from and which metrics we want to obtain.  
+
+More information about monitoring and metrics can be found here: https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/docs/Monitoring.html
+
+The parameter `--metrics-per-stream` does the same, but collects the metrics per stream - not per query.
+This is useful when queries are very fast.
+
 ### Query File
 
 Contains the queries to benchmark.
@@ -316,14 +216,13 @@ Example for `QUERY_FILE`:
 {
   'name': 'Some simple queries',
   'intro': 'Some describing text about this benchmark test setup',
+  'info': 'It runs on a P100 GPU',
   'factor': 'mean',
   'queries':
   [
     {
       'title': "Count all rows in test",
       'query': "SELECT COUNT(*) FROM test",
-      'numWarmup': 5,
-      'numCooldown': 2,
       'delay': 0,
       'numRun': 10,
     },
@@ -333,15 +232,14 @@ Example for `QUERY_FILE`:
 
 * `name`: Name of the list of queries
 * `intro`: Introductional text for reports
+* `info`: Short info about the current experiment
 * `factor`: Determines the measure for comparing performances (optional). Can be set to `mean` or `median` or `relative`. Default is `mean`.
 * `query`: SQL query string
 * `title`: Title of the query
-* `numRun`: Number of runs of this query for benchmarking
-* `numWarmup`: Number of runs of this query for warmup (first `n` queries not counting into statistics), between 0 and `numRun`. This makes sure data is hot and caching is in effect.
-* `numCooldown`: Number of runs of this query for cooldown (last `n` queries not counting into statistics), between 0 and `numRun`. This helps sorting out faster executions when the number of parallel clients decreases near the end of a batch.
 * `delay`: Number of seconds to wait before each execution statement. This is for throtteling. Default is 0.
+* `numRun`: Number of runs of this query for benchmarking
 
-Such a query will be executed 10 times, the time of execution will be measured each time, and statistics will be computed for the runs 6,7 and 8.
+Such a query will be executed 10 times and the time of execution will be measured each time.
 
 ### Extended Query File
 
@@ -351,13 +249,6 @@ Extended example for `QUERY_FILE`:
   'name': 'Some simple queries',
   'intro': 'This is an example workload',
   'info': 'It runs on a P100 GPU',
-  'reporting':
-  {
-    'resultsetPerQuery': 10,
-    'resultsetPerQueryConnection': 10,
-    'queryparameter': 10,
-    'rowsPerResultset': 20,
-  },
   'connectionmanagement': {
     'timeout': 600,
     'numProcesses': 4,
@@ -371,8 +262,6 @@ Extended example for `QUERY_FILE`:
       'DBMS': {
         'MySQL': "SELECT COUNT(*) AS c FROM test"
       }
-      'numWarmup': 5,
-      'numCooldown': 0,
       'delay': 1,
       'numRun': 10,
       'connectionmanagement': {
@@ -400,28 +289,6 @@ Extended example for `QUERY_FILE`:
   ]
 }
 ```
-
-#### Reporting
-
-Some options are used to configure reporting:
-* `intro`: Intro text for report
-* `info`: Short info about the current experiment
-* `reporting`: Optional settings for latex report
-  * `resultsetPerQuery`: Show result sets for each query (and run, in case of randomized)  
-  `None`: Don't show
-  `False`: No limit
-  `n`: Maximum number of runs
-  * `resultsetPerQueryConnection`: Show result sets for each query and dbms if differing (and run, in case of randomized)  
-  `None`: Don't show
-  `False`: No limit
-  `n`: Maximum number of runs
-  * `queryparameter`: Show set of parameters (in case of randomized query)  
-  `None`: Don't show
-  `False`: No limit
-  `n`: Maximum number of runs
-  * `rowsPerResultset`: Show rows per result sets  
-  `False`: No limit
-  `n`: Maximum number of rows
 
 #### SQL Dialects
 
@@ -574,21 +441,6 @@ For `mode=continue` this means missing benchmarks are performed for this fixed D
 If reports are about to be generated, all reports involving this fixed DBMS are generated.
 Connections are called by name.
 
-### Generate reports
-
-If set to yes, some reports are generated each time a benchmark of a single connection and query is finished.
-Currently this means
-* [bar charts](Evaluations.html#timers-per-query) as png files
-* [plots](Evaluations.html#plot-of-values) as png files
-* [boxplots](Evaluations.html#boxplot-of-values) as png files
-* [dataframer](Evaluations.html#all-benchmark-times) - benchmark times as pickled dataframe files
-* [pickler](Evaluations.html#statistics-table) - statistics as pickled dataframe files
-* [metricer](Evaluations.html#hardware-metrics-per-query) - hardware metrics as png and csv files
-* latexer, see an [example report](Report-example-tpch.pdf), also containing all plots and charts, and possibly error messages and fetched result tables. The latex reporter demands all other reporters to be active.
-
-Reports are generated per query, that is one for each entry in the list in the `QUERY_FILE`.
-The latex survey file contains all latex reports, that is all [evaluations](Evaluations.html) for all queries.
-
 ### Generate evaluation
 
 If set to yes, an evaluation file is generated. This is a JSON file containing most of the [evaluations](Evaluations.html).
@@ -634,20 +486,6 @@ and processing `-w connection` is
     * save results
     * generate reports
 
-### Anonymize
-
-Setting `-a` anonymizes all dbms.
-This hides the name of the connections consistently in all reports.
-You may unanonymize one or more dbms by using `-u` followed by a list of names of connections.
-
-Example: `python3 benchmark.py read -r 1234 -a -u MySQL` would hide the name of all connections except for MySQL.
-
-### Latex reports
-
-The option `-l` can be used to change the templates for the generation of latex reports. The default is `pagePerQuery`.
-
-Example: `python3 benchmark.py read -r 1234 -g yes -l simple` would use the templates located in `latex/simple`.
-
 ### Client processes
 
 This tool simulates parallel queries from several clients.
@@ -681,29 +519,3 @@ DBMSBenchmarker will wait until the given time is reached.
 
 This is in particular used by https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager for synching jobs of parallel benchmarker.
 
-### Monitoring
-
-The parameter `--metrics` can be used to activate fetching metrics from a Prometheus server.
-In the `connection.config` we may insert a section per connection about where to fetch these metrics from and which metrics we want to obtain.  
-Example:
-```
-'monitoring': {
-  'grafanashift': 0,
-  'grafanaextend': 20,
-  'prometheus_url': 'http://127.0.0.1:9090/api/v1/',
-  'metrics': {
-    'total_cpu_memory': {
-      'query': 'container_memory_working_set_bytes{job="monitor-node"}/1024/1024',
-      'title': 'CPU Memory [MiB]'
-    }
-  }
-}
-```
-
-* `grafanashift` shifts the fetched interval by `n` seconds to the future.
-* `grafanaextend` extends the fetched interval by `n` seconds at both ends.
-
-More information about monitoring and metrics can be found here: https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/docs/Monitoring.html
-
-The parameter `--metrics-per-stream` does the same, but collects the metrics per stream - not per query.
-This is useful when queries are very fast.

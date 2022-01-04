@@ -7,6 +7,9 @@ After an experiment has finished, the results can be evaluated
 
 There is an *evaluator class*, which collects most of the (numerical) evaluations and provides them as an **evaluation dict**.
 
+* `numWarmup`: Number of runs of this query for warmup (first `n` queries not counting into statistics), between 0 and `numRun`. This makes sure data is hot and caching is in effect.
+* `numCooldown`: Number of runs of this query for cooldown (last `n` queries not counting into statistics), between 0 and `numRun`. This helps sorting out faster executions when the number of parallel clients decreases near the end of a batch.
+
 ## Featured Evaluations
 
 Predefined evaluations are
