@@ -134,10 +134,6 @@ This means the first n runs resp. the last n runs are ignored in evaluation.
 
 ## Filter
 
-<p align="center">
-<img align="right" src="https://raw.githubusercontent.com/Beuth-Erdelt/DBMS-Benchmarker/master/docs/dashboard-filter.png">
-</p>
-
 In the filter panel you can
 
 * filter
@@ -160,3 +156,6 @@ In the filter panel you can
     * Number of runs
     * Result sets 
 
+<p align="center">
+<img align="right" src="https://raw.githubusercontent.com/Beuth-Erdelt/DBMS-Benchmarker/master/docs/dashboard-filter.png">
+</p>
