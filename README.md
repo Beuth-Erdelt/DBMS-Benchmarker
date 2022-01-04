@@ -97,8 +97,6 @@ Run the CLI command: `dbmsbenchmarker run -e yes -b -f ./config`
 
 This is equivalent to `python benchmark.py run -e yes -b -f ./config`
 
-For more options, see the [documentation](Options.html#command-line-options-and-configuration)
-
 After benchmarking has been finished we will see a message like
 ```
 Experiment <code> has been finished
@@ -116,7 +114,7 @@ Visit the address in a browser and select the experiment `<code>`.
 
 This is equivalent to `python dashboard.py`.
 
-Alternatively you may use a [Jupyter notebook](Evaluation-Demo.ipynb).
+Alternatively you may use a [Jupyter notebooks](https://github.com/Beuth-Erdelt/DBMS-Benchmarker/blob/master/Evaluation-Demo.ipynb), see a [rendered example](https://beuth-erdelt.github.io/DBMS-Benchmarker/Evaluation-Demo.html).
 
 ## Benchmarking in a Kubernetes Cloud
 

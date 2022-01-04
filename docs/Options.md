@@ -12,8 +12,6 @@ This tool can be [used](#usage) to
 
 Basically this can be done running `dbmsbenchmarker run` or `dbmsbenchmarker continue` with additional parameters.
 
-# Options
-
 ## Featured Parameters
 
 The lists of [DBMS](#connection-file) and [queries](#query-file) are given in config files in dict format.
@@ -37,6 +35,8 @@ Benchmarks can be [randomized](#randomized-query-file) (optionally with specifie
 * range of years
 
 This is inspired by [TPC-H](http://www.tpc.org/tpch/) and [TPC-DS](http://www.tpc.org/tpcds/) - Decision Support Benchmarks.
+
+# Options
 
 ## Command Line Options and Configuration
 
