@@ -70,7 +70,7 @@ As a result we obtain an interactive dashboard to inspect timing aspects.
 ### Configuration
 
 We need to provide
-* a [DBMS configuration file](Options.html#connection-file), e.g. in `./config/connections.config`  
+* a [DBMS configuration file](#connection-file), e.g. in `./config/connections.config`  
 ```
 [
   {
@@ -86,7 +86,7 @@ We need to provide
 ]
 ```
 * the required JDBC driver, e.g. `mysql-connector-java-8.0.13.jar`
-* a [Queries configuration file](Options.html#query-file), e.g. in `./config/queries.config`  
+* a [Queries configuration file](#query-file), e.g. in `./config/queries.config`  
 ```
 {
   'name': 'Some simple queries',
@@ -266,7 +266,7 @@ In order to do so, result sets (or their hash value or size) are stored as lists
 
 ## Monitoring Hardware Metrics
 
-To make hardware metrics available, we must [provide](Options.html#connection-file) an API URL for a Prometheus Server.
+To make hardware metrics available, we must [provide](#connection-file) an API URL for a Prometheus Server.
 The tool collects metrics from the Prometheus server with a step size of 1 second.
 
 ![Caption for example figure.\label{fig:Concept-Monitoring}](docs/Concept-Monitoring.png){ width=320 }
@@ -914,7 +914,7 @@ optional arguments:
 
 It has two options:
 * `--result-folder`: Path of a local folder containing result folders. This parameter is the same as for `benchmark.py`
-* `--anonymize`: If this flag is set, all DBMS are anonymized following the parameters in their [configuration](Options.html#connection-file).
+* `--anonymize`: If this flag is set, all DBMS are anonymized following the parameters in their [configuration](#connection-file).
 
 When you start the dashboard it is available at `localhost:8050`.
 
@@ -926,7 +926,7 @@ Optionally you can activate to have some default panels that will be included at
 
 ## Concept
 
-The dashboard analyzes the data in [three dimensions](Concept.html#evaluation) using various [aggregation functions](Concept.html#aggregation-functions):
+The dashboard analyzes the data in [three dimensions](#evaluation) using various [aggregation functions](#aggregation-functions):
 <p align="center">
 <img src="https://raw.githubusercontent.com/Beuth-Erdelt/DBMS-Benchmarker/master/docs/Evaluation-Cubes.png">
 </p>
@@ -1006,7 +1006,7 @@ In the settings panel you can select the
 
 * [Kind of measure](#data) you want to inspect (kind, name)
 * [Type](#graph-panels) of plot (graph type, x-axis, annotate)
-* [Aggregation functions](Concept.html#aggregation-functions).
+* [Aggregation functions](#aggregation-functions).
   The order of aggregation is
   1. Query (run dimension)
   1. Total (query dimension)
@@ -1032,11 +1032,11 @@ In the filter panel you can
   * single queries
 * receive details about
   * the connections (configurations)
-    * [Configuration](Options.html#connection-file)
+    * [Configuration](#connection-file)
     * DBMS
     * Resources
   * and the queries like
-    * [Configuration](Options.html#query-file)
+    * [Configuration](#query-file)
     * Number of runs
     * Result sets 
 

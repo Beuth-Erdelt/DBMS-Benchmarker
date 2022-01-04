@@ -96,7 +96,7 @@ In the end we have
 * Per DBMS and Query:
   * Time per session
   * Time per run
-  * Time per run, split up in: connection / execution / data transfer
+  * Time per run, split up into: connection / execution / data transfer
   * Latency and Throughputs per run
   * Latency and Throughputs per session
 
@@ -113,10 +113,9 @@ Each query will be sent to every DBMS in the same number of runs.
 </p>
 
 This also respects randomization, i.e. every DBMS receives exactly the same versions of the query in the same order.
-
 We assume all DBMS will give us the same result sets.
 Without randomization, each run should yield the same result set.
-This tool automatically can check these assumptions by **comparison**.
+This tool can check these assumptions automatically by **comparison**.
 The resulting data table is handled as a list of lists and treated by this:
 ```
 # restrict precision
@@ -130,7 +129,6 @@ columnnames = [[i[0].upper() for i in connection.cursor.description]]
 hashed = columnnames + [[hashlib.sha224(pickle.dumps(data)).hexdigest()]]
 ```
 Result sets of different runs (not randomized) and different DBMS can be compared by their sorted table (small data sets) or their hash value or size (bigger data sets).
-
 In order to do so, result sets (or their hash value or size) are stored as lists of lists and additionally can be saved as csv files or pickled pandas dataframes.
 
 ## Monitoring Hardware Metrics

@@ -17,6 +17,7 @@ See the [homepage](https://github.com/Beuth-Erdelt/DBMS-Benchmarker) and the [do
 ## Key Features
 
 DBMS-Benchmarker
+
 * is Python3-based
 * helps to **benchmark DBMS**
   * connects to all DBMS having a JDBC interface - including GPU-enhanced DBMS
@@ -52,6 +53,7 @@ As a result we obtain an interactive dashboard to inspect timing aspects.
 ### Configuration
 
 We need to provide
+
 * a [DBMS configuration file](Options.html#connection-file), e.g. in `./config/connections.config`  
 ```
 [
@@ -112,9 +114,7 @@ Run the command: `dbmsdashboard`
 This will start the evaluation dashboard at `localhost:8050`.
 Visit the address in a browser and select the experiment `<code>`.
 
-This is equivalent to `python dashboard.py`.
-
-Alternatively you may use a [Jupyter notebooks](https://github.com/Beuth-Erdelt/DBMS-Benchmarker/blob/master/Evaluation-Demo.ipynb), see a [rendered example](https://beuth-erdelt.github.io/DBMS-Benchmarker/Evaluation-Demo.html).
+Alternatively you may use a [Jupyter notebook](https://github.com/Beuth-Erdelt/DBMS-Benchmarker/blob/master/Evaluation-Demo.ipynb), see a [rendered example](https://beuth-erdelt.github.io/DBMS-Benchmarker/Evaluation-Demo.html).
 
 ## Benchmarking in a Kubernetes Cloud
 

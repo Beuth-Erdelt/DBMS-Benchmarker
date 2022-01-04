@@ -17,6 +17,7 @@ Basically this can be done running `dbmsbenchmarker run` or `dbmsbenchmarker con
 The lists of [DBMS](#connection-file) and [queries](#query-file) are given in config files in dict format.
 
 Benchmarks can be [parametrized](#query-file) by
+
 * number of benchmark runs: *Is performance stable across time?*
 * number of benchmark runs per connection: *How does reusing a connection affect performance?*
 * number of warmup and cooldown runs, if any: *How does (re)establishing a connection affect performance?*
@@ -26,6 +27,7 @@ Benchmarks can be [parametrized](#query-file) by
 * optional [comparison](#results-and-comparison) of result sets: *Do I always receive the same results sets?*
 
 Benchmarks can be [randomized](#randomized-query-file) (optionally with specified [seeds](#random-seed) for reproducible results) to avoid caching side effects and to increase variety of queries by taking samples of arbitrary size from a
+
 * list of elements
 * dict of elements (one-to-many relations)
 * range of integers
