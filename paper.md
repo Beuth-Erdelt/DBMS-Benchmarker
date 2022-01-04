@@ -61,6 +61,8 @@ A **query** is a statement, that is understood by a Database Management System (
 
 A **benchmark** of a query consists of these steps:
 
+![Caption for example figure.\label{fig:example}](docs/conceptquery.png){ width=320 }
+
 1. Establish a **connection** between client and server  
 This uses `jaydebeapi.connect()` (and also creates a cursor - time not measured)
 1. Send the query from client to server and
