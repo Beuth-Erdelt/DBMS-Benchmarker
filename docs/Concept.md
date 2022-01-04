@@ -84,12 +84,14 @@ We also measure and store the **total time** of the benchmark of the query, sinc
 Thus the sum of times is more of an indicator for performance of the server system, the total time is more of an indicator for the performance the client user receives.
 
 We also compute for each query and DBMS
+
 * **Latency**: Measured Time
 * **Throughput**: 
   * Number of runs per total time
   * Number of parallel clients per mean time
 
 In the end we have
+
 * Per DBMS: Total time of experiment
 * Per DBMS and Query:
   * Time per session
@@ -209,6 +211,7 @@ All these metrics can be sliced or diced, rolled-up or drilled-down into the var
 ### Aggregation Functions
 
 Currently the following statistics may be computed per dimension:
+
 * Sensitive to outliers
   * Arithmetic mean
   * Standard deviation

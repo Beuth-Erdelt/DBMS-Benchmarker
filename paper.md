@@ -92,9 +92,7 @@ To configure sessions it is also possible to adjust
 
 for the same query.
 
-<p align="center">
-<img src="https://raw.githubusercontent.com/Beuth-Erdelt/DBMS-Benchmarker/master/docs/Concept-Basic.png" width="320">
-</p>
+![Caption for example figure.\label{fig:concept_basic}](docs/Concept-Basic.png){ width=320 }
 
 Parallel clients are simulated using the `pool.apply_async()` method of a `Pool` object of the module [multiprocessing](https://docs.python.org/3/library/multiprocessing.html).
 Runs and their benchmark times are ordered by numbering.
@@ -106,9 +104,7 @@ This means we exchange a part of the query for a random value.
 
 We have several **timers** to collect timing information:
 
-<p align="center">
-<img src="https://raw.githubusercontent.com/Beuth-Erdelt/DBMS-Benchmarker/master/docs/Concept-Benchmarking.png" width="320">
-</p>
+![Caption for example figure.\label{fig:concept_benchmarking}](docs/Concept-Benchmarking.png){ width=320 }
 
 * **timerConnection**  
 This timer gives the time in ms and per run.  
@@ -136,12 +132,14 @@ We also measure and store the **total time** of the benchmark of the query, sinc
 Thus the sum of times is more of an indicator for performance of the server system, the total time is more of an indicator for the performance the client user receives.
 
 We also compute for each query and DBMS
+
 * **Latency**: Measured Time
 * **Throughput**: 
   * Number of runs per total time
   * Number of parallel clients per mean time
 
 In the end we have
+
 * Per DBMS: Total time of experiment
 * Per DBMS and Query:
   * Time per session
@@ -158,9 +156,7 @@ Additionally error messages and timestamps of begin and end of benchmarking a qu
 We can specify a dict of DBMS.
 Each query will be sent to every DBMS in the same number of runs.
 
-<p align="center">
-<img src="https://raw.githubusercontent.com/Beuth-Erdelt/DBMS-Benchmarker/master/docs/Concept-Compare.png" width="320">
-</p>
+![Caption for example figure.\label{fig:concept_compare}](docs/Concept-Compare.png){ width=320 }
 
 This also respects randomization, i.e. every DBMS receives exactly the same versions of the query in the same order.
 
@@ -188,9 +184,7 @@ In order to do so, result sets (or their hash value or size) are stored as lists
 To make hardware metrics available, we must [provide](Options.html#connection-file) an API URL for a Prometheus Server.
 The tool collects metrics from the Prometheus server with a step size of 1 second.
 
-<p align="center">
-<img src="https://raw.githubusercontent.com/Beuth-Erdelt/DBMS-Benchmarker/master/docs/Concept-Monitoring.png" width="320">
-</p>
+![Caption for example figure.\label{fig:concept_monitoring}](docs/Concept-Monitoring.png){ width=320 }
 
 The requested interval matches the interval a specific DBMS is queried.
 To increase expressiveness, it is possible to extend the scraping interval by n seconds at both ends.
@@ -245,9 +239,7 @@ Example:
 
 As a result we obtain measured times in milliseconds for the query processing parts: connection, execution, data transfer.
 
-<p align="center">
-<img src="https://raw.githubusercontent.com/Beuth-Erdelt/DBMS-Benchmarker/master/docs/Evaluation-Cubes.png">
-</p>
+![Caption for example figure.\label{fig:Evaluation-Cubes}](docs/Evaluation-Cubes.png){ width=320 }
 
 These are described in three dimensions:
 number of run, number of query and configuration.
@@ -261,6 +253,7 @@ All these metrics can be sliced or diced, rolled-up or drilled-down into the var
 ### Aggregation Functions
 
 Currently the following statistics may be computed per dimension:
+
 * Sensitive to outliers
   * Arithmetic mean
   * Standard deviation
