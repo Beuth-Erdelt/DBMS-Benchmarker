@@ -77,7 +77,8 @@ A sequence of runs between establishing and discarding a connection is called a 
 
 A basic parameter of a query is the **number of runs** (units of send, execute, transfer).
 To configure sessions it is also possible to adjust
-* the **number of runs per connection** (session length, to have several sequential connections) and  
+
+* the **number of runs per connection** (session length, to have several sequential connections) and
 * the **number of parallel connections** (to simulate several simultanious clients)
 * a **timeout** (maximum lifespan of a connection)
 * a **delay** for throttling (waiting time before each connection or execution)
