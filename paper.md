@@ -33,6 +33,30 @@ See the [homepage](https://github.com/Beuth-Erdelt/DBMS-Benchmarker) and the [do
 
 Run `pip install dbmsbenchmarker` for installation.
 
+# Solution
+
+The lists of [DBMS](#connection-file) and [queries](#query-file) are given in config files in dict format.
+
+Benchmarks can be [parametrized](#query-file) by
+* number of benchmark runs: *Is performance stable across time?*
+* number of benchmark runs per connection: *How does reusing a connection affect performance?*
+* number of warmup and cooldown runs, if any: *How does (re)establishing a connection affect performance?*
+* number of parallel clients: *How do multiple user scenarios affect performance?*
+* optional list of timers (currently: connection, execution, data transfer, run and session): *Where does my time go?*
+* [sequences](#query-list) of queries: *How does sequencing influence performance?*
+* optional [comparison](#results-and-comparison) of result sets: *Do I always receive the same results sets?*
+
+Benchmarks can be [randomized](#randomized-query-file) (optionally with specified [seeds](#random-seed) for reproducible results) to avoid caching side effects and to increase variety of queries by taking samples of arbitrary size from a
+* list of elements
+* dict of elements (one-to-many relations)
+* range of integers
+* range of floats
+* range of days
+* range of (first of) months
+* range of years
+
+This is inspired by [TPC-H](http://www.tpc.org/tpch/) and [TPC-DS](http://www.tpc.org/tpcds/) - Decision Support Benchmarks.
+
 # Basic Example
 
 The following very simple use case runs the query `SELECT COUNT(*) FROM test` 10 times against one local MySQL installation.
@@ -41,6 +65,8 @@ As a result we obtain an interactive dashboard to inspect timing aspects.
 ## Configuration
 
 We need to provide
+
+* the DBMS ready
 * a [DBMS configuration file](#connection-file), e.g. in `./config/connections.config`  
 ```
 [
@@ -80,11 +106,7 @@ We need to provide
 
 Run the CLI command: `dbmsbenchmarker run -e yes -b -f ./config`
 
-After benchmarking has been finished we will see a message like
-```
-Experiment <code> has been finished
-```
-
+After benchmarking has been finished we will see a message like `Experiment <code> has been finished`.
 The script has created a result folder in the current directory containing the results. `<code>` is the name of the folder.
 
 
@@ -94,7 +116,6 @@ Run the command: `dbmsdashboard`
 
 This will start the evaluation dashboard at `localhost:8050`.
 Visit the address in a browser and select the experiment `<code>`.
-
 Alternatively you may use a [Jupyter notebooks](https://github.com/Beuth-Erdelt/DBMS-Benchmarker/blob/master/Evaluation-Demo.ipynb), see a [rendered example](https://beuth-erdelt.github.io/DBMS-Benchmarker/Evaluation-Demo.html).
 
 
@@ -142,7 +163,6 @@ for the same query.
 
 Parallel clients are simulated using the `pool.apply_async()` method of a `Pool` object of the module [multiprocessing](https://docs.python.org/3/library/multiprocessing.html).
 Runs and their benchmark times are ordered by numbering.
-
 Moreover we can **randomize** a query, such that each run will look slightly different.
 This means we exchange a part of the query for a random value.
 
@@ -176,40 +196,11 @@ The columns represent DBMS and each row contains a run.
 
 We also measure and store the **total time** of the benchmark of the query, since for parallel execution this differs from the **sum of times** based on *timerRun*. Total time means measurement starts before first benchmark run and stops after the last benchmark run has been finished. Thus total time also includes some overhead (for spawning a pool of subprocesses, compute size of result sets and joining results of subprocesses).
 Thus the sum of times is more of an indicator for performance of the server system, the total time is more of an indicator for the performance the client user receives.
-
 We also compute for each query and DBMS
-
-* **Latency**: Measured Time
-* **Throughput**: 
-  * Number of runs per total time
-  * Number of parallel clients per mean time
-
+* **Latency** (measured Time)
+* **Throughput** (number of parallel clients per mean time).
 Additionally error messages and timestamps of begin and end of benchmarking a query are stored.
 
-
-## Featured Parameters
-
-The lists of [DBMS](#connection-file) and [queries](#query-file) are given in config files in dict format.
-
-Benchmarks can be [parametrized](#query-file) by
-* number of benchmark runs: *Is performance stable across time?*
-* number of benchmark runs per connection: *How does reusing a connection affect performance?*
-* number of warmup and cooldown runs, if any: *How does (re)establishing a connection affect performance?*
-* number of parallel clients: *How do multiple user scenarios affect performance?*
-* optional list of timers (currently: connection, execution, data transfer, run and session): *Where does my time go?*
-* [sequences](#query-list) of queries: *How does sequencing influence performance?*
-* optional [comparison](#results-and-comparison) of result sets: *Do I always receive the same results sets?*
-
-Benchmarks can be [randomized](#randomized-query-file) (optionally with specified [seeds](#random-seed) for reproducible results) to avoid caching side effects and to increase variety of queries by taking samples of arbitrary size from a
-* list of elements
-* dict of elements (one-to-many relations)
-* range of integers
-* range of floats
-* range of days
-* range of (first of) months
-* range of years
-
-This is inspired by [TPC-H](http://www.tpc.org/tpch/) and [TPC-DS](http://www.tpc.org/tpcds/) - Decision Support Benchmarks.
 
 ## Comparison
 
@@ -219,24 +210,11 @@ Each query will be sent to every DBMS in the same number of runs.
 ![Caption for example figure.\label{fig:Concept-Compare}](docs/Concept-Compare.png){ width=320 }
 
 This also respects randomization, i.e. every DBMS receives exactly the same versions of the query in the same order.
-
 We assume all DBMS will give us the same result sets.
 Without randomization, each run should yield the same result set.
 This tool automatically can check these assumptions by **comparison**.
 The resulting data table is handled as a list of lists and treated by this:
-```
-# restrict precision
-data = [[round(float(item), int(query.restrict_precision)) if tools.convertToFloat(item) == float else item for item in sublist] for sublist in data]
-# sort by all columns
-data = sorted(data, key=itemgetter(*list(range(0,len(data[0])))))
-# size of result
-size = int(df.memory_usage(index=True).sum())
-# hash of result
-columnnames = [[i[0].upper() for i in connection.cursor.description]]
-hashed = columnnames + [[hashlib.sha224(pickle.dumps(data)).hexdigest()]]
-```
 Result sets of different runs (not randomized) and different DBMS can be compared by their sorted table (small data sets) or their hash value or size (bigger data sets).
-
 In order to do so, result sets (or their hash value or size) are stored as lists of lists and additionally can be saved as csv files or pickled pandas dataframes.
 
 ## Monitoring Hardware Metrics
@@ -272,7 +250,7 @@ Second of query execution time, number of query and number of configuration.
 All these metrics can be sliced or diced, rolled-up or drilled-down into the various dimensions using several aggregation functions for evaluation.
 
 
-# Dashboard
+## Dashboard
 
 The dashboard helps in interactive evaluation of experiment results.
 
@@ -280,45 +258,7 @@ The dashboard helps in interactive evaluation of experiment results.
 <img src="https://raw.githubusercontent.com/Beuth-Erdelt/DBMS-Benchmarker/master/docs/dashboard.png" width="960">
 </p>
 
-![Caption for example figure.\label{fig:dashboard}](docs/dashboard.png){ width=960}
-
-
-### Graph Panels
-
-The dashboard is organized into 12 columns and several rows depending on the screen size.
-For a single graph panel you can
-
-* change width (number of columns)
-* change height (number of rows)
-* change ordering on the dashboard
-* activate settings
-* download underlying data as csv.
-
-#### Graph Types
-
-Available types of display are
-
-* Line Plot
-* Boxplot
-* Histogramm
-* Bar Chart
-* Heatmap
-* Table of Measures
-* Table of Statistics
-
-These can be applied to sliced / diced / aggregated data of the cubes.
-
-There are also some preset graphs
-
-* Heatmap of Errors
-* Heatmap of Warnings
-* Heatmap Result Set Size
-* Heatmap Total Time
-* Heatmap Latency Run
-* Heatmap Throughput Run
-* Heatmap Timer Run Factor
-* Bar Chart Run drill-down
-* Bar Chart Ingestion Time
+![Caption for example figure.\label{fig:dashboard}](docs/dashboard.png){ width=640}
 
 
 
