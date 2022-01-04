@@ -18,15 +18,16 @@ See the [homepage](https://github.com/Beuth-Erdelt/DBMS-Benchmarker) and the [do
 
 DBMS-Benchmarker
 * is Python3-based
-* connects to all [DBMS](Options.html#connection-file) having a JDBC interface - including GPU-enhanced DBMS
-* requires *only* JDBC - no vendor specific supplements are used
-* benchmarks arbitrary SQL queries - in all dialects
-* allows [planning](Options.html#query-file) of complex test scenarios - to simulate realistic or revealing use cases
-* allows easy repetition of benchmarks in varying settings - different hardware, DBMS, DBMS configurations, DB settings etc
-* investigates a number of timing aspects - connection, execution, data transfer, in total, per session etc
-* investigates a number of other aspects - received result sets, precision, number of clients
-* collects hardware metrics from a Grafana server - hardware utilization, energy consumption etc
-* helps to [evaluate](Evaluations.html) results - by providing  
+* helps to **benchmark DBMS**
+  * connects to all [DBMS](Options.html#connection-file) having a JDBC interface - including GPU-enhanced DBMS
+  * requires *only* JDBC - no vendor specific supplements are used
+  * benchmarks arbitrary SQL queries - in all dialects
+  * allows [planning](Options.html#query-file) of complex test scenarios - to simulate realistic or revealing use cases
+  * allows easy repetition of benchmarks in varying settings - different hardware, DBMS, DBMS configurations, DB settings etc
+  * investigates a number of timing aspects - connection, execution, data transfer, in total, per session etc
+  * investigates a number of other aspects - received result sets, precision, number of clients
+  * collects hardware metrics from a Prometheus server - hardware utilization, energy consumption etc
+* helps to **[evaluate](Evaluations.html) results** - by providing  
   * standard Python data structures
   * predefined evaluations like statistics
   * an [interface for Jupyter notebooks](https://github.com/Beuth-Erdelt/DBMS-Benchmarker/blob/master/Evaluation-Demo.ipynb)
@@ -89,9 +90,7 @@ We need to provide
 
 ### Perform Benchmark
 
-Run the CLI command:
-
-`dbmsbenchmarker run -e yes -b -f ./config`
+Run the CLI command: `dbmsbenchmarker run -e yes -b -f ./config`
 
 * `-e yes`: This will precompile some evaluations and generate the timer cube.
 * `-b`: This will suppress some output
@@ -111,9 +110,7 @@ The script has created a result folder in the current directory containing the r
 
 ### Evaluate Results in Dashboard
 
-Run the command:
-
-`dbmsdashboard`
+Run the command: `dbmsdashboard`
 
 This will start the evaluation dashboard at `localhost:8050`.
 Visit the address in a browser and select the experiment `<code>`.
