@@ -28,8 +28,9 @@ DBMS-Benchmarker
 * collects hardware metrics from a Grafana server - hardware utilization, energy consumption etc
 * helps to [evaluate](Evaluations.html) results - by providing  
   * standard Python data structures
-  * predefined evaluations like statistics, plots, Latex reporting
-  * an [inspection tool](Inspection.html)
+  * predefined evaluations like statistics
+  * an [interface for Jupyter notebooks](https://github.com/Beuth-Erdelt/DBMS-Benchmarker/blob/master/Evaluation-Demo.ipynb)
+  see [rendered example](https://beuth-erdelt.github.io/DBMS-Benchmarker/Evaluation-Demo.html)  
   * an [interactive dashboard](Dashboard.html)
 
 In the end this tool provides metrics that can be analyzed by [aggregation](Concept.html#aggregation-functions) in [multi-dimensions](Concept.html#evaluation), like maximum throughput per DBMS, average CPU utilization per query or geometric mean of run latency per workload.
