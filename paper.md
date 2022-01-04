@@ -35,6 +35,7 @@ See the [homepage](https://github.com/Beuth-Erdelt/DBMS-Benchmarker) and the [do
 ## Key Features
 
 DBMS-Benchmarker
+
 * is Python3-based
 * helps to **benchmark DBMS**
   * connects to all DBMS having a JDBC interface - including GPU-enhanced DBMS
