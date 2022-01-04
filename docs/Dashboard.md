@@ -38,7 +38,7 @@ When you start the dashboard it is available at `localhost:8050`.
 
 You will be shown a list of experiments available at the path you have provided.
 Select one experiment.
-Optionally you can activate to have some default panels opened to you.
+Optionally you can activate to have some default panels that will be included at start.
 
 ## Concept
 
@@ -49,27 +49,23 @@ The dashboard analyzes the data in [three dimensions](Concept.html#evaluation) u
 
 ### Data
 
-The cells of the runtime cube contains
-* Timer (connection, execution, data transfer)
-* Derived metrics (latencies, throughput)
-
-The cells of the monitoring cube contains
-* Hardware metrics
+The cells of the runtime cube contain timer (connection, execution, data transfer, run and session) and derived metrics (latencies, throughput).
+The cells of the monitoring cube contain hardware metrics.
 
 ### Graph Panels
 
 The dashboard is organized into 12 columns and several rows depending on the screen size.
-
-For a graph panel you can
+For a single graph panel you can
 * change width (number of columns)
 * change height (number of rows)
 * change ordering on the dashboard
 * activate settings
-* download underlying data as csv
+* download underlying data as csv.
 
 #### Graph Types
 
 Available types of display are
+
 * Line Plot
 * Boxplot
 * Histogramm
@@ -77,9 +73,11 @@ Available types of display are
 * Heatmap
 * Table of Measures
 * Table of Statistics
+
 These can be applied to sliced / diced / aggregated data of the cubes.
 
 There are also some preset graphs
+
 * Heatmap of Errors
 * Heatmap of Warnings
 * Heatmap Result Set Size
@@ -136,26 +134,25 @@ This means the first n runs resp. the last n runs are ignored in evaluation.
 
 <img align="right" src="https://raw.githubusercontent.com/Beuth-Erdelt/DBMS-Benchmarker/master/docs/dashboard-filter.png">
 
-In the filter panel you can filter
+In the filter panel you can
 
-* one or more connections (configurations) using
-  * a checkbox list of single connections
-  * property filters
+* filter
+  * one or more connections (configurations) using
+    * a checkbox list of single connections
+    * property filters
+      * DBMS
+      * Cluster node
+      * Number of clients
+      * CPU
+      * GPU
+  * single queries
+* receive details about
+  * the connections (configurations)
+    * [Configuration](Options.html#connection-file)
     * DBMS
-    * Cluster node
-    * Number of clients
-    * CPU
-    * GPU
-* single queries
-
-Moreover you can receive details about
-
-* the connections (configurations)
-  * [Configuration](Options.html#connection-file)
-  * DBMS
-  * Resources
-* and the queries like
-  * [Configuration](Options.html#query-file)
-  * Number of runs
-  * Result sets 
+    * Resources
+  * and the queries like
+    * [Configuration](Options.html#query-file)
+    * Number of runs
+    * Result sets 
 
