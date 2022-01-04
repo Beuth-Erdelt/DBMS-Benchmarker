@@ -3,6 +3,7 @@ title: 'DBMS-Benchmarker: Benchmark and Evaluate DBMS in Python'
 tags:
   - Python
   - DBMS
+  - JDBC
 authors:
   - name: Patrick K. Erdelt
     orcid: 0000-0002-3359-2386

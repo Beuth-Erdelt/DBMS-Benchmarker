@@ -32,7 +32,8 @@ A sequence of runs between establishing and discarding a connection is called a 
 
 A basic parameter of a query is the **number of runs** (units of send, execute, transfer).
 To configure sessions it is also possible to adjust
-* the **number of runs per connection** (session length, to have several sequential connections) and  
+
+* the **number of runs per connection** (session length, to have several sequential connections) and
 * the **number of parallel connections** (to simulate several simultanious clients)
 * a **timeout** (maximum lifespan of a connection)
 * a **delay** for throttling (waiting time before each connection or execution)
@@ -45,10 +46,6 @@ for the same query.
 
 Parallel clients are simulated using the `pool.apply_async()` method of a `Pool` object of the module [multiprocessing](https://docs.python.org/3/library/multiprocessing.html).
 Runs and their benchmark times are ordered by numbering.
-
-We can specify a **number of warmup runs** and a **number of cooldown runs**.
-This means the first n runs resp. the last n runs are ignored in evaluation.
-**Note** this is only reliable for non-parallel connections.
 
 Moreover we can **randomize** a query, such that each run will look slightly different.
 This means we exchange a part of the query for a random value.
@@ -79,22 +76,18 @@ That is the sum of *timerConnection*, *timerExecution* and *timerTransfer*.
 This timer gives the time in ms and per session.  
 It aggregates all runs of a session and sums up their *timerRun*s.  
 A session starts with establishing a connection and ends when the connection is disconnected.  
-This timer ignores warmup / cooldown phases, since they are only valid for runs.
 
 The benchmark times of a query are stored in csv files (optional pickeled pandas dataframe): For connection, execution and transfer.
 The columns represent DBMS and each row contains a run.
 
-We also measure and store the **total time** of the benchmark of the query, since for parallel execution this differs from the **sum of times** based on *timerRun*. Total time means measurement starts before first benchmark run and stops after the last benchmark run has been finished. Thus total time also includes some overhead (for spawning a pool of subprocesses, compute size of result sets and joining results of subprocesses). Additionally total time always spans all benchmarks. The sum of times on the other hand ignores warmup and cooldown phase.
-
-We think
-* the sum of times is more of an indicator for performance of the server system
-* the total time is more of an indicator for the performance the client user receives.
+We also measure and store the **total time** of the benchmark of the query, since for parallel execution this differs from the **sum of times** based on *timerRun*. Total time means measurement starts before first benchmark run and stops after the last benchmark run has been finished. Thus total time also includes some overhead (for spawning a pool of subprocesses, compute size of result sets and joining results of subprocesses).
+Thus the sum of times is more of an indicator for performance of the server system, the total time is more of an indicator for the performance the client user receives.
 
 We also compute for each query and DBMS
-* **Latency**: Mean time (without warmup / cooldown)
-* **Throughput**:
-  * Number of runs per total time (including warmup / cooldown phase)
-  * Number of parallel clients per mean time (without warmup / cooldown)
+* **Latency**: Measured Time
+* **Throughput**: 
+  * Number of runs per total time
+  * Number of parallel clients per mean time
 
 In the end we have
 * Per DBMS: Total time of experiment
@@ -140,8 +133,8 @@ In order to do so, result sets (or their hash value or size) are stored as lists
 
 ## Monitoring Hardware Metrics
 
-To make hardware metrics available, we must [provide](Options.html#connection-file) an API URL and an API Access Token for a Grafana Server.
-The tool collects metrics from the Grafana server with a step size of 1 second.
+To make hardware metrics available, we must [provide](Options.html#connection-file) an API URL for a Prometheus Server.
+The tool collects metrics from the Prometheus server with a step size of 1 second.
 
 <p align="center">
 <img src="https://raw.githubusercontent.com/Beuth-Erdelt/DBMS-Benchmarker/master/docs/Concept-Monitoring.png" width="320">
@@ -156,31 +149,31 @@ Metrics can be defined per connection.
 Example:
 ```
 'title': 'CPU Memory [MB]'
-'query': 'container_memory_working_set_bytes{container_label_io_kubernetes_container_name="dbms"}'
+'query': 'container_memory_working_set_bytes'
 
 'title': 'CPU Memory Cached [MB]'
-'query': 'container_memory_usage_bytes{container_label_io_kubernetes_container_name="dbms"}'
+'query': 'container_memory_usage_bytes'
 
 'title': 'CPU Util [%]'
-'query': 'sum(irate(container_cpu_usage_seconds_total{container_label_io_kubernetes_container_name="dbms"}[1m]))'
+'query': 'sum(irate(container_cpu_usage_seconds_total[1m]))'
 
 'title': 'CPU Throttle [%]'
-'query': 'sum(irate(container_cpu_cfs_throttled_seconds_total{container_label_io_kubernetes_container_name="dbms"}[1m]))'
+'query': 'sum(irate(container_cpu_cfs_throttled_seconds_total[1m]))'
 
 'title': 'CPU Util Others [%]'
-'query': 'sum(irate(container_cpu_usage_seconds_total{container_label_io_kubernetes_container_name!="dbms",id!="/"}[1m]))'
+'query': 'sum(irate(container_cpu_usage_seconds_total{id!="/"}[1m]))'
 
 'title': 'Net Rx [b]'
-'query': 'sum(container_network_receive_bytes_total{container_label_app="dbmsbenchmarker"})'
+'query': 'sum(container_network_receive_bytes_total{)'
 
 'title': 'Net Tx [b]'
-'query': 'sum(container_network_transmit_bytes_total{container_label_app="dbmsbenchmarker"})'
+'query': 'sum(container_network_transmit_bytes_total{)'
 
 'title': 'FS Read [b]'
-'query': 'sum(container_fs_reads_bytes_total{container_label_io_kubernetes_container_name="dbms"})'
+'query': 'sum(container_fs_reads_bytes_total)'
 
 'title': 'FS Write [b]'
-'query': 'sum(container_fs_writes_bytes_total{container_label_io_kubernetes_container_name="dbms"})'
+'query': 'sum(container_fs_writes_bytes_total)'
 
 'title': 'GPU Util [%]'
 'query': 'DCGM_FI_DEV_GPU_UTIL{UUID=~"GPU-4d1c2617-649d-40f1-9430-2c9ab3297b79"}'
@@ -211,7 +204,7 @@ We also can have various hardware metrics like CPU and GPU utilization, CPU thro
 These are also described in three dimensions:
 Second of query execution time, number of query and number of configuration.
 
-All these metrics can be sliced or diced, rolled-up or drilled-down into the various dimensions using several aggregation functions for [evaluation](Evaluations.html).
+All these metrics can be sliced or diced, rolled-up or drilled-down into the various dimensions using several aggregation functions for evaluation.
 
 ### Aggregation Functions
 

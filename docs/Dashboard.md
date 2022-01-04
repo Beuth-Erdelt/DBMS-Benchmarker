@@ -94,6 +94,7 @@ There are also some preset graphs
 ## Menu
 
 The menu allows you to
+
 * open the [filtering](#filter) panel
 * open the [favorites](#favorites) panel
 * [select](#select-experiment) (change to) an experiment
@@ -106,6 +107,7 @@ The menu allows you to
 ## Favorites
 
 The favorites menu allows you to
+
 * load a dashboard
 * append a list of panels to the current dashboard
 * save the current list of panels as a favorite
@@ -117,6 +119,7 @@ The favorites menu allows you to
 <img align="right" src="https://raw.githubusercontent.com/Beuth-Erdelt/DBMS-Benchmarker/master/docs/dashboard-settings.png">
 
 In the settings panel you can select the
+
 * [Kind of measure](#data) you want to inspect (kind, name)
 * [Type](#graph-panels) of plot (graph type, x-axis, annotate)
 * [Aggregation functions](Concept.html#aggregation-functions).
@@ -125,13 +128,16 @@ In the settings panel you can select the
   1. Total (query dimension)
   1. Connection (configuration dimension)  
   Aggregation in the connection dimension can be drilled-down (color by)
-* number of (excluded) warmup and cooldown runs
+* a **number of warmup runs** and a **number of cooldown runs**  
+This means the first n runs resp. the last n runs are ignored in evaluation.  
+**Note** this is only reliable for non-parallel connections.
 
 ## Filter
 
 <img align="right" src="https://raw.githubusercontent.com/Beuth-Erdelt/DBMS-Benchmarker/master/docs/dashboard-filter.png">
 
 In the filter panel you can filter
+
 * one or more connections (configurations) using
   * a checkbox list of single connections
   * property filters
@@ -143,6 +149,7 @@ In the filter panel you can filter
 * single queries
 
 Moreover you can receive details about
+
 * the connections (configurations)
   * [Configuration](Options.html#connection-file)
   * DBMS
