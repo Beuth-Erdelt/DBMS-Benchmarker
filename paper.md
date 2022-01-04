@@ -59,15 +59,13 @@ This is inspired by [TPC-H](http://www.tpc.org/tpch/) and [TPC-DS](http://www.tp
 
 # Basic Example
 
-The following very simple use case runs the query `SELECT COUNT(*) FROM test` 10 times against one local MySQL installation.
-As a result we obtain an interactive dashboard to inspect timing aspects.
+The following very simple use case runs the query `SELECT COUNT(*) FROM test` 10 times against one local (existing) MySQL installation.
+We assume here we have downloaded the required JDBC driver, e.g. `mysql-connector-java-8.0.13.jar`.
 
 ## Configuration
 
-We need to provide
+### DBMS configuration file, e.g. in `./config/connections.config`  
 
-* the DBMS ready
-* a [DBMS configuration file](#connection-file), e.g. in `./config/connections.config`  
 ```
 [
   {
@@ -82,8 +80,9 @@ We need to provide
   }
 ]
 ```
-* the required JDBC driver, e.g. `mysql-connector-java-8.0.13.jar`
-* a [Queries configuration file](#query-file), e.g. in `./config/queries.config`  
+
+### Queries configuration file, e.g. in `./config/queries.config`  
+
 ```
 {
   'name': 'Some simple queries',
@@ -238,7 +237,7 @@ Metrics can be defined per connection.
 
 As a result we obtain measured times in milliseconds for the query processing parts: connection, execution, data transfer.
 
-![Caption for example figure.\label{fig:Evaluation-Cubes}](docs/Evaluation-Cubes.png){ width=320 }
+![Caption for example figure.\label{fig:Evaluation-Cubes}](docs/Evaluation-Cubes.png){ width=480 }
 
 These are described in three dimensions:
 number of run, number of query and configuration.
