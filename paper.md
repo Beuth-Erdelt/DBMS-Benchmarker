@@ -31,6 +31,8 @@ See the [homepage](https://github.com/Beuth-Erdelt/DBMS-Benchmarker) and the [do
 
 @ErdeltOrchestrator, @Erdelt20
 
+This is inspired by [TPC-H](http://www.tpc.org/tpch/) and [TPC-DS](http://www.tpc.org/tpcds/) - Decision Support Benchmarks.
+
 Run `pip install dbmsbenchmarker` for installation.
 
 # Solution
@@ -46,16 +48,8 @@ Benchmarks can be [parametrized](#query-file) by
 * [sequences](#query-list) of queries: *How does sequencing influence performance?*
 * optional [comparison](#results-and-comparison) of result sets: *Do I always receive the same results sets?*
 
-Benchmarks can be [randomized](#randomized-query-file) (optionally with specified [seeds](#random-seed) for reproducible results) to avoid caching side effects and to increase variety of queries by taking samples of arbitrary size from a
-* list of elements
-* dict of elements (one-to-many relations)
-* range of integers
-* range of floats
-* range of days
-* range of (first of) months
-* range of years
+Benchmarks can be [randomized](#randomized-query-file) (optionally with specified [seeds](#random-seed) for reproducible results) to avoid caching side effects and to increase variety of queries by taking samples of arbitrary size from a predefined data structure.
 
-This is inspired by [TPC-H](http://www.tpc.org/tpch/) and [TPC-DS](http://www.tpc.org/tpcds/) - Decision Support Benchmarks.
 
 # Basic Example
 
@@ -195,9 +189,7 @@ The columns represent DBMS and each row contains a run.
 
 We also measure and store the **total time** of the benchmark of the query, since for parallel execution this differs from the **sum of times** based on *timerRun*. Total time means measurement starts before first benchmark run and stops after the last benchmark run has been finished. Thus total time also includes some overhead (for spawning a pool of subprocesses, compute size of result sets and joining results of subprocesses).
 Thus the sum of times is more of an indicator for performance of the server system, the total time is more of an indicator for the performance the client user receives.
-We also compute for each query and DBMS
-* **Latency** (measured Time)
-* **Throughput** (number of parallel clients per mean time).
+We also compute for each query and DBMS **latency** (measured time) and **Throughput** (number of parallel clients per mean time).
 Additionally error messages and timestamps of begin and end of benchmarking a query are stored.
 
 
@@ -220,14 +212,10 @@ In order to do so, result sets (or their hash value or size) are stored as lists
 
 To make hardware metrics available, we must [provide](#connection-file) an API URL for a Prometheus Server.
 The tool collects metrics from the Prometheus server with a step size of 1 second.
-
-![Caption for example figure.\label{fig:Concept-Monitoring}](docs/Concept-Monitoring.png){ width=320 }
-
-The requested interval matches the interval a specific DBMS is queried.
-To increase expressiveness, it is possible to extend the scraping interval by n seconds at both ends.
-In the end we have a list of per second values for each query and DBMS.
 We may define the metrics in terms of **promql**.
 Metrics can be defined per connection.
+
+![Caption for example figure.\label{fig:Concept-Monitoring}](docs/Concept-Monitoring.png){ width=320 }
 
 **Note** this expects monitoring to be installed properly and naming to be appropriate. See https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager for a working example and more details.
 
@@ -254,7 +242,7 @@ All these metrics can be sliced or diced, rolled-up or drilled-down into the var
 The dashboard helps in interactive evaluation of experiment results.
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/Beuth-Erdelt/DBMS-Benchmarker/master/docs/dashboard.png" width="960">
+<img src="https://raw.githubusercontent.com/Beuth-Erdelt/DBMS-Benchmarker/master/docs/dashboard.png" width="640">
 </p>
 
 ![Caption for example figure.\label{fig:dashboard}](docs/dashboard.png){ width=640}
