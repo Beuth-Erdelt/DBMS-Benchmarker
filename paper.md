@@ -95,17 +95,14 @@ We assume here we have downloaded the required JDBC driver, e.g. `mysql-connecto
 ```
 
 
-## Perform Benchmark
+## Perform Benchmark and Evaluate Results
 
 Run the CLI command: `dbmsbenchmarker run -e yes -b -f ./config`
 
 After benchmarking has been finished we will see a message like `Experiment <code> has been finished`.
 The script has created a result folder in the current directory containing the results. `<code>` is the name of the folder.
 
-
-## Evaluate Results in Dashboard
-
-Run the command: `dbmsdashboard`
+Run the CLI command: `dbmsdashboard`
 
 This will start the evaluation dashboard at `localhost:8050`.
 Visit the address in a browser and select the experiment `<code>`.
@@ -165,27 +162,28 @@ We have several **timers** to collect timing information:
 
 ![Caption for example figure.\label{fig:Concept-Benchmarking}](docs/Concept-Benchmarking.png){ width=320 }
 
-* **timerConnection**  
+**timerConnection**:
 This timer gives the time in ms and per run.  
 It measures the time it takes to establish a JDBC connection.  
 **Note** that if a run reuses an established connection, this timer will be 0 for that run.
-* **timerExecution**  
+
+**timerExecution**:
 This timer gives the time in ms and per run.  
 It measures the time between sending a SQL command and receiving a result code via JDBC.
-* **timerTransfer**  
+
+**timerTransfer**:
 This timer gives the time in ms and per run.  
 **Note** that if a run does not transfer any result set (a writing query or if we suspend the result set), this timer will be 0 for that run.
-* **timerRun**  
+
+**timerRun**:
 This timer gives the time in ms and per run.  
 That is the sum of *timerConnection*, *timerExecution* and *timerTransfer*.  
+
 **Note** that connection time is 0, if we reuse an established session, and transfer time is 0, if we do not transfer any result set.
-* **timerSession**  
+**timerSession**:
 This timer gives the time in ms and per session.  
 It aggregates all runs of a session and sums up their *timerRun*s.  
 A session starts with establishing a connection and ends when the connection is disconnected.  
-
-The benchmark times of a query are stored in csv files (optional pickeled pandas dataframe): For connection, execution and transfer.
-The columns represent DBMS and each row contains a run.
 
 We also measure and store the **total time** of the benchmark of the query, since for parallel execution this differs from the **sum of times** based on *timerRun*. Total time means measurement starts before first benchmark run and stops after the last benchmark run has been finished. Thus total time also includes some overhead (for spawning a pool of subprocesses, compute size of result sets and joining results of subprocesses).
 Thus the sum of times is more of an indicator for performance of the server system, the total time is more of an indicator for the performance the client user receives.
@@ -197,9 +195,6 @@ Additionally error messages and timestamps of begin and end of benchmarking a qu
 
 We can specify a dict of DBMS.
 Each query will be sent to every DBMS in the same number of runs.
-
-![Caption for example figure.\label{fig:Concept-Compare}](docs/Concept-Compare.png){ width=320 }
-
 This also respects randomization, i.e. every DBMS receives exactly the same versions of the query in the same order.
 We assume all DBMS will give us the same result sets.
 Without randomization, each run should yield the same result set.
@@ -214,12 +209,6 @@ To make hardware metrics available, we must [provide](#connection-file) an API U
 The tool collects metrics from the Prometheus server with a step size of 1 second.
 We may define the metrics in terms of **promql**.
 Metrics can be defined per connection.
-
-![Caption for example figure.\label{fig:Concept-Monitoring}](docs/Concept-Monitoring.png){ width=320 }
-
-**Note** this expects monitoring to be installed properly and naming to be appropriate. See https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager for a working example and more details.
-
-**Note** this has limited validity, since metrics are typically scraped only on a basis of several seconds. It works best with a high repetition of the same query.
 
 ## Evaluation
 
