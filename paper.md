@@ -29,6 +29,18 @@ See the [homepage](https://github.com/Beuth-Erdelt/DBMS-Benchmarker) and the [do
 
 # Statement of Need
 
+Variety of DBMS
+Relational
+
+Rerun scenarios
+
+Evaluation
+Statistical
+Interactive
+Python Data Science language
+measurements
+
+
 @ErdeltOrchestrator, @Erdelt20
 
 This is inspired by [TPC-H](http://www.tpc.org/tpch/) and [TPC-DS](http://www.tpc.org/tpcds/) - Decision Support Benchmarks.
@@ -219,16 +231,15 @@ Second of query execution time, number of query and number of configuration.
 
 All these metrics can be sliced or diced, rolled-up or drilled-down into the various dimensions using several aggregation functions for evaluation.
 
+```
+df = evaluate.get_aggregated_query_statistics(type='latency', name='execution', query_aggregate='Mean')
+```
 
 ## Dashboard
 
 The dashboard helps in interactive evaluation of experiment results.
 
-<p align="center">
-<img src="https://raw.githubusercontent.com/Beuth-Erdelt/DBMS-Benchmarker/master/docs/dashboard.png" width="480">
-</p>
-
-![Caption for example figure.\label{fig:dashboard}](docs/dashboard.png){ width=640}
+![Caption for example figure.\label{fig:dashboard}](docs/dashboard.png){ width=480}
 
 
 
