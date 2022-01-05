@@ -168,9 +168,9 @@ This means we exchange a part of the query for a random value.
 
 We have several **timers** to collect timing information in ms and per run, corresponding to the parts of query processing: **timerConnection**, **timerExecution** and **timerTransfer**.
 The tool also computes **timerRun** (the sum of *timerConnection*, *timerExecution* and *timerTransfer*) and **timerSession**:
-This timer gives the time in ms and per session.  
-It aggregates all runs of a session and sums up their *timerRun*s.  
-A session starts with establishing a connection and ends when the connection is disconnected.  
+This timer gives the time in ms and per session.
+It aggregates all runs of a session and sums up their *timerRun*s.
+A session starts with establishing a connection and ends when the connection is disconnected.
 
 We also measure and store the **total time** of the benchmark of the query, since for parallel execution this differs from the **sum of times** based on *timerRun*. Total time means measurement starts before first benchmark run and stops after the last benchmark run has been finished. Thus total time also includes some overhead (for spawning a pool of subprocesses, compute size of result sets and joining results of subprocesses).
 Thus the sum of times is more of an indicator for performance of the server system, the total time is more of an indicator for the performance the client user receives.
