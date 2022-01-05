@@ -27,7 +27,7 @@ An interactive dashboard assists in multi-dimensional analysis of the results.
 
 See the [homepage](https://github.com/Beuth-Erdelt/DBMS-Benchmarker) and the [documentation](https://dbmsbenchmarker.readthedocs.io/en/latest/Docs.html).
 
-# Need
+# Statement of Need
 
 @ErdeltOrchestrator, @Erdelt20
 
@@ -137,8 +137,6 @@ The times needed for steps connection (1.), execution (2. and 3.) and transfer (
 A unit of connect, send, execute and transfer is called a **run**. Connection time will be zero if an existing connection is reused.
 A sequence of runs between establishing and discarding a connection is called a **session**.
 
-## Basic Parameters
-
 A basic parameter of a query is the **number of runs** (units of send, execute, transfer).
 To configure sessions it is also possible to adjust
 
@@ -148,19 +146,15 @@ To configure sessions it is also possible to adjust
 * a **delay** for throttling (waiting time before each connection or execution)
 
 for the same query.
-
-![Caption for example figure.\label{fig:Concept-Basic}](docs/Concept-Basic.png){ width=320 }
-
 Parallel clients are simulated using the `pool.apply_async()` method of a `Pool` object of the module [multiprocessing](https://docs.python.org/3/library/multiprocessing.html).
 Runs and their benchmark times are ordered by numbering.
 Moreover we can **randomize** a query, such that each run will look slightly different.
 This means we exchange a part of the query for a random value.
 
+
 ## Basic Metrics
 
 We have several **timers** to collect timing information:
-
-![Caption for example figure.\label{fig:Concept-Benchmarking}](docs/Concept-Benchmarking.png){ width=320 }
 
 **timerConnection**:
 This timer gives the time in ms and per run.  
@@ -178,8 +172,8 @@ This timer gives the time in ms and per run.
 **timerRun**:
 This timer gives the time in ms and per run.  
 That is the sum of *timerConnection*, *timerExecution* and *timerTransfer*.  
-
 **Note** that connection time is 0, if we reuse an established session, and transfer time is 0, if we do not transfer any result set.
+
 **timerSession**:
 This timer gives the time in ms and per session.  
 It aggregates all runs of a session and sums up their *timerRun*s.  
