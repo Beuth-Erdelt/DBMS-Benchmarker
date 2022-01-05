@@ -231,11 +231,16 @@ Second of query execution time, number of query and number of configuration.
 
 All these metrics can be sliced or diced, rolled-up or drilled-down into the various dimensions using several aggregation functions for evaluation.
 
+### Python - Pandas
+
 ```
-df = evaluate.get_aggregated_query_statistics(type='latency', name='execution', query_aggregate='Mean')
+df = evaluate.get_aggregated_query_statistics(
+    type='latency', name='execution', query_aggregate='Mean')
 ```
 
-## Dashboard
+![Caption for example figure.\label{fig:dashboard}](docs/latency-table-example.png){ width=480}
+
+### GUI - Dashboard
 
 The dashboard helps in interactive evaluation of experiment results.
 
