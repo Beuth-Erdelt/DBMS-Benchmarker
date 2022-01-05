@@ -166,27 +166,8 @@ This means we exchange a part of the query for a random value.
 
 ## Basic Metrics
 
-We have several **timers** to collect timing information:
-
-**timerConnection**:
-This timer gives the time in ms and per run.  
-It measures the time it takes to establish a JDBC connection.  
-**Note** that if a run reuses an established connection, this timer will be 0 for that run.
-
-**timerExecution**:
-This timer gives the time in ms and per run.  
-It measures the time between sending a SQL command and receiving a result code via JDBC.
-
-**timerTransfer**:
-This timer gives the time in ms and per run.  
-**Note** that if a run does not transfer any result set (a writing query or if we suspend the result set), this timer will be 0 for that run.
-
-**timerRun**:
-This timer gives the time in ms and per run.  
-That is the sum of *timerConnection*, *timerExecution* and *timerTransfer*.  
-**Note** that connection time is 0, if we reuse an established session, and transfer time is 0, if we do not transfer any result set.
-
-**timerSession**:
+We have several **timers** to collect timing information in ms and per run, corresponding to the parts of query processing: **timerConnection**, **timerExecution** and **timerTransfer**.
+The tool also computes **timerRun** (the sum of *timerConnection*, *timerExecution* and *timerTransfer*) and **timerSession**:
 This timer gives the time in ms and per session.  
 It aggregates all runs of a session and sums up their *timerRun*s.  
 A session starts with establishing a connection and ends when the connection is disconnected.  
