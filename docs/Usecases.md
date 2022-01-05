@@ -18,9 +18,6 @@ and combinations like compare n queries in m DBMS.
 We want to measure how long it takes to run one query in a DBMS.
 
 The following performs a counting query 10 times against one DBMS.
-A report in latex is generated containing a plot of the 10 runs.
-It also contains statistics, which ignore the first 5 runs as warmups.
-The statistics are shown in a table, as boxplots, plots and bar charts.
 The script benchmarks the execution of the query and also the transfer of data.
 The result (the number of rows in table test) is stored and should be the same for each run.
 
@@ -51,7 +48,6 @@ The result (the number of rows in table test) is stored and should be the same f
     {
       'title': "Count all rows in test",
       'query': "SELECT COUNT(*) FROM test",
-      `numWarmup`: 5,
       'numRun': 10,
       'timer':
       {
@@ -72,9 +68,6 @@ We want to compare run times of two queries in a DBMS.
 
 The following performs a query 10 times against two DBMS each.
 This helps comparing the relevance of position of ordering in the execution plan in this case.  
-A report in latex is generated containing a plot of the 10 runs.
-It also contains statistics, which ignore the first 5 runs as warmups.
-The statistics are shown in a table, as boxplots, plots and bar charts.
 The script benchmarks the execution of the query and also the transfer of data.
 The result (some rows of table test in a certain order) is stored and should be the same for each run.
 **Beware** that storing result may take a lot of RAM and disk space!
@@ -121,7 +114,6 @@ The result (some rows of table test in a certain order) is stored and should be 
         'MySQL-1': "SELECT * FROM (SELECT * FROM test WHERE a IS TRUE) tmp ORDER BY b",
         'MySQL-2': "SELECT * FROM (SELECT * FROM test ORDER BY b) tmp WHERE a IS TRUE",
       },
-      `numWarmup`: 5,
       'numRun': 10,
       'timer':
       {
@@ -144,9 +136,6 @@ An application may be having the same tables with different indices and data typ
 The following performs a query 10 times against two databases in a DBMS each.
 This helps comparing the relevance of table structure in this case.
 Suppose we have a table test in database database and in database2 resp.  
-A report in latex is generated containing a plot of the 10 runs.
-It also contains statistics, which ignore the first 5 runs as warmups.
-The statistics are shown in a table, as boxplots, plots and bar charts.
 The script benchmarks the execution of the query and also the transfer of data.
 The result (the number of rows in table test) is stored and should be the same for each run.
 
@@ -189,7 +178,6 @@ The result (the number of rows in table test) is stored and should be the same f
     {
       'title': "Count all rows in test",
       'query': "SELECT COUNT(*) FROM test",
-      `numWarmup`: 5,
       'numRun': 10,
       'timer':
       {
@@ -212,9 +200,6 @@ An application may be having the same tables in different DBMS and want to find 
 The following performs a query 10 times against two DBMS each.
 This helps comparing the power of the two DBMS, MySQL and PostgreSQL in this case.
 Suppose we have a table test in both DBMS.  
-A report in latex is generated containing a plot of the 10 runs.
-It also contains statistics, which ignore the first 5 runs as warmups.
-The statistics are shown in a table, as boxplots, plots and bar charts.
 The script benchmarks the execution of the query and also the transfer of data.
 The result (the number of rows in table test) is stored and should be the same for each run.
 
@@ -257,7 +242,6 @@ The result (the number of rows in table test) is stored and should be the same f
     {
       'title': "Count all rows in test",
       'query': "SELECT COUNT(*) FROM test",
-      `numWarmup`: 5,
       'numRun': 10,
       'timer':
       {
@@ -270,76 +254,6 @@ The result (the number of rows in table test) is stored and should be the same f
     },
   ]
 }
-```
-
-## Benchmarking DBMS Configurations
-
-Setup
-* a query config file in `hpo/queries.config`
-* a connection config file `hpo/connections.config`, which contains just an empty list `[]`
-* a local PostgreSQL instance with open JDBC at `localhost:5432`
-
-```
-from dbmsbenchmarker import *
-
-resultfolder = "tmp/results"
-configfolder = "hpo"
-code = None
-
-# template for connection
-template = {
-  'active': True,
-  'version': 'v11.4',
-  'alias': '',
-  'JDBC': {
-    'driver': "org.postgresql.Driver",
-    'auth': ["postgres", ""],
-    'url': 'jdbc:postgresql://localhost:5432/postgres',
-    'jar': '~/JDBC/postgresql-42.2.5.jar'
-  }
-}
-
-# setup PostgreSQL instance with specific config
-...
-
-# give the config a unique name
-connection = "setup A"
-
-# generate new connection config
-c = template.copy()
-c['name'] = connection
-
-# if this is not the first benchmark:
-if code is not None:
-  resultfolder += '/'+str(code)
-
-# generate benchmarker object for this specific config
-benchmarks = benchmarker.benchmarker(
-    fixedConnection=connection,
-    result_path=resultfolder,
-    batch=True,
-    working='connection'
-)
-benchmarks.getConfig(configfolder)
-
-# append new connection
-benchmarks.connections.append(c)
-benchmarks.dbms[c['name']] = tools.dbms(c, False)
-filename = benchmarks.path+'/connections.config'
-with open(filename, 'w') as f:
-  f.write(str(benchmarks.connections))
-
-# run or continue benchmarks
-if code is not None:
-  benchmarks.continueBenchmarks(overwrite = True)
-else:
-  benchmarks.runBenchmarks()
-
-# store code (unique id) of benchmark for further usage
-code = benchmarks.code
-
-# now go back to: setup PostgreSQL instance with specific config
-
 ```
 
 # Scenarios
@@ -390,8 +304,6 @@ Excerpt from `queries.config`:
     },
   },
   'active': True,
-  'numWarmup': 0,
-  'numCooldown': 0,
   'numRun': 20,
   'timer':
   {
@@ -433,8 +345,6 @@ Excerpt from `queries.config`:
   'title': "Count rows in nation",
   'query': "SELECT COUNT(*) c FROM nation",
   'active': True,
-  'numWarmup': 5,
-  'numCooldown': 5,
   'numRun': 20,
   'timer':
   {
@@ -454,7 +364,6 @@ Excerpt from `queries.config`:
 },
 ```
 That is each simulated user counts the number of rows in table nations (five times per connection). We want to have 20 counts in total, so the simulated user (re)connects four times one after the other.
-The first 5 and the last 5 of the 20 runs are not taken into account for evaluation.
 The result sets will be truncated to 4 decimals, sorted and compared.
 The result set of the first run will be stored to disk as a pickled pandas dataframe.
 The time for connection, execution and data transfer will be measured.

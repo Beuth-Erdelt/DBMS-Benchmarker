@@ -181,7 +181,7 @@ A session starts with establishing a connection and ends when the connection is 
 
 We also measure and store the **total time** of the benchmark of the query, since for parallel execution this differs from the **sum of times** based on *timerRun*. Total time means measurement starts before first benchmark run and stops after the last benchmark run has been finished. Thus total time also includes some overhead (for spawning a pool of subprocesses, compute size of result sets and joining results of subprocesses).
 Thus the sum of times is more of an indicator for performance of the server system, the total time is more of an indicator for the performance the client user receives.
-We also compute for each query and DBMS **latency** (measured time) and **Throughput** (number of parallel clients per mean time).
+We also compute for each query and DBMS **latency** (measured time) and **throughput** (number of parallel clients per mean time).
 Additionally error messages and timestamps of begin and end of benchmarking a query are stored.
 
 
@@ -225,7 +225,7 @@ All these metrics can be sliced or diced, rolled-up or drilled-down into the var
 The dashboard helps in interactive evaluation of experiment results.
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/Beuth-Erdelt/DBMS-Benchmarker/master/docs/dashboard.png" width="640">
+<img src="https://raw.githubusercontent.com/Beuth-Erdelt/DBMS-Benchmarker/master/docs/dashboard.png" width="480">
 </p>
 
 ![Caption for example figure.\label{fig:dashboard}](docs/dashboard.png){ width=640}
