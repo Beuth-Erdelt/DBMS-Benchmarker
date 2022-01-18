@@ -158,6 +158,7 @@ Other comparable products you might like
 > Orchestrating DBMS Benchmarking in the Cloud with Kubernetes.
 > In: Nambiar R., Poess M. (eds) Performance Evaluation and Benchmarking. TPCTC 2021.
 > Lecture Notes in Computer Science, vol 13169. Springer, Cham.
+> https://doi.org/10.1007/978-3-030-94437-7_6
 
 (old, slightly outdated [docs](Docs_old.html))
 
