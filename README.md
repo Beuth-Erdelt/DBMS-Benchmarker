@@ -120,7 +120,7 @@ Alternatively you may use a [Jupyter notebook](https://github.com/Beuth-Erdelt/D
 This module can serve as the **query executor** [2] and **evaluator** [1] for distributed parallel benchmarking experiments in a Kubernetes Cloud, see the [orchestrator](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager) for more details.
 
 <p align="center">
-    <img src="https://raw.githubusercontent.com/Beuth-Erdelt/DBMS-Benchmarker/v0.11.4/docs/experiment-with-orchestrator.png" width="800">
+    <img src="https://raw.githubusercontent.com/Beuth-Erdelt/DBMS-Benchmarker/master/docs/experiment-with-orchestrator.png" width="800">
 </p>
 
 
