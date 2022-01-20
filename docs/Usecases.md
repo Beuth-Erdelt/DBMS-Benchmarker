@@ -18,9 +18,6 @@ and combinations like compare n queries in m DBMS.
 We want to measure how long it takes to run one query in a DBMS.
 
 The following performs a counting query 10 times against one DBMS.
-A report in latex is generated containing a plot of the 10 runs.
-It also contains statistics, which ignore the first 5 runs as warmups.
-The statistics are shown in a table, as boxplots, plots and bar charts.
 The script benchmarks the execution of the query and also the transfer of data.
 The result (the number of rows in table test) is stored and should be the same for each run.
 
@@ -51,7 +48,6 @@ The result (the number of rows in table test) is stored and should be the same f
     {
       'title': "Count all rows in test",
       'query': "SELECT COUNT(*) FROM test",
-      `numWarmup`: 5,
       'numRun': 10,
       'timer':
       {
@@ -72,9 +68,6 @@ We want to compare run times of two queries in a DBMS.
 
 The following performs a query 10 times against two DBMS each.
 This helps comparing the relevance of position of ordering in the execution plan in this case.  
-A report in latex is generated containing a plot of the 10 runs.
-It also contains statistics, which ignore the first 5 runs as warmups.
-The statistics are shown in a table, as boxplots, plots and bar charts.
 The script benchmarks the execution of the query and also the transfer of data.
 The result (some rows of table test in a certain order) is stored and should be the same for each run.
 **Beware** that storing result may take a lot of RAM and disk space!
@@ -121,7 +114,6 @@ The result (some rows of table test in a certain order) is stored and should be 
         'MySQL-1': "SELECT * FROM (SELECT * FROM test WHERE a IS TRUE) tmp ORDER BY b",
         'MySQL-2': "SELECT * FROM (SELECT * FROM test ORDER BY b) tmp WHERE a IS TRUE",
       },
-      `numWarmup`: 5,
       'numRun': 10,
       'timer':
       {
@@ -144,9 +136,6 @@ An application may be having the same tables with different indices and data typ
 The following performs a query 10 times against two databases in a DBMS each.
 This helps comparing the relevance of table structure in this case.
 Suppose we have a table test in database database and in database2 resp.  
-A report in latex is generated containing a plot of the 10 runs.
-It also contains statistics, which ignore the first 5 runs as warmups.
-The statistics are shown in a table, as boxplots, plots and bar charts.
 The script benchmarks the execution of the query and also the transfer of data.
 The result (the number of rows in table test) is stored and should be the same for each run.
 
@@ -189,7 +178,6 @@ The result (the number of rows in table test) is stored and should be the same f
     {
       'title': "Count all rows in test",
       'query': "SELECT COUNT(*) FROM test",
-      `numWarmup`: 5,
       'numRun': 10,
       'timer':
       {
@@ -212,9 +200,6 @@ An application may be having the same tables in different DBMS and want to find 
 The following performs a query 10 times against two DBMS each.
 This helps comparing the power of the two DBMS, MySQL and PostgreSQL in this case.
 Suppose we have a table test in both DBMS.  
-A report in latex is generated containing a plot of the 10 runs.
-It also contains statistics, which ignore the first 5 runs as warmups.
-The statistics are shown in a table, as boxplots, plots and bar charts.
 The script benchmarks the execution of the query and also the transfer of data.
 The result (the number of rows in table test) is stored and should be the same for each run.
 
@@ -257,7 +242,6 @@ The result (the number of rows in table test) is stored and should be the same f
     {
       'title': "Count all rows in test",
       'query': "SELECT COUNT(*) FROM test",
-      `numWarmup`: 5,
       'numRun': 10,
       'timer':
       {
@@ -270,76 +254,6 @@ The result (the number of rows in table test) is stored and should be the same f
     },
   ]
 }
-```
-
-## Benchmarking DBMS Configurations
-
-Setup
-* a query config file in `hpo/queries.config`
-* a connection config file `hpo/connections.config`, which contains just an empty list `[]`
-* a local PostgreSQL instance with open JDBC at `localhost:5432`
-
-```
-from dbmsbenchmarker import *
-
-resultfolder = "tmp/results"
-configfolder = "hpo"
-code = None
-
-# template for connection
-template = {
-  'active': True,
-  'version': 'v11.4',
-  'alias': '',
-  'JDBC': {
-    'driver': "org.postgresql.Driver",
-    'auth': ["postgres", ""],
-    'url': 'jdbc:postgresql://localhost:5432/postgres',
-    'jar': '~/JDBC/postgresql-42.2.5.jar'
-  }
-}
-
-# setup PostgreSQL instance with specific config
-...
-
-# give the config a unique name
-connection = "setup A"
-
-# generate new connection config
-c = template.copy()
-c['name'] = connection
-
-# if this is not the first benchmark:
-if code is not None:
-  resultfolder += '/'+str(code)
-
-# generate benchmarker object for this specific config
-benchmarks = benchmarker.benchmarker(
-    fixedConnection=connection,
-    result_path=resultfolder,
-    batch=True,
-    working='connection'
-)
-benchmarks.getConfig(configfolder)
-
-# append new connection
-benchmarks.connections.append(c)
-benchmarks.dbms[c['name']] = tools.dbms(c, False)
-filename = benchmarks.path+'/connections.config'
-with open(filename, 'w') as f:
-  f.write(str(benchmarks.connections))
-
-# run or continue benchmarks
-if code is not None:
-  benchmarks.continueBenchmarks(overwrite = True)
-else:
-  benchmarks.runBenchmarks()
-
-# store code (unique id) of benchmark for further usage
-code = benchmarks.code
-
-# now go back to: setup PostgreSQL instance with specific config
-
 ```
 
 # Scenarios
@@ -390,8 +304,6 @@ Excerpt from `queries.config`:
     },
   },
   'active': True,
-  'numWarmup': 0,
-  'numCooldown': 0,
   'numRun': 20,
   'timer':
   {
@@ -433,8 +345,6 @@ Excerpt from `queries.config`:
   'title': "Count rows in nation",
   'query': "SELECT COUNT(*) c FROM nation",
   'active': True,
-  'numWarmup': 5,
-  'numCooldown': 5,
   'numRun': 20,
   'timer':
   {
@@ -454,7 +364,6 @@ Excerpt from `queries.config`:
 },
 ```
 That is each simulated user counts the number of rows in table nations (five times per connection). We want to have 20 counts in total, so the simulated user (re)connects four times one after the other.
-The first 5 and the last 5 of the 20 runs are not taken into account for evaluation.
 The result sets will be truncated to 4 decimals, sorted and compared.
 The result set of the first run will be stored to disk as a pickled pandas dataframe.
 The time for connection, execution and data transfer will be measured.
@@ -500,4 +409,90 @@ Excerpt from `queries.config`:
 }
 ```
 
+# Example Runs
+
+## Run benchmarks
+
+`python3 benchmark.py run -f test` generates a folder containing result files: csv of benchmarks per query.
+The example uses `test/connections.config` and `test/queries.config` as config files.
+
+Example: This produces a folder containing
+```
+connections.config
+queries.config
+protocol.json
+query_1_connection.csv
+query_1_execution.csv
+query_1_transfer.csv
+query_2_connection.csv
+query_2_execution.csv
+query_2_transfer.csv
+query_3_connection.csv
+query_3_execution.csv
+query_3_transfer.csv
+```
+where
+- `connections.config` is a copy of the input file
+- `queries.config` is a copy of the input file
+- `protocol.json`: JSON file containing error messages (up to one per query and connection), durations (per query) and retried data (per query)
+- `query_n_connection.csv`: CSV containing times (columns) for each dbms (rows) for query n - duration of establishing JDBC connection
+- `query_n_execution.csv`: CSV containing times (columns) for each dbms (rows) for query n - duration of execution
+- `query_n_transfer.csv`: CSV containing times (columns) for each dbms (rows) for query n - duration of data transfer
+
+## Run benchmarks and generate evaluations
+
+`python3 benchmark.py run -e yes -f test` is the same as above, and additionally generates evaluation cube files.
+
+```
+evaluation.dict
+evaluation.json
+```
+These can be inspected comfortably using the dashboard or the Python API.
+
+## Read stored benchmarks
+
+`python3 benchmark.py read  -r 12345` reads files from folder `12345`containing result files and shows summaries of the results.       
+
+## Generate evaluation of stored benchmarks
+
+`python3 benchmark.py read -r 12345 -e yes` reads files from folder `12345`  containing result files, and generates evaluation cubes.
+The example uses `12345/connections.config` and `12345/queries.config` as config files.
+
+## Continue benchmarks
+
+`python3 benchmark.py continue -r 12345 -e yes` reads files from folder `12345` containing result files, continues to perform possibly missing benchmarks and generates evaluation cubes.
+This is useful if a run had to be stopped. It continues automatically at the first missing query.
+It can be restricted to specific queries or connections using `-q` and `c` resp.
+The example uses `12345/connections.config` and `12345/queries.config` as config files.
+
+### Continue benchmarks for more queries
+You would go to a result folder, say `12345`, and add queries to the query file.
+`python3 benchmark.py continue -r 12345 -g yes` then reads files from folder `12345` and continue benchmarking the new (missing) queries.
+
+**Do not remove existing queries, since results are mapped to queries via their number (position). Use `active` instead.**
+
+### Continue benchmarks for more connections
+You would go to a result folder, say `12345`, and add connections to the connection file.
+`python3 benchmark.py continue -r 12345 -g yes` then reads files from folder `12345` and continue benchmarking the new (missing) connections.
+
+**Do not remove existing connections, since their results would not make any sense anymore. Use `active` instead.**
+
+## Rerun benchmarks
+
+`python3 benchmark.py run -r 12345 -e yes` reads files from folder `12345` containing result files, performs benchmarks again and generates evaluation cubes.
+It also performs benchmarks of missing queries.
+It can be restricted to specific queries or connections using `-q` and `c` resp.
+The example uses `12345/connections.config` and `12345/queries.config` as config files.
+
+### Rerun benchmarks for one query
+
+`python3 benchmark.py run -r 12345 -e yes -q 5` reads files from folder `12345`containing result files, performs benchmarks again and generates evaluation cubes.
+The example uses `12345/connections.config` and `12345/queries.config` as config files.
+In this example, query number 5 is benchmarked (again) in any case.
+
+### Rerun benchmarks for one connection
+
+`python3 benchmark.py run -r 12345 -g yes -c MySQL` reads files from folder `12345`containing result files, performs benchmarks again and generates evaluation cubes.
+The example uses `12345/connections.config` and `12345/queries.config` as config files.
+In this example, the connection named MySQL is benchmarked (again) in any case.
 

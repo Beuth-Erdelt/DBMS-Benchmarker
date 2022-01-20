@@ -38,7 +38,7 @@ When you start the dashboard it is available at `localhost:8050`.
 
 You will be shown a list of experiments available at the path you have provided.
 Select one experiment.
-Optionally you can activate to have some default panels opened to you.
+Optionally you can activate to have some default panels that will be included at start.
 
 ## Concept
 
@@ -49,27 +49,23 @@ The dashboard analyzes the data in [three dimensions](Concept.html#evaluation) u
 
 ### Data
 
-The cells of the runtime cube contains
-* Timer (connection, execution, data transfer)
-* Derived metrics (latencies, throughput)
-
-The cells of the monitoring cube contains
-* Hardware metrics
+The cells of the runtime cube contain timer (connection, execution, data transfer, run and session) and derived metrics (latencies, throughput).
+The cells of the monitoring cube contain hardware metrics.
 
 ### Graph Panels
 
 The dashboard is organized into 12 columns and several rows depending on the screen size.
-
-For a graph panel you can
+For a single graph panel you can
 * change width (number of columns)
 * change height (number of rows)
 * change ordering on the dashboard
 * activate settings
-* download underlying data as csv
+* download underlying data as csv.
 
 #### Graph Types
 
 Available types of display are
+
 * Line Plot
 * Boxplot
 * Histogramm
@@ -77,9 +73,11 @@ Available types of display are
 * Heatmap
 * Table of Measures
 * Table of Statistics
+
 These can be applied to sliced / diced / aggregated data of the cubes.
 
 There are also some preset graphs
+
 * Heatmap of Errors
 * Heatmap of Warnings
 * Heatmap Result Set Size
@@ -94,6 +92,7 @@ There are also some preset graphs
 ## Menu
 
 The menu allows you to
+
 * open the [filtering](#filter) panel
 * open the [favorites](#favorites) panel
 * [select](#select-experiment) (change to) an experiment
@@ -106,6 +105,7 @@ The menu allows you to
 ## Favorites
 
 The favorites menu allows you to
+
 * load a dashboard
 * append a list of panels to the current dashboard
 * save the current list of panels as a favorite
@@ -114,9 +114,12 @@ The favorites menu allows you to
 
 ## Settings
 
+<p align="center">
 <img align="right" src="https://raw.githubusercontent.com/Beuth-Erdelt/DBMS-Benchmarker/master/docs/dashboard-settings.png">
+</p>
 
 In the settings panel you can select the
+
 * [Kind of measure](#data) you want to inspect (kind, name)
 * [Type](#graph-panels) of plot (graph type, x-axis, annotate)
 * [Aggregation functions](Concept.html#aggregation-functions).
@@ -125,30 +128,34 @@ In the settings panel you can select the
   1. Total (query dimension)
   1. Connection (configuration dimension)  
   Aggregation in the connection dimension can be drilled-down (color by)
-* number of (excluded) warmup and cooldown runs
+* a **number of warmup runs** and a **number of cooldown runs**  
+This means the first n runs resp. the last n runs are ignored in evaluation.  
+**Note** this is only reliable for non-parallel connections.
 
 ## Filter
 
-<img align="right" src="https://raw.githubusercontent.com/Beuth-Erdelt/DBMS-Benchmarker/master/docs/dashboard-filter.png">
+In the filter panel you can
 
-In the filter panel you can filter
-* one or more connections (configurations) using
-  * a checkbox list of single connections
-  * property filters
+* filter
+  * one or more connections (configurations) using
+    * a checkbox list of single connections
+    * property filters
+      * DBMS
+      * Cluster node
+      * Number of clients
+      * CPU
+      * GPU
+  * single queries
+* receive details about
+  * the connections (configurations)
+    * [Configuration](Options.html#connection-file)
     * DBMS
-    * Cluster node
-    * Number of clients
-    * CPU
-    * GPU
-* single queries
+    * Resources
+  * and the queries like
+    * [Configuration](Options.html#query-file)
+    * Number of runs
+    * Result sets 
 
-Moreover you can receive details about
-* the connections (configurations)
-  * [Configuration](Options.html#connection-file)
-  * DBMS
-  * Resources
-* and the queries like
-  * [Configuration](Options.html#query-file)
-  * Number of runs
-  * Result sets 
-
+<p align="center">
+<img align="right" src="https://raw.githubusercontent.com/Beuth-Erdelt/DBMS-Benchmarker/master/docs/dashboard-filter.png">
+</p>

@@ -202,11 +202,14 @@ class metrics():
                 # is there a global timeshift
                 if 'grafanashift' in connectiondata['monitoring']:
                     time_shift = connectiondata['monitoring']['grafanashift']
+                elif 'shift' in connectiondata['monitoring']:
+                    time_shift = connectiondata['monitoring']['shift']
                 else:
                     time_shift = 0
                 time_start = time_start + time_shift
                 time_end = time_end + time_shift
-                add_interval = int(connectiondata['monitoring']['grafanaextend'])
+                add_interval = int(connectiondata['monitoring']['extend'])
+                #add_interval = int(connectiondata['monitoring']['grafanaextend'])
                 time_start = time_start - add_interval
                 time_end = time_end + add_interval
                 #print(time_end-time_start)
@@ -234,7 +237,7 @@ class metrics():
             for c,t in times["starts"].items():
                 time_start = int(datetime.timestamp(datetime.strptime(times["starts"][c],'%Y-%m-%d %H:%M:%S.%f')))
                 time_end = int(datetime.timestamp(datetime.strptime(times["ends"][c],'%Y-%m-%d %H:%M:%S.%f')))
-                add_interval = int(self.benchmarker.dbms[c].connectiondata['monitoring']['grafanaextend'])
+                add_interval = int(self.benchmarker.dbms[c].connectiondata['monitoring']['extend'])
                 intervals[c] = time_end-time_start #+1# because of ceil()
                 df = metrics.fetchMetric(query, m, c, self.benchmarker.dbms[c].connectiondata, time_start, time_end, self.benchmarker.path)
                 if df.empty or len(df.index)==1:
@@ -317,7 +320,7 @@ class metrics():
                                     m_n[c][m] = 0
                                     m_sum[c][m] = 0
                                 #logging.debug("Connection "+c)
-                                add_interval = int(self.benchmarker.dbms[c].connectiondata['monitoring']['grafanaextend'])
+                                add_interval = int(self.benchmarker.dbms[c].connectiondata['monitoring']['extend'])
                                 csvfile = self.benchmarker.path+'/query_'+str(query)+'_metric_'+str(m)+'_'+c+'.csv'
                                 if os.path.isfile(csvfile):
                                     #print(csvfile)
