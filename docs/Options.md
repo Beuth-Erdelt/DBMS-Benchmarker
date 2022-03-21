@@ -1,4 +1,4 @@
-# Usage
+# Parameter
 
 ## Featured Parameters
 

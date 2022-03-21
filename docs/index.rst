@@ -13,7 +13,6 @@
     ./Example-TPC-H.md
     ./Concept.md
     ./Options.md
-    ./Usage.md
     ./Evaluations.md
     ./Dashboard.md
     ./Inspection.md
