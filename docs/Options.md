@@ -1,17 +1,5 @@
 # Usage
 
-## Featured Usage
-
-This tool can be [used](#usage) to
-* [run](#run-benchmarks) benchmarks
-* [continue](#continue-benchmarks) aborted benchmarks
-* [rerun](#rerun-benchmarks) benchmarks for one fixed [query](#rerun-benchmarks-for-one-query) and/or one fixed [DBMS](#rerun-benchmarks-for-one-connection)
-* [compare](#extended-query-file) result sets obtained from different runs and dbms
-* add benchmarks for more [queries](#continue-benchmarks-for-more-queries) or for more [DBMS](#continue-benchmarks-for-more-connections)
-* [read](#read-stored-benchmarks) finished benchmarks
-
-Basically this can be done running `dbmsbenchmarker run` or `dbmsbenchmarker continue` with additional parameters.
-
 ## Featured Parameters
 
 The lists of [DBMS](#connection-file) and [queries](#query-file) are given in config files in dict format.
