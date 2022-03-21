@@ -55,7 +55,7 @@ Run the command:
 * `-b`: This will suppress some output
 * `-f`: This points to a folder having the configuration files.
 
-For more options, see the [documentation](Options.md#command-line-options-and-configuration)
+For more options, see the [documentation](Options.html#command-line-options-and-configuration)
 
 After benchmarking has been finished will see a message like
 ```

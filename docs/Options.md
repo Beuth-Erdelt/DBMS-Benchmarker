@@ -47,11 +47,12 @@ How to configure the benchmarker can be illustrated best by looking at the sourc
 `python3 benchmark.py -h`
 
 ```
-usage: benchmark.py [-h] [-d] [-b] [-qf QUERY_FILE] [-cf CONNECTION_FILE] [-q QUERY] [-c CONNECTION] [-ca CONNECTION_ALIAS] [-l LATEX_TEMPLATE] [-f CONFIG_FOLDER] [-r RESULT_FOLDER] [-g {no,yes}] [-e {no,yes}] [-w {query,connection}] [-a] [-u [UNANONYMIZE [UNANONYMIZE ...]]] [-p NUMPROCESSES] [-s SEED] [-cs] [-ms MAX_SUBFOLDERS] [-sl SLEEP]
-                    [-st START_TIME] [-sf SUBFOLDER] [-vq] [-vs] [-vr] [-pn NUM_RUN] [-m] [-mps]
+usage: benchmark.py [-h] [-d] [-b] [-qf QUERY_FILE] [-cf CONNECTION_FILE] [-q QUERY] [-c CONNECTION] [-ca CONNECTION_ALIAS] [-f CONFIG_FOLDER] [-r RESULT_FOLDER] [-e {no,yes}] [-w {query,connection}] [-p NUMPROCESSES] [-s SEED] [-cs]
+                    [-ms MAX_SUBFOLDERS] [-sl SLEEP] [-st START_TIME] [-sf SUBFOLDER] [-vq] [-vs] [-vr] [-pn NUM_RUN] [-m] [-mps]
                     {run,read,continue}
 
-A benchmark tool for RDBMS. It connects to a given list of RDBMS via JDBC and runs a given list benchmark queries. Optionally some reports are generated.
+DBMS-Benchmarker is a Python-based application-level blackbox benchmark tool for Database Management Systems (DBMS). It connects to a given list of DBMS (via JDBC) and runs a given list of parametrized and randomized (SQL) benchmark
+queries. Evaluations are available via Python interface, in reports and at an interactive multi-dimensional dashboard.
 
 positional arguments:
   {run,read,continue}   run benchmarks and save results, or just read benchmark results from folder, or continue with missing benchmarks only
