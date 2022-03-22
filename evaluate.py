@@ -41,7 +41,7 @@ def convertToInt(var):
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='A benchmark tool for RDBMS. It connects to a given list of RDBMS via JDBC and runs a given list benchmark queries. Optionally some reports are generated.')
+    parser = argparse.ArgumentParser(description='A debug tool for DBMSBenchmarker. It helps to analyze a result folder. It depends on the evaluation cube, so that cube must have been created before.')
     parser.add_argument('-r', '--result-folder', help='folder for storing benchmark result files, default is given by timestamp', default="./")
     parser.add_argument('-e', '--experiment', help='code of experiment', default="")
     parser.add_argument('-q', '--query', help='number of query to inspect', default=None)
@@ -49,7 +49,7 @@ if __name__ == '__main__':
     parser.add_argument('-n', '--num-run', help='number of run to inspect', default=None)
     parser.add_argument('-d', '--diff', help='show differences in result sets', action='store_true', default=False)
     parser.add_argument('-rt', '--remove-titles', help='remove titles when comparing result sets', action='store_true', default=False)
-    parser.add_argument('mode', help='run benchmarks and save results, or just read benchmark results from folder, or continue with missing benchmarks only', choices=['resultsets', 'errors', 'warnings', 'query'])
+    parser.add_argument('mode', help='show debug infos about which part of the outcome', choices=['resultsets', 'errors', 'warnings', 'query'])
     args = parser.parse_args()
     # path of folder containing experiment results
     resultfolder = args.result_folder#"./"

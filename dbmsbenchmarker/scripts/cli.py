@@ -54,6 +54,7 @@ def run_benchmarker():
 	parser.add_argument('-vq', '--verbose-queries', help='print every query that is sent', action='store_true', default=False)
 	parser.add_argument('-vs', '--verbose-statistics', help='print statistics about query that have been sent', action='store_true', default=False)
 	parser.add_argument('-vr', '--verbose-results', help='print result sets of every query that have been sent', action='store_true', default=False)
+	parser.add_argument('-vp', '--verbose-process', help='print result sets of every query that have been sent', action='store_true', default=False)
 	parser.add_argument('-pn', '--num-run', help='Parameter: Number of executions per query', default=0)
 	parser.add_argument('-m', '--metrics', help='collect hardware metrics per query', action='store_true', default=False)
 	parser.add_argument('-mps', '--metrics-per-stream', help='collect hardware metrics per stream', action='store_true', default=False)
@@ -114,6 +115,8 @@ def run_benchmarker():
 		benchmarker.BENCHMARKER_VERBOSE_STATISTICS = True
 	if args.verbose_results:
 		benchmarker.BENCHMARKER_VERBOSE_RESULTS = True
+	if args.verbose_process:
+		benchmarker.BENCHMARKER_VERBOSE_PROCESS = True
 	if int(args.num_run) > 0:
 		querymanagement = {
  			'numRun': int(args.num_run),
@@ -130,8 +133,8 @@ def run_benchmarker():
 		fixedAlias=args.connection_alias,
 		rename_connection=rename_connection,
 		rename_alias=rename_alias,
-		anonymize=args.anonymize,
-		unanonymize=args.unanonymize,
+		#anonymize=args.anonymize,
+		#unanonymize=args.unanonymize,
 		numProcesses=args.numProcesses,
 		seed=args.seed)
 	experiments.getConfig(args.config_folder, args.connection_file, args.query_file)
@@ -159,6 +162,7 @@ def run_benchmarker():
 		# collect hardware metrics
 		experiments.reporter.append(benchmarker.reporter.metricer(experiments, per_stream=True))
 		experiments.generateReportsAll()
+	"""
 	if args.generate_output == 'yes':
 		experiments.overwrite = True
 		# store measures ans statistics in separate files
@@ -175,6 +179,7 @@ def run_benchmarker():
 		# generate latex report
 		experiments.reporter.append(benchmarker.reporter.latexer(experiments, args.latex_template))
 		experiments.generateReportsAll()
+	"""
 	if args.generate_evaluation == 'yes':
 		experiments.overwrite = True
 		evaluator.evaluator(experiments, load=False, force=True)

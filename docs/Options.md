@@ -35,12 +35,11 @@ How to configure the benchmarker can be illustrated best by looking at the sourc
 `python3 benchmark.py -h`
 
 ```
-usage: benchmark.py [-h] [-d] [-b] [-qf QUERY_FILE] [-cf CONNECTION_FILE] [-q QUERY] [-c CONNECTION] [-ca CONNECTION_ALIAS] [-f CONFIG_FOLDER] [-r RESULT_FOLDER] [-e {no,yes}] [-w {query,connection}] [-p NUMPROCESSES] [-s SEED] [-cs]
-                    [-ms MAX_SUBFOLDERS] [-sl SLEEP] [-st START_TIME] [-sf SUBFOLDER] [-vq] [-vs] [-vr] [-pn NUM_RUN] [-m] [-mps]
-                    {run,read,continue}
+usage: dbmsbenchmarker [-h] [-d] [-b] [-qf QUERY_FILE] [-cf CONNECTION_FILE] [-q QUERY] [-c CONNECTION] [-ca CONNECTION_ALIAS] [-f CONFIG_FOLDER] [-r RESULT_FOLDER] [-e {no,yes}] [-w {query,connection}] [-p NUMPROCESSES] [-s SEED]
+                       [-cs] [-ms MAX_SUBFOLDERS] [-sl SLEEP] [-st START_TIME] [-sf SUBFOLDER] [-vq] [-vs] [-vr] [-vp] [-pn NUM_RUN] [-m] [-mps]
+                       {run,read,continue}
 
-DBMS-Benchmarker is a Python-based application-level blackbox benchmark tool for Database Management Systems (DBMS). It connects to a given list of DBMS (via JDBC) and runs a given list of parametrized and randomized (SQL) benchmark
-queries. Evaluations are available via Python interface, in reports and at an interactive multi-dimensional dashboard.
+A benchmark tool for RDBMS. It connects to a given list of RDBMS via JDBC and runs a given list benchmark queries. Optionally some reports are generated.
 
 positional arguments:
   {run,read,continue}   run benchmarks and save results, or just read benchmark results from folder, or continue with missing benchmarks only
@@ -85,6 +84,8 @@ optional arguments:
   -vs, --verbose-statistics
                         print statistics about query that have been sent
   -vr, --verbose-results
+                        print result sets of every query that have been sent
+  -vp, --verbose-process
                         print result sets of every query that have been sent
   -pn NUM_RUN, --num-run NUM_RUN
                         Parameter: Number of executions per query
@@ -420,8 +421,6 @@ This also respects randomization, i.e. every DBMS receives exactly the same vers
 This parameter sets reading or running benchmarks to one fixed query.
 For `mode=run` this means the fixed query is benchmarked (again), no matter if benchmarks already exist for this query.
 For `mode=continue` this means missing benchmarks are performed for this fixed query only.
-If reports are about to be generated, only the report for this fixed query is generated.
-This does not apply to the latex reporter, which always generates a complete report due to technical reasons.
 Queries are numbered starting at 1.
 
 ### Connection
@@ -429,7 +428,6 @@ Queries are numbered starting at 1.
 This parameter sets running benchmarks to one fixed DBMS (connection).
 For `mode=run` this means the fixed DBMS is benchmarked (again), no matter if benchmarks already exist for it.
 For `mode=continue` this means missing benchmarks are performed for this fixed DBMS only.
-If reports are about to be generated, all reports involving this fixed DBMS are generated.
 Connections are called by name.
 
 ### Generate evaluation
@@ -455,6 +453,8 @@ Batch mode is automatically turned on if debug mode is used.
 ### Verbosity Level
 
 Using the flags `-vq` means each query that is sent is dumped to stdout.
+Using the flags `-vr` means each result set that is received is dumped to stdout.
+Using the flags `-vp` means more information about the process and connections are dumped to stdout.
 Using the flags `-vs` means after each query that has been finished, some statistics are dumped to stdout.
 
 ### Working querywise or connectionswise
