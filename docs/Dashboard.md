@@ -1,4 +1,4 @@
-## Dashboard
+# Dashboard
 
 The dashboard helps in interactive evaluation of experiment results.
 

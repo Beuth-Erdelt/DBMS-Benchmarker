@@ -30,7 +30,7 @@ This is inspired by [TPC-H](http://www.tpc.org/tpch/) and [TPC-DS](http://www.tp
 
 ## Command Line Options and Configuration
 
-How to configure the benchmarker can be illustrated best by looking at the source code of the [command line tool](../benchmark.py), which will be described in the following.
+How to configure the benchmarker can be illustrated best by looking at the source code of the command line tool `benchmark.py`, which will be described in the following.
 
 `python3 benchmark.py -h`
 
