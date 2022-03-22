@@ -11,7 +11,7 @@ authors:
 affiliations:
  - name: Berliner Hochschule für Technik (BHT)
    index: 1
-date: 03 January 2022
+date: 21 March 2022
 bibliography: paper.bib
 
 ---
@@ -23,7 +23,7 @@ It aims at reproducible measuring and easy evaluation of the performance the use
 It connects to a given list of DBMS (via JDBC) and runs a given list of (SQL) benchmark queries.
 Queries can be parametrized and randomized.
 Results and evaluations are available via a Python interface and can be inspected for example in Jupyter notebooks.
-An interactive dashboard assists in multi-dimensional analysis of the results.
+An interactive visual dashboard assists in multi-dimensional analysis of the results.
 
 See the [homepage](https://github.com/Beuth-Erdelt/DBMS-Benchmarker) and the [documentation](https://dbmsbenchmarker.readthedocs.io/en/latest/Docs.html).
 
@@ -41,7 +41,7 @@ Python Data Science language
 measurements
 
 
-@ErdeltOrchestrator, @Erdelt20
+@10.1007/978-3-030-94437-7_6, @Erdelt20
 
 This is inspired by [TPC-H](http://www.tpc.org/tpch/) and [TPC-DS](http://www.tpc.org/tpcds/) - Decision Support Benchmarks.
 
