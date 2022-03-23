@@ -29,14 +29,18 @@ See the [homepage](https://github.com/Beuth-Erdelt/DBMS-Benchmarker) and the [do
 
 # Statement of Need
 
-There is a variety of (Relational) Database Management Systems (DBMS).
-In order to be able to verify and assure performance measurement, we want to be able to rerun scenarios.
-We are looking for a tool to provide support in repetition and to provide reproducibility.
-We are also looking for a tool to help in evaluation of results statistically and interactively.
+There are a variety of (relational) database management systems (DBMS).
+All of these have unique characteristics, special use cases, advantages and disadvantages and their justification.
+In order to be able to verify and ensure the performance measurement, we want to be able to create and repeat scenarios.
+We are looking for a tool to support the repetition and reproducibility of benchmarking situations.
+We are also looking for a tool that will help with the statistical and interactive analysis of the results.
 
 There is a need for a tool to combine both @Raasveldt2018FBC32099503209955, and for both we want to use Python as the common Data Science language.
 
-To our knowledge there is no tool, c.f. @10.1007/978-3-319-67162-8_12, @10.1007/978-3-030-12079-5_4.
+There are other tools like Apache JMeter, HammerDB, Sysbench, OLTPBench, that provide nice features, but none fitting these needs.
+To our knowledge there is no other such tool, c.f. @10.1007/978-3-319-67162-8_12, @10.1007/978-3-030-12079-5_4.
+
+The need for such a tool has been elaborated in more detail in @Erdelt20 and DBMS-Benchmarker has been used as a support for recieving scientific results about benchmarking DBMS performance in Cloud environments as in @Erdelt20 and @10.1007/978-3-030-94437-7_6.
 
 ## Summary of Solution
 
@@ -52,6 +56,7 @@ DBMS-Benchmarker is Python3-based and helps to **benchmark DBMS**. It
 * investigates a number of other aspects - received result sets, precision, number of clients
 * collects hardware metrics from a Prometheus server - hardware utilization, energy consumption etc
 * compares result sets: *Do I always receive the same data?*
+
 DBMS-Benchmarker helps to **evaluate results** - by providing    
 * metrics that can be analyzed by aggregation in multi-dimensions, like maximum throughput per DBMS, average CPU utilization per query or geometric mean of run latency per workload
 * predefined evaluations like statistics
@@ -60,7 +65,6 @@ DBMS-Benchmarker helps to **evaluate results** - by providing
 * in an interactive dashboard
 
 Some features are inspired by [TPC-H](http://www.tpc.org/tpch/) and [TPC-DS](http://www.tpc.org/tpcds/) - Decision Support Benchmarks, which are provided in parts as predefined configs.
-DBMS-Benchmarker has been used as a support for scientific papers @10.1007/978-3-030-94437-7_6, @Erdelt20.
 
 Run `pip install dbmsbenchmarker` for installation.
 
