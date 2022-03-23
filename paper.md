@@ -43,6 +43,13 @@ measurements
 
 @10.1007/978-3-030-94437-7_6, @Erdelt20
 
+In @10.1007/978-3-319-67162-8_12 the authors present a cloud-centric analysis of eight evaluation frameworks.
+In @10.1007/978-3-030-12079-5_4 the authors inspect several frameworks, in particular YCSB and OLTP-Bench
+In @Raasveldt2018FBC32099503209955 the authors explain common pitfalls in DBMS performance benchmarking.
+In @10114533389063338912 the authors introduce a performance testing methodology for cloud applications.
+In @DBLPconfsigmodKerstenKZ18 the authors introduce a framework SQLScalpel for DBMS performance benchmarking.
+
+
 This is inspired by [TPC-H](http://www.tpc.org/tpch/) and [TPC-DS](http://www.tpc.org/tpcds/) - Decision Support Benchmarks.
 
 Run `pip install dbmsbenchmarker` for installation.
