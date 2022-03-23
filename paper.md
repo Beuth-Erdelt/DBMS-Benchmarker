@@ -57,6 +57,7 @@ In @DBLPconfsigmodKerstenKZ18 the authors introduce a framework SQLScalpel for D
 ## Summary of Solution
 
 DBMS-Benchmarker has been used to used to support scientific results @10.1007/978-3-030-94437-7_6, @Erdelt20. It  
+
 * is Python3-based
 * helps to **benchmark DBMS**
   * connects to all DBMS having a JDBC interface - including GPU-enhanced DBMS
