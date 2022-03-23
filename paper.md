@@ -40,7 +40,7 @@ There is a need for a tool to combine both @Raasveldt2018FBC32099503209955, and 
 There are other tools like Apache JMeter, HammerDB, Sysbench, OLTPBench, that provide nice features, but none fitting these needs.
 To our knowledge there is no other such tool, c.f. @10.1007/978-3-319-67162-8_12, @10.1007/978-3-030-12079-5_4.
 
-The need for such a tool has been elaborated in more detail in @Erdelt20 and DBMS-Benchmarker has been used as a support for recieving scientific results about benchmarking DBMS performance in Cloud environments as in @Erdelt20 and @10.1007/978-3-030-94437-7_6.
+The need for such a tool has been elaborated in more detail in @10.1007/978-3-030-84924-5_6 and DBMS-Benchmarker has been used as a support for recieving scientific results about benchmarking DBMS performance in Cloud environments as in @10.1007/978-3-030-84924-5_6 and @10.1007/978-3-030-94437-7_6.
 
 ## Summary of Solution
 
@@ -58,6 +58,7 @@ DBMS-Benchmarker is Python3-based and helps to **benchmark DBMS**. It
 * compares result sets: *Do I always receive the same data?*
 
 DBMS-Benchmarker helps to **evaluate results** - by providing    
+
 * metrics that can be analyzed by aggregation in multi-dimensions, like maximum throughput per DBMS, average CPU utilization per query or geometric mean of run latency per workload
 * predefined evaluations like statistics
 * in standard Python data structures
@@ -124,7 +125,7 @@ Run the CLI command: `dbmsdashboard`
 
 This will start the evaluation dashboard at `localhost:8050`.
 Visit the address in a browser and select the experiment `<code>`.
-Alternatively you may use a [Jupyter notebooks](https://github.com/Beuth-Erdelt/DBMS-Benchmarker/blob/master/Evaluation-Demo.ipynb), see a [rendered example](https://beuth-erdelt.github.io/DBMS-Benchmarker/Evaluation-Demo.html).
+Alternatively you may use a Jupyter notebooks or standard Python.
 
 
 # Concepts
