@@ -40,7 +40,8 @@ To our knowledge there is no tool, c.f. @10.1007/978-3-319-67162-8_12, @10.1007/
 
 ## Summary of Solution
 
-DBMS-Benchmarker is Python3-based and helps to **benchmark DBMS**  
+DBMS-Benchmarker is Python3-based and helps to **benchmark DBMS**. It
+
 * connects to all DBMS having a JDBC interface - including GPU-enhanced DBMS
 * requires *only* JDBC - no vendor specific supplements are used
 * benchmarks arbitrary SQL queries - in all dialects
