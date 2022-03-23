@@ -8,8 +8,8 @@ DBMS-Benchmarker is a Python-based application-level blackbox benchmark tool for
 It aims at reproducible measuring and easy evaluation of the performance the user receives even in complex benchmark situations.
 It connects to a given list of DBMS (via JDBC) and runs a given list of (SQL) benchmark queries.
 Queries can be parametrized and randomized.
-Results and evaluations are available via a Python interface and can be inspected for example in Jupyter notebooks.
-An interactive dashboard assists in multi-dimensional analysis of the results.
+Results and evaluations are available via a Python interface and can be inspected with standard Python tools like pandas DataFrames.
+An interactive visual dashboard assists in multi-dimensional analysis of the results.
 
 See the [homepage](https://github.com/Beuth-Erdelt/DBMS-Benchmarker) and the [documentation](https://dbmsbenchmarker.readthedocs.io/en/latest/Docs.html).
 

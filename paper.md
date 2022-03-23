@@ -22,25 +22,20 @@ DBMS-Benchmarker is a Python-based application-level blackbox benchmark tool for
 It aims at reproducible measuring and easy evaluation of the performance the user receives even in complex benchmark situations.
 It connects to a given list of DBMS (via JDBC) and runs a given list of (SQL) benchmark queries.
 Queries can be parametrized and randomized.
-Results and evaluations are available via a Python interface and can be inspected for example in Jupyter notebooks.
+Results and evaluations are available via a Python interface and can be inspected with standard Python tools like pandas DataFrames.
 An interactive visual dashboard assists in multi-dimensional analysis of the results.
 
 See the [homepage](https://github.com/Beuth-Erdelt/DBMS-Benchmarker) and the [documentation](https://dbmsbenchmarker.readthedocs.io/en/latest/Docs.html).
 
 # Statement of Need
 
-Variety of DBMS
-Relational
+There is a variety of (Relational) Database Management Systems (DBMS).
+In order to be able to verify and assure performance measurement, we want to be able to rerun scenarios.
+We are looking for a tool to provide support in repetition and to provide reproducibility.
 
-Rerun scenarios
-Reproducibility
-Repetition
+We also look for a tool to help in evaluation of results statistically and interactive.
 
-Evaluation
-Statistical
-Interactive
-Python Data Science language
-measurements
+For both we want to use Python as the common Data Science language.
 
 
 
@@ -56,28 +51,26 @@ In @DBLPconfsigmodKerstenKZ18 the authors introduce a framework SQLScalpel for D
 
 ## Summary of Solution
 
-DBMS-Benchmarker has been used to used to support scientific results @10.1007/978-3-030-94437-7_6, @Erdelt20. It  
+DBMS-Benchmarker helps to **benchmark DBMS**
+* connects to all DBMS having a JDBC interface - including GPU-enhanced DBMS
+* requires *only* JDBC - no vendor specific supplements are used
+* benchmarks arbitrary SQL queries - in all dialects
+* allows planning of complex test scenarios - to simulate realistic or revealing use cases
+* allows easy repetition of benchmarks in varying settings - different hardware, DBMS, DBMS configurations, DB settings etc
+* allows randomized queries (optionally with specified seeds for reproducible results) to avoid caching side effects
+* investigates a number of timing aspects - connection, execution, data transfer, in total, per session etc
+* investigates a number of other aspects - received result sets, precision, number of clients
+* collects hardware metrics from a Prometheus server - hardware utilization, energy consumption etc
+* compares result sets: *Do I always receive the same data?*
+DBMS-Benchmarker helps to **evaluate results** - by providing  
+* metrics that can be analyzed by aggregation in multi-dimensions, like maximum throughput per DBMS, average CPU utilization per query or geometric mean of run latency per workload
+* predefined evaluations like statistics
+* in standard Python data structures
+* in Jupyter notebooks - see [rendered example](https://beuth-erdelt.github.io/DBMS-Benchmarker/Evaluation-Demo.html)
+* in an interactive dashboard
 
-* is Python3-based
-* helps to **benchmark DBMS**
-  * connects to all DBMS having a JDBC interface - including GPU-enhanced DBMS
-  * requires *only* JDBC - no vendor specific supplements are used
-  * benchmarks arbitrary SQL queries - in all dialects
-  * allows planning of complex test scenarios - to simulate realistic or revealing use cases
-  * allows easy repetition of benchmarks in varying settings - different hardware, DBMS, DBMS configurations, DB settings etc
-  * allows randomized queries (optionally with specified seeds for reproducible results) to avoid caching side effects
-  * investigates a number of timing aspects - connection, execution, data transfer, in total, per session etc
-  * investigates a number of other aspects - received result sets, precision, number of clients
-  * collects hardware metrics from a Prometheus server - hardware utilization, energy consumption etc
-  * compares result sets: *Do I always receive the same data?*
-* helps to **evaluate results** - by providing  
-  * metrics that can be analyzed by aggregation in multi-dimensions, like maximum throughput per DBMS, average CPU utilization per query or geometric mean of run latency per workload
-  * predefined evaluations like statistics
-  * in standard Python data structures
-  * in Jupyter notebooks - see [rendered example](https://beuth-erdelt.github.io/DBMS-Benchmarker/Evaluation-Demo.html)  
-  * in an interactive dashboard
-
-This is inspired by [TPC-H](http://www.tpc.org/tpch/) and [TPC-DS](http://www.tpc.org/tpcds/) - Decision Support Benchmarks, which are provided as predefined configs.
+Some features are inspired by [TPC-H](http://www.tpc.org/tpch/) and [TPC-DS](http://www.tpc.org/tpcds/) - Decision Support Benchmarks, which are provided in parts as predefined configs.
+DBMS-Benchmarker has been used as a support for scientific papers @10.1007/978-3-030-94437-7_6, @Erdelt20.
 
 Run `pip install dbmsbenchmarker` for installation.
 
