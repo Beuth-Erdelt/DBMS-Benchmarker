@@ -165,7 +165,7 @@ To configure sessions it is also possible to adjust
 * a **delay** for throttling (waiting time before each connection or execution)
 
 for the same query.
-Parallel clients are simulated using the `pool.apply_async()` method of a `Pool` object of the module [multiprocessing](https://docs.python.org/3/library/multiprocessing.html).
+Parallel clients are simulated using the `pool.apply_async()` method of a `Pool` object of the module multiprocessing.
 Runs and their benchmark times are ordered by numbering.
 Moreover we can **randomize** a query, such that each run will look slightly different.
 This means we exchange a part of the query for a random value.
@@ -199,7 +199,7 @@ In order to do so, result sets (or their hash value or size) are stored as lists
 
 ## Monitoring Hardware Metrics
 
-To make hardware metrics available, we must [provide](#connection-file) an API URL for a Prometheus Server.
+To make hardware metrics available, we must provide an API URL for a Prometheus Server.
 The tool collects metrics from the Prometheus server with a step size of 1 second.
 We may define the metrics in terms of **promql**.
 Metrics can be defined per connection.
