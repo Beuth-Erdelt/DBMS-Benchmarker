@@ -144,7 +144,7 @@ A **query** is a statement, that is understood by a Database Management System (
 
 A **benchmark** of a query consists of these steps:
 
-![Caption for example figure.\label{fig:Concept-Query}](docs/Concept-Query.png){ width=320 }
+![Caption for example figure.\label{fig:Concept-Query}](docs/Concept-Query.png){ width=960}
 
 
 1. Establish a **connection** between client and server  
