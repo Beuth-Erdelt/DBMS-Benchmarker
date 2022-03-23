@@ -55,7 +55,8 @@ In @DBLPconfsigmodKerstenKZ18 the authors introduce a framework SQLScalpel for D
 
 
 
-## Summary
+## Summary of Solution
+
 This is inspired by [TPC-H](http://www.tpc.org/tpch/) and [TPC-DS](http://www.tpc.org/tpcds/) - Decision Support Benchmarks.
 
 The lists of [DBMS](#connection-file) and [queries](#query-file) are given in config files in dict format.
@@ -208,11 +209,11 @@ The tool collects metrics from the Prometheus server with a step size of 1 secon
 We may define the metrics in terms of **promql**.
 Metrics can be defined per connection.
 
-## Evaluation
+# Evaluation
 
 As a result we obtain measured times in milliseconds for the query processing parts: connection, execution, data transfer.
 
-![Caption for example figure.\label{fig:Evaluation-Cubes}](docs/Evaluation-Cubes.png){ width=960 }
+![Caption for example figure.\label{fig:Evaluation-Cubes}](docs/Evaluation-Cubes.png){ width=1280 }
 
 These are described in three dimensions:
 number of run, number of query and configuration.
@@ -223,20 +224,20 @@ Second of query execution time, number of query and number of configuration.
 
 All these metrics can be sliced or diced, rolled-up or drilled-down into the various dimensions using several aggregation functions for evaluation.
 
-### Python - Pandas
+## Python - Pandas
 
 ```
 df = evaluate.get_aggregated_query_statistics(
     type='latency', name='execution', query_aggregate='Mean')
 ```
 
-![Caption for example figure.\label{fig:dashboard}](docs/latency-table-example.png){ width=960}
+![Caption for example figure.\label{fig:dashboard}](docs/latency-table-example.png){ width=1280}
 
-### GUI - Dashboard
+## GUI - Dashboard
 
 The dashboard helps in interactive evaluation of experiment results.
 
-![Caption for example figure.\label{fig:dashboard}](docs/dashboard.png){ width=960}
+![Caption for example figure.\label{fig:dashboard}](docs/dashboard.png){ width=1280}
 
 
 
