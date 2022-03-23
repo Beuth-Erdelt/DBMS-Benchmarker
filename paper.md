@@ -57,20 +57,22 @@ In @DBLPconfsigmodKerstenKZ18 the authors introduce a framework SQLScalpel for D
 
 ## Summary of Solution
 
-This is inspired by [TPC-H](http://www.tpc.org/tpch/) and [TPC-DS](http://www.tpc.org/tpcds/) - Decision Support Benchmarks.
+Users can provide (several) DBMS and a list of queries, enhanced by some meta data, as dictionaries, so we use standard Python structures for the benchmarking.
+Benchmarks can be parametrized for example by
 
-The lists of [DBMS](#connection-file) and [queries](#query-file) are given in config files in dict format.
-
-Benchmarks can be [parametrized](#query-file) by
 * number of benchmark runs: *Is performance stable across time?*
 * number of benchmark runs per connection: *How does reusing a connection affect performance?*
-* number of warmup and cooldown runs, if any: *How does (re)establishing a connection affect performance?*
 * number of parallel clients: *How do multiple user scenarios affect performance?*
-* optional list of timers (currently: connection, execution, data transfer, run and session): *Where does my time go?*
-* [sequences](#query-list) of queries: *How does sequencing influence performance?*
-* optional [comparison](#results-and-comparison) of result sets: *Do I always receive the same results sets?*
+* sequences of queries: *How does sequencing influence performance?*
 
-Benchmarks can be [randomized](#randomized-query-file) (optionally with specified [seeds](#random-seed) for reproducible results) to avoid caching side effects and to increase variety of queries by taking samples of arbitrary size from a predefined data structure.
+Optionally the tool also compares result sets: *Do I always receive the same data?*
+
+Benchmarks can also be randomized (optionally with specified seeds for reproducible results) to avoid caching side effects and to increase variety of queries by taking samples of arbitrary size from a predefined data structure.
+This is inspired by [TPC-H](http://www.tpc.org/tpch/) and [TPC-DS](http://www.tpc.org/tpcds/) - Decision Support Benchmarks, which are provided as predefined configs.
+
+**monitoring**
+
+In the end we have performance metrics for evaluation, again using the standard Python structure of pandas DataFrames.
 
 Run `pip install dbmsbenchmarker` for installation.
 
