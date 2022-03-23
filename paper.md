@@ -33,6 +33,8 @@ Variety of DBMS
 Relational
 
 Rerun scenarios
+Reproducibility
+Repetition
 
 Evaluation
 Statistical
@@ -41,7 +43,6 @@ Python Data Science language
 measurements
 
 
-@10.1007/978-3-030-94437-7_6, @Erdelt20
 
 In @10.1007/978-3-319-67162-8_12 the authors present a cloud-centric analysis of eight evaluation frameworks.
 In @10.1007/978-3-030-12079-5_4 the authors inspect several frameworks, in particular YCSB and OLTP-Bench
@@ -50,11 +51,12 @@ In @10114533389063338912 the authors introduce a performance testing methodology
 In @DBLPconfsigmodKerstenKZ18 the authors introduce a framework SQLScalpel for DBMS performance benchmarking.
 
 
+@10.1007/978-3-030-94437-7_6, @Erdelt20
+
+
+
+## Summary
 This is inspired by [TPC-H](http://www.tpc.org/tpch/) and [TPC-DS](http://www.tpc.org/tpcds/) - Decision Support Benchmarks.
-
-Run `pip install dbmsbenchmarker` for installation.
-
-# Solution
 
 The lists of [DBMS](#connection-file) and [queries](#query-file) are given in config files in dict format.
 
@@ -68,6 +70,8 @@ Benchmarks can be [parametrized](#query-file) by
 * optional [comparison](#results-and-comparison) of result sets: *Do I always receive the same results sets?*
 
 Benchmarks can be [randomized](#randomized-query-file) (optionally with specified [seeds](#random-seed) for reproducible results) to avoid caching side effects and to increase variety of queries by taking samples of arbitrary size from a predefined data structure.
+
+Run `pip install dbmsbenchmarker` for installation.
 
 
 # Basic Example
@@ -208,7 +212,7 @@ Metrics can be defined per connection.
 
 As a result we obtain measured times in milliseconds for the query processing parts: connection, execution, data transfer.
 
-![Caption for example figure.\label{fig:Evaluation-Cubes}](docs/Evaluation-Cubes.png){ width=480 }
+![Caption for example figure.\label{fig:Evaluation-Cubes}](docs/Evaluation-Cubes.png){ width=960 }
 
 These are described in three dimensions:
 number of run, number of query and configuration.
@@ -226,13 +230,13 @@ df = evaluate.get_aggregated_query_statistics(
     type='latency', name='execution', query_aggregate='Mean')
 ```
 
-![Caption for example figure.\label{fig:dashboard}](docs/latency-table-example.png){ width=480}
+![Caption for example figure.\label{fig:dashboard}](docs/latency-table-example.png){ width=960}
 
 ### GUI - Dashboard
 
 The dashboard helps in interactive evaluation of experiment results.
 
-![Caption for example figure.\label{fig:dashboard}](docs/dashboard.png){ width=480}
+![Caption for example figure.\label{fig:dashboard}](docs/dashboard.png){ width=960}
 
 
 
