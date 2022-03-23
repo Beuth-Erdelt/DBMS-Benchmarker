@@ -32,26 +32,15 @@ See the [homepage](https://github.com/Beuth-Erdelt/DBMS-Benchmarker) and the [do
 There is a variety of (Relational) Database Management Systems (DBMS).
 In order to be able to verify and assure performance measurement, we want to be able to rerun scenarios.
 We are looking for a tool to provide support in repetition and to provide reproducibility.
+We are also looking for a tool to help in evaluation of results statistically and interactively.
 
-We also look for a tool to help in evaluation of results statistically and interactive.
+There is a need for a tool to combine both @Raasveldt2018FBC32099503209955, and for both we want to use Python as the common Data Science language.
 
-For both we want to use Python as the common Data Science language.
-
-
-
-In @10.1007/978-3-319-67162-8_12 the authors present a cloud-centric analysis of eight evaluation frameworks.
-In @10.1007/978-3-030-12079-5_4 the authors inspect several frameworks, in particular YCSB and OLTP-Bench
-In @Raasveldt2018FBC32099503209955 the authors explain common pitfalls in DBMS performance benchmarking.
-In @10114533389063338912 the authors introduce a performance testing methodology for cloud applications.
-In @DBLPconfsigmodKerstenKZ18 the authors introduce a framework SQLScalpel for DBMS performance benchmarking.
-
-
-
-
+To our knowledge there is no tool, c.f. @10.1007/978-3-319-67162-8_12, @10.1007/978-3-030-12079-5_4.
 
 ## Summary of Solution
 
-DBMS-Benchmarker helps to **benchmark DBMS**
+DBMS-Benchmarker is Python3-based and helps to **benchmark DBMS**  
 * connects to all DBMS having a JDBC interface - including GPU-enhanced DBMS
 * requires *only* JDBC - no vendor specific supplements are used
 * benchmarks arbitrary SQL queries - in all dialects
@@ -62,7 +51,7 @@ DBMS-Benchmarker helps to **benchmark DBMS**
 * investigates a number of other aspects - received result sets, precision, number of clients
 * collects hardware metrics from a Prometheus server - hardware utilization, energy consumption etc
 * compares result sets: *Do I always receive the same data?*
-DBMS-Benchmarker helps to **evaluate results** - by providing  
+DBMS-Benchmarker helps to **evaluate results** - by providing    
 * metrics that can be analyzed by aggregation in multi-dimensions, like maximum throughput per DBMS, average CPU utilization per query or geometric mean of run latency per workload
 * predefined evaluations like statistics
 * in standard Python data structures
