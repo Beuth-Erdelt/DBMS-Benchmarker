@@ -55,6 +55,7 @@ defaultParameters = {}
 # defaultParameters = {'SF': 10}
 
 def generateParameters(parameters, number):
+	logger = logging.getLogger('parameter')
 	result = []
 	for i in range(0, number):
 		#print(k)
@@ -71,16 +72,17 @@ def generateParameters(parameters, number):
 			else:
 				result[i][k] = w
 		#result[i] = tools.joinDicts(result[i], defaultParameters)
-	logging.debug(result)
+	logger.debug(result)
 	return result
 
 # generateParameters(demoparameters,1)
 
 class randomizer():
 	def __init__(self, parameter):
+		logger = logging.getLogger('parameter')
 		f = getattr(self, parameter['type'])
 		self.value = f(parameter)
-		logging.debug(parameter)
+		logger.debug(parameter)
 	def integer(self, parameter):
 		l = parameter['range']
 		size = parameter['size']
