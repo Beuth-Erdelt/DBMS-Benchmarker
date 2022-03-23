@@ -209,11 +209,11 @@ The tool collects metrics from the Prometheus server with a step size of 1 secon
 We may define the metrics in terms of **promql**.
 Metrics can be defined per connection.
 
-# Evaluation
+## Results
 
 As a result we obtain measured times in milliseconds for the query processing parts: connection, execution, data transfer.
 
-![Caption for example figure.\label{fig:Evaluation-Cubes}](docs/Evaluation-Cubes.png){ width=1280 }
+![Caption for example figure.\label{fig:Evaluation-Cubes}](docs/Evaluation-Cubes.png){ width=1440}
 
 These are described in three dimensions:
 number of run, number of query and configuration.
@@ -224,6 +224,8 @@ Second of query execution time, number of query and number of configuration.
 
 All these metrics can be sliced or diced, rolled-up or drilled-down into the various dimensions using several aggregation functions for evaluation.
 
+# Evaluation
+
 ## Python - Pandas
 
 ```
@@ -231,13 +233,13 @@ df = evaluate.get_aggregated_query_statistics(
     type='latency', name='execution', query_aggregate='Mean')
 ```
 
-![Caption for example figure.\label{fig:dashboard}](docs/latency-table-example.png){ width=1280}
+![Caption for example figure.\label{fig:dashboard}](docs/latency-table-example.png){ width=1440}
 
 ## GUI - Dashboard
 
 The dashboard helps in interactive evaluation of experiment results.
 
-![Caption for example figure.\label{fig:dashboard}](docs/dashboard.png){ width=1280}
+![Caption for example figure.\label{fig:dashboard}](docs/dashboard.png){ width=1440}
 
 
 
