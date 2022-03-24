@@ -14,6 +14,7 @@
     ./Concept.md
     ./Usecases.md
     ./Options.md
+    ./DBMS.md
     ./Evaluations.md
     ./Dashboard.md
     ./Inspection.md
