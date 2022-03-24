@@ -12,11 +12,12 @@
     ./Docs.md
     ./Example-TPC-H.md
     ./Concept.md
+    ./Usecases.md
     ./Options.md
+    ./DBMS.md
     ./Evaluations.md
     ./Dashboard.md
     ./Inspection.md
-    ./Usecases.md
     ...
 
 

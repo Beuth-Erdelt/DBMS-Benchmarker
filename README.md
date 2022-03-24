@@ -1,6 +1,6 @@
 [![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://GitHub.com/Beuth-Erdelt/DBMS-Benchmarker/graphs/commit-activity)
 [![GitHub release](https://img.shields.io/github/release/Beuth-Erdelt/DBMS-Benchmarker.svg)](https://GitHub.com/Beuth-Erdelt/DBMS-Benchmarker/releases/)
-
+[![.github/workflows/draft-pdf.yml](https://github.com/Beuth-Erdelt/DBMS-Benchmarker/actions/workflows/draft-pdf.yml/badge.svg)](https://github.com/Beuth-Erdelt/DBMS-Benchmarker/actions/workflows/draft-pdf.yml)
 
 # DBMS-Benchmarker
 
@@ -8,8 +8,8 @@ DBMS-Benchmarker is a Python-based application-level blackbox benchmark tool for
 It aims at reproducible measuring and easy evaluation of the performance the user receives even in complex benchmark situations.
 It connects to a given list of DBMS (via JDBC) and runs a given list of (SQL) benchmark queries.
 Queries can be parametrized and randomized.
-Results and evaluations are available via a Python interface and can be inspected for example in Jupyter notebooks.
-An interactive dashboard assists in multi-dimensional analysis of the results.
+Results and evaluations are available via a Python interface and can be inspected with standard Python tools like pandas DataFrames.
+An interactive visual dashboard assists in multi-dimensional analysis of the results.
 
 See the [homepage](https://github.com/Beuth-Erdelt/DBMS-Benchmarker) and the [documentation](https://dbmsbenchmarker.readthedocs.io/en/latest/Docs.html).
 
@@ -120,7 +120,7 @@ Alternatively you may use a [Jupyter notebook](https://github.com/Beuth-Erdelt/D
 This module can serve as the **query executor** [2] and **evaluator** [1] for distributed parallel benchmarking experiments in a Kubernetes Cloud, see the [orchestrator](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager) for more details.
 
 <p align="center">
-    <img src="https://raw.githubusercontent.com/Beuth-Erdelt/DBMS-Benchmarker/v0.11.4/docs/experiment-with-orchestrator.png" width="800">
+    <img src="https://raw.githubusercontent.com/Beuth-Erdelt/DBMS-Benchmarker/master/docs/experiment-with-orchestrator.png" width="800">
 </p>
 
 

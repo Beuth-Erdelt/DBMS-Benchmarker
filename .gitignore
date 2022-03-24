@@ -9,3 +9,4 @@ build/*
 dbmsbenchmarker.egg-info/*
 dist/*
 .ipynb_checkpoints/*
+tpc*/

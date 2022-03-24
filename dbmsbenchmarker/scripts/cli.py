@@ -54,21 +54,23 @@ def run_benchmarker():
 	parser.add_argument('-vq', '--verbose-queries', help='print every query that is sent', action='store_true', default=False)
 	parser.add_argument('-vs', '--verbose-statistics', help='print statistics about query that have been sent', action='store_true', default=False)
 	parser.add_argument('-vr', '--verbose-results', help='print result sets of every query that have been sent', action='store_true', default=False)
+	parser.add_argument('-vp', '--verbose-process', help='print result sets of every query that have been sent', action='store_true', default=False)
 	parser.add_argument('-pn', '--num-run', help='Parameter: Number of executions per query', default=0)
 	parser.add_argument('-m', '--metrics', help='collect hardware metrics per query', action='store_true', default=False)
 	parser.add_argument('-mps', '--metrics-per-stream', help='collect hardware metrics per stream', action='store_true', default=False)
 	#parser.add_argument('-pt', '--timeout', help='Parameter: Timeout in seconds', default=0)
+	logger = logging.getLogger('dbmsbenchmarker')
 	args = parser.parse_args()
 	# evaluate args
 	if args.debug:
 		logging.basicConfig(level=logging.DEBUG)
 		bBatch = True
 	else:
-		logging.basicConfig(level=logging.ERROR)
+		logging.basicConfig(level=logging.INFO)
 		bBatch = args.batch
 	# sleep before going to work
 	if int(args.sleep) > 0:
-		logging.debug("Sleeping {} seconds before going to work".format(int(args.sleep)))
+		logger.debug("Sleeping {} seconds before going to work".format(int(args.sleep)))
 		time.sleep(int(args.sleep))
 	# make a copy of result folder
 	subfolder = args.subfolder
@@ -80,33 +82,33 @@ def run_benchmarker():
 			if args.max_subfolders is not None and client > int(args.max_subfolders):
 				exit()
 			resultpath = args.result_folder+'/'+subfolder+'-'+str(client)
-			logging.debug("Checking if {} is suitable folder for free job number".format(resultpath))
+			logger.debug("Checking if {} is suitable folder for free job number".format(resultpath))
 			if path.isdir(resultpath):
 				client = client + 1
 				waiting = random.randint(1, 10)
-				logging.debug("Sleeping {} seconds before checking for next free job number".format(waiting))
+				logger.debug("Sleeping {} seconds before checking for next free job number".format(waiting))
 				time.sleep(waiting)
 			else:
 				makedirs(resultpath)
 				break
 		subfolder = subfolder+'-'+str(client)
 		rename_connection = args.connection+'-'+str(client)
-		logging.debug("Rename connection {} to {}".format(args.connection, rename_connection))
+		logger.debug("Rename connection {} to {}".format(args.connection, rename_connection))
 		rename_alias = args.connection_alias+'-'+str(client)
-		logging.debug("Rename alias {} to {}".format(args.connection_alias, rename_alias))
+		logger.debug("Rename alias {} to {}".format(args.connection_alias, rename_alias))
 	# sleep before going to work
 	if args.start_time is not None:
-		#logging.debug(args.start_time)
+		#logger.debug(args.start_time)
 		now = datetime.utcnow()
 		try:
 			start = datetime.strptime(args.start_time, '%Y-%m-%d %H:%M:%S')
 			if start > now:
 				wait = (start-now).seconds
 				now_string = now.strftime('%Y-%m-%d %H:%M:%S')
-				logging.debug("Sleeping until {} before going to work ({} seconds, it is {} now)".format(args.start_time, wait, now_string))
+				logger.debug("Sleeping until {} before going to work ({} seconds, it is {} now)".format(args.start_time, wait, now_string))
 				time.sleep(int(wait))
 		except Exception as e:
-			logging.debug("Invalid format: {}".format(args.start_time))
+			logger.debug("Invalid format: {}".format(args.start_time))
 	# set verbose level
 	if args.verbose_queries:
 		benchmarker.BENCHMARKER_VERBOSE_QUERIES = True
@@ -114,6 +116,8 @@ def run_benchmarker():
 		benchmarker.BENCHMARKER_VERBOSE_STATISTICS = True
 	if args.verbose_results:
 		benchmarker.BENCHMARKER_VERBOSE_RESULTS = True
+	if args.verbose_process:
+		benchmarker.BENCHMARKER_VERBOSE_PROCESS = True
 	if int(args.num_run) > 0:
 		querymanagement = {
  			'numRun': int(args.num_run),
@@ -130,8 +134,8 @@ def run_benchmarker():
 		fixedAlias=args.connection_alias,
 		rename_connection=rename_connection,
 		rename_alias=rename_alias,
-		anonymize=args.anonymize,
-		unanonymize=args.unanonymize,
+		#anonymize=args.anonymize,
+		#unanonymize=args.unanonymize,
 		numProcesses=args.numProcesses,
 		seed=args.seed)
 	experiments.getConfig(args.config_folder, args.connection_file, args.query_file)
@@ -159,6 +163,7 @@ def run_benchmarker():
 		# collect hardware metrics
 		experiments.reporter.append(benchmarker.reporter.metricer(experiments, per_stream=True))
 		experiments.generateReportsAll()
+	"""
 	if args.generate_output == 'yes':
 		experiments.overwrite = True
 		# store measures ans statistics in separate files
@@ -175,6 +180,7 @@ def run_benchmarker():
 		# generate latex report
 		experiments.reporter.append(benchmarker.reporter.latexer(experiments, args.latex_template))
 		experiments.generateReportsAll()
+	"""
 	if args.generate_evaluation == 'yes':
 		experiments.overwrite = True
 		evaluator.evaluator(experiments, load=False, force=True)
