@@ -36,29 +36,6 @@ JDBC driver: https://jdbc.postgresql.org/
 ]
 ```
 
-
-## Citus Data
-
-https://www.citusdata.com/
-
-JDBC driver: https://jdbc.postgresql.org/
-
-```
-[
-    {
-        'name': 'Citus',
-        'info': 'This is a demo of Citus',
-        'active': True,
-        'JDBC': {
-            'driver': 'org.postgresql.Driver',
-            'url': 'jdbc:postgresql://localhost:5432/database',
-            'auth': ['user', 'password'],
-            'jar': 'jars/postgresql-42.2.5.jar'
-        }
-    },
-]
-```
-
 ## Clickhouse
 
 https://clickhouse.com/

@@ -30,9 +30,10 @@ See the [homepage](https://github.com/Beuth-Erdelt/DBMS-Benchmarker) and the [do
 # Statement of Need
 
 There are a variety of (relational) database management systems (DBMS).
+Some types cover row-wise, column-wise, in-memory, distributed and GPU-enhanced. 
 All of these have unique characteristics, special use cases, advantages and disadvantages and their justification.
 In order to be able to verify and ensure the performance measurement, we want to be able to create and repeat scenarios.
-We are looking for a tool to support the repetition and reproducibility of benchmarking situations.
+We are looking for a tool to support the repetition and reproducibility of benchmarking situations, and that is capable of connecting to all these systems.
 We are also looking for a tool that will help with the statistical and interactive analysis of the results.
 
 There is a need for a tool to combine both @Raasveldt2018FBC32099503209955, and for both we want to use Python as the common Data Science language.
