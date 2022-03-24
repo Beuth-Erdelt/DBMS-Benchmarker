@@ -983,15 +983,6 @@ class benchmarker():
 		if timeout is not None:
 			jaydebeapi.QUERY_TIMEOUT = timeout
 		singleConnection = connectionmanagement['singleConnection']
-		# Patch: if singleConnection only with single process
-		if singleConnection:
-			numProcesses = 1
-		if singleConnection and len(self.activeConnections) < numProcesses:
-			self.logger.info("More active connections from {} to {}".format(len(self.activeConnections), numProcesses))
-			for i in range(len(self.activeConnections), numProcesses):
-				self.activeConnections.append(tools.dbms(self.dbms[connectionname].connectiondata))
-				self.logger.info("Establish global connection #"+str(i))
-				self.activeConnections[i].connect()
 		# overwrite by connection
 		#if 'connectionmanagement' in self.dbms[c].connectiondata:
 		#	connectionmanagement = self.dbms[c].connectiondata['connectionmanagement']
@@ -1055,6 +1046,15 @@ class benchmarker():
 			self.logger.info("numProcesses: "+str(numProcesses))
 			self.logger.info("timeout: "+str(timeout))
 			self.logger.info("singleConnection: "+str(singleConnection))
+		# Patch: if singleConnection only with single process
+		if singleConnection:
+			numProcesses = 1
+		if singleConnection and len(self.activeConnections) < numProcesses:
+			self.logger.info("More active connections from {} to {}".format(len(self.activeConnections), numProcesses))
+			for i in range(len(self.activeConnections), numProcesses):
+				self.activeConnections.append(tools.dbms(self.dbms[connectionname].connectiondata))
+				self.logger.info("Establish global connection #"+str(i))
+				self.activeConnections[i].connect()
 		# do we want to keep result sets? (because of mismatch)
 		keepResultsets = False
 		# do we want to cancel / abort loop over benchmarks?
