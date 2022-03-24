@@ -40,7 +40,6 @@ There is a need for a tool to combine both @Raasveldt2018FBC32099503209955, and 
 
 There are other tools like Apache JMeter, HammerDB, Sysbench, OLTPBench, that provide nice features, but none fitting these needs.
 To our knowledge there is no other such tool, c.f. @10.1007/978-3-319-67162-8_12, @10.1007/978-3-030-12079-5_4.
-
 The need for such a tool has been elaborated in more detail in @10.1007/978-3-030-84924-5_6 and DBMS-Benchmarker has been used as a support for recieving scientific results about benchmarking DBMS performance in Cloud environments as in @10.1007/978-3-030-84924-5_6 and @10.1007/978-3-030-94437-7_6.
 This module has been tested with Clickhouse, DB2, Exasol, Hyperscale (Citus), Kinetica, MariaDB, MariaDB Columnstore, MemSQL, Mariadb, MonetDB, MySQL, OmniSci, Oracle DB, PostgreSQL, SingleStore, SQL Server and SAP HANA.
 
@@ -69,13 +68,13 @@ DBMS-Benchmarker helps to **evaluate results** - by providing
 
 Some features are inspired by [TPC-H](http://www.tpc.org/tpch/) and [TPC-DS](http://www.tpc.org/tpcds/) - Decision Support Benchmarks, which are provided in parts as predefined configs.
 
-Run `pip install dbmsbenchmarker` for installation.
-
 
 # Basic Example
 
 The following very simple use case runs the query `SELECT COUNT(*) FROM test` 10 times against one local (existing) MySQL installation.
 We assume here we have downloaded the required JDBC driver, e.g. `mysql-connector-java-8.0.13.jar`.
+
+Run `pip install dbmsbenchmarker` for installation.
 
 ## Configuration
 
