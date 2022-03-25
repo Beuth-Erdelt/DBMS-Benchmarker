@@ -8,8 +8,21 @@ Make sure to adjust the
 * port of the server, when necessary
 * name of the database `database` (and / or `schema`)
 * username and passwort `user`/`password`
-* path of the (locally existing) JDBC jar file - you will have to download the file from the website of the vendor
+* path of the (locally existing) JDBC jar file - **you will have to download the jar file from the website of the vendor**
 
+
+
+    {
+        'name': "Vertica",
+        'info': "This is Vertica on dsm server SF=1",
+        'active': True,
+        'JDBC': {
+            'driver': "com.mysql.cj.jdbc.Driver",
+            'url': 'jdbc:vertica://dsm.beuth-hochschule.de:5433/',
+            'auth': ["dbadmin", ""],
+            'jar': "jars/vertica-jdbc-11.1.0-0.jar"
+        },
+    },
 
 
 
@@ -346,3 +359,26 @@ JDBC driver: https://mariadb.com/kb/en/about-mariadb-connector-j/
     },
 ]
 ```
+
+## Vertica
+
+https://www.vertica.com/
+
+JDBC driver: https://www.vertica.com/download/vertica/client-drivers/
+
+```
+[
+    {
+        'name': 'Vertica',
+        'info': 'This is a demo of Vertica',
+        'active': True,
+        'JDBC': {
+            'driver': "com.vertica.jdbc.Driver",
+            'url': 'jdbc:vertica://localhost:5433/database',
+            'auth': ["user", "password"],
+            'jar': "jars/vertica-jdbc-11.1.0-0.jar"
+        },
+    },
+]
+```
+

@@ -78,5 +78,5 @@ Visit the address in a browser and select the experiment `<code>`.
 
 * Use different [DBMS](DBMS.html)
 * Add metadata
-* Use Bexhoma
 * SF
+* Use Bexhoma: https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager
