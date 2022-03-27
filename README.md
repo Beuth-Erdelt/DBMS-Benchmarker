@@ -1,5 +1,6 @@
 [![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://GitHub.com/Beuth-Erdelt/DBMS-Benchmarker/graphs/commit-activity)
 [![GitHub release](https://img.shields.io/github/release/Beuth-Erdelt/DBMS-Benchmarker.svg)](https://GitHub.com/Beuth-Erdelt/DBMS-Benchmarker/releases/)
+[![PyPI version](https://badge.fury.io/py/dbmsbenchmarker.svg)](https://badge.fury.io/py/dbmsbenchmarker)
 [![.github/workflows/draft-pdf.yml](https://github.com/Beuth-Erdelt/DBMS-Benchmarker/actions/workflows/draft-pdf.yml/badge.svg)](https://github.com/Beuth-Erdelt/DBMS-Benchmarker/actions/workflows/draft-pdf.yml)
 [![DOI](https://zenodo.org/badge/213186578.svg)](https://zenodo.org/badge/latestdoi/213186578)
 
