@@ -142,7 +142,7 @@ A **query** is a statement, that is understood by a Database Management System (
 
 A **benchmark** of a query consists of these steps:
 
-![Caption for example figure.\label{fig:Concept-Query}](docs/Concept-Query.png){ width=960}
+![measured times of query processing parts.\label{fig:Concept-Query}](docs/Concept-Query.png){ width=960}
 
 
 1. Establish a **connection** between client and server  
@@ -198,7 +198,7 @@ Without randomization, each run should yield the same result set.
 This tool automatically can check these assumptions by **comparison**.
 The resulting data table is handled as a list of lists and treated by this:
 Result sets of different runs (not randomized) and different DBMS can be compared by their sorted table (small data sets) or their hash value or size (bigger data sets).
-In order to do so, result sets (or their hash value or size) are stored as lists of lists and additionally can be saved as csv files or pickled pandas dataframes.
+In order to do so, result sets (or their hash value or size) are stored as lists of lists and additionally can be saved as csv files or pickled pandas DataFrames.
 
 ## Monitoring Hardware Metrics
 
@@ -211,7 +211,7 @@ Metrics can be defined per connection.
 
 As a result we obtain measured times in milliseconds for the query processing parts: connection, execution, data transfer.
 
-![Caption for example figure.\label{fig:Evaluation-Cubes}](docs/Evaluation-Cubes.png){ width=1440}
+![evaluation cubes for time and hardware metrics.\label{fig:Evaluation-Cubes}](docs/Evaluation-Cubes.png){ width=1440}
 
 These are described in three dimensions:
 number of run, number of query and configuration.
@@ -239,14 +239,14 @@ df = evaluate.get_aggregated_query_statistics(
     type='latency', name='execution', query_aggregate='Mean')
 ```
 
-![Caption for example figure.\label{fig:dashboard}](docs/latency-table-example.png){ width=1440}
+![example DataFrame: latency of execution times aggregated.\label{fig:dashboard}](docs/latency-table-example.png){ width=1440}
 
 ## GUI - Dashboard
 
 The dashboard helps in interactive evaluation of experiment results.
 It show plots of various types, that can be customized and filtered by DBMS configuration and query.
 
-![Caption for example figure.\label{fig:dashboard}](docs/dashboard.png){ width=1440}
+![screenshot of dashboard.\label{fig:dashboard}](docs/dashboard.png){ width=1440}
 
 
 # References
