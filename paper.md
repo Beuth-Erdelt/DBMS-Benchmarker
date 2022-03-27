@@ -29,19 +29,21 @@ See the [homepage](https://github.com/Beuth-Erdelt/DBMS-Benchmarker) and the [do
 
 # Statement of Need
 
-There are a variety of (relational) database management systems (DBMS).
-Some types cover row-wise, column-wise, in-memory, distributed and GPU-enhanced. 
-All of these have unique characteristics, special use cases, advantages and disadvantages and their justification.
+There are a variety of (relational) database management systems (DBMS) and a lot of products.
+The types thereof can be divided into for example row-wise, column-wise, in-memory, distributed and GPU-enhanced. 
+All of these products have unique characteristics, special use cases, advantages and disadvantages and their justification.
 In order to be able to verify and ensure the performance measurement, we want to be able to create and repeat scenarios.
+Repetition is crucial @Raasveldt2018FBC32099503209955, in particular in the age of Cloud-based systems with it's diversity of hardware configurations.
+
 We are looking for a tool to support the repetition and reproducibility of benchmarking situations, and that is capable of connecting to all these systems.
 We are also looking for a tool that will help with the statistical and interactive analysis of the results.
+We want to use Python as the common Data Science language.
 
-There is a need for a tool to combine both @Raasveldt2018FBC32099503209955, and for both we want to use Python as the common Data Science language.
-
-There are other tools like Apache JMeter, HammerDB, Sysbench, OLTPBench, that provide nice features, but none fitting these needs.
 To our knowledge there is no other such tool, c.f. @10.1007/978-3-319-67162-8_12, @10.1007/978-3-030-12079-5_4.
-The need for such a tool has been elaborated in more detail in @10.1007/978-3-030-84924-5_6 and DBMS-Benchmarker has been used as a support for recieving scientific results about benchmarking DBMS performance in Cloud environments as in @10.1007/978-3-030-84924-5_6 and @10.1007/978-3-030-94437-7_6.
-This module has been tested with Clickhouse, DB2, Exasol, Hyperscale (Citus), Kinetica, MariaDB, MariaDB Columnstore, MemSQL, Mariadb, MonetDB, MySQL, OmniSci, Oracle DB, PostgreSQL, SingleStore, SQL Server and SAP HANA.
+There are other tools like Apache JMeter, HammerDB, Sysbench, OLTPBench, that provide nice features, but none fitting these needs.
+The design decisions of this tool have been elaborated in more detail in @10.1007/978-3-030-84924-5_6.
+DBMS-Benchmarker has been used as a support for recieving scientific results about benchmarking DBMS performance in Cloud environments as in @10.1007/978-3-030-84924-5_6 and @10.1007/978-3-030-94437-7_6.
+This module has been tested with Clickhouse, DB2, Exasol, Citus Data (Hyperscale), Kinetica, MariaDB, MariaDB Columnstore, MemSQL (SingleStore), MariaDB, MariaDB Columnstore, MonetDB, MySQL, OmniSci (HEAVY.AI) , Oracle DB, PostgreSQL, SQL Server, SAP HANA and Vertica.
 
 ## Summary of Solution
 
@@ -222,7 +224,15 @@ All these metrics can be sliced or diced, rolled-up or drilled-down into the var
 
 # Evaluation
 
+Results can be evaluated via a Python interface.
+Measurements are available as pandas DataFrames.
+Moreover the package includes a browser-based visual analysis tool.
+
 ## Python - Pandas
+
+There are DataFrames covering errors and warnings, that have occured, and timing and hardware metrics that have been collected or derived.
+
+For example the latency of execution, aggregated in the query dimension by computing the mean value, can be obtained as:
 
 ```
 df = evaluate.get_aggregated_query_statistics(
@@ -234,12 +244,9 @@ df = evaluate.get_aggregated_query_statistics(
 ## GUI - Dashboard
 
 The dashboard helps in interactive evaluation of experiment results.
+It show plots of various types, that can be customized and filtered by DBMS configuration and query.
 
 ![Caption for example figure.\label{fig:dashboard}](docs/dashboard.png){ width=1440}
-
-
-
-# Acknowledgements
 
 
 # References
