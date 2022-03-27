@@ -16,9 +16,12 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 import dash
-import dash_core_components as dcc
-import dash_html_components as html
-import dash_table
+#import dash_core_components as dcc
+from dash import dcc
+#import dash_html_components as html
+from dash import html
+#import dash_table
+from dash import dash_table
 from dash.dependencies import Input, Output, State, MATCH, ALL
 from dash.exceptions import PreventUpdate
 from dash import no_update
