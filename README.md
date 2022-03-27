@@ -36,7 +36,7 @@ DBMS-Benchmarker
   * in standard Python data structures
   * in [Jupyter notebooks](https://github.com/Beuth-Erdelt/DBMS-Benchmarker/blob/master/Evaluation-Demo.ipynb)
   see [rendered example](https://beuth-erdelt.github.io/DBMS-Benchmarker/Evaluation-Demo.html)  
-  * in an [interactive dashboard](Dashboard.html)
+  * in an interactive dashboard
 
 For more informations, see a [basic example](#basic-usage) or take a look in the [documentation](https://dbmsbenchmarker.readthedocs.io/en/latest/Docs.html) for a full list of options.
 
@@ -56,7 +56,7 @@ As a result we obtain an interactive dashboard to inspect timing aspects.
 
 We need to provide
 
-* a [DBMS configuration file](Options.html#connection-file), e.g. in `./config/connections.config`  
+* a [DBMS configuration file](https://dbmsbenchmarker.readthedocs.io/en/latest/Options.html#connection-file), e.g. in `./config/connections.config`  
 ```
 [
   {
@@ -72,7 +72,7 @@ We need to provide
 ]
 ```
 * the required JDBC driver, e.g. `mysql-connector-java-8.0.13.jar`
-* a [Queries configuration file](Options.html#query-file), e.g. in `./config/queries.config`  
+* a [Queries configuration file](https://dbmsbenchmarker.readthedocs.io/en/latest/Options.html#query-file), e.g. in `./config/queries.config`  
 ```
 {
   'name': 'Some simple queries',
