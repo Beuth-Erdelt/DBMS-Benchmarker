@@ -16,7 +16,7 @@ bibliography: paper.bib
 
 ---
 
-# DBMS-Benchmarker
+# Summary
 
 DBMS-Benchmarker is a Python-based application-level blackbox benchmark tool for Database Management Systems (DBMS).
 It aims at reproducible measuring and easy evaluation of the performance the user receives even in complex benchmark situations.
@@ -35,8 +35,8 @@ All of these products have unique characteristics, special use cases, advantages
 In order to be able to verify and ensure the performance measurement, we want to be able to create and repeat scenarios.
 Repetition is crucial @Raasveldt2018FBC32099503209955, in particular in the age of Cloud-based systems with it's diversity of hardware configurations.
 
-We are looking for a tool to support the repetition and reproducibility of benchmarking situations, and that is capable of connecting to all these systems.
-We are also looking for a tool that will help with the statistical and interactive analysis of the results.
+There is a need for a tool to support the repetition and reproducibility of benchmarking situations, and that is capable of connecting to all these systems.
+There is also need for a tool that will help with the statistical and interactive analysis of the results.
 We want to use Python as the common Data Science language.
 
 To our knowledge there is no other such tool, c.f. @10.1007/978-3-319-67162-8_12, @10.1007/978-3-030-12079-5_4.
@@ -49,20 +49,20 @@ This module has been tested with Clickhouse, Exasol, Citus Data (Hyperscale), IB
 
 DBMS-Benchmarker is Python3-based and helps to **benchmark DBMS**. It
 
-* connects to all DBMS having a JDBC interface - including GPU-enhanced DBMS
+* connects to all DBMS having a JDBC interface
 * requires *only* JDBC - no vendor specific supplements are used
-* benchmarks arbitrary SQL queries - in all dialects
-* allows planning of complex test scenarios - to simulate realistic or revealing use cases
-* allows easy repetition of benchmarks in varying settings - different hardware, DBMS, DBMS configurations, DB settings etc
-* allows randomized queries (optionally with specified seeds for reproducible results) to avoid caching side effects
-* investigates a number of timing aspects - connection, execution, data transfer, in total, per session etc
+* benchmarks arbitrary SQL queries
+* allows planning of complex test scenarios
+* allows easy repetition of benchmarks in varying settings
+* allows randomized queries to avoid caching side effects
+* investigates a number of timing aspects
 * investigates a number of other aspects - received result sets, precision, number of clients
-* collects hardware metrics from a Prometheus server - hardware utilization, energy consumption etc
+* collects hardware metrics from a Prometheus server
 * compares result sets: *Do I always receive the same data?*
 
 DBMS-Benchmarker helps to **evaluate results** - by providing    
 
-* metrics that can be analyzed by aggregation in multi-dimensions, like maximum throughput per DBMS, average CPU utilization per query or geometric mean of run latency per workload
+* metrics that can be analyzed by aggregation in multi-dimensions
 * predefined evaluations like statistics
 * in standard Python data structures
 * in Jupyter notebooks - see [rendered example](https://beuth-erdelt.github.io/DBMS-Benchmarker/Evaluation-Demo.html)
@@ -71,7 +71,7 @@ DBMS-Benchmarker helps to **evaluate results** - by providing
 Some features are inspired by [TPC-H](http://www.tpc.org/tpch/) and [TPC-DS](http://www.tpc.org/tpcds/) - Decision Support Benchmarks, which are provided in parts as predefined configs.
 
 
-# Basic Example
+# A Basic Example
 
 The following very simple use case runs the query `SELECT COUNT(*) FROM test` 10 times against one local (existing) MySQL installation.
 We assume here we have downloaded the required JDBC driver, e.g. `mysql-connector-java-8.0.13.jar`.
@@ -128,10 +128,10 @@ Run the CLI command: `dbmsdashboard`
 
 This will start the evaluation dashboard at `localhost:8050`.
 Visit the address in a browser and select the experiment `<code>`.
-Alternatively you may use a Jupyter notebooks or standard Python.
+Alternatively you may use Python's pandas.
 
 
-# Concepts
+# Description
 
 ## Experiment
 
@@ -162,7 +162,7 @@ A sequence of runs between establishing and discarding a connection is called a 
 A basic parameter of a query is the **number of runs** (units of send, execute, transfer).
 To configure sessions it is also possible to adjust
 
-* the **number of runs per connection** (session length, to have several sequential connections) and
+* the **number of runs per connection** (session length) and
 * the **number of parallel connections** (to simulate several simultanious clients)
 * a **timeout** (maximum lifespan of a connection)
 * a **delay** for throttling (waiting time before each connection or execution)
@@ -223,10 +223,6 @@ Second of query execution time, number of query and number of configuration.
 All these metrics can be sliced or diced, rolled-up or drilled-down into the various dimensions using several aggregation functions for evaluation.
 
 # Evaluation
-
-Results can be evaluated via a Python interface.
-Measurements are available as pandas DataFrames.
-Moreover the package includes a browser-based visual analysis tool.
 
 ## Python - Pandas
 
