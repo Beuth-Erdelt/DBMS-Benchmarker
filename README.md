@@ -41,7 +41,7 @@ DBMS-Benchmarker
 For more informations, see a [basic example](#basic-usage) or take a look in the [documentation](https://dbmsbenchmarker.readthedocs.io/en/latest/Docs.html) for a full list of options.
 
 The code uses several Python modules, in particular <a href="https://github.com/baztian/jaydebeapi" target="_blank">jaydebeapi</a> for handling DBMS.
-This module has been tested with Clickhouse, DB2, Exasol, Hyperscale (Citus), Kinetica, MariaDB, MariaDB Columnstore, MemSQL, Mariadb, MonetDB, MySQL, OmniSci, Oracle DB, PostgreSQL, SingleStore, SQL Server and SAP HANA.
+This module has been tested with Clickhouse, DB2, Exasol, Hyperscale (Citus), Kinetica, MariaDB, MariaDB Columnstore, MemSQL, Mariadb, MonetDB, MySQL, OmniSci, Oracle DB, PostgreSQL, SingleStore, SQL Server, SAP HANA and Vertica.
 
 ## Installation
 
@@ -162,8 +162,3 @@ Other comparable products you might like
 > In: Nambiar R., Poess M. (eds) Performance Evaluation and Benchmarking. TPCTC 2021.
 > Lecture Notes in Computer Science, vol 13169. Springer, Cham.
 > https://doi.org/10.1007/978-3-030-94437-7_6
-
-(old, slightly outdated [docs](Docs_old.html))
-
-
-

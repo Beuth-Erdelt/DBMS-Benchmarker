@@ -43,7 +43,7 @@ To our knowledge there is no other such tool, c.f. @10.1007/978-3-319-67162-8_12
 There are other tools like Apache JMeter, HammerDB, Sysbench, OLTPBench, that provide nice features, but none fitting these needs.
 The design decisions of this tool have been elaborated in more detail in @10.1007/978-3-030-84924-5_6.
 DBMS-Benchmarker has been used as a support for recieving scientific results about benchmarking DBMS performance in Cloud environments as in @10.1007/978-3-030-84924-5_6 and @10.1007/978-3-030-94437-7_6.
-This module has been tested with Clickhouse, DB2, Exasol, Citus Data (Hyperscale), Kinetica, MariaDB, MariaDB Columnstore, MemSQL (SingleStore), MariaDB, MariaDB Columnstore, MonetDB, MySQL, OmniSci (HEAVY.AI) , Oracle DB, PostgreSQL, SQL Server, SAP HANA and Vertica.
+This module has been tested with Clickhouse, Exasol, Citus Data (Hyperscale), IBM DB2, Kinetica, MariaDB, MariaDB Columnstore, MemSQL (SingleStore), MariaDB, MariaDB Columnstore, MonetDB, MySQL, OmniSci (HEAVY.AI) , Oracle DB, PostgreSQL, SQL Server, SAP HANA and Vertica.
 
 ## Summary of Solution
 
