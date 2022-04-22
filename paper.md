@@ -35,7 +35,7 @@ There are a variety of (relational) database management systems (DBMS) and a lot
 The types thereof can be divided into for example row-wise, column-wise, in-memory, distributed and GPU-enhanced. 
 All of these products have unique characteristics, special use cases, advantages and disadvantages and their justification.
 In order to be able to verify and ensure the performance measurement, we want to be able to create and repeat scenarios.
-Repetition is crucial @Raasveldt2018FBC32099503209955, in particular in the age of Cloud-based systems with it's diversity of hardware configurations.
+Repetition is crucial @Raasveldt2018FBC32099503209955, @DBLPconfsigmodKerstenKZ18, in particular in the age of Cloud-based systems with it's diversity of hardware configurations.
 
 There is a need for a tool to support the repetition and reproducibility of benchmarking situations, and that is capable of connecting to all these systems.
 There is also need for a tool that will help with the statistical and interactive analysis of the results.
@@ -58,14 +58,14 @@ DBMS-Benchmarker is Python3-based and helps to **benchmark DBMS**. It
 * allows randomized queries to avoid caching side effects
 * investigates a number of timing aspects
 * investigates a number of other aspects - received result sets, precision, number of clients
-* collects hardware metrics from a Prometheus server @208870
+* collects hardware metrics from a Prometheus server, c.f. @208870
 * compares result sets: *Do I always receive the same data?*
 
 DBMS-Benchmarker helps to **evaluate results** - by providing    
 
 * metrics that can be analyzed by aggregation in multi-dimensions
 * predefined evaluations like statistics
-* in standard Python data structures like pandas @reback2020pandas, @mckinney-proc-scipy-2010
+* in standard Python data structures like pandas, c.f. @reback2020pandas, @mckinney-proc-scipy-2010
 * in Jupyter notebooks - see [rendered example](https://beuth-erdelt.github.io/DBMS-Benchmarker/Evaluation-Demo.html)
 * in an interactive dashboard
 
