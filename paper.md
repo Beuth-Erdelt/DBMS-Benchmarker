@@ -25,6 +25,8 @@ Queries can be parametrized and randomized.
 Results and evaluations are available via a Python interface and can be inspected with standard Python tools like pandas DataFrames.
 An interactive visual dashboard assists in multi-dimensional analysis of the results.
 
+This module has been tested with Clickhouse, Exasol, Citus Data (Hyperscale), IBM DB2, Kinetica, MariaDB, MariaDB Columnstore, MemSQL (SingleStore), MariaDB, MariaDB Columnstore, MonetDB, MySQL, OmniSci (HEAVY.AI) , Oracle DB, PostgreSQL, SQL Server, SAP HANA and Vertica.
+
 See the [homepage](https://github.com/Beuth-Erdelt/DBMS-Benchmarker) and the [documentation](https://dbmsbenchmarker.readthedocs.io/en/latest/Docs.html).
 
 # Statement of Need
@@ -37,13 +39,12 @@ Repetition is crucial @Raasveldt2018FBC32099503209955, in particular in the age 
 
 There is a need for a tool to support the repetition and reproducibility of benchmarking situations, and that is capable of connecting to all these systems.
 There is also need for a tool that will help with the statistical and interactive analysis of the results.
-We want to use Python as the common Data Science language.
 
+We want to use Python as the common Data Science language.
 To our knowledge there is no other such tool, c.f. @10.1007/978-3-319-67162-8_12, @10.1007/978-3-030-12079-5_4.
 There are other tools like Apache JMeter, HammerDB, Sysbench, OLTPBench, that provide nice features, but none fitting these needs.
 The design decisions of this tool have been elaborated in more detail in @10.1007/978-3-030-84924-5_6.
 DBMS-Benchmarker has been used as a support for recieving scientific results about benchmarking DBMS performance in Cloud environments as in @10.1007/978-3-030-84924-5_6 and @10.1007/978-3-030-94437-7_6.
-This module has been tested with Clickhouse, Exasol, Citus Data (Hyperscale), IBM DB2, Kinetica, MariaDB, MariaDB Columnstore, MemSQL (SingleStore), MariaDB, MariaDB Columnstore, MonetDB, MySQL, OmniSci (HEAVY.AI) , Oracle DB, PostgreSQL, SQL Server, SAP HANA and Vertica.
 
 ## Summary of Solution
 
@@ -57,14 +58,14 @@ DBMS-Benchmarker is Python3-based and helps to **benchmark DBMS**. It
 * allows randomized queries to avoid caching side effects
 * investigates a number of timing aspects
 * investigates a number of other aspects - received result sets, precision, number of clients
-* collects hardware metrics from a Prometheus server
+* collects hardware metrics from a Prometheus server @208870
 * compares result sets: *Do I always receive the same data?*
 
 DBMS-Benchmarker helps to **evaluate results** - by providing    
 
 * metrics that can be analyzed by aggregation in multi-dimensions
 * predefined evaluations like statistics
-* in standard Python data structures
+* in standard Python data structures like pandas @reback2020pandas, @mckinney-proc-scipy-2010
 * in Jupyter notebooks - see [rendered example](https://beuth-erdelt.github.io/DBMS-Benchmarker/Evaluation-Demo.html)
 * in an interactive dashboard
 
@@ -204,7 +205,7 @@ In order to do so, result sets (or their hash value or size) are stored as lists
 
 To make hardware metrics available, we must provide an API URL for a Prometheus Server.
 The tool collects metrics from the Prometheus server with a step size of 1 second.
-We may define the metrics in terms of **promql**.
+We may define the metrics in terms of Prometheus's **promql**.
 Metrics can be defined per connection.
 
 ## Results
@@ -240,7 +241,7 @@ df = evaluate.get_aggregated_query_statistics(
 ## GUI - Dashboard
 
 The dashboard helps in interactive evaluation of experiment results.
-It show plots of various types, that can be customized and filtered by DBMS configuration and query.
+It shows plots of various types, that can be customized and filtered by DBMS configuration and query.
 
 ![screenshot of dashboard.\label{fig:dashboard}](docs/dashboard.png){ width=1440}
 
