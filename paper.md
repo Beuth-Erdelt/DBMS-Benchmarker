@@ -39,8 +39,10 @@ Repetition is crucial, in particular in the age of Cloud-based systems with it's
 
 There is a need for a tool to support the repetition and reproducibility of benchmarking situations, and that is capable of connecting to all these systems.
 There is also need for a tool that will help with the statistical and interactive analysis of the results.
-
 We want to use Python as the common Data Science language.
+This helps to implement the tool into a pipeline.
+Moreover this allows to use common and sophisticated tools to inspect and evaluate the results, like pandas, c.f. @reback2020pandas, @mckinney-proc-scipy-2010, Jupyter notebooks, c.f. @Kluyver2016jupyter, matplotlib, c.f. @Hunter:2007, SciPy, c.f. @2020SciPy-NMeth, or even Machine Learning tools.
+
 To our knowledge there is no other such tool, c.f. @10.1007/978-3-319-67162-8_12, @10.1007/978-3-030-12079-5_4.
 There are other tools like Apache JMeter, HammerDB, Sysbench, OLTPBench, that provide nice features, but none fitting these needs.
 The design decisions of this tool have been elaborated in more detail in @10.1007/978-3-030-84924-5_6.
@@ -65,7 +67,7 @@ DBMS-Benchmarker helps to **evaluate results** - by providing
 
 * metrics that can be analyzed by aggregation in multi-dimensions
 * predefined evaluations like statistics
-* in standard Python data structures like pandas, c.f. @reback2020pandas, @mckinney-proc-scipy-2010
+* in standard Python data structures
 * in Jupyter notebooks - see [rendered example](https://beuth-erdelt.github.io/DBMS-Benchmarker/Evaluation-Demo.html)
 * in an interactive dashboard
 
