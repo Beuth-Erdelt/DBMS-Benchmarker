@@ -61,7 +61,6 @@ DBMS-Benchmarker is Python3-based and helps to **benchmark DBMS**. It
 * investigates a number of timing aspects
 * investigates a number of other aspects - received result sets, precision, number of clients
 * collects hardware metrics from a Prometheus server, c.f. @208870
-* compares result sets: *Do I always receive the same data?*
 
 DBMS-Benchmarker helps to **evaluate results** - by providing    
 
