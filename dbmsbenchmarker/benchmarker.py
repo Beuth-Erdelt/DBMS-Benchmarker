@@ -283,12 +283,14 @@ def singleResult(connectiondata, inputConfig, numRuns, connectionname, numQuery,
 			logger.info(workername+"Size of processed result list retrieved: "+str(sys.getsizeof(data))+" bytes")
 			# convert to dataframe
 			#columnnames = [[i[0].upper() for i in connection.cursor.description]]
-			df = pd.DataFrame.from_records(data)
+			df = pd.DataFrame.from_records(data=data, coerce_float=True)
 			logger.debug(workername+'Data {}'.format(data))
 			logger.debug(workername+'DataFrame generated')
 			if not df.empty:
 				df.columns = columnnames
-			size = int(df.memory_usage(index=True).sum())
+				size = int(df.memory_usage(index=True, deep=True).sum())
+			else:
+				size = 0
 			logger.debug(workername+'DataFrame size: %s' %str(size))
 			# store result set for connection and query
 			storeResultSet = query.storeResultSet
