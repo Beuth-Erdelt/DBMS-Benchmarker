@@ -5,7 +5,7 @@
 * [Compare 2 Queries in 1 DBMS](#compare-2-queries-in-1-dbms)
 * [Compare 2 Databases in 1 DBMS](#compare-2-databases-in-1-dbms)
 * [Compare 1 Query in 2 DBMS](#compare-1-query-in-2-dbms)  
-and combinations like compare n queries in m DBMS.
+and combinations like compare `n` queries in `m` DBMS.
 * [Benchmarking DBMS Configurations](#benchmarking-dbms-configurations)
 
 [Scenarios](#scenarios) may be

@@ -16,7 +16,7 @@ bibliography: paper.bib
 
 ---
 
-# DBMS-Benchmarker
+# Summary
 
 DBMS-Benchmarker is a Python-based application-level blackbox benchmark tool for Database Management Systems (DBMS).
 It aims at reproducible measuring and easy evaluation of the performance the user receives even in complex benchmark situations.
@@ -25,42 +25,46 @@ Queries can be parametrized and randomized.
 Results and evaluations are available via a Python interface and can be inspected with standard Python tools like pandas DataFrames.
 An interactive visual dashboard assists in multi-dimensional analysis of the results.
 
+This module has been tested with Clickhouse, Exasol, Citus Data (Hyperscale), IBM DB2, Kinetica, MariaDB, MariaDB Columnstore, MemSQL (SingleStore), MariaDB, MariaDB Columnstore, MonetDB, MySQL, OmniSci (HEAVY.AI) , Oracle DB, PostgreSQL, SQL Server, SAP HANA and Vertica.
+
 See the [homepage](https://github.com/Beuth-Erdelt/DBMS-Benchmarker) and the [documentation](https://dbmsbenchmarker.readthedocs.io/en/latest/Docs.html).
 
 # Statement of Need
 
-There are a variety of (relational) database management systems (DBMS).
-Some types cover row-wise, column-wise, in-memory, distributed and GPU-enhanced. 
-All of these have unique characteristics, special use cases, advantages and disadvantages and their justification.
+There are a variety of (relational) database management systems (DBMS) and a lot of products.
+The types thereof can be divided into for example row-wise, column-wise, in-memory, distributed and GPU-enhanced. 
+All of these products have unique characteristics, special use cases, advantages and disadvantages and their justification.
 In order to be able to verify and ensure the performance measurement, we want to be able to create and repeat scenarios.
-We are looking for a tool to support the repetition and reproducibility of benchmarking situations, and that is capable of connecting to all these systems.
-We are also looking for a tool that will help with the statistical and interactive analysis of the results.
+Repetition is crucial, in particular in the age of Cloud-based systems with it's diversity of hardware configurations, @Raasveldt2018FBC32099503209955, @DBLPconfsigmodKerstenKZ18.
 
-There is a need for a tool to combine both @Raasveldt2018FBC32099503209955, and for both we want to use Python as the common Data Science language.
+There is a need for a tool to support the repetition and reproducibility of benchmarking situations, and that is capable of connecting to all these systems.
+There is also need for a tool that will help with the statistical and interactive analysis of the results.
+We want to use Python as the common Data Science language.
+This helps to implement the tool into a pipeline.
+Moreover this allows to use common and sophisticated tools to inspect and evaluate the results, like pandas, c.f. @reback2020pandas, @mckinney-proc-scipy-2010, Jupyter notebooks, c.f. @Kluyver2016jupyter, matplotlib, c.f. @Hunter:2007, SciPy, c.f. @2020SciPy-NMeth, or even Machine Learning tools.
 
-There are other tools like Apache JMeter, HammerDB, Sysbench, OLTPBench, that provide nice features, but none fitting these needs.
 To our knowledge there is no other such tool, c.f. @10.1007/978-3-319-67162-8_12, @10.1007/978-3-030-12079-5_4.
-The need for such a tool has been elaborated in more detail in @10.1007/978-3-030-84924-5_6 and DBMS-Benchmarker has been used as a support for recieving scientific results about benchmarking DBMS performance in Cloud environments as in @10.1007/978-3-030-84924-5_6 and @10.1007/978-3-030-94437-7_6.
-This module has been tested with Clickhouse, DB2, Exasol, Hyperscale (Citus), Kinetica, MariaDB, MariaDB Columnstore, MemSQL, Mariadb, MonetDB, MySQL, OmniSci, Oracle DB, PostgreSQL, SingleStore, SQL Server and SAP HANA.
+There are other tools like Apache JMeter, HammerDB, Sysbench, OLTPBench, that provide nice features, but none fitting these needs.
+The design decisions of this tool have been elaborated in more detail in @10.1007/978-3-030-84924-5_6.
+DBMS-Benchmarker has been used as a support for recieving scientific results about benchmarking DBMS performance in Cloud environments as in @10.1007/978-3-030-84924-5_6 and @10.1007/978-3-030-94437-7_6.
 
 ## Summary of Solution
 
 DBMS-Benchmarker is Python3-based and helps to **benchmark DBMS**. It
 
-* connects to all DBMS having a JDBC interface - including GPU-enhanced DBMS
+* connects to all DBMS having a JDBC interface
 * requires *only* JDBC - no vendor specific supplements are used
-* benchmarks arbitrary SQL queries - in all dialects
-* allows planning of complex test scenarios - to simulate realistic or revealing use cases
-* allows easy repetition of benchmarks in varying settings - different hardware, DBMS, DBMS configurations, DB settings etc
-* allows randomized queries (optionally with specified seeds for reproducible results) to avoid caching side effects
-* investigates a number of timing aspects - connection, execution, data transfer, in total, per session etc
+* benchmarks arbitrary SQL queries
+* allows planning of complex test scenarios
+* allows easy repetition of benchmarks in varying settings
+* allows randomized queries to avoid caching side effects
+* investigates a number of timing aspects
 * investigates a number of other aspects - received result sets, precision, number of clients
-* collects hardware metrics from a Prometheus server - hardware utilization, energy consumption etc
-* compares result sets: *Do I always receive the same data?*
+* collects hardware metrics from a Prometheus server, c.f. @208870
 
 DBMS-Benchmarker helps to **evaluate results** - by providing    
 
-* metrics that can be analyzed by aggregation in multi-dimensions, like maximum throughput per DBMS, average CPU utilization per query or geometric mean of run latency per workload
+* metrics that can be analyzed by aggregation in multi-dimensions
 * predefined evaluations like statistics
 * in standard Python data structures
 * in Jupyter notebooks - see [rendered example](https://beuth-erdelt.github.io/DBMS-Benchmarker/Evaluation-Demo.html)
@@ -69,7 +73,7 @@ DBMS-Benchmarker helps to **evaluate results** - by providing
 Some features are inspired by [TPC-H](http://www.tpc.org/tpch/) and [TPC-DS](http://www.tpc.org/tpcds/) - Decision Support Benchmarks, which are provided in parts as predefined configs.
 
 
-# Basic Example
+# A Basic Example
 
 The following very simple use case runs the query `SELECT COUNT(*) FROM test` 10 times against one local (existing) MySQL installation.
 We assume here we have downloaded the required JDBC driver, e.g. `mysql-connector-java-8.0.13.jar`.
@@ -126,10 +130,10 @@ Run the CLI command: `dbmsdashboard`
 
 This will start the evaluation dashboard at `localhost:8050`.
 Visit the address in a browser and select the experiment `<code>`.
-Alternatively you may use a Jupyter notebooks or standard Python.
+Alternatively you may use Python's pandas.
 
 
-# Concepts
+# Description
 
 ## Experiment
 
@@ -140,7 +144,7 @@ A **query** is a statement, that is understood by a Database Management System (
 
 A **benchmark** of a query consists of these steps:
 
-![Caption for example figure.\label{fig:Concept-Query}](docs/Concept-Query.png){ width=960}
+![measured times of query processing parts.\label{fig:Concept-Query}](docs/Concept-Query.png){ width=960}
 
 
 1. Establish a **connection** between client and server  
@@ -160,7 +164,7 @@ A sequence of runs between establishing and discarding a connection is called a 
 A basic parameter of a query is the **number of runs** (units of send, execute, transfer).
 To configure sessions it is also possible to adjust
 
-* the **number of runs per connection** (session length, to have several sequential connections) and
+* the **number of runs per connection** (session length) and
 * the **number of parallel connections** (to simulate several simultanious clients)
 * a **timeout** (maximum lifespan of a connection)
 * a **delay** for throttling (waiting time before each connection or execution)
@@ -196,20 +200,20 @@ Without randomization, each run should yield the same result set.
 This tool automatically can check these assumptions by **comparison**.
 The resulting data table is handled as a list of lists and treated by this:
 Result sets of different runs (not randomized) and different DBMS can be compared by their sorted table (small data sets) or their hash value or size (bigger data sets).
-In order to do so, result sets (or their hash value or size) are stored as lists of lists and additionally can be saved as csv files or pickled pandas dataframes.
+In order to do so, result sets (or their hash value or size) are stored as lists of lists and additionally can be saved as csv files or pickled pandas DataFrames.
 
 ## Monitoring Hardware Metrics
 
 To make hardware metrics available, we must provide an API URL for a Prometheus Server.
 The tool collects metrics from the Prometheus server with a step size of 1 second.
-We may define the metrics in terms of **promql**.
+We may define the metrics in terms of Prometheus's **promql**.
 Metrics can be defined per connection.
 
 ## Results
 
 As a result we obtain measured times in milliseconds for the query processing parts: connection, execution, data transfer.
 
-![Caption for example figure.\label{fig:Evaluation-Cubes}](docs/Evaluation-Cubes.png){ width=1440}
+![evaluation cubes for time and hardware metrics.\label{fig:Evaluation-Cubes}](docs/Evaluation-Cubes.png){ width=1440}
 
 These are described in three dimensions:
 number of run, number of query and configuration.
@@ -224,22 +228,23 @@ All these metrics can be sliced or diced, rolled-up or drilled-down into the var
 
 ## Python - Pandas
 
+There are DataFrames covering errors and warnings, that have occured, and timing and hardware metrics that have been collected or derived.
+
+For example the latency of execution, aggregated in the query dimension by computing the mean value, can be obtained as:
+
 ```
 df = evaluate.get_aggregated_query_statistics(
     type='latency', name='execution', query_aggregate='Mean')
 ```
 
-![Caption for example figure.\label{fig:dashboard}](docs/latency-table-example.png){ width=1440}
+![example DataFrame: latency of execution times aggregated.\label{fig:dashboard}](docs/latency-table-example.png){ width=1440}
 
 ## GUI - Dashboard
 
 The dashboard helps in interactive evaluation of experiment results.
+It shows plots of various types, that can be customized and filtered by DBMS configuration and query.
 
-![Caption for example figure.\label{fig:dashboard}](docs/dashboard.png){ width=1440}
-
-
-
-# Acknowledgements
+![screenshot of dashboard.\label{fig:dashboard}](docs/dashboard.png){ width=1440}
 
 
 # References

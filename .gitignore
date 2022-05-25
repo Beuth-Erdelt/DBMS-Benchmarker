@@ -10,3 +10,5 @@ dbmsbenchmarker.egg-info/*
 dist/*
 .ipynb_checkpoints/*
 tpc*/
+Review/*
+.spyproject/*

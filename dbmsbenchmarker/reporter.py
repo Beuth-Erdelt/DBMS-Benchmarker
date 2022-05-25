@@ -139,7 +139,7 @@ class storer(reporter):
 			# are there benchmarks for this query?
 			if not t.checkForSuccessfulBenchmarks(numQuery):
 				continue
-			logging.debug("saveBenchmarkOfQuery: "+str(numQuery))
+			logging.debug("saveBenchmarkOfQuery {}, timer={} ".format(numQuery, t.name))
 			query = tools.query(self.benchmarker.queries[numQuery-1])
 			df = t.toDataFrame(numQuery)
 			# save as csv

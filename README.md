@@ -36,12 +36,12 @@ DBMS-Benchmarker
   * in standard Python data structures
   * in [Jupyter notebooks](https://github.com/Beuth-Erdelt/DBMS-Benchmarker/blob/master/Evaluation-Demo.ipynb)
   see [rendered example](https://beuth-erdelt.github.io/DBMS-Benchmarker/Evaluation-Demo.html)  
-  * in an [interactive dashboard](Dashboard.html)
+  * in an interactive dashboard
 
 For more informations, see a [basic example](#basic-usage) or take a look in the [documentation](https://dbmsbenchmarker.readthedocs.io/en/latest/Docs.html) for a full list of options.
 
 The code uses several Python modules, in particular <a href="https://github.com/baztian/jaydebeapi" target="_blank">jaydebeapi</a> for handling DBMS.
-This module has been tested with Clickhouse, DB2, Exasol, Hyperscale (Citus), Kinetica, MariaDB, MariaDB Columnstore, MemSQL, Mariadb, MonetDB, MySQL, OmniSci, Oracle DB, PostgreSQL, SingleStore, SQL Server and SAP HANA.
+This module has been tested with Clickhouse, DB2, Exasol, Hyperscale (Citus), Kinetica, MariaDB, MariaDB Columnstore, MemSQL, Mariadb, MonetDB, MySQL, OmniSci, Oracle DB, PostgreSQL, SingleStore, SQL Server, SAP HANA and Vertica.
 
 ## Installation
 
@@ -56,7 +56,7 @@ As a result we obtain an interactive dashboard to inspect timing aspects.
 
 We need to provide
 
-* a [DBMS configuration file](Options.html#connection-file), e.g. in `./config/connections.config`  
+* a [DBMS configuration file](https://dbmsbenchmarker.readthedocs.io/en/latest/Options.html#connection-file), e.g. in `./config/connections.config`  
 ```
 [
   {
@@ -72,7 +72,7 @@ We need to provide
 ]
 ```
 * the required JDBC driver, e.g. `mysql-connector-java-8.0.13.jar`
-* a [Queries configuration file](Options.html#query-file), e.g. in `./config/queries.config`  
+* a [Queries configuration file](https://dbmsbenchmarker.readthedocs.io/en/latest/Options.html#query-file), e.g. in `./config/queries.config`  
 ```
 {
   'name': 'Some simple queries',
@@ -162,8 +162,3 @@ Other comparable products you might like
 > In: Nambiar R., Poess M. (eds) Performance Evaluation and Benchmarking. TPCTC 2021.
 > Lecture Notes in Computer Science, vol 13169. Springer, Cham.
 > https://doi.org/10.1007/978-3-030-94437-7_6
-
-(old, slightly outdated [docs](Docs_old.html))
-
-
-
