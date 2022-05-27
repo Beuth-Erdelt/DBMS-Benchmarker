@@ -12,21 +12,6 @@ Make sure to adjust the
 
 
 
-    {
-        'name': "Vertica",
-        'info': "This is Vertica on dsm server SF=1",
-        'active': True,
-        'JDBC': {
-            'driver': "com.mysql.cj.jdbc.Driver",
-            'url': 'jdbc:vertica://dsm.beuth-hochschule.de:5433/',
-            'auth': ["dbadmin", ""],
-            'jar': "jars/vertica-jdbc-11.1.0-0.jar"
-        },
-    },
-
-
-
-
 ## Citus Data
 
 https://www.citusdata.com/
