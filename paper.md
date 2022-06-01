@@ -226,8 +226,11 @@ Second of query execution time, number of query and number of configuration.
 
 ## Python - Pandas
 
-The package includes pandas DataFrames covering errors and warnings, that have occured, and timing and hardware metrics, that have been collected or derived.
-All metrics can be sliced or diced, rolled-up or drilled-down into the various dimensions using several aggregation functions for evaluation.
+All metrics can be sliced or diced, rolled-up or drilled-down into the various dimensions using several aggregation functions for evaluation:
+First, last, minimum, maximum, arithmetic and geometric mean, range and interquartile range, standard deviation, median, some quantiles, coefficient of variation and quartile coefficient of dispersion.
+This helps in univariate analysis of center and dispersion of the metrics to evaluate measures and stability.
+
+The package includes tools to convert the three dimensional results into pandas DataFrames, like covering errors and warnings, that have occured, and timing and hardware metrics, that have been collected or derived.
 
 For example the latency of execution, aggregated in the query dimension by computing the mean value, can be obtained as:
 
