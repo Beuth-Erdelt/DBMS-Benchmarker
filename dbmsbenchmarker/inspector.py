@@ -322,7 +322,9 @@ class inspector():
                 #print(df_stat[total_aggregate])
                 df_result.insert(loc=len(df_result.columns), column=i, value=df_stat[total_aggregate])
             #print(df_result)
-            return df_result
+            #return df_result
+            newframe = df_result.copy()
+            return newframe
     def get_aggregated_by_connection(self, dataframe, list_connections=[], connection_aggregate='Mean'):
         """
         Calculate the connection aggregate
@@ -343,7 +345,9 @@ class inspector():
         else:
             df_stats = evaluator.addStatistics(dataframe.T, drop_measures=True)
             df_stats = pd.DataFrame(df_stats[connection_aggregate])
-        return df_stats.T
+        #return df_stats.T
+        newframe = df_stats.copy().T
+        return newframe
     def get_error(self, numQuery, connection=None):
         # error message of connection at query
         return self.benchmarks.getError(numQuery, connection)
