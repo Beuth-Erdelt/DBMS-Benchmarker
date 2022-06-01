@@ -324,6 +324,14 @@ class inspector():
             #print(df_result)
             return df_result
     def get_aggregated_by_connection(self, dataframe, list_connections=[], connection_aggregate='Mean'):
+        """
+        Calculate the connection aggregate
+        
+        :param dataframe: DataFrame 
+        :param list_connections:
+        :param connection_aggregate: 
+        :return: 
+        """
         df_stats = pd.DataFrame()
         if len(list_connections) > 0:
             for i, l2 in list_connections.items():

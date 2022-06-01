@@ -25,7 +25,7 @@ Queries can be parametrized and randomized.
 Results and evaluations are available via a Python interface and can be inspected with standard Python tools like pandas DataFrames.
 An interactive visual dashboard assists in multi-dimensional analysis of the results.
 
-This module has been tested with Clickhouse, Exasol, Citus Data (Hyperscale), IBM DB2, Kinetica, MariaDB, MariaDB Columnstore, MemSQL (SingleStore), MariaDB, MariaDB Columnstore, MonetDB, MySQL, OmniSci (HEAVY.AI) , Oracle DB, PostgreSQL, SQL Server, SAP HANA and Vertica.
+This module has been tested with Clickhouse, Exasol, Citus Data (Hyperscale), IBM DB2, MariaDB, MariaDB Columnstore, MemSQL (SingleStore), MonetDB, MySQL, OmniSci (HEAVY.AI) , Oracle DB, PostgreSQL, SQL Server, SAP HANA and Vertica.
 
 See the [homepage](https://github.com/Beuth-Erdelt/DBMS-Benchmarker) and the [documentation](https://dbmsbenchmarker.readthedocs.io/en/latest/Docs.html).
 
@@ -186,7 +186,7 @@ A session starts with establishing a connection and ends when the connection is 
 
 We also measure and store the **total time** of the benchmark of the query, since for parallel execution this differs from the **sum of times** based on *timerRun*. Total time means measurement starts before first benchmark run and stops after the last benchmark run has been finished. Thus total time also includes some overhead (for spawning a pool of subprocesses, compute size of result sets and joining results of subprocesses).
 Thus the sum of times is more of an indicator for performance of the server system, the total time is more of an indicator for the performance the client user receives.
-We also compute for each query and DBMS **latency** (measured time) and **throughput** (number of parallel clients per mean time).
+We also compute for each query and DBMS **latency** (measured time) and **throughput** (number of parallel clients per measured time).
 Additionally error messages and timestamps of begin and end of benchmarking a query are stored.
 
 
@@ -222,13 +222,15 @@ We also can have various hardware metrics like CPU and GPU utilization, CPU thro
 These are also described in three dimensions:
 Second of query execution time, number of query and number of configuration.
 
-All these metrics can be sliced or diced, rolled-up or drilled-down into the various dimensions using several aggregation functions for evaluation.
-
 # Evaluation
 
 ## Python - Pandas
 
-There are DataFrames covering errors and warnings, that have occured, and timing and hardware metrics that have been collected or derived.
+All metrics can be sliced or diced, rolled-up or drilled-down into the various dimensions using several aggregation functions for evaluation:
+First, last, minimum, maximum, arithmetic and geometric mean, range and interquartile range, standard deviation, median, some quantiles, coefficient of variation and quartile coefficient of dispersion.
+This helps in univariate analysis of center and dispersion of the metrics to evaluate measures and stability.
+
+The package includes tools to convert the three dimensional results into pandas DataFrames, like covering errors and warnings, that have occured, and timing and hardware metrics, that have been collected or derived.
 
 For example the latency of execution, aggregated in the query dimension by computing the mean value, can be obtained as:
 
@@ -241,8 +243,8 @@ df = evaluate.get_aggregated_query_statistics(
 
 ## GUI - Dashboard
 
-The dashboard helps in interactive evaluation of experiment results.
-It shows plots of various types, that can be customized and filtered by DBMS configuration and query.
+The package includes a dashboard helping in interactive evaluation of experiment results.
+It shows predefined plots of various types, that can be customized and filtered by DBMS configuration and query.
 
 ![screenshot of dashboard.\label{fig:dashboard}](docs/dashboard.png){ width=1440}
 
