@@ -398,9 +398,13 @@ class metricer(reporter):
 					time_start = int(datetime.timestamp(datetime.strptime(times["starts"][c],'%Y-%m-%d %H:%M:%S.%f')))
 					times = self.benchmarker.protocol['query'][str(number_of_queries)]
 					time_end = int(datetime.timestamp(datetime.strptime(times["ends"][c],'%Y-%m-%d %H:%M:%S.%f')))
-					logging.debug(connection.connectiondata['monitoring']['prometheus_url'])
+					#logging.debug(connection.connectiondata['monitoring']['prometheus_url'])
 					query='stream'
-					for m, metric in connection.connectiondata['monitoring']['metrics'].items():
+					if 'metrics' in connection.connectiondata['monitoring']:
+						metrics_dict = connection.connectiondata['monitoring']['metrics']
+					else:
+						metrics_dict = monitor.metrics.metrics
+					for m, metric in metrics_dict.items():
 						logging.debug("Metric {}".format(m))
 						monitor.metrics.fetchMetric(query, m, c, connection.connectiondata, time_start, time_end, '{result_path}/'.format(result_path=self.benchmarker.path))
 

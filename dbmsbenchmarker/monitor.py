@@ -104,6 +104,7 @@ class metrics():
         self.benchmarker = benchmarks
     @staticmethod
     def getMetrics(url, metric, time_start, time_end, step=1):
+        logging.debug("getMetrics from "+url)
         query = 'query_range'#?query='+metric['query']+'&start='+str(time_start)+'&end='+str(time_end)+'&step='+str(self.step)
         params = {
             'query': metric['query'],
@@ -197,6 +198,8 @@ class metrics():
                 # is there a custom query for this metric and dbms?
                 if 'metrics' in connectiondata['monitoring'] and metric_code in connectiondata['monitoring']['metrics']:
                     metric = connectiondata['monitoring']['metrics'][metric_code].copy()
+                else:
+                    metric = metrics.metrics[metric_code]
                 #print(metric)
                 # this yields seconds
                 # is there a global timeshift
@@ -236,25 +239,18 @@ class metrics():
         times = self.benchmarker.protocol['query'][str(query)]
         for m, metric in metrics.metrics.items():
             intervals = {}
-            df_all = None
             logging.debug("Metric "+m)
             for c,t in times["starts"].items():
                 time_start = int(datetime.timestamp(datetime.strptime(times["starts"][c],'%Y-%m-%d %H:%M:%S.%f')))
                 time_end = int(datetime.timestamp(datetime.strptime(times["ends"][c],'%Y-%m-%d %H:%M:%S.%f')))
-                if 'extend' in self.benchmarker.dbms[c].connectiondata['monitoring']:
-                    add_interval = int(self.benchmarker.dbms[c].connectiondata['monitoring']['extend'])
-                else:
-                    add_interval = 0
-                intervals[c] = time_end-time_start #+1# because of ceil()
-                df = metrics.fetchMetric(query, m, c, self.benchmarker.dbms[c].connectiondata, time_start, time_end, self.benchmarker.path)
-                if df.empty or len(df.index)==1:
-                    continue
-                if df_all is None:
-                    df_all = df
-                else:
-                    df_all = df_all.merge(df,how='outer', left_index=True,right_index=True)
-            if df_all is None:
-                continue
+                #if 'extend' in self.benchmarker.dbms[c].connectiondata['monitoring']:
+                #    add_interval = int(self.benchmarker.dbms[c].connectiondata['monitoring']['extend'])
+                #else:
+                #    add_interval = 0
+                #intervals[c] = time_end-time_start #+1# because of ceil()
+                logging.debug("Start={} End={}".format(time_start, time_end))
+                df = self.fetchMetric(query, m, c, self.benchmarker.dbms[c].connectiondata, time_start, time_end, self.benchmarker.path)
+                print(df)
     def DEPRECATED_generatePlotForQuery(self, query):
         times = self.benchmarker.protocol['query'][str(query)]
         for m, metric in metrics.metrics.items():
@@ -351,7 +347,11 @@ class metrics():
                                     m_n[c][m] = 0
                                     m_sum[c][m] = 0
                                 #logging.debug("Connection "+c)
-                                add_interval = int(self.benchmarker.dbms[c].connectiondata['monitoring']['extend'])
+                                if 'extend' in self.benchmarker.dbms[c].connectiondata['monitoring']:
+                                    add_interval = int(self.benchmarker.dbms[c].connectiondata['monitoring']['extend'])
+                                else:
+                                    add_interval = 0
+                                #add_interval = int(self.benchmarker.dbms[c].connectiondata['monitoring']['extend'])
                                 csvfile = self.benchmarker.path+'/query_'+str(query)+'_metric_'+str(m)+'_'+c+'.csv'
                                 if os.path.isfile(csvfile):
                                     #print(csvfile)
