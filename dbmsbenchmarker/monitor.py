@@ -208,7 +208,11 @@ class metrics():
                     time_shift = 0
                 time_start = time_start + time_shift
                 time_end = time_end + time_shift
-                add_interval = int(connectiondata['monitoring']['extend'])
+                if 'extend' in connectiondata['monitoring']:
+                    add_interval = int(connectiondata['monitoring']['extend'])
+                else:
+                    add_interval = 0
+                #add_interval = int(connectiondata['monitoring']['extend'])
                 #add_interval = int(connectiondata['monitoring']['grafanaextend'])
                 time_start = time_start - add_interval
                 time_end = time_end + add_interval
@@ -237,7 +241,10 @@ class metrics():
             for c,t in times["starts"].items():
                 time_start = int(datetime.timestamp(datetime.strptime(times["starts"][c],'%Y-%m-%d %H:%M:%S.%f')))
                 time_end = int(datetime.timestamp(datetime.strptime(times["ends"][c],'%Y-%m-%d %H:%M:%S.%f')))
-                add_interval = int(self.benchmarker.dbms[c].connectiondata['monitoring']['extend'])
+                if 'extend' in self.benchmarker.dbms[c].connectiondata['monitoring']:
+                    add_interval = int(self.benchmarker.dbms[c].connectiondata['monitoring']['extend'])
+                else:
+                    add_interval = 0
                 intervals[c] = time_end-time_start #+1# because of ceil()
                 df = metrics.fetchMetric(query, m, c, self.benchmarker.dbms[c].connectiondata, time_start, time_end, self.benchmarker.path)
                 if df.empty or len(df.index)==1:
@@ -257,7 +264,11 @@ class metrics():
             for c,t in times["starts"].items():
                 time_start = int(datetime.timestamp(datetime.strptime(times["starts"][c],'%Y-%m-%d %H:%M:%S.%f')))
                 time_end = int(datetime.timestamp(datetime.strptime(times["ends"][c],'%Y-%m-%d %H:%M:%S.%f')))
-                add_interval = int(self.benchmarker.dbms[c].connectiondata['monitoring']['extend'])
+                if 'extend' in self.benchmarker.dbms[c].connectiondata['monitoring']:
+                    add_interval = int(self.benchmarker.dbms[c].connectiondata['monitoring']['extend'])
+                else:
+                    add_interval = 0
+                #add_interval = int(self.benchmarker.dbms[c].connectiondata['monitoring']['extend'])
                 intervals[c] = time_end-time_start #+1# because of ceil()
                 df = metrics.fetchMetric(query, m, c, self.benchmarker.dbms[c].connectiondata, time_start, time_end, self.benchmarker.path)
                 if df.empty or len(df.index)==1:
