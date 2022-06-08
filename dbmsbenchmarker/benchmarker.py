@@ -50,6 +50,8 @@ BENCHMARKER_VERBOSE_STATISTICS = False
 BENCHMARKER_VERBOSE_RESULTS = False
 BENCHMARKER_VERBOSE_PROCESS = False
 
+logger = mp.log_to_stderr(logging.INFO)
+
 class singleRunInput:
 	"""
 	Class for collecting info about a benchmark run
@@ -386,6 +388,8 @@ class benchmarker():
 		#self.timeout = 600
 		# there is no general pool
 		self.pool = None
+		# store number of cpu cores
+		self.num_cpu = mp.cpu_count()
 		# printer is first and fixed reporter
 		self.reporter = [reporter.printer(self)]
 		# store is fixed reporter and cannot be removed
@@ -1171,7 +1175,7 @@ class benchmarker():
 				inputConfig.append(singleResultInput(i, l_data[i], l_columnnames[i], self.queries[numQuery-1]))
 			#print(inputConfig)
 			lists = []
-			numProcesses_cpu = mp.cpu_count()
+			numProcesses_cpu = self.num_cpu# mp.cpu_count()
 			batchsize_data = 1
 			numBatches_data = math.ceil(query.numRun/batchsize_data)
 			runs_data = list(range(0,query.numRun))
