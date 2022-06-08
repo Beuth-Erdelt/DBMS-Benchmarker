@@ -172,6 +172,14 @@ class timer():
 		#if benchmarker.BENCHMARKER_VERBOSE_STATISTICS:
 		#	print("Benchmark "+self.name+" has been stored for "+self.nameConnection+" mean: "+str(self.stats[self.currentQuery][self.nameConnection][0]))
 	def skipTimer(self, numQuery, query, nameConnection):
+		"""
+		Skips the timer, that is and empty list of measures is appended.
+
+		:param numQuery: Number of query
+		:param query: Query object of the query
+		:param nameConnection: Name of the connection
+		:return: returns nothing
+		"""
 		self.nameConnection = nameConnection
 		self.startTimerQuery(numQuery, query)#numWarmup, numRun)
 		if len(self.times) <= self.currentQuery:
@@ -180,27 +188,25 @@ class timer():
 		self.finishTimerQuery()
 	def startTimerQuery(self, numQuery, query):# numWarmup, numRun):
 		"""
-		Stores number of warmup runs and benchmark runs.
-		Also clears data of current query.
-		This is a list (connections) of benchmarks (runs)
+		Starts new (current) query and stores the query object of it.
 
-		:param numWarmup: Number of warmup runs
-		:param numRun: Number of benchmarking runs
+		:param numQuery: Number of query
+		:param query: Query object of the query
 		:return: returns nothing
 		"""
 		self.currentQuery = numQuery-1
 		self.query = query
 	def finishTimerQuery(self):
 		"""
-		Appends completed benchmarks of one single query to storage.
-		This is a list (connections) of benchmarks (runs).
+		Purpose is to stop recording timer of a query.
+		Does nothing currently.
 
 		:return: returns nothing
 		"""
 		pass
 	def startTimerConnection(self):
 		"""
-		Starts benchmark of one single connection with fixed query.
+		Starts recording measures of one single connection with fixed query.
 		Clears list of numbers of runs of current connection.
 
 		:return: returns nothing
@@ -247,9 +253,10 @@ class timer():
 	def finishTimerRun(self):
 		"""
 		Ends benchmark of one single run.
-		Benchmark is set to 0 due to error.
+		Computes duration in ms.
+		Benchmark is stored in list (fixed query, one connection)
 
-		:return: returns 0
+		:return: returns duration of current benchmark
 		"""
 		self.end = default_timer()
 		duration = self.end - self.start
@@ -258,9 +265,9 @@ class timer():
 	def abortTimerRun(self):
 		"""
 		Ends benchmark of one single run.
-		Benchmark is stored in list (fixed query, one connection)
+		Same as finishTimerRun(), but time is set to 0 due to error.
 
-		:return: returns duration of current benchmark
+		:return: returns 0
 		"""
 		# same as finishTimerRun(), but time is 0
 		self.end = self.start
@@ -367,7 +374,7 @@ class query():
 	"""
 	def __init__(self, querydict):
 		"""
-		Converts dict into object.
+		Creates object and stores data given in dict into object.
 
 		:param query: Dict containing query infos - query, numRun, numParallel, withData, warmup, cooldown, title
 		:return: returns nothing
@@ -412,6 +419,13 @@ class query():
 		self.timer['run'] = {'active': True}
 		self.timer['session'] = {'active': True}
 	def dictToObject(self, query):
+		"""
+		Converts dict into object.
+		Sets missing values to defaults.
+
+		:param query: Dict containing query infos - query, numRun, numParallel, withData, warmup, cooldown, title
+		:return: returns nothing
+		"""
 		if 'query' in query:
 			self.query = query['query']
 		if 'maxTime' in query:
@@ -511,7 +525,7 @@ class dbms():
 		Converts dict into object.
 		Anonymizes dbms if activated.
 
-		:param query: Dict containing query infos - query, numRun, withData, warmup, title
+		:param connectiondata: Dict containing connection infos
 		:return: returns nothing
 		"""
 		self.connectiondata = connectiondata
@@ -617,8 +631,7 @@ class dbms():
 		"""
 		Fetches result from current cursor.
 
-		:param queryString: SQL query to be executed
-		:return: returns nothing
+		:return: returns result set
 		"""
 		if self.cursor is not None:
 			return self.cursor.fetchall()
@@ -637,12 +650,20 @@ class dbms():
 		"""
 		Returns name of dbms, or alias if anonymous.
 
-		:return: returns nothing
+		:return: returns (anonymized) name
 		"""
 		return self.name
 	def hasHardwareMetrics(self):
+		"""
+		Returns if monitoring service parameter are present in connection information.
+
+		:return: returns nothing
+		"""
 		# should hardware metrics be fetched from grafana
 		if 'monitoring' in self.connectiondata and 'grafanatoken' in self.connectiondata['monitoring'] and 'grafanaurl' in self.connectiondata['monitoring'] and self.connectiondata['monitoring']['grafanatoken'] and self.connectiondata['monitoring']['grafanaurl']:
+			return True
+		# should hardware metrics be fetched from prometheus
+		elif 'monitoring' in self.connectiondata and 'prometheus_url' in self.connectiondata['monitoring'] and len(self.connectiondata['monitoring']['prometheus_url']):
 			return True
 		else:
 			return False
@@ -721,9 +742,10 @@ class dataframehelper():
 		Rows=dbms, cols=timer, values=sum of times
 		Anonymizes dbms if activated.
 
+		:param benchmarker: Benchmarker object that contains all information about the benchmark, connections and queries
 		:param numQuery: Number of query to generate dataframe of (None means all)
 		:param timer: Timer containing benchmark results
-		:return: returns nothing
+		:return: returns dataframe and title
 		"""
 		sums = list(range(0,len(timer)))
 		timerNames = [t.name for t in timer]
@@ -803,12 +825,13 @@ class dataframehelper():
 	def multiplyPerTimer(benchmarker, numQuery, timer):
 		"""
 		Generates a dataframe (for bar charts) of the time series of a benchmarker.
-		Rows=dbms, cols=timer, values=sum of times
+		Rows=dbms, cols=timer, values=product of factors of times
 		Anonymizes dbms if activated.
 
+		:param benchmarker: Benchmarker object that contains all information about the benchmark, connections and queries
 		:param numQuery: Number of query to generate dataframe of (None means all)
 		:param timer: Timer containing benchmark results
-		:return: returns nothing
+		:return: returns dataframe and title
 		"""
 		#logging.basicConfig(level=logging.DEBUG)
 		sums = list(range(0,len(timer)))
@@ -920,6 +943,15 @@ class dataframehelper():
 		return d, title
 	@staticmethod
 	def totalTimes(benchmarker, dbms_filter=[]):
+		"""
+		Generates a dataframe (for bar charts) of the time series of a benchmarker.
+		Rows=queries, cols=dbms, values=sum of times
+		Anonymizes dbms if activated.
+
+		:param benchmarker: Benchmarker object that contains all information about the benchmark, connections and queries
+		:param dbms_filter: List of connections to keep
+		:return: returns nothing
+		"""
 		# find position of execution timer
 		e = [i for i,t in enumerate(benchmarker.timers) if t.name=="execution"]
 		# list of active queries for timer e[0] = execution
@@ -943,7 +975,7 @@ class dataframehelper():
 		title = 'Total times of '+str(len(times[c]))+" queries"
 		return dataframe, title
 	@staticmethod
-	def timesToStatsDataFrame(times):
+	def DEPRECATED_timesToStatsDataFrame(times):
 		l = timer.getStats(times)
 		# convert statistics to DataFrame
 		df = pd.DataFrame.from_records([l])
@@ -952,6 +984,12 @@ class dataframehelper():
 		return df
 	@staticmethod
 	def resultsetToDataFrame(data):
+		"""
+		Generates a dataframe from a result set.
+
+		:param data: Result set as a list
+		:return: dataframe of result set
+		"""
 		df = pd.DataFrame.from_records(data)
 		# set column names
 		df.columns = df.iloc[0]
@@ -960,6 +998,12 @@ class dataframehelper():
 		return df
 	@staticmethod
 	def evaluateHardwareToDataFrame(evaluation):
+		"""
+		Generates a dataframe from system parameters.
+
+		:param evaluation: Evaluation object
+		:return: dataframe of system (hardware) parameters
+		"""
 		df1=pd.DataFrame.from_dict({c:d['hardwaremetrics'] for c,d in evaluation['dbms'].items()}).transpose()
 		df2=pd.DataFrame.from_dict({c:d['hostsystem'] for c,d in evaluation['dbms'].items()}).transpose()
 		if 'CUDA' in df2.columns:
@@ -978,7 +1022,7 @@ class dataframehelper():
 		df = df.applymap(lambda x: x if not np.isnan(x) else 0.0)
 		return df
 	@staticmethod
-	def addStatistics(df):
+	def DEPRECATED_addStatistics(df):
 		#print("Compute statistics")
 		#print(df)
 		#with_nan = False

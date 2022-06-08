@@ -325,6 +325,83 @@ class pickler(reporter):
 
 
 
+class metricer(reporter):
+	"""
+	Class for generating reports.
+	Generates a plot of the benchmarks as a time series and saves it to disk.
+	"""
+	def __init__(self, benchmarker, per_stream=False):
+		reporter.__init__(self, benchmarker)
+		self.per_stream = per_stream
+	def save(self, dataframe, title, subtitle, filename):
+		"""
+		Saves report of a given query as plot image per timer.
+		Anonymizes dbms if activated.
+
+		:param dataframe: Report data given as a pandas DataFrame (rows=dbms, cols=benchmarks)
+		:param title: Title of the report
+		:param subtitle: Subtitle of the report
+		:param filename: Name of the file the report will be saved to
+		:return: returns nothing
+		"""
+		pass
+	def generate(self, numQuery, timer):
+		"""
+		Generates a plot of the benchmarks as a time series and saves it to disk.
+		Anonymizes dbms if activated.
+
+		:param numQuery: Number of query to generate report of
+		:param timer: Timer containing benchmark results
+		:return: returns nothing
+		"""
+		for connectionname, connection in self.benchmarker.dbms.items():
+			if connection.hasHardwareMetrics():
+				logging.debug("Hardware metrics for Q"+str(numQuery))
+				metricsReporter = monitor.metrics(self.benchmarker)
+				metricsReporter.generatePlotForQuery(numQuery)
+				break
+	def generateAll(self, timer):
+		"""
+		Generates all reports for the benchmarker object for a given timer.
+		If benchmarker has a fixed query, only reports for this query are generated.
+		A plot of the total times is generated in any case.
+		Anonymizes dbms if activated.
+
+		:param timer: Timer object
+		:return: returns nothing
+		"""
+		# per query
+		if not self.per_stream:
+			if self.benchmarker.bBatch:
+				range_runs = self.benchmarker.protocol['query'].items()
+			else:
+				range_runs = tqdm(self.benchmarker.protocol['query'].items())
+			for numQuery, protocol in range_runs:
+				query = tools.query(self.benchmarker.queries[int(numQuery)-1])
+				if not query.active:
+					continue
+				self.generate(numQuery, [])
+		#for q, d in self.benchmarker.protocol['query'].items():
+		#	query = tools.query(self.benchmarker.queries[int(q)-1])
+		#	# is query active?
+		#	if not query.active:
+		#		continue
+		#	self.generate(q, [])
+		# per stream
+		if self.per_stream:
+			number_of_queries = len(self.benchmarker.protocol['query'].items())
+			for c, connection in self.benchmarker.dbms.items():
+				if connection.hasHardwareMetrics():
+					logging.info("Hardware metrics for stream of connection {}".format(c))
+					times = self.benchmarker.protocol['query'][str(1)]
+					time_start = int(datetime.timestamp(datetime.strptime(times["starts"][c],'%Y-%m-%d %H:%M:%S.%f')))
+					times = self.benchmarker.protocol['query'][str(number_of_queries)]
+					time_end = int(datetime.timestamp(datetime.strptime(times["ends"][c],'%Y-%m-%d %H:%M:%S.%f')))
+					logging.debug(connection.connectiondata['monitoring']['prometheus_url'])
+					query='stream'
+					for m, metric in connection.connectiondata['monitoring']['metrics'].items():
+						logging.debug("Metric {}".format(m))
+						monitor.metrics.fetchMetric(query, m, c, connection.connectiondata, time_start, time_end, '{result_path}/'.format(result_path=self.benchmarker.path))
 
 
 
@@ -386,7 +463,9 @@ class pickler(reporter):
 
 
 
-class ploter(reporter):
+
+
+class DEPRECATED_ploter(reporter):
 	"""
 	Class for generating reports.
 	Generates a plot of the benchmarks as a time series and saves it to disk.
@@ -472,7 +551,7 @@ class ploter(reporter):
 
 
 
-class dataframer(reporter):
+class DEPRECATED_dataframer(reporter):
 	"""
 	Class for generating reports.
 	Generates a data frame of the benchmark times and saves it to disk as a pickle file.
@@ -534,7 +613,7 @@ class dataframer(reporter):
 
 
 
-class boxploter(reporter):
+class DEPRECATED_boxploter(reporter):
 	"""
 	Class for generating reports.
 	Generates a boxplot of the time series and saves it to disk.
@@ -623,7 +702,7 @@ class boxploter(reporter):
 
 
 
-class barer(reporter):
+class DEPRECATED_barer(reporter):
 	"""
 	Class for generating reports.
 	Generates a bar chart of the time series and saves it to disk.
@@ -721,7 +800,7 @@ class barer(reporter):
 
 
 
-class tps(reporter):
+class DEPRECATED_tps(reporter):
 	"""
 	Class for generating reports.
 	Generates a bar chart of the time series and saves it to disk.
@@ -851,7 +930,7 @@ class tps(reporter):
 		self.generate(numQuery=None, timer=timer)
 
 
-class hister(reporter):
+class DEPRECATED_hister(reporter):
 	"""
 	Class for generating reports.
 	Generates a bar chart of the time series and saves it to disk.
@@ -959,7 +1038,7 @@ class hister(reporter):
 
 
 
-class arear(reporter):
+class DEPRECATED_arear(reporter):
 	"""
 	Class for generating reports.
 	Generates a plot of the benchmarks as a time series and saves it to disk.
@@ -1057,7 +1136,7 @@ class arear(reporter):
 
 
 
-class normarear(arear):
+class DEPRECATED_normarear(DEPRECATED_arear):
 	"""
 	Class for generating reports.
 	Generates a plot of the benchmarks as a time series and saves it to disk.
@@ -1067,88 +1146,9 @@ class normarear(arear):
 		self.normed = True
 
 
-class metricer(reporter):
-	"""
-	Class for generating reports.
-	Generates a plot of the benchmarks as a time series and saves it to disk.
-	"""
-	def __init__(self, benchmarker, per_stream=False):
-		reporter.__init__(self, benchmarker)
-		self.per_stream = per_stream
-	def save(self, dataframe, title, subtitle, filename):
-		"""
-		Saves report of a given query as plot image per timer.
-		Anonymizes dbms if activated.
-
-		:param dataframe: Report data given as a pandas DataFrame (rows=dbms, cols=benchmarks)
-		:param title: Title of the report
-		:param subtitle: Subtitle of the report
-		:param filename: Name of the file the report will be saved to
-		:return: returns nothing
-		"""
-		pass
-	def generate(self, numQuery, timer):
-		"""
-		Generates a plot of the benchmarks as a time series and saves it to disk.
-		Anonymizes dbms if activated.
-
-		:param numQuery: Number of query to generate report of
-		:param timer: Timer containing benchmark results
-		:return: returns nothing
-		"""
-		for connectionname, connection in self.benchmarker.dbms.items():
-			if connection.hasHardwareMetrics():
-				logging.debug("Hardware metrics for Q"+str(numQuery))
-				metricsReporter = monitor.metrics(self.benchmarker)
-				metricsReporter.generatePlotForQuery(numQuery)
-				break
-	def generateAll(self, timer):
-		"""
-		Generates all reports for the benchmarker object for a given timer.
-		If benchmarker has a fixed query, only reports for this query are generated.
-		A plot of the total times is generated in any case.
-		Anonymizes dbms if activated.
-
-		:param timer: Timer object
-		:return: returns nothing
-		"""
-		# per query
-		if not self.per_stream:
-			if self.benchmarker.bBatch:
-				range_runs = self.benchmarker.protocol['query'].items()
-			else:
-				range_runs = tqdm(self.benchmarker.protocol['query'].items())
-			for numQuery, protocol in range_runs:
-				query = tools.query(self.benchmarker.queries[int(numQuery)-1])
-				if not query.active:
-					continue
-				self.generate(numQuery, [])
-		#for q, d in self.benchmarker.protocol['query'].items():
-		#	query = tools.query(self.benchmarker.queries[int(q)-1])
-		#	# is query active?
-		#	if not query.active:
-		#		continue
-		#	self.generate(q, [])
-		# per stream
-		if self.per_stream:
-			number_of_queries = len(self.benchmarker.protocol['query'].items())
-			for c, connection in self.benchmarker.dbms.items():
-				if connection.hasHardwareMetrics():
-					logging.info("Hardware metrics for stream of connection {}".format(c))
-					times = self.benchmarker.protocol['query'][str(1)]
-					time_start = int(datetime.timestamp(datetime.strptime(times["starts"][c],'%Y-%m-%d %H:%M:%S.%f')))
-					times = self.benchmarker.protocol['query'][str(number_of_queries)]
-					time_end = int(datetime.timestamp(datetime.strptime(times["ends"][c],'%Y-%m-%d %H:%M:%S.%f')))
-					logging.debug(connection.connectiondata['monitoring']['prometheus_url'])
-					query='stream'
-					for m, metric in connection.connectiondata['monitoring']['metrics'].items():
-						logging.debug("Metric {}".format(m))
-						monitor.metrics.fetchMetric(query, m, c, connection.connectiondata, time_start, time_end, '{result_path}/'.format(result_path=self.benchmarker.path))
 
 
-
-
-class latexer(reporter):
+class DEPRECATED_latexer(reporter):
 	"""
 	Class for generating reports.
 	This class generates a survey in latex and saves it to disk.
@@ -2299,7 +2299,7 @@ class latexer(reporter):
 
 
 
-class latexerPagePerQuery(latexer):
+class DEPRECATED_latexerPagePerQuery(DEPRECATED_latexer):
 	"""
 	Class for generating reports.
 	This class generates a survey in latex and saves it to disk.
@@ -2310,7 +2310,7 @@ class latexerPagePerQuery(latexer):
 
 
 
-class latexerCustom(latexer):
+class DEPRECATED_latexerCustom(DEPRECATED_latexer):
 	"""
 	Class for generating reports.
 	This class generates a survey in latex and saves it to disk.
