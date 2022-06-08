@@ -1432,6 +1432,8 @@ class benchmarker():
 		if self.bBatch:
 			# generate reports at the end only
 			self.generateReportsAll()
+		# stop logging multiprocessing
+		mp.log_to_stderr(logging.ERROR)
 	def readResultfolder(self):
 		"""
 		Reads data of previous benchmark from folder.
