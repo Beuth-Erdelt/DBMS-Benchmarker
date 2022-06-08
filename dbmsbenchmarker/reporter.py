@@ -358,7 +358,8 @@ class metricer(reporter):
 			if connection.hasHardwareMetrics():
 				logging.debug("Hardware metrics for Q"+str(numQuery))
 				metricsReporter = monitor.metrics(self.benchmarker)
-				metricsReporter.generatePlotForQuery(numQuery)
+				#metricsReporter.generatePlotForQuery(numQuery)
+				metricsReporter.fetchMetricPerQuery(numQuery)
 				break
 	def generateAll(self, timer):
 		"""

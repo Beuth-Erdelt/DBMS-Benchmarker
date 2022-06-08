@@ -228,7 +228,27 @@ class metrics():
                 return df
         df = pd.DataFrame()
         return df
-    def generatePlotForQuery(self, query):
+    def fetchMetricPerQuery(self, query):
+        times = self.benchmarker.protocol['query'][str(query)]
+        for m, metric in metrics.metrics.items():
+            intervals = {}
+            df_all = None
+            logging.debug("Metric "+m)
+            for c,t in times["starts"].items():
+                time_start = int(datetime.timestamp(datetime.strptime(times["starts"][c],'%Y-%m-%d %H:%M:%S.%f')))
+                time_end = int(datetime.timestamp(datetime.strptime(times["ends"][c],'%Y-%m-%d %H:%M:%S.%f')))
+                add_interval = int(self.benchmarker.dbms[c].connectiondata['monitoring']['extend'])
+                intervals[c] = time_end-time_start #+1# because of ceil()
+                df = metrics.fetchMetric(query, m, c, self.benchmarker.dbms[c].connectiondata, time_start, time_end, self.benchmarker.path)
+                if df.empty or len(df.index)==1:
+                    continue
+                if df_all is None:
+                    df_all = df
+                else:
+                    df_all = df_all.merge(df,how='outer', left_index=True,right_index=True)
+            if df_all is None:
+                continue
+    def DEPRECATED_generatePlotForQuery(self, query):
         times = self.benchmarker.protocol['query'][str(query)]
         for m, metric in metrics.metrics.items():
             intervals = {}
