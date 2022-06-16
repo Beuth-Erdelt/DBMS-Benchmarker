@@ -7,7 +7,9 @@ tags:
 authors:
   - name: Patrick K. Erdelt
     orcid: 0000-0002-3359-2386
+    corresponding: true
     affiliation: 1
+  - name: Jascha Jestel
 affiliations:
  - name: Berliner Hochschule für Technik (BHT)
    index: 1
