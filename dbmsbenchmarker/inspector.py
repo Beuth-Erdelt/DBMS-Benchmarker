@@ -50,14 +50,48 @@ color_ranges = [
 ]
 
 def getIntersection(df1, df2):
+    """
+    Intersection of two dataframes.
+
+    :param df1: First dataframe
+    :param df2: Second dataframe
+    :return: Intersection
+    """
     return pd.merge(df1, df2, how='inner')
 def getUnion(df1, df2):
+    """
+    Union of two dataframes.
+
+    :param df1: First dataframe
+    :param df2: Second dataframe
+    :return: Union
+    """
     return pd.concat([df1, df2])
 def getDifference12(df1, df2):
+    """
+    Difference of two dataframes.
+
+    :param df1: First dataframe
+    :param df2: Second dataframe
+    :return: Difference
+    """
     return pd.concat([df1, df2, df2]).drop_duplicates(keep=False)
 def completeSort(df):
+    """
+    Sort dataframe by all columns.
+
+    :param df: Dataframe
+    :return: Sorted dataframe
+    """
     return df.sort_values(by=[df_union_all.columns[i] for i in range(0,len(df.columns))], ascending=True)
 def list_intersection(lst1, lst2): 
+    """
+    Intersection of two lists.
+
+    :param lst1: First list
+    :param lst2: Second list
+    :return: Intersection
+    """
     lst3 = [value for value in lst1 if value in lst2] 
     return lst3 
 
@@ -322,7 +356,9 @@ class inspector():
                 #print(df_stat[total_aggregate])
                 df_result.insert(loc=len(df_result.columns), column=i, value=df_stat[total_aggregate])
             #print(df_result)
-            return df_result
+            #return df_result
+            newframe = df_result.copy()
+            return newframe
     def get_aggregated_by_connection(self, dataframe, list_connections=[], connection_aggregate='Mean'):
         """
         Calculate the connection aggregate
@@ -343,7 +379,9 @@ class inspector():
         else:
             df_stats = evaluator.addStatistics(dataframe.T, drop_measures=True)
             df_stats = pd.DataFrame(df_stats[connection_aggregate])
-        return df_stats.T
+        #return df_stats.T
+        newframe = df_stats.copy().T
+        return newframe
     def get_error(self, numQuery, connection=None):
         # error message of connection at query
         return self.benchmarks.getError(numQuery, connection)

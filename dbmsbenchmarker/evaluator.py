@@ -1,5 +1,5 @@
 """
-    Classes for generating reports for benchmarks of the Python Package DBMS Benchmarker
+    Classes for generating evaluation cubes for benchmarks of the Python Package DBMS Benchmarker
     Copyright (C) 2020  Patrick Erdelt
 
     This program is free software: you can redistribute it and/or modify

@@ -50,6 +50,8 @@ BENCHMARKER_VERBOSE_STATISTICS = False
 BENCHMARKER_VERBOSE_RESULTS = False
 BENCHMARKER_VERBOSE_PROCESS = False
 
+logger = mp.log_to_stderr(logging.INFO)
+
 class singleRunInput:
 	"""
 	Class for collecting info about a benchmark run
@@ -280,7 +282,7 @@ def singleResult(connectiondata, inputConfig, numRuns, connectionname, numQuery,
 					logger.debug(workername+"Begin sorting")
 					data = sorted(data, key=itemgetter(*list(range(0,len(data[0])))))
 					logger.debug(workername+"Finished sorting")
-			logger.info(workername+"Size of processed result list retrieved: "+str(sys.getsizeof(data))+" bytes")
+				logger.info(workername+"Size of processed result list retrieved: "+str(sys.getsizeof(data))+" bytes")
 			# convert to dataframe
 			#columnnames = [[i[0].upper() for i in connection.cursor.description]]
 			df = pd.DataFrame.from_records(data=data, coerce_float=True)
@@ -386,6 +388,8 @@ class benchmarker():
 		#self.timeout = 600
 		# there is no general pool
 		self.pool = None
+		# store number of cpu cores
+		self.num_cpu = mp.cpu_count()
 		# printer is first and fixed reporter
 		self.reporter = [reporter.printer(self)]
 		# store is fixed reporter and cannot be removed
@@ -1171,7 +1175,7 @@ class benchmarker():
 				inputConfig.append(singleResultInput(i, l_data[i], l_columnnames[i], self.queries[numQuery-1]))
 			#print(inputConfig)
 			lists = []
-			numProcesses_cpu = mp.cpu_count()
+			numProcesses_cpu = self.num_cpu# mp.cpu_count()
 			batchsize_data = 1
 			numBatches_data = math.ceil(query.numRun/batchsize_data)
 			runs_data = list(range(0,query.numRun))
@@ -1428,6 +1432,8 @@ class benchmarker():
 		if self.bBatch:
 			# generate reports at the end only
 			self.generateReportsAll()
+		# stop logging multiprocessing
+		mp.log_to_stderr(logging.ERROR)
 	def readResultfolder(self):
 		"""
 		Reads data of previous benchmark from folder.
