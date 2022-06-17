@@ -246,6 +246,6 @@ It shows predefined plots of various types, that can be customized and filtered 
 
 # Acknowledgements
 
-We acknowledge contribution from Andre Bubbel.
+We acknowledge contributions from Andre Bubbel to include TPC-DS queries.
 
 # References
