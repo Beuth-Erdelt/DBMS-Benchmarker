@@ -36,17 +36,17 @@ See the [homepage](https://github.com/Beuth-Erdelt/DBMS-Benchmarker) and the [do
 There are a variety of (relational) database management systems (DBMS) and a lot of products.
 The types thereof can be divided into for example row-wise, column-wise, in-memory, distributed and GPU-enhanced. 
 All of these products have unique characteristics, special use cases, advantages and disadvantages and their justification.
-In order to be able to verify and ensure the performance measurement, we want to be able to create and repeat scenarios.
+In order to be able to verify and ensure the performance measurement, we want to be able to create and repeat benchmarking scenarios.
 Repetition and thorough evaluation are crucial, in particular in the age of Cloud-based systems with it's diversity of hardware configurations, @Raasveldt2018FBC32099503209955, @DBLPconfsigmodKerstenKZ18, @KounevLK20.
 
-There is a need for a tool to support the repetition and reproducibility of benchmarking situations, and that is capable of connecting to all these systems.
+There is need for a tool to support the repetition and reproducibility of benchmarking situations, and that is capable of connecting to all these systems.
 There is also need for a tool that will help with the statistical and interactive analysis of the results.
 We want to use Python as the common Data Science language.
 This helps to implement the tool into a pipeline.
 Moreover this allows to use common and sophisticated tools to inspect and evaluate the results, like pandas, c.f. @reback2020pandas, @mckinney-proc-scipy-2010, Jupyter notebooks, c.f. @Kluyver2016jupyter, matplotlib, c.f. @Hunter:2007, SciPy, c.f. @2020SciPy-NMeth, or even Machine Learning tools.
 
 To our knowledge there is no other such tool, c.f. @10.1007/978-3-319-67162-8_12, @10.1007/978-3-030-12079-5_4.
-There are other tools like Apache JMeter, HammerDB, Sysbench, OLTPBench, that provide nice features, but none fitting these needs.
+There are other tools like Apache JMeter, HammerDB, Sysbench, OLTPBench, that provide very nice features, but none fitting these needs.
 The design decisions of this tool have been elaborated in more detail in @10.1007/978-3-030-84924-5_6.
 DBMS-Benchmarker has been used as a support for recieving scientific results about benchmarking DBMS performance in Cloud environments as in @10.1007/978-3-030-84924-5_6 and @10.1007/978-3-030-94437-7_6.
 
