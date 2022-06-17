@@ -244,4 +244,8 @@ It shows predefined plots of various types, that can be customized and filtered 
 ![screenshot of dashboard.\label{fig:dashboard}](docs/dashboard.png){ width=1440}
 
 
+# Acknowledgements
+
+We acknowledge contribution from Andre Bubbel.
+
 # References
