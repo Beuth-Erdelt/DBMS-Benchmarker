@@ -10,6 +10,7 @@ authors:
     corresponding: true
     affiliation: 1
   - name: Jascha Jestel
+    affiliation: 1
 affiliations:
  - name: Berliner Hochschule für Technik (BHT)
    index: 1
