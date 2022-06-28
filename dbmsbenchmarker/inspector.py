@@ -25,6 +25,7 @@ import ast
 from colour import Color
 from numpy import nan
 from datetime import datetime, timezone
+import copy
 
 from dbmsbenchmarker import benchmarker, tools, evaluator, monitor
 
@@ -260,7 +261,7 @@ class inspector():
             return self.e.evaluation['query']
     def get_experiment_workload_properties(self):
         # dict of workload properties
-        workload = self.e.evaluation['general']
+        workload = copy.deepcopy(self.e.evaluation['general'])
         # remove metrics
         del(workload['loadingmetrics'])
         del(workload['streamingmetrics'])
