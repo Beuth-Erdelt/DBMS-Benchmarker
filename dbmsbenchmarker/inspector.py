@@ -260,7 +260,12 @@ class inspector():
             return self.e.evaluation['query']
     def get_experiment_workload_properties(self):
         # dict of workload properties
-        return self.e.evaluation['general']
+        workload = self.e.evaluation['general']
+        # remove metrics
+        del(workload['loadingmetrics'])
+        del(workload['streamingmetrics'])
+        del(workload['reporting'])
+        return workload
     #def get_measures(self, numQuery, timer, warmup=0, cooldown=0):
     def get_timer(self, numQuery, timer, warmup=0, cooldown=0):
         # dataframe of dbms x measures
