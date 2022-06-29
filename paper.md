@@ -34,7 +34,8 @@ See the [homepage](https://github.com/Beuth-Erdelt/DBMS-Benchmarker) and the [do
 
 # Statement of Need
 
-There are a variety of (relational) database management systems (DBMS) and a lot of products.
+Benchmarking of database management systems (DBMS) is an active research area.
+There are a variety of DBMS and a lot of products.
 The types thereof can be divided into for example row-wise, column-wise, in-memory, distributed and GPU-enhanced. 
 All of these products have unique characteristics, special use cases, advantages and disadvantages and their justification.
 In order to be able to verify and ensure the performance measurement, we want to be able to create and repeat benchmarking scenarios.
