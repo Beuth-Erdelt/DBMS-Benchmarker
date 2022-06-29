@@ -25,6 +25,7 @@ import ast
 from colour import Color
 from numpy import nan
 from datetime import datetime, timezone
+import copy
 
 from dbmsbenchmarker import benchmarker, tools, evaluator, monitor
 
@@ -144,6 +145,11 @@ class inspector():
         self.benchmarks.computeTimerRun()
         self.benchmarks.computeTimerSession()
         self.e = evaluator.evaluator(self.benchmarks, load=load, force=True)
+        self.workload = copy.deepcopy(self.e.evaluation['general'])
+        # remove metrics
+        del(self.workload['loadingmetrics'])
+        del(self.workload['streamingmetrics'])
+        del(self.workload['reporting'])
     def get_experiment_list_queries(self):
         # list of successful queries
         return self.benchmarks.listQueries()
@@ -260,12 +266,7 @@ class inspector():
             return self.e.evaluation['query']
     def get_experiment_workload_properties(self):
         # dict of workload properties
-        workload = self.e.evaluation['general']
-        # remove metrics
-        del(workload['loadingmetrics'])
-        del(workload['streamingmetrics'])
-        del(workload['reporting'])
-        return workload
+        return self.workload
     #def get_measures(self, numQuery, timer, warmup=0, cooldown=0):
     def get_timer(self, numQuery, timer, warmup=0, cooldown=0):
         # dataframe of dbms x measures
