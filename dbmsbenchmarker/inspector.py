@@ -147,9 +147,12 @@ class inspector():
         self.e = evaluator.evaluator(self.benchmarks, load=load, force=True)
         self.workload = copy.deepcopy(self.e.evaluation['general'])
         # remove metrics
-        del(self.workload['loadingmetrics'])
-        del(self.workload['streamingmetrics'])
-        del(self.workload['reporting'])
+        if 'loadingmetrics' in self.workload:
+            del(self.workload['loadingmetrics'])
+        if 'streamingmetrics' in self.workload:
+            del(self.workload['streamingmetrics'])
+        if 'reporting' in self.workload:
+            del(self.workload['reporting'])
     def get_experiment_list_queries(self):
         # list of successful queries
         return self.benchmarks.listQueries()
