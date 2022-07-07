@@ -3,6 +3,7 @@
 [![PyPI version](https://badge.fury.io/py/dbmsbenchmarker.svg)](https://badge.fury.io/py/dbmsbenchmarker)
 [![.github/workflows/draft-pdf.yml](https://github.com/Beuth-Erdelt/DBMS-Benchmarker/actions/workflows/draft-pdf.yml/badge.svg)](https://github.com/Beuth-Erdelt/DBMS-Benchmarker/actions/workflows/draft-pdf.yml)
 [![DOI](https://zenodo.org/badge/213186578.svg)](https://zenodo.org/badge/latestdoi/213186578)
+[![JOSS](https://joss.theoj.org/papers/82d2fa62b5c3ec30014f6307cc731cdd/status.svg)](https://joss.theoj.org/papers/82d2fa62b5c3ec30014f6307cc731cdd)
 
 
 # DBMS-Benchmarker
