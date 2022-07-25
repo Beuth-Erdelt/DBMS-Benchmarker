@@ -427,7 +427,7 @@ def serve_layout(preview) -> html.Div:
                     html.Label('Color by', id='label_graph_colorby'),
                     dcc.Dropdown(
                         id='dd_graph_colorby',
-                        options=[{'label': x, 'value': x} for x in ['DBMS', 'Node', 'Script', 'CPU Limit', 'Client', 'GPU', 'CPU', 'Docker Image']],
+                        options=[{'label': x, 'value': x} for x in ['DBMS', 'Node', 'Script', 'CPU Limit', 'Client', 'GPU', 'CPU', 'Docker Image', 'Experiment Run']],
                     ),
 
                     html.Label('Boxpoints', id='label_boxpoints'),

@@ -173,6 +173,8 @@ def get_connections_by_filter(filter_by: str, e: inspector.inspector) -> dict:
         connections_by_filter = e.get_experiment_list_connections_by_hostsystem('limits_cpu')
     elif filter_by == 'Docker Image':
         connections_by_filter = e.get_experiment_list_connections_by_parameter('dockerimage')
+    elif filter_by == 'Experiment Run':
+        connections_by_filter = e.get_experiment_list_connections_by_parameter('numExperiment')
     else:
         raise KeyError('filter_by')
 
