@@ -48,7 +48,7 @@ There thus is widespread need for a tool to support the repetition and reproduci
 
 There is also need for a tool that will help with the statistical and interactive analysis of the results.
 We want to use Python as the common Data Science language, since
-*it is a mature language programming, easy for the newbies, and can be used as a specific platform for data scientists, thanks to its large ecosystem of scientific libraries and its high and vibrant community* @series/utcs/IgualS17.
+*it is a mature language programming, easy for the newbies, and can be used as a specific platform for data scientists, thanks to its large ecosystem of scientific libraries and its high and vibrant community*, @series/utcs/IgualS17.
 This helps to implement the tool into a pipeline, for example to make use of closed-loop benchmarking situations, @10114533389063338912, or to closely inspect parts of queries, @DBLPconfsigmodKerstenKZ18.
 It also allows to use common and sophisticated tools to inspect and evaluate the results.
 To name a few:
