@@ -35,19 +35,31 @@ See the [homepage](https://github.com/Beuth-Erdelt/DBMS-Benchmarker) and the [do
 # Statement of Need
 
 Benchmarking of database management systems (DBMS) is an active research area.
+
 There are a variety of DBMS and a lot of products.
 The types thereof can be divided into for example row-wise, column-wise, in-memory, distributed and GPU-enhanced. 
 All of these products have unique characteristics, special use cases, advantages and disadvantages and their justification.
 In order to be able to verify and ensure the performance measurement, we want to be able to create and repeat benchmarking scenarios.
 Repetition and thorough evaluation are crucial, in particular in the age of Cloud-based systems with it's diversity of hardware configurations, @Raasveldt2018FBC32099503209955, @DBLPconfsigmodKerstenKZ18, @KounevLK20.
 
-There is need for a tool to support the repetition and reproducibility of benchmarking situations, and that is capable of connecting to all these systems.
-There is also need for a tool that will help with the statistical and interactive analysis of the results.
-We want to use Python as the common Data Science language.
-This helps to implement the tool into a pipeline.
-Moreover this allows to use common and sophisticated tools to inspect and evaluate the results, like pandas, c.f. @reback2020pandas, @mckinney-proc-scipy-2010, Jupyter notebooks, c.f. @Kluyver2016jupyter, matplotlib, c.f. @Hunter:2007, SciPy, c.f. @2020SciPy-NMeth, or even Machine Learning tools.
+Performance benchmarking of DBMS has a broad audience. It is used *by DBMS developers to evaluate their work and to find out which algorithm works best in which situation. Benchmarks are used by (potential) customers to evaluate what system or hardware to buy or rent. Benchmarks are used by administrators to find bottlenecks and adjust configurations. Benchmarks are used by users to compare semantically equivalent queries and to find the best formulation alternative* @10.1007/978-3-030-84924-5_6.
 
-To our knowledge there is no other such tool, c.f. @10.1007/978-3-319-67162-8_12, @10.1007/978-3-030-12079-5_4.
+There thus is widespread need for a tool to support the repetition and reproducibility of benchmarking situations, and that is capable of connecting to all these systems.
+
+There is also need for a tool that will help with the statistical and interactive analysis of the results.
+We want to use Python as the common Data Science language, since
+*it is a mature language programming, easy for the newbies, and can be used as a specific platform for data scientists, thanks to its large ecosystem of scientific libraries and its high and vibrant community* @series/utcs/IgualS17.
+This helps to implement the tool into a pipeline, for example to make use of closed-loop benchmarking situations @10114533389063338912 or to closely inspect parts of queries @DBLPconfsigmodKerstenKZ18.
+It also allows to use common and sophisticated tools to inspect and evaluate the results.
+To name a few:
+Pandas for statistical evaluation of tabular data @reback2020pandas, @mckinney-proc-scipy-2010,
+Scipy for scientific investigation of data @2020SciPy-NMeth,
+IPython and Jupyter notebooks for interactive analysis and display of results @Kluyver2016jupyter,
+Matplotlib and Seaborn for visual analysis @Hunter:2007, @Waskom2021,
+or even Machine Learning tools.
+Moreover Python is currently the most popular computer language @PYPL, @TIOBE.
+
+To our knowledge there is no other such tool, c.f. results of @10.1007/978-3-319-67162-8_12, @10.1007/978-3-030-12079-5_4.
 There are other tools like Apache JMeter, HammerDB, Sysbench, OLTPBench, that provide very nice features, but none fitting these needs.
 The design decisions of this tool have been elaborated in more detail in @10.1007/978-3-030-84924-5_6.
 DBMS-Benchmarker has been used as a support for recieving scientific results about benchmarking DBMS performance in Cloud environments as in @10.1007/978-3-030-84924-5_6 and @10.1007/978-3-030-94437-7_6.
