@@ -168,13 +168,16 @@ def get_connections_by_filter(filter_by: str, e: inspector.inspector) -> dict:
     elif filter_by == 'GPU':
         connections_by_filter = e.get_experiment_list_connections_by_hostsystem('GPU')
     elif filter_by == 'Client':
-        connections_by_filter = e.get_experiment_list_connections_by_connectionmanagement('numProcesses')
+        connections_by_filter = e.get_experiment_list_connections_by_parameter('client')
+        #connections_by_filter = e.get_experiment_list_connections_by_connectionmanagement('numProcesses')
     elif filter_by == 'CPU':
         connections_by_filter = e.get_experiment_list_connections_by_hostsystem('CPU')
     elif filter_by == 'CPU Limit':
         connections_by_filter = e.get_experiment_list_connections_by_hostsystem('limits_cpu')
     elif filter_by == 'Docker Image':
         connections_by_filter = e.get_experiment_list_connections_by_parameter('dockerimage')
+    elif filter_by == 'Experiment Run':
+        connections_by_filter = e.get_experiment_list_connections_by_parameter('numExperiment')
     else:
         raise KeyError('filter_by')
 

@@ -345,6 +345,28 @@ JDBC driver: https://mariadb.com/kb/en/about-mariadb-connector-j/
 ]
 ```
 
+## TimescaleDB
+
+https://www.timescale.com/
+
+JDBC driver: https://jdbc.postgresql.org/
+
+```
+[
+    {
+        'name': 'TimescaleDB',
+        'info': 'This is a demo of TimescaleDB',
+        'active': True,
+        'JDBC': {
+            'driver': 'org.postgresql.Driver',
+            'url': 'jdbc:postgresql://localhost:5432/database',
+            'auth': ['user', 'password'],
+            'jar': 'jars/postgresql-42.2.5.jar'
+        }
+    },
+]
+```
+
 ## Vertica
 
 https://www.vertica.com/
