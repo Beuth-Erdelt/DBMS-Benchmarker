@@ -36,13 +36,14 @@ See the [homepage](https://github.com/Beuth-Erdelt/DBMS-Benchmarker) and the [do
 
 Performance benchmarking of database management systems (DBMS) is an active research area and has a broad audience. It is used *by DBMS developers to evaluate their work and to find out which algorithm works best in which situation. Benchmarks are used by (potential) customers to evaluate what system or hardware to buy or rent. Benchmarks are used by administrators to find bottlenecks and adjust configurations. Benchmarks are used by users to compare semantically equivalent queries and to find the best formulation alternative*, @10.1007/978-3-030-84924-5_6.
 Also in the academic field, approaches and their special implementations are examined in benchmarks.
-In order to be able to verify and ensure the performance measurement, we want to be able to create and repeat benchmarking scenarios.
-Repetition and thorough evaluation are crucial, in particular in the age of Cloud-based systems with it's diversity of hardware configurations, @Raasveldt2018FBC32099503209955, @DBLPconfsigmodKerstenKZ18, @KounevLK20.
-There are a variety of DBMS and a lot of products.
+There are a variety of DBMS and a lot of products[^1].
 The types thereof can be divided into for example row-wise, column-wise, in-memory, distributed and GPU-enhanced. 
 All of these products have unique characteristics, special use cases, advantages and disadvantages and their justification.
+In order to be able to verify and ensure the performance measurement, we want to be able to create and repeat benchmarking scenarios.
+Repetition and thorough evaluation are crucial, in particular in the age of Cloud-based systems with it's diversity of hardware configurations, @Raasveldt2018FBC32099503209955, @DBLPconfsigmodKerstenKZ18, @KounevLK20.
+[^1]: https://dbdb.io/ lists 850 DBMS, https://db-engines.com/en/ranking ranks 350 DBMS.
 
-There thus is widespread need for a tool to support the repetition and reproducibility of benchmarking situations, and that is capable of connecting to all these systems.
+Thus there is a widespread need for a tool to support the repetition and reproducibility of benchmarking situations, and that is capable of connecting to all these systems.
 
 There is also need for a tool that will help with the statistical, visual and interactive analysis of the results.
 We want to use Python as a common Data Science language, since
