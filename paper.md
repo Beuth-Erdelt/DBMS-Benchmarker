@@ -35,12 +35,11 @@ See the [homepage](https://github.com/Beuth-Erdelt/DBMS-Benchmarker) and the [do
 # Statement of Need
 
 Performance benchmarking of database management systems (DBMS) is an active research area and has a broad audience. It is used *by DBMS developers to evaluate their work and to find out which algorithm works best in which situation. Benchmarks are used by (potential) customers to evaluate what system or hardware to buy or rent. Benchmarks are used by administrators to find bottlenecks and adjust configurations. Benchmarks are used by users to compare semantically equivalent queries and to find the best formulation alternative*, @10.1007/978-3-030-84924-5_6.
-
+In order to be able to verify and ensure the performance measurement, we want to be able to create and repeat benchmarking scenarios.
+Repetition and thorough evaluation are crucial, in particular in the age of Cloud-based systems with it's diversity of hardware configurations, @Raasveldt2018FBC32099503209955, @DBLPconfsigmodKerstenKZ18, @KounevLK20.
 There are a variety of DBMS and a lot of products.
 The types thereof can be divided into for example row-wise, column-wise, in-memory, distributed and GPU-enhanced. 
 All of these products have unique characteristics, special use cases, advantages and disadvantages and their justification.
-In order to be able to verify and ensure the performance measurement, we want to be able to create and repeat benchmarking scenarios.
-Repetition and thorough evaluation are crucial, in particular in the age of Cloud-based systems with it's diversity of hardware configurations, @Raasveldt2018FBC32099503209955, @DBLPconfsigmodKerstenKZ18, @KounevLK20.
 
 There thus is widespread need for a tool to support the repetition and reproducibility of benchmarking situations, and that is capable of connecting to all these systems.
 
@@ -74,7 +73,7 @@ DBMS-Benchmarker is Python3-based and helps to **benchmark DBMS**. It
 * allows randomized queries to avoid caching side effects
 * investigates a number of timing aspects
 * investigates a number of other aspects - received result sets, precision, number of clients
-* collects hardware metrics from a Prometheus server, c.f. @208870
+* collects hardware metrics from a Prometheus server, @208870
 
 DBMS-Benchmarker helps to **evaluate results** - by providing    
 
