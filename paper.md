@@ -60,7 +60,7 @@ or even Machine Learning tools.
 Moreover Python is currently the most popular computer language, @PYPL, @TIOBE.
 
 To our knowledge there is no other such tool, c.f. the studies in @10.1007/978-3-319-67162-8_12 and @10.1007/978-3-030-12079-5_4.
-There are other tools like Apache JMeter, HammerDB, Sysbench, OLTPBench, that provide very nice features, but none fitting these needs.
+There are other tools like Apache JMeter, HammerDB, Sysbench, OLTPBench and BenchBase, that provide very nice features, but none fitting these needs, since they are not Python-based and moreover some are limited in DBMS or not randomized.
 The design decisions of this tool have been elaborated in more detail in @10.1007/978-3-030-84924-5_6.
 DBMS-Benchmarker has been used as a support for receiving scientific results about benchmarking DBMS performance in Cloud environments as in @10.1007/978-3-030-84924-5_6 and @10.1007/978-3-030-94437-7_6.
 
@@ -176,8 +176,8 @@ This uses `close()` on the cursor and the connection
 The times needed for steps connection (1.), execution (2. and 3.) and transfer (4.) are measured on the client side.
 A unit of connect, send, execute and transfer of a single query is called a **run**.
 Connection time will be zero if an existing connection is reused.
-A sequence of sending, executing, and transmitting units between establishing and discarding a connection is called a **session**.
-This is the same as a run, if we reconnect for each query, but if we choose to reuse a connection this will cover multiple runs.
+A sequence of units of sending, executing, and transmitting between establishing and discarding a connection is called a **session**.
+This is the same as a run, if we always reconnect prior to sending a query, but if we choose to reuse a connection this will cover multiple runs.
 
 A basic parameter of a query is the **number of runs**.
 To configure sessions it is also possible to adjust
