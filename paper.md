@@ -174,10 +174,12 @@ This uses `fetchall()` on a cursor of the JDBC connection
 This uses `close()` on the cursor and the connection
 
 The times needed for steps connection (1.), execution (2. and 3.) and transfer (4.) are measured on the client side.
-A unit of connect, send, execute and transfer is called a **run**. Connection time will be zero if an existing connection is reused.
-A sequence of runs between establishing and discarding a connection is called a **session**.
+A unit of connect, send, execute and transfer of a single query is called a **run**.
+Connection time will be zero if an existing connection is reused.
+A sequence of sending, executing, and transmitting units between establishing and dropping a connection is called a **session**.
+This is the same as a run, if we reconnect for each query, but if we choose to reuse a connection this will cover multiple runs.
 
-A basic parameter of a query is the **number of runs** (units of send, execute, transfer).
+A basic parameter of a query is the **number of runs**.
 To configure sessions it is also possible to adjust
 
 * the **number of runs per connection** (session length) and
