@@ -141,9 +141,10 @@ Limitations are:
 
 Other comparable products you might like
 * [Apache JMeter](https://jmeter.apache.org/index.html) - Java-based performance measure tool, including a configuration GUI and reporting to HTML
-* [HammerDB](https://www.hammerdb.com/) - industry accepted benchmark tool, but limited to some DBMS
+* [HammerDB](https://www.hammerdb.com/) - industry accepted benchmark tool based on Tcl, but limited to some DBMS
 * [Sysbench](https://github.com/akopytov/sysbench) - a scriptable multi-threaded benchmark tool based on LuaJIT
-* [OLTPBench](https://github.com/oltpbenchmark/oltpbench) -Java-based performance measure tool, using JDBC and including a lot of predefined benchmarks 
+* [OLTPBench](https://github.com/oltpbenchmark/oltpbench) - Java-based performance measure tool, using JDBC and including a lot of predefined benchmarks
+* [BenchBase](https://github.com/cmu-db/benchbase) - successor of OLTPBench
 
 
 

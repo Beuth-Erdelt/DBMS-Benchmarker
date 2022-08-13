@@ -34,23 +34,23 @@ See the [homepage](https://github.com/Beuth-Erdelt/DBMS-Benchmarker) and the [do
 
 # Statement of Need
 
-Performance benchmarking of database management systems (DBMS) is an active research area and has a broad audience. It is used *by DBMS developers to evaluate their work and to find out which algorithm works best in which situation. Benchmarks are used by (potential) customers to evaluate what system or hardware to buy or rent. Benchmarks are used by administrators to find bottlenecks and adjust configurations. Benchmarks are used by users to compare semantically equivalent queries and to find the best formulation alternative*, @10.1007/978-3-030-84924-5_6.
+Performance benchmarking of database management systems (DBMS) is an active research area and has a broad audience. It is used "*by DBMS developers to evaluate their work and to find out which algorithm works best in which situation. Benchmarks are used by (potential) customers to evaluate what system or hardware to buy or rent. Benchmarks are used by administrators to find bottlenecks and adjust configurations. Benchmarks are used by users to compare semantically equivalent queries and to find the best formulation alternative*", @10.1007/978-3-030-84924-5_6.
 Also in the academic field, approaches and their special implementations are examined in benchmarks.
-There are a variety of DBMS and a lot of products.
+There is a large variety of DBMS types and products.
 For example @DBEngines ranks 350 DBMS (150 Relational), @DBDBIO lists 850 DBMS (280 Relational).
 We focus on Relational DBMS (RDBMS) in the following.
 The types thereof can be divided into for example row-wise, column-wise, in-memory, distributed and GPU-enhanced. 
-All of these products have unique characteristics, special use cases, advantages and disadvantages and their justification.
+All of these products have unique characteristics, special use cases, advantages and disadvantages, and their own justification.
 In order to be able to verify and ensure the performance measurement, we want to be able to create and repeat benchmarking scenarios.
-Repetition and thorough evaluation are crucial, in particular in the age of Cloud-based systems with it's diversity of hardware configurations, @Raasveldt2018FBC32099503209955, @DBLPconfsigmodKerstenKZ18, @KounevLK20.
+Repetition and thorough evaluation are crucial, in particular in the age of Cloud-based systems with its diversity of hardware configurations, @Raasveldt2018FBC32099503209955, @DBLPconfsigmodKerstenKZ18, @KounevLK20.
 
 Thus there is a widespread need for a tool to support the repetition and reproducibility of benchmarking situations, and that is capable of connecting to all these systems.
 
 When we collect a lot of data during benchmarking processes, we also need a tool that will help with the statistical, visual and interactive analysis of the results.
 The authors advocate using Python as a common Data Science language, since
-*it is a mature language programming, easy for the newbies, and can be used as a specific platform for data scientists, thanks to its large ecosystem of scientific libraries and its high and vibrant community*, @series/utcs/IgualS17.
+"*it is a mature language programming, easy for the newbies, and can be used as a specific platform for data scientists, thanks to its large ecosystem of scientific libraries and its high and vibrant community*", @series/utcs/IgualS17.
 This helps to implement the tool into a pipeline, for example to make use of closed-loop benchmarking situations, @10114533389063338912, or to closely inspect parts of queries, @DBLPconfsigmodKerstenKZ18.
-It also allows to use common and sophisticated tools to inspect and evaluate the results.
+It also allows the use of common and sophisticated tools to inspect and evaluate the results.
 To name a few:
 Pandas for statistical evaluation of tabular data, @reback2020pandas, @mckinney-proc-scipy-2010,
 Scipy for scientific investigation of data, @2020SciPy-NMeth,
@@ -59,10 +59,11 @@ Matplotlib and Seaborn for visual analysis, @Hunter:2007, @Waskom2021,
 or even Machine Learning tools.
 Moreover Python is currently the most popular computer language, @PYPL, @TIOBE.
 
-To our knowledge there is no other such tool, c.f. the studies in @10.1007/978-3-319-67162-8_12 and @10.1007/978-3-030-12079-5_4.
-There are other tools like Apache JMeter, HammerDB, Sysbench, OLTPBench, that provide very nice features, but none fitting these needs.
+To our knowledge there is no other such tool, c.f. also the studies in @10.1007/978-3-319-67162-8_12 and @10.1007/978-3-030-12079-5_4.
+There are other tools like Apache JMeter (Java), HammerDB (Tcl), Sysbench (LuaJIT), OLTPBench (Java) and BenchBase (Java), that provide very nice features.
+However they do not fit these needs, since they are not Python-based. Moreover some are limited in supported DBMS, in supporting repetition and (statistical) evaluation or do not support randomized queries.
 The design decisions of this tool have been elaborated in more detail in @10.1007/978-3-030-84924-5_6.
-DBMS-Benchmarker has been used as a support for recieving scientific results about benchmarking DBMS performance in Cloud environments as in @10.1007/978-3-030-84924-5_6 and @10.1007/978-3-030-94437-7_6.
+DBMS-Benchmarker has been used as a support for receiving scientific results about benchmarking DBMS performance in Cloud environments as in @10.1007/978-3-030-84924-5_6 and @10.1007/978-3-030-94437-7_6.
 
 ## Summary of Solution
 
@@ -86,12 +87,12 @@ DBMS-Benchmarker helps to **evaluate results** - by providing
 * in Jupyter notebooks - see [rendered example](https://beuth-erdelt.github.io/DBMS-Benchmarker/Evaluation-Demo.html)
 * in an interactive dashboard
 
-Some features are inspired by [TPC-H](http://www.tpc.org/tpch/) and [TPC-DS](http://www.tpc.org/tpcds/) - Decision Support Benchmarks, which are provided in parts as predefined configs.
+Some features are inspired by [TPC-H](http://www.tpc.org/tpch/) and [TPC-DS](http://www.tpc.org/tpcds/) - Decision Support Benchmarks, which are provided in part as predefined configs.
 
 
 # A Basic Example
 
-The following very simple use case runs the query `SELECT COUNT(*) FROM test` 10 times against one local (existing) MySQL installation.
+The following simple use case runs the query `SELECT COUNT(*) FROM test` 10 times against one local (existing) MySQL installation.
 We assume here we have downloaded the required JDBC driver, e.g. `mysql-connector-java-8.0.13.jar`.
 
 Run `pip install dbmsbenchmarker` for installation.
@@ -154,7 +155,7 @@ Alternatively you may use Python's pandas.
 ## Experiment
 
 An **experiment** is organized in *queries*.
-A **query** is a statement, that is understood by a Database Management System (DBMS).
+A **query** is a statement that is understood by a Database Management System (DBMS).
 
 ## Single Query
 
@@ -174,10 +175,12 @@ This uses `fetchall()` on a cursor of the JDBC connection
 This uses `close()` on the cursor and the connection
 
 The times needed for steps connection (1.), execution (2. and 3.) and transfer (4.) are measured on the client side.
-A unit of connect, send, execute and transfer is called a **run**. Connection time will be zero if an existing connection is reused.
-A sequence of runs between establishing and discarding a connection is called a **session**.
+A unit of connect, send, execute and transfer of a single query is called a **run**.
+Connection time will be zero if an existing connection is reused.
+A sequence of units of sending, executing, and transmitting between establishing and discarding a connection is called a **session**.
+This is the same as a run, if we always reconnect prior to sending a query, but if we choose to reuse a connection this will cover multiple runs.
 
-A basic parameter of a query is the **number of runs** (units of send, execute, transfer).
+A basic parameter of a query is the **number of runs**.
 To configure sessions it is also possible to adjust
 
 * the **number of runs per connection** (session length) and
@@ -197,7 +200,7 @@ This means we exchange a part of the query for a random value.
 We have several **timers** to collect timing information in milliseconds and per run, corresponding to the parts of query processing: **timerConnection**, **timerExecution** and **timerTransfer**.
 The tool also computes **timerRun** (the sum of *timerConnection*, *timerExecution* and *timerTransfer*) and **timerSession**.
 
-We also measure and store the **total time** of the benchmark of the query, since for parallel execution this differs from the **sum of times** based on *timerRun*. Total time means measurement starts before first benchmark run and stops after the last benchmark run has been finished. Thus total time also includes some overhead (for spawning a pool of subprocesses, compute size of result sets and joining results of subprocesses).
+We also measure and store the **total time** of the benchmark of the query, since for parallel execution this differs from the **sum of times** based on *timerRun*. Total time means measurement starts before the first benchmark run and it stops after the last benchmark run has finished. Thus total time also includes some overhead (for spawning a pool of subprocesses, compute size of result sets and joining results of subprocesses).
 We also compute for each query and DBMS **latency** (measured time) and **throughput** (number of parallel clients per measured time).
 Additionally error messages and timestamps of begin and end of benchmarking a query are stored.
 
@@ -209,7 +212,7 @@ Each query will be sent to every DBMS in the same number of runs.
 This also respects randomization, i.e. every DBMS receives exactly the same versions of the query in the same order.
 We assume all DBMS will give us the same result sets.
 Without randomization, each run should yield the same result set.
-This tool automatically can check these assumptions by **comparison** of sorted result tables (small data sets) or their hash value or size (bigger data sets).
+The tool automatically can check these assumptions by **comparison** of sorted result tables (small data sets) or their hash value or size (bigger data sets).
 In order to do so, result sets (or their hash value or size) are stored as lists of lists and additionally can be saved as csv files or pickled pandas DataFrames.
 
 ## Monitoring Hardware Metrics
