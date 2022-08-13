@@ -59,8 +59,9 @@ Matplotlib and Seaborn for visual analysis, @Hunter:2007, @Waskom2021,
 or even Machine Learning tools.
 Moreover Python is currently the most popular computer language, @PYPL, @TIOBE.
 
-To our knowledge there is no other such tool, c.f. the studies in @10.1007/978-3-319-67162-8_12 and @10.1007/978-3-030-12079-5_4.
-There are other tools like Apache JMeter (Java), HammerDB (Tcl), Sysbench (LuaJIT), OLTPBench and BenchBase (Java), that provide very nice features, but none fitting these needs, since they are not Python-based. Moreover some are limited in DBMS or not randomized.
+To our knowledge there is no other such tool, c.f. also the studies in @10.1007/978-3-319-67162-8_12 and @10.1007/978-3-030-12079-5_4.
+There are other tools like Apache JMeter (Java), HammerDB (Tcl), Sysbench (LuaJIT), OLTPBench (Java) and BenchBase (Java), that provide very nice features.
+However they do not fit these needs, since they are not Python-based. Moreover some are limited in supported DBMS, in supporting repetition and (statistical) evaluation or do not support randomized queries.
 The design decisions of this tool have been elaborated in more detail in @10.1007/978-3-030-84924-5_6.
 DBMS-Benchmarker has been used as a support for receiving scientific results about benchmarking DBMS performance in Cloud environments as in @10.1007/978-3-030-84924-5_6 and @10.1007/978-3-030-94437-7_6.
 
