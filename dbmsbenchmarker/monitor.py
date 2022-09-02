@@ -147,8 +147,8 @@ class metrics():
         return df
     @staticmethod
     def saveMetricsDataframe(filename, df):
-        logging.debug("saveMetricsDataframe "+filename)
         if df is not None:
+            logging.debug("saveMetricsDataframe "+filename)
             csv = df.to_csv(index_label=False,index=False)
             # save
             csv_file = open(filename, "w")
@@ -156,8 +156,8 @@ class metrics():
             csv_file.close()
     @staticmethod
     def loadMetricsDataframe(filename):
-        logging.debug("loadMetricsDataframe "+filename)
         if os.path.isfile(filename):
+            logging.debug("loadMetricsDataframe "+filename)
             df = pd.read_csv(filename)
             return df
         else:
