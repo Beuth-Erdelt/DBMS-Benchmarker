@@ -92,12 +92,14 @@ def singleRun(connectiondata, inputConfig, numRuns, connectionname, numQuery, pa
 	:return: returns object of class singleRunOutput
 	"""
 	#global activeConnections
-	import logging
+	import logging, multiprocessing
 	#logging.basicConfig(format='%(asctime)s %(message)s')
+	#logger = multiprocessing.get_logger()
 	logger = logging.getLogger('singleRun')
-	logger.setLevel(logging.DEBUG)
+	#logger.setLevel(logging.INFO)
 	# init list of results
 	results = []
+	#print("HELLO!")
 	# compute number of (parallel) connection
 	# example: 5/6/7/8 yields number 1 (i.e. the second one)
 	# this is working, but requires a connection per batch
@@ -112,7 +114,7 @@ def singleRun(connectiondata, inputConfig, numRuns, connectionname, numQuery, pa
 		connection = activeConnections[numActiveConnection]
 		durationConnect = 0.0
 	else:
-		# look at first run to determine of there should be sleeping
+		# look at first run to determine if there should be sleeping
 		query = tools.query(inputConfig[numRuns[0]].queryConfig)
 		if query.delay_connect > 0:
 			if BENCHMARKER_VERBOSE_PROCESS:
@@ -157,6 +159,7 @@ def singleRun(connectiondata, inputConfig, numRuns, connectionname, numQuery, pa
 					connection.executeQuery(queryPart)
 			else:
 				connection.executeQuery(queryString)
+			print(connection.getName())
 			end = default_timer()
 			durationExecute = 1000.0*(end - start)
 			logger.info(workername+"execution [ms]: "+str(durationExecute))
@@ -543,6 +546,10 @@ class benchmarker():
 					with open(self.path+'/queries.config','w') as outp:
 						pprint.pprint(self.queryconfig, outp)
 			self.queries = self.queryconfig["queries"].copy()
+			# default for all queries is being 'active'
+			for numQuery in range(len(self.queries)):
+				if not 'active' in self.queries[numQuery]:
+					self.queries[numQuery]['active'] = True
 			if not "name" in self.queryconfig:
 				self.queryconfig["name"] = "No name"
 			if not "intro" in self.queryconfig:
@@ -1383,25 +1390,26 @@ class benchmarker():
 
 		:return: returns nothing
 		"""
-		for c in sorted(self.dbms.keys()):
+		for connectionname in sorted(self.dbms.keys()):
 			# check if we need a global connection
-			singleConnection = False
+			singleConnection = self.connectionmanagement['singleConnection'] # Default is (probably) True
 			if 'connectionmanagement' in self.queryconfig:
 				connectionmanagement = self.queryconfig['connectionmanagement']
 				if('singleConnection' in connectionmanagement):# and connectionmanagement['timeout'] != 0):
 					singleConnection = connectionmanagement['singleConnection']
-					if singleConnection:
-						# we assume all queries should share a connection
-						numProcesses = 1
-						i = 0
-						connectionname = c
-						print("More active connections from {} to {}".format(len(self.activeConnections), numProcesses))
-						self.activeConnections.append(tools.dbms(self.dbms[connectionname].connectiondata))
-						print("Establish global connection #"+str(i))
-						self.activeConnections[i].connect()
+			if singleConnection:
+				# we assume all queries should share a connection
+				numProcesses = 1
+				i = 0
+				#connectionname = c
+				print("More active connections from {} to {}".format(len(self.activeConnections), numProcesses))
+				self.activeConnections.append(tools.dbms(self.dbms[connectionname].connectiondata))
+				print("Establish global connection #"+str(i))
+				self.activeConnections[i].connect()
+			print(self.activeConnections)
 			# work queries
 			for numQuery in range(1, len(self.queries)+1):
-				bBenchmarkDone = self.runBenchmark(numQuery, c)
+				bBenchmarkDone = self.runBenchmark(numQuery, connectionname)
 				# if benchmark has been done: store and generate reports
 				if bBenchmarkDone:
 					# store results
