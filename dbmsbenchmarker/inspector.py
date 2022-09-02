@@ -123,7 +123,7 @@ class inspector():
                     workload_preview[code]['name'] = workload_properties['name']
                     workload_preview[code]['info'] = workload_properties.get('info', '')
                     workload_preview[code]['intro'] = workload_properties.get('intro', '')
-                    l = [q for q in workload_properties['queries'] if q['active'] == True]
+                    l = [q for q in workload_properties['queries'] if ('active' in q and q['active'] == True) or 'active' not in q]
                     workload_preview[code]['queries'] = len(l)
                     l = [c for c in connection_properties if c['active'] == True]
                     workload_preview[code]['connections'] = len(l)
