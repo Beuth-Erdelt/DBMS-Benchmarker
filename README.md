@@ -46,7 +46,12 @@ This module has been tested with Clickhouse, DB2, Exasol, Hyperscale (Citus), Ki
 
 ## Installation
 
-Run `pip install dbmsbenchmarker`
+Run `pip install dbmsbenchmarker` to install the package.
+
+You will also need to have
+* Java [installed](https://www.java.com/en/download/help/download_options.html) (we tested with Java 8)
+* `JAVA_HOME` set correctly
+* a JDBC driver suitable for the DBMS you want to connect to (optionally located in your `CLASSPATH`)
 
 ## Basic Usage
 
