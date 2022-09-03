@@ -93,9 +93,9 @@ Some features are inspired by [TPC-H](http://www.tpc.org/tpch/) and [TPC-DS](htt
 # A Basic Example
 
 The following simple use case runs the query `SELECT COUNT(*) FROM test` 10 times against one local (existing) MySQL installation.
-We assume here we have downloaded the required JDBC driver, e.g. `mysql-connector-java-8.0.13.jar`.
 
-Run `pip install dbmsbenchmarker` for installation.
+Run `pip install dbmsbenchmarker` for installation. Make sure Java is set up correctly.
+We assume here we have downloaded the required JDBC driver, e.g. `mysql-connector-java-8.0.13.jar`.
 
 ## Configuration
 
