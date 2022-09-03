@@ -17,6 +17,8 @@ An interactive visual dashboard assists in multi-dimensional analysis of the res
 
 See the [homepage](https://github.com/Beuth-Erdelt/DBMS-Benchmarker) and the [documentation](https://dbmsbenchmarker.readthedocs.io/en/latest/Docs.html).
 
+If you encounter any issues, please report them to our (Github issue tracker)[https://github.com/Beuth-Erdelt/DBMS-Benchmarker/issues].
+
 ## Key Features
 
 DBMS-Benchmarker
@@ -124,14 +126,6 @@ Visit the address in a browser and select the experiment `<code>`.
 
 Alternatively you may use a [Jupyter notebook](https://github.com/Beuth-Erdelt/DBMS-Benchmarker/blob/master/Evaluation-Demo.ipynb), see a [rendered example](https://beuth-erdelt.github.io/DBMS-Benchmarker/Evaluation-Demo.html).
 
-## Benchmarking in a Kubernetes Cloud
-
-This module can serve as the **query executor** [2] and **evaluator** [1] for distributed parallel benchmarking experiments in a Kubernetes Cloud, see the [orchestrator](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager) for more details.
-
-<p align="center">
-    <img src="https://raw.githubusercontent.com/Beuth-Erdelt/DBMS-Benchmarker/master/docs/experiment-with-orchestrator.png" width="800">
-</p>
-
 
 ## Limitations
 
@@ -151,6 +145,14 @@ Other comparable products you might like
 * [OLTPBench](https://github.com/oltpbenchmark/oltpbench) - Java-based performance measure tool, using JDBC and including a lot of predefined benchmarks
 * [BenchBase](https://github.com/cmu-db/benchbase) - successor of OLTPBench
 
+
+## Benchmarking in a Kubernetes Cloud
+
+This module can serve as the **query executor** [2] and **evaluator** [1] for distributed parallel benchmarking experiments in a Kubernetes Cloud, see the [orchestrator](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager) for more details.
+
+<p align="center">
+    <img src="https://raw.githubusercontent.com/Beuth-Erdelt/DBMS-Benchmarker/master/docs/experiment-with-orchestrator.png" width="800">
+</p>
 
 
 ## References
