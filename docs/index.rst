@@ -18,6 +18,7 @@
     ./Evaluations.md
     ./Dashboard.md
     ./Inspection.md
+    ../CONTRIBUTING.md
     ...
 
 

@@ -146,6 +146,21 @@ Other comparable products you might like
 * [BenchBase](https://github.com/cmu-db/benchbase) - successor of OLTPBench
 
 
+## Contributing, Bug Reports
+
+If you have any question or found a bug, please report them to our [Github issue tracker](https://github.com/Beuth-Erdelt/DBMS-Benchmarker/issues).
+In any bug report, please let us know:
+
+* Which operating system and hardware (32 bit or 64 bit) you are using
+* Python version
+* DBMSBenchmarker version (or git commit/date)
+* DBMS you are connecting to
+* Traceback that occurs (the full error message)
+
+We are always looking for people interested in helping with code development, documentation writing, technical administration, and whatever else comes up.
+If you wish to contribute, please first read the contribution section in the documentation.
+
+
 ## Benchmarking in a Kubernetes Cloud
 
 This module can serve as the **query executor** [2] and **evaluator** [1] for distributed parallel benchmarking experiments in a Kubernetes Cloud, see the [orchestrator](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager) for more details.
@@ -156,6 +171,9 @@ This module can serve as the **query executor** [2] and **evaluator** [1] for di
 
 
 ## References
+
+If you use DBMSBenchmarker in work contributing to a scientific publication, we ask that you cite our application note [1]:
+
 
 [1] [A Framework for Supporting Repetition and Evaluation in the Process of Cloud-Based DBMS Performance Benchmarking](https://doi.org/10.1007/978-3-030-84924-5_6)
 
