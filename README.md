@@ -17,7 +17,7 @@ An interactive visual dashboard assists in multi-dimensional analysis of the res
 
 See the [homepage](https://github.com/Beuth-Erdelt/DBMS-Benchmarker) and the [documentation](https://dbmsbenchmarker.readthedocs.io/en/latest/Docs.html).
 
-If you encounter any issues, please report them to our (Github issue tracker)[https://github.com/Beuth-Erdelt/DBMS-Benchmarker/issues].
+If you encounter any issues, please report them to our [Github issue tracker](https://github.com/Beuth-Erdelt/DBMS-Benchmarker/issues).
 
 ## Key Features
 
