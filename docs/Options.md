@@ -113,83 +113,6 @@ Example: `-r /tmp/dbmsresults/`, and a subfolder, say `1234`, will be generated 
 Name of folder containing query and connection config files.
 If set, the names `connections.config` and `queries.config` are assumed automatically.
 
-### Connection File
-
-Contains infos about JDBC connections.
-
-Example for `CONNECTION_FILE`:
-```
-[
-  {
-    'name': "MySQL",
-    'version': "CE 8.0.13",
-    'info': "This uses engine innodb",
-    'active': True,
-    'alias': "DBMS A",
-    'docker': "MySQL",
-    'docker_alias': "DBMS A",
-    'dialect': "MySQL",
-    'timeload': 100,
-    'priceperhourdollar': 1.0,
-    'JDBC': {
-      'driver': "com.mysql.cj.jdbc.Driver",
-      'url': "jdbc:mysql://localhost:3306/database",
-      'auth': ["username", "password"],
-      'jar': "mysql-connector-java-8.0.13.jar"
-    },
-    'connectionmanagement': {
-      'timeout': 600,
-      'numProcesses': 4,
-      'runsPerConnection': 5
-    },
-    'hostsystem': {
-      'RAM': 61.0,
-      'CPU': 'Intel(R) Xeon(R) CPU E5-2686 v4 @ 2.30GHz\n',
-      'Cores': '8\n',
-      'host': '4.4.0-1075-aws\n',
-      'disk': '82G\n',
-      'CUDA': ' NVIDIA-SMI 410.79       Driver Version: 410.79       CUDA Version: 10.0',
-      'instance': 'p3.2xlarge'
-    },
-    'monitoring': {
-      'shift': 0,
-      'extend': 20,
-      'prometheus_url': 'http://127.0.0.1:9090/api/v1/',
-      'metrics': {
-        'total_cpu_memory': {
-          'query': 'container_memory_working_set_bytes{job="monitor-node"}/1024/1024',
-          'title': 'CPU Memory [MiB]'
-        }
-      }
-    }
-},
-]
-```
-
-* `name`: References the connection
-* `version` and `info`: Just info texts for implementation in reports
-* `active`: Use this connection in benchmarking and reporting (optional, default True)
-* `alias`: Alias for anonymized reports (optional, default is a random name)
-* `docker`: Name of the docker image. This helps aggregating connections using the same docker image.
-* `docker_alias`: Anonymized name of the docker image. This helps aggregating connections using the same docker image in anonymized reports.
-* `alias`: Alias for anonymized reports (optional default is a random name)
-* `dialect`: Key for (optional) alternative SQL statements in the query file
-* `driver`, `url`, `auth`, `jar`: JDBC data
-* Additional information useful for reporting and also used for computations
-  * `timeload`: Time for ingest (in milliseconds), because not part of the benchmark
-  * `priceperhourdollar`: Used to compute total cost based on total time (optional)
-* `connectionmanagement`: Parameter for connection management. This overwrites general settings made in the [query config](#extended-query-file) and can be overwritten by query-wise settings made there.
-  * `timeout`: Maximum lifespan of a connection. Default is None, i.e. no limit.
-  * `numProcesses`: Number of parallel client processes. Default is 1.
-  * `runsPerConnection`: Number of runs performed before connection is closed. Default is None, i.e. no limit.
-  * `singleConnection`: This indicates if the connection should be used for the complete stream of queries. Default is True. Switch this off, if you want to have reconnects during the stream, for example to inspect the effect of reconnection of execution times.
-* `hostsystem`: Describing information for report in particular about the host system.
-  This can be written automatically by https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager
-* `monitoring`: We might also add information about fetching [monitoring](#monitoring) metrics.
-  * `prometheus_url`: URL to API of Prometheus instance monitoring the system under test
-  * `shift`: Shifts the fetched interval by `n` seconds to the future.
-  * `extend`: Extends the fetched interval by `n` seconds at both ends.
-
 ### Monitoring
 
 The parameter `--metrics` can be used to activate fetching metrics from a Prometheus server.
@@ -200,7 +123,101 @@ More information about monitoring and metrics can be found here: https://github.
 The parameter `--metrics-per-stream` does the same, but collects the metrics per stream - not per query.
 This is useful when queries are very fast.
 
-### Query File
+### Query
+
+This parameter sets reading or running benchmarks to one fixed query.
+For `mode=run` this means the fixed query is benchmarked (again), no matter if benchmarks already exist for this query.
+For `mode=continue` this means missing benchmarks are performed for this fixed query only.
+Queries are numbered starting at 1.
+
+### Connection
+
+This parameter sets running benchmarks to one fixed DBMS (connection).
+For `mode=run` this means the fixed DBMS is benchmarked (again), no matter if benchmarks already exist for it.
+For `mode=continue` this means missing benchmarks are performed for this fixed DBMS only.
+Connections are called by name.
+
+### Generate evaluation
+
+If set to yes, an evaluation file is generated. This is a JSON file containing most of the [evaluations](Evaluations.html).
+It can be accessed most easily using the inspection class or the interactive dashboard.
+
+### Debug
+
+This flag activates output of debug infos.
+
+### Sleep
+
+Time in seconds to wait before starting to operate.
+This is handy when we want to wait for other systems (e.g. a DBMS) to startup completely.
+
+### Batch
+
+This flag changes the output slightly and should be used for logging if script runs in background.
+This also means reports are generated only at the end of processing.
+Batch mode is automatically turned on if debug mode is used.
+
+### Verbosity Level
+
+Using the flags `-vq` means each query that is sent is dumped to stdout.
+Using the flags `-vr` means each result set that is received is dumped to stdout.
+Using the flags `-vp` means more information about the process and connections are dumped to stdout.
+Using the flags `-vs` means after each query that has been finished, some statistics are dumped to stdout.
+
+### Working querywise or connectionswise
+
+This options sets if benchmarks are performed per query (one after the other is completed) or per connection (one after the other is completed).
+
+This means processing `-w query` is
+* loop over queries q
+  * loop over connections c
+    * making n benchmarks for q and c
+    * compute statistics
+    * save results
+    * generate reports  
+
+and processing `-w connection` is
+* loop over connections c
+  * loop over queries q
+    * making n benchmarks for q and c
+    * compute statistics
+    * save results
+    * generate reports
+
+### Client processes
+
+This tool simulates parallel queries from several clients.
+The option `-p` can be used to change the global setting for the number of parallel processes.
+Moreover each connection can have a local values for this parameter.
+If nothing is specified, the default value is used, which is half of the number of processors.
+
+### Random Seed
+The option `-s` can be used to specify a random seed.
+This should guarantee reproducible results for randomized queries.
+
+### Subfolders
+
+If the flag `--copy-subfolder` is set, connection and query configuration will be copied from an existing result folder to a subfolder.
+The name of the subfolder can be set via `--subfolder`.
+These flags can be used to allow parallel quering of independent dbmsbenchmarker:
+Each will write in an own subfolder.
+These partial results can be merged using the `merge.py` command line tool.
+The normal behaviour is: If we run the same connection twice, the results of the first run will be overwritten.
+Since we might query the same connection in these instances, the subfolders will be numbered automatically.
+Using `MAX_SUBFOLDERS` we can limit the number of subfolders that are allowed.  
+Example: `-r /tmp/dbmsresults/1234/ -cs -sf MySQL` will continue the benchmarks of folder `/tmp/dbmsresults/1234/` by creating a folder `/tmp/dbmsresults/1234/MySQL-1`.
+If that folder already exists, `/tmp/dbmsresults/1234/MySQL-2` will be used etc.
+
+This is in particular used by https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager for jobs of parallel benchmarker.
+
+### Delay start
+
+The parameter `--sleep` can be used to set a start time.
+DBMSBenchmarker will wait until the given time is reached.
+
+This is in particular used by https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager for synching jobs of parallel benchmarker.
+
+## Query File
 
 Contains the queries to benchmark.
 
@@ -419,97 +436,81 @@ Here, we reconnect each time the sequence is through (`runsPerConnection` = 4) a
 
 This also respects randomization, i.e. every DBMS receives exactly the same versions of the queries in the same order.
 
-### Query
 
-This parameter sets reading or running benchmarks to one fixed query.
-For `mode=run` this means the fixed query is benchmarked (again), no matter if benchmarks already exist for this query.
-For `mode=continue` this means missing benchmarks are performed for this fixed query only.
-Queries are numbered starting at 1.
+## Connection File
 
-### Connection
+Contains infos about JDBC connections.
 
-This parameter sets running benchmarks to one fixed DBMS (connection).
-For `mode=run` this means the fixed DBMS is benchmarked (again), no matter if benchmarks already exist for it.
-For `mode=continue` this means missing benchmarks are performed for this fixed DBMS only.
-Connections are called by name.
+Example for `CONNECTION_FILE`:
+```
+[
+  {
+    'name': "MySQL",
+    'version': "CE 8.0.13",
+    'info': "This uses engine innodb",
+    'active': True,
+    'alias': "DBMS A",
+    'docker': "MySQL",
+    'docker_alias': "DBMS A",
+    'dialect': "MySQL",
+    'timeload': 100,
+    'priceperhourdollar': 1.0,
+    'JDBC': {
+      'driver': "com.mysql.cj.jdbc.Driver",
+      'url': "jdbc:mysql://localhost:3306/database",
+      'auth': ["username", "password"],
+      'jar': "mysql-connector-java-8.0.13.jar"
+    },
+    'connectionmanagement': {
+      'timeout': 600,
+      'numProcesses': 4,
+      'runsPerConnection': 5
+    },
+    'hostsystem': {
+      'RAM': 61.0,
+      'CPU': 'Intel(R) Xeon(R) CPU E5-2686 v4 @ 2.30GHz\n',
+      'Cores': '8\n',
+      'host': '4.4.0-1075-aws\n',
+      'disk': '82G\n',
+      'CUDA': ' NVIDIA-SMI 410.79       Driver Version: 410.79       CUDA Version: 10.0',
+      'instance': 'p3.2xlarge'
+    },
+    'monitoring': {
+      'shift': 0,
+      'extend': 20,
+      'prometheus_url': 'http://127.0.0.1:9090/api/v1/',
+      'metrics': {
+        'total_cpu_memory': {
+          'query': 'container_memory_working_set_bytes{job="monitor-node"}/1024/1024',
+          'title': 'CPU Memory [MiB]'
+        }
+      }
+    }
+},
+]
+```
 
-### Generate evaluation
-
-If set to yes, an evaluation file is generated. This is a JSON file containing most of the [evaluations](Evaluations.html).
-It can be accessed most easily using the inspection class or the interactive dashboard.
-
-### Debug
-
-This flag activates output of debug infos.
-
-### Sleep
-
-Time in seconds to wait before starting to operate.
-This is handy when we want to wait for other systems (e.g. a DBMS) to startup completely.
-
-### Batch
-
-This flag changes the output slightly and should be used for logging if script runs in background.
-This also means reports are generated only at the end of processing.
-Batch mode is automatically turned on if debug mode is used.
-
-### Verbosity Level
-
-Using the flags `-vq` means each query that is sent is dumped to stdout.
-Using the flags `-vr` means each result set that is received is dumped to stdout.
-Using the flags `-vp` means more information about the process and connections are dumped to stdout.
-Using the flags `-vs` means after each query that has been finished, some statistics are dumped to stdout.
-
-### Working querywise or connectionswise
-
-This options sets if benchmarks are performed per query (one after the other is completed) or per connection (one after the other is completed).
-
-This means processing `-w query` is
-* loop over queries q
-  * loop over connections c
-    * making n benchmarks for q and c
-    * compute statistics
-    * save results
-    * generate reports  
-
-and processing `-w connection` is
-* loop over connections c
-  * loop over queries q
-    * making n benchmarks for q and c
-    * compute statistics
-    * save results
-    * generate reports
-
-### Client processes
-
-This tool simulates parallel queries from several clients.
-The option `-p` can be used to change the global setting for the number of parallel processes.
-Moreover each connection can have a local values for this parameter.
-If nothing is specified, the default value is used, which is half of the number of processors.
-
-### Random Seed
-The option `-s` can be used to specify a random seed.
-This should guarantee reproducible results for randomized queries.
-
-### Subfolders
-
-If the flag `--copy-subfolder` is set, connection and query configuration will be copied from an existing result folder to a subfolder.
-The name of the subfolder can be set via `--subfolder`.
-These flags can be used to allow parallel quering of independent dbmsbenchmarker:
-Each will write in an own subfolder.
-These partial results can be merged using the `merge.py` command line tool.
-The normal behaviour is: If we run the same connection twice, the results of the first run will be overwritten.
-Since we might query the same connection in these instances, the subfolders will be numbered automatically.
-Using `MAX_SUBFOLDERS` we can limit the number of subfolders that are allowed.  
-Example: `-r /tmp/dbmsresults/1234/ -cs -sf MySQL` will continue the benchmarks of folder `/tmp/dbmsresults/1234/` by creating a folder `/tmp/dbmsresults/1234/MySQL-1`.
-If that folder already exists, `/tmp/dbmsresults/1234/MySQL-2` will be used etc.
-
-This is in particular used by https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager for jobs of parallel benchmarker.
-
-### Delay start
-
-The parameter `--sleep` can be used to set a start time.
-DBMSBenchmarker will wait until the given time is reached.
-
-This is in particular used by https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager for synching jobs of parallel benchmarker.
+* `name`: References the connection
+* `version` and `info`: Just info texts for implementation in reports
+* `active`: Use this connection in benchmarking and reporting (optional, default True)
+* `alias`: Alias for anonymized reports (optional, default is a random name)
+* `docker`: Name of the docker image. This helps aggregating connections using the same docker image.
+* `docker_alias`: Anonymized name of the docker image. This helps aggregating connections using the same docker image in anonymized reports.
+* `alias`: Alias for anonymized reports (optional default is a random name)
+* `dialect`: Key for (optional) alternative SQL statements in the query file
+* `driver`, `url`, `auth`, `jar`: JDBC data
+* Additional information useful for reporting and also used for computations
+  * `timeload`: Time for ingest (in milliseconds), because not part of the benchmark
+  * `priceperhourdollar`: Used to compute total cost based on total time (optional)
+* `connectionmanagement`: Parameter for connection management. This overwrites general settings made in the [query config](#extended-query-file) and can be overwritten by query-wise settings made there.
+  * `timeout`: Maximum lifespan of a connection. Default is None, i.e. no limit.
+  * `numProcesses`: Number of parallel client processes. Default is 1.
+  * `runsPerConnection`: Number of runs performed before connection is closed. Default is None, i.e. no limit.
+  * `singleConnection`: This indicates if the connection should be used for the complete stream of queries. Default is True. Switch this off, if you want to have reconnects during the stream, for example to inspect the effect of reconnection of execution times.
+* `hostsystem`: Describing information for report in particular about the host system.
+  This can be written automatically by https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager
+* `monitoring`: We might also add information about fetching [monitoring](#monitoring) metrics.
+  * `prometheus_url`: URL to API of Prometheus instance monitoring the system under test
+  * `shift`: Shifts the fetched interval by `n` seconds to the future.
+  * `extend`: Extends the fetched interval by `n` seconds at both ends.
 
