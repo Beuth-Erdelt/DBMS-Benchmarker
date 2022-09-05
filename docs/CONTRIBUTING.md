@@ -3,10 +3,10 @@
 You would like to contribute? Great!
 
 Some things that you can help on include:
-* **New Workloads**: The `example/` folder includes the TPC-H and TPC-DS (reading) queries in various dialects.
-* **Documentation**
-* **Testing**
-* **More DBMS**
+* **New Workloads**: The `example/` folder includes the TPC-H and TPC-DS (reading) queries in various dialects. We are interested in adding other relevant workloads.
+* **Documentation**: If a point in the documentation is unclear, we look forward to receiving tips and suggestions for improvement.
+* **Testing**: If the behavior is not as expected and you suspect a bug, please report it to our issue tracker.
+* **Use Cases**: If you have had any experiences with peculiarities, mistakes, ambiguities or oddities or particularly beautiful cases etc., we are interested in hearing about them and passing them on to others.
 
 ## Non-code contributions
 
