@@ -182,6 +182,7 @@ Example for `CONNECTION_FILE`:
   * `timeout`: Maximum lifespan of a connection. Default is None, i.e. no limit.
   * `numProcesses`: Number of parallel client processes. Default is 1.
   * `runsPerConnection`: Number of runs performed before connection is closed. Default is None, i.e. no limit.
+  * `singleConnection`: This indicates if the connection should be used for the complete stream of queries. Default is True. Switch this off, if you want to have reconnects during the stream, for example to inspect the effect of reconnection of execution times.
 * `hostsystem`: Describing information for report in particular about the host system.
   This can be written automatically by https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager
 * `monitoring`: We might also add information about fetching [monitoring](#monitoring) metrics.
@@ -242,9 +243,10 @@ Extended example for `QUERY_FILE`:
   'intro': 'This is an example workload',
   'info': 'It runs on a P100 GPU',
   'connectionmanagement': {
-    'timeout': 600,
-    'numProcesses': 4,
-    'runsPerConnection': 5
+    'timeout': 600,             # in seconds
+    'numProcesses': 4,          # number of parallel client processes
+    'runsPerConnection': 5,     # number of runs performed before connection is closed
+    'singleConnection': False   # if connection should be used for the complete stream
   },
   'queries':
   [
@@ -293,6 +295,7 @@ The first `connectionmanagement` options set global values valid for all DBMS. T
   * `timeout`: Maximum lifespan of a connection. Default is None, i.e. no limit.
   * `numProcesses`: Number of parallel client processes. Default is 1.
   * `runsPerConnection`: Number of runs performed before connection is closed. Default is None, i.e. no limit.
+  * `singleConnection`: This indicates if the connection should be used for the complete stream of queries. Default is True. Switch this off, if you want to have reconnects during the stream, for example to inspect the effect of reconnection of execution times.
 
 
 #### Connection Latency
