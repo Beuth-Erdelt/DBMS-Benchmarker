@@ -17,6 +17,8 @@ An interactive visual dashboard assists in multi-dimensional analysis of the res
 
 See the [homepage](https://github.com/Beuth-Erdelt/DBMS-Benchmarker) and the [documentation](https://dbmsbenchmarker.readthedocs.io/en/latest/Docs.html).
 
+If you encounter any issues, please report them to our [Github issue tracker](https://github.com/Beuth-Erdelt/DBMS-Benchmarker/issues).
+
 ## Key Features
 
 DBMS-Benchmarker
@@ -46,7 +48,12 @@ This module has been tested with Clickhouse, DB2, Exasol, Hyperscale (Citus), Ki
 
 ## Installation
 
-Run `pip install dbmsbenchmarker`
+Run `pip install dbmsbenchmarker` to install the package.
+
+You will also need to have
+* Java [installed](https://www.java.com/en/download/help/download_options.html) (we tested with Java 8)
+* `JAVA_HOME` set correctly
+* a JDBC driver suitable for the DBMS you want to connect to (optionally located in your `CLASSPATH`)
 
 ## Basic Usage
 
@@ -119,14 +126,6 @@ Visit the address in a browser and select the experiment `<code>`.
 
 Alternatively you may use a [Jupyter notebook](https://github.com/Beuth-Erdelt/DBMS-Benchmarker/blob/master/Evaluation-Demo.ipynb), see a [rendered example](https://beuth-erdelt.github.io/DBMS-Benchmarker/Evaluation-Demo.html).
 
-## Benchmarking in a Kubernetes Cloud
-
-This module can serve as the **query executor** [2] and **evaluator** [1] for distributed parallel benchmarking experiments in a Kubernetes Cloud, see the [orchestrator](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager) for more details.
-
-<p align="center">
-    <img src="https://raw.githubusercontent.com/Beuth-Erdelt/DBMS-Benchmarker/master/docs/experiment-with-orchestrator.png" width="800">
-</p>
-
 
 ## Limitations
 
@@ -147,8 +146,34 @@ Other comparable products you might like
 * [BenchBase](https://github.com/cmu-db/benchbase) - successor of OLTPBench
 
 
+## Contributing, Bug Reports
+
+If you have any question or found a bug, please report them to our [Github issue tracker](https://github.com/Beuth-Erdelt/DBMS-Benchmarker/issues).
+In any bug report, please let us know:
+
+* Which operating system and hardware (32 bit or 64 bit) you are using
+* Python version
+* DBMSBenchmarker version (or git commit/date)
+* DBMS you are connecting to
+* Traceback that occurs (the full error message)
+
+We are always looking for people interested in helping with code development, documentation writing, technical administration, and whatever else comes up.
+If you wish to contribute, please first read the contribution [section in the documentation](https://dbmsbenchmarker.readthedocs.io/en/latest/CONTRIBUTING.html).
+
+
+## Benchmarking in a Kubernetes Cloud
+
+This module can serve as the **query executor** [2] and **evaluator** [1] for distributed parallel benchmarking experiments in a Kubernetes Cloud, see the [orchestrator](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager) for more details.
+
+<p align="center">
+    <img src="https://raw.githubusercontent.com/Beuth-Erdelt/DBMS-Benchmarker/master/docs/experiment-with-orchestrator.png" width="800">
+</p>
+
 
 ## References
+
+If you use DBMSBenchmarker in work contributing to a scientific publication, we ask that you cite our application note [1]:
+
 
 [1] [A Framework for Supporting Repetition and Evaluation in the Process of Cloud-Based DBMS Performance Benchmarking](https://doi.org/10.1007/978-3-030-84924-5_6)
 

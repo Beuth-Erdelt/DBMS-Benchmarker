@@ -210,6 +210,7 @@ def singleRun(connectiondata, inputConfig, numRuns, connectionname, numQuery, pa
 			size = 0
 		finally:
 			#start = default_timer()
+			#print("close")
 			connection.closeCursor()
 			#end = default_timer()
 			#durationExecute += 1000.0*(end - start)
@@ -229,6 +230,7 @@ def singleRun(connectiondata, inputConfig, numRuns, connectionname, numQuery, pa
 		results.append(result)
 	if not len(activeConnections) > numActiveConnection:
 		#start = default_timer()
+		#print("disconnect")
 		connection.disconnect()
 		#end = default_timer()
 		#durationConnect += 1000.0*(end - start)
