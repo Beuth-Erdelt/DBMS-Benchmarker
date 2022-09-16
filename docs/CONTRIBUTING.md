@@ -38,6 +38,14 @@ DBMSBenchmarker tries to follow the coding conventions laid out in PEP8 and PEP2
 
 ### Testing
 
-Any new feature or functionality will not be accepted without tests.
-Likewise for any bug fix, we encourage including an additional test.
+New features or functions will not be accepted without testing.
+Likewise for any enhancement or bug fix, we require including an additional test.
+
+**If the feature or functionality concerns benchmarking**:
+We expect it to be testable with the TPC-H workload.
+Otherwise please add references to data and queries you used to test the functionality.
+They must be publicly accessible.
+
+**If the feature or functionality concerns evaluation**:
+Please include a zipped result folder, so we can trace the enhancement of evaluations based on the same results you have used.
 
