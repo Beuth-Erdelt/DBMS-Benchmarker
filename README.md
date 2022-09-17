@@ -158,7 +158,7 @@ In any bug report, please let us know:
 * Traceback that occurs (the full error message)
 
 We are always looking for people interested in helping with code development, documentation writing, technical administration, and whatever else comes up.
-If you wish to contribute, please first read the contribution [section in the documentation](https://dbmsbenchmarker.readthedocs.io/en/latest/CONTRIBUTING.html).
+If you wish to contribute, please first read the [contribution section](https://github.com/Beuth-Erdelt/DBMS-Benchmarker/blob/docs/CONTRIBUTING.md) or visit the [documentation](https://dbmsbenchmarker.readthedocs.io/en/latest/CONTRIBUTING.html).
 
 
 ## Benchmarking in a Kubernetes Cloud
