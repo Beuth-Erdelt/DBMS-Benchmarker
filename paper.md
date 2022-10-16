@@ -14,7 +14,7 @@ authors:
 affiliations:
  - name: Berliner Hochschule für Technik (BHT)
    index: 1
-date: 21 March 2022
+date: 16 October 2022
 bibliography: paper.bib
 
 ---
