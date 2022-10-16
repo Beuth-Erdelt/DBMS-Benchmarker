@@ -1,3 +1,0 @@
-\newpage
-\subsection{{{queryName}}}\label{{appendix:{code}-Q{queryNumber}}}
-{{\scriptsize{{{queryNotes}{errors}{warnings}{comparesettings}{queryParameter}{queryRuns}{data}{resultSets}}}}}

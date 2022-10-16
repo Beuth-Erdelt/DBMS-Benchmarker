@@ -8,7 +8,7 @@ with open('requirements.txt') as f:
 
 setuptools.setup(
     name="dbmsbenchmarker",
-    version="0.12.4",
+    version="0.12.5",
     author="Patrick Erdelt",
     author_email="perdelt@beuth-hochschule.de",
     description="DBMS-Benchmarker is a Python-based application-level blackbox benchmark tool for Database Management Systems (DBMS). It connects to a given list of DBMS (via JDBC) and runs a given list of parametrized and randomized (SQL) benchmark queries. Evaluations are available via Python interface, in reports and at an interactive multi-dimensional dashboard.",
@@ -27,7 +27,7 @@ setuptools.setup(
     install_requires=requirements,
     package_dir={'dbmsbenchmarker': 'dbmsbenchmarker'},
     package_data={
-        'dbmsbenchmarker': ['dbmsbenchmarker/latex/*', 'dbmsbenchmarker/scripts/assets/*']
+        'dbmsbenchmarker': ['dbmsbenchmarker/scripts/assets/*']
     },
     py_modules=['cli'],
     entry_points='''

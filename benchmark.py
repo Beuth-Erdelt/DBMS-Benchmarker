@@ -36,10 +36,8 @@ if __name__ == '__main__':
 	parser.add_argument('-q', '--query', help='number of query to benchmark', default=None)
 	parser.add_argument('-c', '--connection', help='name of connection to benchmark', default=None)
 	parser.add_argument('-ca', '--connection-alias', help='alias of connection to benchmark', default='')
-	#parser.add_argument('-l', '--latex-template', help='name of latex template for reporting', default='pagePerQuery')
 	parser.add_argument('-f', '--config-folder', help='folder containing query and connection config files. If set, the names connections.config and queries.config are assumed automatically.', default=None)
 	parser.add_argument('-r', '--result-folder', help='folder for storing benchmark result files, default is given by timestamp', default=None)
-	#parser.add_argument('-g', '--generate-output', help='generate new report files', default='no', choices=['no','yes'])
 	parser.add_argument('-e', '--generate-evaluation', help='generate new evaluation file', default='no', choices=['no','yes'])
 	parser.add_argument('-w', '--working', help='working per query or connection', default='query', choices=['query','connection'])
 	#parser.add_argument('-a', '--anonymize', help='anonymize all dbms', action='store_true', default=False)
@@ -165,24 +163,7 @@ if __name__ == '__main__':
 		# collect hardware metrics
 		experiments.reporter.append(benchmarker.reporter.metricer(experiments, per_stream=True))
 		experiments.generateReportsAll()
-	"""
-	if args.generate_output == 'yes':
-		experiments.overwrite = True
-		# store measures ans statistics in separate files
-		experiments.reporter.append(benchmarker.reporter.pickler(experiments))
-		experiments.reporter.append(benchmarker.reporter.dataframer(experiments))
-		# collect hardware metrics
-		experiments.reporter.append(benchmarker.reporter.metricer(experiments))
-		# generate charts
-		experiments.reporter.append(benchmarker.reporter.barer(experiments))
-		experiments.reporter.append(benchmarker.reporter.ploter(experiments))
-		experiments.reporter.append(benchmarker.reporter.boxploter(experiments))
-		experiments.reporter.append(benchmarker.reporter.tps(experiments))
-		experiments.reporter.append(benchmarker.reporter.hister(experiments))
-		# generate latex report
-		experiments.reporter.append(benchmarker.reporter.latexer(experiments, args.latex_template))
-		experiments.generateReportsAll()
-	"""
 	if args.generate_evaluation == 'yes':
+		# generate evaluation cube
 		experiments.overwrite = True
 		evaluator.evaluator(experiments, load=False, force=True)
