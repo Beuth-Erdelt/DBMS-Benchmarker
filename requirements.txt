@@ -22,6 +22,7 @@ dash-html-components
 dash-renderer
 dash-table
 Flask==2.1.0
+Flask-Caching
 future>=0.18.2
 idna>=2.9
 itsdangerous>=1.1.0
