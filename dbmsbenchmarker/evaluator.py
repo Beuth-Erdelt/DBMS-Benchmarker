@@ -37,13 +37,11 @@ import numpy as np
 class evaluator():
 	evaluation = {}
 	"""
-	Class for generating reports.
-	This class generates a survey in latex and saves it to disk.
-	The survey has one page per timer.
+	Class for generating evaluation cube.
 	"""
 	def __init__(self, benchmarker, load=False, force=False):
 		"""
-		Construct a new 'reporter' object.
+		Construct a new 'evaluator' object.
 
 		:param benchmarker: Object of benchmarker containing information about queries, connections and benchmark times
 		:return: returns nothing
