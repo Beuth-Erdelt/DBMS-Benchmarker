@@ -22,48 +22,47 @@ bibliography: paper.bib
 # Summary
 
 DBMS-Benchmarker is a Python-based application-level blackbox benchmark tool for Database Management Systems (DBMS).
-It aims at reproducible measuring and easy evaluation of the performance the user receives even in complex benchmark situations.
+It is intended for reproducible measurement and easy evaluation of the performance the user receives, even in complex benchmark situations.
 It connects to a given list of DBMS (via JDBC) and runs a given list of (SQL) benchmark queries.
 Queries can be parametrized and randomized.
 Results and evaluations are available via a Python interface and can be inspected with standard Python tools like pandas DataFrames.
 An interactive visual dashboard assists in multi-dimensional analysis of the results.
 
-This module has been tested with Clickhouse, Exasol, Citus Data (Hyperscale), IBM DB2, MariaDB, MariaDB Columnstore, MemSQL (SingleStore), MonetDB, MySQL, OmniSci (HEAVY.AI) , Oracle DB, PostgreSQL, SQL Server, SAP HANA, TimescaleDB and Vertica.
+This module has been tested with Clickhouse, Exasol, Citus Data (Hyperscale), IBM DB2, MariaDB, MariaDB Columnstore, MemSQL (SingleStore), MonetDB, MySQL, OmniSci (HEAVY.AI), Oracle DB, PostgreSQL, SQL Server, SAP HANA, TimescaleDB, and Vertica.
 
-See the [homepage](https://github.com/Beuth-Erdelt/DBMS-Benchmarker) and the [documentation](https://dbmsbenchmarker.readthedocs.io/en/latest/Docs.html).
+See the [homepage](https://github.com/Beuth-Erdelt/DBMS-Benchmarker) and the [documentation](https://dbmsbenchmarker.readthedocs.io/en/latest/Docs.html) for more details.
 
 # Statement of Need
 
 Performance benchmarking of database management systems (DBMS) is an active research area and has a broad audience. It is used "*by DBMS developers to evaluate their work and to find out which algorithm works best in which situation. Benchmarks are used by (potential) customers to evaluate what system or hardware to buy or rent. Benchmarks are used by administrators to find bottlenecks and adjust configurations. Benchmarks are used by users to compare semantically equivalent queries and to find the best formulation alternative*", @10.1007/978-3-030-84924-5_6.
-Also in the academic field, approaches and their special implementations are examined in benchmarks.
+Approaches and their special implementations are also examined in benchmarks in academia.
 There is a large variety of DBMS types and products.
-For example @DBEngines ranks 350 DBMS (150 Relational), @DBDBIO lists 850 DBMS (280 Relational).
+For example, @DBEngines ranks 350 DBMS (150 Relational) and @DBDBIO lists 850 DBMS (280 Relational).
 We focus on Relational DBMS (RDBMS) in the following.
-The types thereof can be divided into for example row-wise, column-wise, in-memory, distributed and GPU-enhanced. 
+Their types can be divided into, for example, row-wise, column-wise, in-memory, distributed, and GPU-enhanced. 
 All of these products have unique characteristics, special use cases, advantages and disadvantages, and their own justification.
-In order to be able to verify and ensure the performance measurement, we want to be able to create and repeat benchmarking scenarios.
-Repetition and thorough evaluation are crucial, in particular in the age of Cloud-based systems with its diversity of hardware configurations, @Raasveldt2018FBC32099503209955, @DBLPconfsigmodKerstenKZ18, @KounevLK20.
+In order to be able to verify and ensure performance measurements, we want to be able to create and repeat benchmarking scenarios.
+Repetition and thorough evaluation are crucial, in particular in the age of cloud-based systems with their diversity of hardware configurations[@Raasveldt2018FBC32099503209955; @DBLPconfsigmodKerstenKZ18; @KounevLK20].
 
-Thus there is a widespread need for a tool to support the repetition and reproducibility of benchmarking situations, and that is capable of connecting to all these systems.
+Thus there is widespread need for a tool to support the repetition and reproducibility of benchmarking situations, and that is capable of connecting to all these systems.
 
-When we collect a lot of data during benchmarking processes, we also need a tool that will help with the statistical, visual and interactive analysis of the results.
-The authors advocate using Python as a common Data Science language, since
+When we collect a lot of data during benchmarking processes, we also need a tool that will help with the statistical, visual, and interactive analysis of the results.
+The authors advocate using Python as a common data-science language, since
 "*it is a mature language programming, easy for the newbies, and can be used as a specific platform for data scientists, thanks to its large ecosystem of scientific libraries and its high and vibrant community*", @series/utcs/IgualS17.
-This helps to implement the tool into a pipeline, for example to make use of closed-loop benchmarking situations, @10114533389063338912, or to closely inspect parts of queries, @DBLPconfsigmodKerstenKZ18.
+This helps in implementing the tool within a pipeline, for example to make use of closed-loop benchmarking situations [@10114533389063338912], or to closely inspect parts of queries [@DBLPconfsigmodKerstenKZ18].
 It also allows the use of common and sophisticated tools to inspect and evaluate the results.
-To name a few:
-Pandas for statistical evaluation of tabular data, @reback2020pandas, @mckinney-proc-scipy-2010,
-Scipy for scientific investigation of data, @2020SciPy-NMeth,
-IPython and Jupyter notebooks for interactive analysis and display of results, @Kluyver2016jupyter,
-Matplotlib and Seaborn for visual analysis, @Hunter:2007, @Waskom2021,
-or even Machine Learning tools.
-Moreover Python is currently the most popular computer language, @PYPL, @TIOBE.
+To name a few: pandas [@reback2020pandas; @mckinney-proc-scipy-2010] for statistical evaluation of tabular data,
+scipy [@2020SciPy-NMeth] for scientific investigation of data,
+IPython and Jupyter notebooks [@Kluyver2016jupyter] for interactive analysis and display of results,
+Matplotlib [@Hunter:2007] and Seaborn [@Waskom2021] for visual analysis,
+or even machine learning tools.
+Moreover, Python is currently the most popular computer language [@PYPL; @TIOBE].
 
-To our knowledge there is no other such tool, c.f. also the studies in @10.1007/978-3-319-67162-8_12 and @10.1007/978-3-030-12079-5_4.
-There are other tools like Apache JMeter (Java), HammerDB (Tcl), Sysbench (LuaJIT), OLTPBench (Java) and BenchBase (Java), that provide very nice features.
-However they do not fit these needs, since they are not Python-based. Moreover some are limited in supported DBMS, in supporting repetition and (statistical) evaluation or do not support randomized queries.
-The design decisions of this tool have been elaborated in more detail in @10.1007/978-3-030-84924-5_6.
-DBMS-Benchmarker has been used as a support for receiving scientific results about benchmarking DBMS performance in Cloud environments as in @10.1007/978-3-030-84924-5_6 and @10.1007/978-3-030-94437-7_6.
+To our knowledge, there is no other such tool, c.f. also the studies in @10.1007/978-3-319-67162-8_12 and @10.1007/978-3-030-12079-5_4.
+There are other tools like Apache JMeter (Java), HammerDB (Tcl), Sysbench (LuaJIT), OLTPBench (Java), and BenchBase (Java) that provide very nice features.
+However they do not fit these needs, since they are not Python-based. Moreover some are limited in supported DBMS, in supporting repetition and (statistical) evaluation, or do not support randomized queries.
+The design decisions of this tool have been described in more detail in @10.1007/978-3-030-84924-5_6.
+DBMS-Benchmarker has been used as to support receiving scientific results about benchmarking DBMS performance in Cloud environments as in @10.1007/978-3-030-84924-5_6 and @10.1007/978-3-030-94437-7_6.
 
 ## Summary of Solution
 
@@ -77,7 +76,7 @@ DBMS-Benchmarker is Python3-based and helps to **benchmark DBMS**. It
 * allows randomized queries to avoid caching side effects
 * investigates a number of timing aspects
 * investigates a number of other aspects - received result sets, precision, number of clients
-* collects hardware metrics from a Prometheus server, @208870
+* collects hardware metrics from a Prometheus server [@208870]
 
 DBMS-Benchmarker helps to **evaluate results** - by providing    
 
@@ -95,7 +94,7 @@ Some features are inspired by [TPC-H](http://www.tpc.org/tpch/) and [TPC-DS](htt
 The following simple use case runs the query `SELECT COUNT(*) FROM test` 10 times against one local (existing) MySQL installation.
 
 Run `pip install dbmsbenchmarker` for installation. Make sure Java is set up correctly.
-We assume here we have downloaded the required JDBC driver, e.g. `mysql-connector-java-8.0.13.jar`.
+We assume here we have downloaded the required JDBC driver, e.g., `mysql-connector-java-8.0.13.jar`.
 
 ## Configuration
 
@@ -140,7 +139,7 @@ We assume here we have downloaded the required JDBC driver, e.g. `mysql-connecto
 
 Run the CLI command: `dbmsbenchmarker run -e yes -b -f ./config`
 
-After benchmarking has been finished we will see a message like `Experiment <code> has been finished`.
+After benchmarking has completed we will see a message like `Experiment <code> has been finished`.
 The script has created a result folder in the current directory containing the results. `<code>` is the name of the folder.
 
 Run the CLI command: `dbmsdashboard`
@@ -174,8 +173,8 @@ This uses `fetchall()` on a cursor of the JDBC connection
 1. Close the connection  
 This uses `close()` on the cursor and the connection
 
-The times needed for steps connection (1.), execution (2. and 3.) and transfer (4.) are measured on the client side.
-A unit of connect, send, execute and transfer of a single query is called a **run**.
+The times needed for the connection (1), execution (2 and 3), and transfer (4) steps are measured on the client side.
+A unit of connect, send, execute, and transfer of a single query is called a **run**.
 Connection time will be zero if an existing connection is reused.
 A sequence of units of sending, executing, and transmitting between establishing and discarding a connection is called a **session**.
 This is the same as a run, if we always reconnect prior to sending a query, but if we choose to reuse a connection this will cover multiple runs.
@@ -197,53 +196,53 @@ This means we exchange a part of the query for a random value.
 
 ## Basic Metrics
 
-We have several **timers** to collect timing information in milliseconds and per run, corresponding to the parts of query processing: **timerConnection**, **timerExecution** and **timerTransfer**.
-The tool also computes **timerRun** (the sum of *timerConnection*, *timerExecution* and *timerTransfer*) and **timerSession**.
+We have several **timers** to collect timing information in milliseconds and per run, corresponding to the parts of query processing: **timerConnection**, **timerExecution**, and **timerTransfer**.
+The tool also computes **timerRun** (the sum of *timerConnection*, *timerExecution*, and *timerTransfer*) and **timerSession**.
 
-We also measure and store the **total time** of the benchmark of the query, since for parallel execution this differs from the **sum of times** based on *timerRun*. Total time means measurement starts before the first benchmark run and it stops after the last benchmark run has finished. Thus total time also includes some overhead (for spawning a pool of subprocesses, compute size of result sets and joining results of subprocesses).
-We also compute for each query and DBMS **latency** (measured time) and **throughput** (number of parallel clients per measured time).
-Additionally error messages and timestamps of begin and end of benchmarking a query are stored.
+We also measure and store the **total time** of the benchmark of the query, since for parallel execution this differs from the **sum of times** based on *timerRun*. Total time means measurement starts before the first benchmark run and it stops after the last benchmark run has finished. Thus total time also includes some overhead (for spawning a pool of subprocesses, computing the size of result sets, and joining results of subprocesses.)
+We also compute **latency** (measured time) and **throughput** (number of parallel clients per measured time) for each query and DBMS.
+Additionally error messages and timestamps of the begin and end of benchmarking a query are stored.
 
 
 ## Comparison
 
 We can specify a dict of DBMS.
 Each query will be sent to every DBMS in the same number of runs.
-This also respects randomization, i.e. every DBMS receives exactly the same versions of the query in the same order.
+This also respects randomization, i.e., every DBMS receives exactly the same versions of the query in the same order.
 We assume all DBMS will give us the same result sets.
 Without randomization, each run should yield the same result set.
-The tool automatically can check these assumptions by **comparison** of sorted result tables (small data sets) or their hash value or size (bigger data sets).
+The tool can automatically check these assumptions by **comparison** of sorted result tables (small data sets) or their hash value or size (bigger data sets).
 In order to do so, result sets (or their hash value or size) are stored as lists of lists and additionally can be saved as csv files or pickled pandas DataFrames.
 
 ## Monitoring Hardware Metrics
 
-To make hardware metrics available, we must provide an API URL of a Prometheus Server.
+To make hardware metrics available, we must provide the API URL of a Prometheus Server.
 The tool collects metrics from the Prometheus server with a step size of 1 second.
 We may define the metrics in terms of Prometheus's **promql**.
 Metrics can be defined per connection.
 
 ## Results
 
-As a result we obtain measured times in milliseconds for the query processing parts: connection, execution, data transfer.
+As a result, we obtain measured times in milliseconds for the query processing parts: connection, execution, and data transfer.
 
 ![evaluation cubes for time and hardware metrics.\label{fig:Evaluation-Cubes}](docs/Evaluation-Cubes.png){ width=1440}
 
 These are described in three dimensions:
-number of run, of query and of configuration.
-The configuration dimension can consist of various nominal attributes like DBMS, selected processor, assigned cluster node, number of clients and execution order.
-We also can have various hardware metrics like CPU and GPU utilization, CPU throttling, memory caching and working set.
+number of run, of query, and of configuration.
+The configuration dimension can consist of various nominal attributes like DBMS, selected processor, assigned cluster node, number of clients, and execution order.
+We also can have various hardware metrics like CPU and GPU utilization, CPU throttling, memory caching, and working set.
 These are also described in three dimensions:
-Second of query execution time, number of query and of configuration.
+Second of query execution time, number of query, and of configuration.
 
 # Evaluation
 
 ## Python - Pandas
 
-The cubes of measurements can be sliced or diced, rolled-up or drilled-down into the various dimensions and several aggregation functions for evaluation of the metrics can be applied:
-First, last, minimum, maximum, arithmetic and geometric mean, range and interquartile range, standard deviation, median, some quantiles, coefficient of variation and quartile coefficient of dispersion.
+The cubes of measurements can be sliced or diced, rolled-up, or drilled-down into the various dimensions and several aggregation functions for evaluation of the metrics can be applied:
+first, last, minimum, maximum, arithmetic, and geometric mean, range, and interquartile range, standard deviation, median, some quantiles, coefficient of variation, and quartile coefficient of dispersion.
 This helps in univariate analysis of center and dispersion of the metrics to evaluate measures and stability.
 
-The package includes tools to convert the three dimensional results into pandas DataFrames, like covering errors and warnings, that have occured, and timing and hardware metrics, that have been collected or derived.
+The package includes tools to convert the three-dimensional results into pandas DataFrames, like covering errors and warnings that have occured, and timing and hardware metrics that have been collected or derived.
 For example the latency of execution, aggregated in the query dimension by computing the mean value, can be obtained as:
 
 ```
@@ -255,8 +254,8 @@ df = evaluate.get_aggregated_query_statistics(
 
 ## GUI - Dashboard
 
-The package includes a dashboard helping in interactive evaluation of experiment results.
-It shows predefined plots of various types, that can be customized and filtered by DBMS configuration and query.
+The package includes a dashboard that helps in interactive evaluation of experiment results.
+It shows predefined plots of various types, which can be customized and filtered by DBMS configuration and query.
 
 ![screenshot of dashboard.\label{fig:dashboard}](docs/dashboard.png){ width=1440}
 
