@@ -251,7 +251,7 @@ df = evaluate.get_aggregated_query_statistics(
     type='latency', name='execution', query_aggregate='Mean')
 ```
 
-![example DataFrame: latency of execution times aggregated.\label{fig:dashboard}](docs/latency-table-example.png){ width=1440}
+![example DataFrame: latency of execution times aggregated.\label{fig:table}](docs/latency-table-example.png){ width=1440}
 
 ## GUI - Dashboard
 
