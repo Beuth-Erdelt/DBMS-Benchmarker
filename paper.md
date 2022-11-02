@@ -47,7 +47,7 @@ Repetition and thorough evaluation are crucial, in particular in the age of clou
 Thus there is widespread need for a tool to support the repetition and reproducibility of benchmarking situations, and that is capable of connecting to all these systems.
 
 When we collect a lot of data during benchmarking processes, we also need a tool that will help with the statistical, visual, and interactive analysis of the results.
-The authors advocate using Python as a common data-science language, since
+The authors advocate using Python as a common Data Science language, since
 "*it is a mature language programming, easy for the newbies, and can be used as a specific platform for data scientists, thanks to its large ecosystem of scientific libraries and its high and vibrant community*", @series/utcs/IgualS17.
 This helps in implementing the tool within a pipeline, for example to make use of closed-loop benchmarking situations [@10114533389063338912], or to closely inspect parts of queries [@DBLPconfsigmodKerstenKZ18].
 It also allows the use of common and sophisticated tools to inspect and evaluate the results.
