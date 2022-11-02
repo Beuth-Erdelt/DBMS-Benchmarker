@@ -42,7 +42,7 @@ We focus on Relational DBMS (RDBMS) in the following.
 Their types can be divided into, for example, row-wise, column-wise, in-memory, distributed, and GPU-enhanced. 
 All of these products have unique characteristics, special use cases, advantages and disadvantages, and their own justification.
 In order to be able to verify and ensure performance measurements, we want to be able to create and repeat benchmarking scenarios.
-Repetition and thorough evaluation are crucial, in particular in the age of cloud-based systems with their diversity of hardware configurations[@Raasveldt2018FBC32099503209955; @DBLPconfsigmodKerstenKZ18; @KounevLK20].
+Repetition and thorough evaluation are crucial, in particular in the age of cloud-based systems with their diversity of hardware configurations [@Raasveldt2018FBC32099503209955; @DBLPconfsigmodKerstenKZ18; @KounevLK20].
 
 Thus there is widespread need for a tool to support the repetition and reproducibility of benchmarking situations, and that is capable of connecting to all these systems.
 
