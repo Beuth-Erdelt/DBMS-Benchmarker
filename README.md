@@ -172,7 +172,7 @@ This module can serve as the **query executor** [2] and **evaluator** [1] for di
 
 ## References
 
-If you use DBMSBenchmarker in work contributing to a scientific publication, we ask that you cite our application note [1]:
+If you use DBMSBenchmarker in work contributing to a scientific publication, we kindly ask that you cite our application note [1] and/or [3]:
 
 
 [1] [A Framework for Supporting Repetition and Evaluation in the Process of Cloud-Based DBMS Performance Benchmarking](https://doi.org/10.1007/978-3-030-84924-5_6)
