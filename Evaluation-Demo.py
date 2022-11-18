@@ -9,682 +9,705 @@
 # Import some libraries
 
 # In[1]:
+import argparse
 
+if __name__ == '__main__':
+    description = """Automatically inspect result of experiment for failures.
+    """
+    # argparse
+    parser = argparse.ArgumentParser(description=description)
+    parser.add_argument('-db', '--debug', help='dump debug informations', action='store_true')
+    parser.add_argument('-cx', '--context', help='context of Kubernetes (for a multi cluster environment), default is current context', default=None)
+    parser.add_argument('-e', '--experiment', help='sets experiment code for continuing started experiment', default=None)
+    # evaluate args
+    args = parser.parse_args()
+    code = args.experiment
+    try:
 
-from dbmsbenchmarker import *
-import pandas as pd
-pd.set_option("display.max_rows", None)
-pd.set_option('display.max_colwidth', None)
 
-# Some plotly figures
-import plotly.graph_objects as go
-import plotly.figure_factory as ff
+        from dbmsbenchmarker import *
+        import pandas as pd
+        pd.set_option("display.max_rows", None)
+        pd.set_option('display.max_colwidth', None)
 
-# Some nice output
-#from IPython.display import display, Markdown
+        # Some plotly figures
+        import plotly.graph_objects as go
+        import plotly.figure_factory as ff
 
-def display(string):
-    print(string)
+        # Some nice output
+        #from IPython.display import display, Markdown
 
-def Markdown(string):
-    return string
+        def display(string):
+            print(string)
 
-import logging
-logging.basicConfig(level=logging.INFO)
+        def Markdown(string):
+            return string
 
+        import logging
+        logging.basicConfig(level=logging.INFO)
 
-# ## Inspect Result Folder
 
-# In[2]:
+        # ## Inspect Result Folder
 
+        # In[2]:
 
-# path of folder containing experiment results
-resultfolder = "results/"
 
-# create evaluation object for result folder
-evaluate = inspector.inspector(resultfolder)
+        # path of folder containing experiment results
+        resultfolder = "results/"
 
-# list of all experiments in folder
-# evaluate.list_experiments
-# dataframe of experiments
-evaluate.get_experiments_preview()
+        # create evaluation object for result folder
+        evaluate = inspector.inspector(resultfolder)
 
+        # list of all experiments in folder
+        # evaluate.list_experiments
+        # dataframe of experiments
+        print(evaluate.get_experiments_preview())
 
-# ## Pick an Experiment and load it
 
-# In[3]:
+        # ## Pick an Experiment and load it
 
+        # In[3]:
 
-# last Experiment
-code = evaluate.list_experiments[len(evaluate.list_experiments)-1]
 
-# Specific Experiment
-code = '1668781697'
+        # last Experiment
+        #code = evaluate.list_experiments[len(evaluate.list_experiments)-1]
 
-# load it
-evaluate.load_experiment(code)
+        # Specific Experiment
+        #code = '1668781697'
 
+        # load it
+        evaluate.load_experiment(code)
 
-# ## Load general Properties into Variables
 
-# In[4]:
+        # ## Load general Properties into Variables
 
+        # In[4]:
 
-# get experiment workflow
-df = evaluate.get_experiment_workflow()
-#print(df)
 
-# get workload properties
-workload_properties = evaluate.get_experiment_workload_properties()
-print(workload_properties['name'])
-print(workload_properties['info'])
+        # get experiment workflow
+        df = evaluate.get_experiment_workflow()
+        #print(df)
 
-# list queries
-list_queries = evaluate.get_experiment_list_queries()
+        # get workload properties
+        workload_properties = evaluate.get_experiment_workload_properties()
+        print("workload_properties", workload_properties)
+        print(workload_properties['name'])
+        print(workload_properties['info'])
 
-# list connections
-list_nodes = evaluate.get_experiment_list_nodes()
-list_dbms = evaluate.get_experiment_list_dbms()
-list_connections = evaluate.get_experiment_list_connections()
-list_connections_node = evaluate.get_experiment_list_connections_by_node()
-list_connections_dbms = evaluate.get_experiment_list_connections_by_dbms()
-list_connections_clients = evaluate.get_experiment_list_connections_by_connectionmanagement('numProcesses')
-list_connections_gpu = evaluate.get_experiment_list_connections_by_hostsystem('GPU')
-list_connections_dockerimage = evaluate.get_experiment_list_connections_by_parameter('dockerimage')
+        # list queries
+        list_queries = evaluate.get_experiment_list_queries()
 
-# colors by dbms
-list_connections_dbms = evaluate.get_experiment_list_connections_by_dbms()
-connection_colors = evaluate.get_experiment_list_connection_colors(list_connections_dbms)
+        # list connections
+        list_nodes = evaluate.get_experiment_list_nodes()
+        list_dbms = evaluate.get_experiment_list_dbms()
+        list_connections = evaluate.get_experiment_list_connections()
+        list_connections_node = evaluate.get_experiment_list_connections_by_node()
+        list_connections_dbms = evaluate.get_experiment_list_connections_by_dbms()
+        list_connections_clients = evaluate.get_experiment_list_connections_by_connectionmanagement('numProcesses')
+        list_connections_gpu = evaluate.get_experiment_list_connections_by_hostsystem('GPU')
+        list_connections_dockerimage = evaluate.get_experiment_list_connections_by_parameter('dockerimage')
 
-# fix some examples:
-# first connection, first query, first run
-connection = list_connections[0]
-numQuery = 1
-numRun = 0
+        # colors by dbms
+        list_connections_dbms = evaluate.get_experiment_list_connections_by_dbms()
+        connection_colors = evaluate.get_experiment_list_connection_colors(list_connections_dbms)
 
+        # fix some examples:
+        # first connection, first query, first run
+        connection = list_connections[0]
+        numQuery = 1
+        numRun = 0
 
-# # Show Properties of the Workload
-# 
-# ## Show Properties of a DBMS 
 
-# In[5]:
+        # # Show Properties of the Workload
+        # 
+        # ## Show Properties of a DBMS 
 
+        # In[5]:
 
-#connection = 'MonetDB-1-1'
 
-display(Markdown("### Properties of {}".format(connection)))
+        #connection = 'MonetDB-1-1'
 
-print(evaluator.pretty(evaluate.get_experiment_connection_properties(connection)))
+        display(Markdown("### Properties of {}".format(connection)))
 
+        print(evaluator.pretty(evaluate.get_experiment_connection_properties(connection)))
 
-# ## Show Properties of a Query
 
-# In[6]:
+        # ## Show Properties of a Query
 
+        # In[6]:
 
-connection = list_connections[0]
-numQuery = 1
-numRun = 0
 
+        connection = list_connections[0]
+        numQuery = 1
+        numRun = 0
 
-# ### Show Errors
 
-# In[7]:
+        # ### Show Errors
 
+        # In[7]:
 
-list_errors = evaluate.get_error(numQuery)
 
-display(Markdown("### Errors of Query {}".format(numQuery)))
-df = pd.DataFrame.from_dict(list_errors, orient='index').sort_index()
-print(df)
+        list_errors = evaluate.get_error(numQuery)
 
-# ### Show Warnings
+        display(Markdown("### Errors of Query {}".format(numQuery)))
+        df = pd.DataFrame.from_dict(list_errors, orient='index').sort_index()
+        print(df)
 
-# In[8]:
+        # ### Show Warnings
 
+        # In[8]:
 
-list_errors = evaluate.get_warning(numQuery)
 
-display(Markdown("### Warnings of Query {}".format(numQuery)))
-df = pd.DataFrame.from_dict(list_errors, orient='index').sort_index()
-print(df)
+        list_errors = evaluate.get_warning(numQuery)
 
+        display(Markdown("### Warnings of Query {}".format(numQuery)))
+        df = pd.DataFrame.from_dict(list_errors, orient='index').sort_index()
+        print(df)
 
-# ### Show Query Template
 
-# In[9]:
+        # ### Show Query Template
 
+        # In[9]:
 
-query_properties = evaluate.get_experiment_query_properties()
 
-display(Markdown("#### Show Query Template {} - {}".format(numQuery, query_properties[str(numQuery)]['config']['title'])))
-print(query_properties[str(numQuery)]['config']['query'])
+        query_properties = evaluate.get_experiment_query_properties()
 
+        display(Markdown("#### Show Query Template {} - {}".format(numQuery, query_properties[str(numQuery)]['config']['title'])))
+        print(query_properties[str(numQuery)]['config']['query'])
 
-# ### Show Query Parameters
 
-# In[10]:
+        # ### Show Query Parameters
 
+        # In[10]:
 
-display(Markdown("#### Show Parameters of Query {} - {}".format(numQuery, query_properties[str(numQuery)]['config']['title'])))
 
-df = evaluate.get_parameter_df(numQuery)
-print(df)
+        display(Markdown("#### Show Parameters of Query {} - {}".format(numQuery, query_properties[str(numQuery)]['config']['title'])))
 
+        df = evaluate.get_parameter_df(numQuery)
+        print(df)
 
-# ### Show Query as being Run
 
-# In[11]:
+        # ### Show Query as being Run
 
+        # In[11]:
 
-display(Markdown("#### Show Query {} as run by {} - Run number {}".format(numQuery, connection, numRun)))
 
-query_string = evaluate.get_querystring(numQuery, connection, numRun)
-print(query_string)
+        display(Markdown("#### Show Query {} as run by {} - Run number {}".format(numQuery, connection, numRun)))
 
+        query_string = evaluate.get_querystring(numQuery, connection, numRun)
+        print(query_string)
 
-# ### Show Query as being Run by another DBMS
 
-# In[12]:
+        # ### Show Query as being Run by another DBMS
 
+        # In[12]:
 
-#display(Markdown("#### Show Query {} as run by {} - Run number {}".format(numQuery, "MonetDB-1-1", numRun)))
 
-#query_string = evaluate.get_querystring(numQuery, connection, numRun)
-#print(query_string)
+        #display(Markdown("#### Show Query {} as run by {} - Run number {}".format(numQuery, "MonetDB-1-1", numRun)))
 
+        #query_string = evaluate.get_querystring(numQuery, connection, numRun)
+        #print(query_string)
 
-# ### Show Result Set
 
-# In[13]:
+        # ### Show Result Set
 
+        # In[13]:
 
-display(Markdown("#### Show Result Set of Query {} as run by {} - Run number {}".format(numQuery, connection, numRun)))
 
-df = evaluate.get_datastorage_df(numQuery, numRun)
-print(df)
+        display(Markdown("#### Show Result Set of Query {} as run by {} - Run number {}".format(numQuery, connection, numRun)))
 
+        df = evaluate.get_datastorage_df(numQuery, numRun)
+        print(df)
 
-# ### Show Result Set from another DBMS
 
-# In[14]:
+        # ### Show Result Set from another DBMS
 
+        # In[14]:
 
-#display(Markdown("#### Show Result Set of Query {} as run by {} - Run number {}".format(numQuery, "MonetDB-1-1", numRun)))
 
-#df = evaluate.get_resultset_df(numQuery, "MonetDB-1-1", numRun)
-#print(df)
+        #display(Markdown("#### Show Result Set of Query {} as run by {} - Run number {}".format(numQuery, "MonetDB-1-1", numRun)))
 
+        #df = evaluate.get_resultset_df(numQuery, "MonetDB-1-1", numRun)
+        #print(df)
 
-# # Some Measures of the Workload
-# 
-# ## Hardware Metrics
 
-# ### List all available Metrics
+        # # Some Measures of the Workload
+        # 
+        # ## Hardware Metrics
 
-# In[15]:
+        # ### List all available Metrics
 
+        # In[15]:
 
-display(Markdown("### Hardware Metrics"))
 
-df = pd.DataFrame(monitor.metrics.metrics).T
-print(df)
+        display(Markdown("### Hardware Metrics"))
 
+        df = pd.DataFrame(monitor.metrics.metrics).T
+        print(df)
 
-# ### Get Hardware Metrics for Loading Test
 
-# In[16]:
+        # ### Get Hardware Metrics for Loading Test
 
+        # In[16]:
 
-df = evaluate.get_loading_metrics('total_cpu_memory')
-df = evaluate.get_loading_metrics('total_cpu_util_s')
-df = df.T.max().sort_index() - df.T.min().sort_index() # compute difference of counter
 
-display(Markdown("### CPU of Ingestion (via counter)"))
-pd.DataFrame(df)
-print(df)
+        df = evaluate.get_loading_metrics('total_cpu_memory')
+        df = evaluate.get_loading_metrics('total_cpu_util_s')
+        df = df.T.max().sort_index() - df.T.min().sort_index() # compute difference of counter
 
+        display(Markdown("### CPU of Ingestion (via counter)"))
+        pd.DataFrame(df)
+        print(df)
 
-# In[17]:
 
+        # In[17]:
 
-df = evaluate.get_loading_metrics('total_cpu_util')
-df = df.T.sum().sort_index() # computer sum of rates
 
-display(Markdown("### CPU of Ingestion (via rate)"))
-pd.DataFrame(df)
-print(df)
+        df = evaluate.get_loading_metrics('total_cpu_util')
+        df = df.T.sum().sort_index() # computer sum of rates
 
+        display(Markdown("### CPU of Ingestion (via rate)"))
+        pd.DataFrame(df)
+        print(df)
 
-# ### Get Hardware Metrics per Stream
 
-# In[18]:
+        # ### Get Hardware Metrics per Stream
 
+        # In[18]:
 
-df = evaluate.get_streaming_metrics('total_cpu_memory')
-df = evaluate.get_streaming_metrics('total_cpu_util_s')
-df = df.T.max().sort_index() - df.T.min().sort_index() # compute difference of counter
 
-display(Markdown("### CPU of Stream (via counter)"))
-pd.DataFrame(df)
-print(df)
+        df = evaluate.get_streaming_metrics('total_cpu_memory')
+        df = evaluate.get_streaming_metrics('total_cpu_util_s')
+        df = df.T.max().sort_index() - df.T.min().sort_index() # compute difference of counter
 
+        display(Markdown("### CPU of Stream (via counter)"))
+        pd.DataFrame(df)
+        print(df)
 
-# In[19]:
 
+        # In[19]:
 
-df = evaluate.get_streaming_metrics('total_cpu_util')
-df = df.T.sum().sort_index() # computer sum of rates
 
-display(Markdown("### CPU of Stream (via rate)"))
-pd.DataFrame(df)
-print(df)
+        df = evaluate.get_streaming_metrics('total_cpu_util')
+        df = df.T.sum().sort_index() # computer sum of rates
 
+        display(Markdown("### CPU of Stream (via rate)"))
+        pd.DataFrame(df)
+        print(df)
 
-# ## Timing Measures
-# 
-# ### Mean of Means of Timer Run
 
-# In[20]:
+        # ## Timing Measures
+        # 
+        # ### Mean of Means of Timer Run
 
+        # In[20]:
 
-df = evaluate.get_aggregated_experiment_statistics(type='timer', name='run', query_aggregate='Mean', total_aggregate='Mean')
-df = (df/1000.0).sort_index()
 
-display(Markdown("### Mean of Means of Timer Run [s]"))
-print(df)
+        df = evaluate.get_aggregated_experiment_statistics(type='timer', name='run', query_aggregate='Mean', total_aggregate='Mean')
+        df = (df/1000.0).sort_index()
 
+        display(Markdown("### Mean of Means of Timer Run [s]"))
+        print(df)
 
-# ### Geometric Mean of Medians of Timer Run
 
-# In[21]:
+        # ### Geometric Mean of Medians of Timer Run
 
+        # In[21]:
 
-df = evaluate.get_aggregated_experiment_statistics(type='timer', name='run', query_aggregate='Median', total_aggregate='Geo')
-df = (df/1000.0).sort_index()
 
-display(Markdown("### Geometric Mean of Medians of Timer Run [s]"))
-print(df)
+        df = evaluate.get_aggregated_experiment_statistics(type='timer', name='run', query_aggregate='Median', total_aggregate='Geo')
+        df = (df/1000.0).sort_index()
 
+        display(Markdown("### Geometric Mean of Medians of Timer Run [s]"))
+        print(df)
 
-# ## Plots
 
-# In[22]:
+        # ## Plots
 
+        # In[22]:
 
-#get_ipython().run_line_magic('matplotlib', 'inline')
 
+        #get_ipython().run_line_magic('matplotlib', 'inline')
 
-# In[23]:
 
+        # In[23]:
 
-df = evaluate.get_aggregated_experiment_statistics(type='timer', name='run', query_aggregate='Median', total_aggregate='Geo')
-df = df.sort_index()
 
-fig = go.Figure()
-for i in range(len(df.index)):
-    t = fig.add_trace(go.Bar(x=[df.index[i]], y=df.iloc[i], name=df.index[i], marker=dict(color=connection_colors[df.index[i]])))
+        df = evaluate.get_aggregated_experiment_statistics(type='timer', name='run', query_aggregate='Median', total_aggregate='Geo')
+        df = df.sort_index()
 
-fig.update_layout(title_text='Geometric Mean of Medians of Timer Run [s]')
-#fig.show()
+        fig = go.Figure()
+        for i in range(len(df.index)):
+            t = fig.add_trace(go.Bar(x=[df.index[i]], y=df.iloc[i], name=df.index[i], marker=dict(color=connection_colors[df.index[i]])))
 
+        fig.update_layout(title_text='Geometric Mean of Medians of Timer Run [s]')
+        ##fig.show()
 
-# # Some Measures per Query
 
-# ## Timing Measures
-# 
-# ### Means of Timer Runs
+        # # Some Measures per Query
 
-# In[24]:
+        # ## Timing Measures
+        # 
+        # ### Means of Timer Runs
 
+        # In[24]:
 
-df = evaluate.get_aggregated_query_statistics(type='timer', name='run', query_aggregate='Mean').sort_index().T
 
-display(Markdown("### Means of Timer Runs [ms]"))
-print(df)
+        df = evaluate.get_aggregated_query_statistics(type='timer', name='run', query_aggregate='Mean').sort_index().T
 
+        display(Markdown("### Means of Timer Runs [ms]"))
+        print(df)
 
-# ### Maximum of Run Throughput
 
-# In[25]:
+        # ### Maximum of Run Throughput
 
+        # In[25]:
 
-df = (evaluate.get_aggregated_query_statistics(type='throughput', name='run', query_aggregate='Max')).sort_index().T
 
-display(Markdown("### Maximum of Run Throughput [1/s]"))
-print(df)
+        df = (evaluate.get_aggregated_query_statistics(type='throughput', name='run', query_aggregate='Max')).sort_index().T
 
+        display(Markdown("### Maximum of Run Throughput [1/s]"))
+        print(df)
 
-# ### Latency of Timer Execution
 
-# In[26]:
+        # ### Latency of Timer Execution
 
+        # In[26]:
 
-df = evaluate.get_aggregated_query_statistics(type='latency', name='execution', query_aggregate='Mean').sort_index().T
 
-display(Markdown("### Latency of Timer Execution [ms]"))
-print(df)
+        df = evaluate.get_aggregated_query_statistics(type='latency', name='execution', query_aggregate='Mean').sort_index().T
 
+        display(Markdown("### Latency of Timer Execution [ms]"))
+        print(df)
 
-# ### Mean of Latency of Timer Execution per DBMS
 
-# In[27]:
+        # ### Mean of Latency of Timer Execution per DBMS
 
+        # In[27]:
 
-df = evaluate.get_aggregated_query_statistics(type='latency', name='execution', query_aggregate='Mean').sort_index()
-df = evaluate.get_aggregated_by_connection(df, list_connections_dbms, connection_aggregate='Mean').T
 
-display(Markdown("### Mean of Latency of Timer Execution per DBMS [ms]"))
-print(df)
+        df = evaluate.get_aggregated_query_statistics(type='latency', name='execution', query_aggregate='Mean').sort_index()
+        df = evaluate.get_aggregated_by_connection(df, list_connections_dbms, connection_aggregate='Mean').T
 
+        display(Markdown("### Mean of Latency of Timer Execution per DBMS [ms]"))
+        print(df)
 
-# ### Coefficient of Variation of Latency of Timer Execution per DBMS
 
-# In[28]:
+        # ### Coefficient of Variation of Latency of Timer Execution per DBMS
 
+        # In[28]:
 
-df = evaluate.get_aggregated_query_statistics(type='latency', name='execution', query_aggregate='Mean').sort_index()
-df = evaluate.get_aggregated_by_connection(df, list_connections_dbms, connection_aggregate='cv [%]').T
 
-display(Markdown("### CV of Latency of Timer Execution per DBMS [%]"))
-print(df)
+        df = evaluate.get_aggregated_query_statistics(type='latency', name='execution', query_aggregate='Mean').sort_index()
+        df = evaluate.get_aggregated_by_connection(df, list_connections_dbms, connection_aggregate='cv [%]').T
 
+        display(Markdown("### CV of Latency of Timer Execution per DBMS [%]"))
+        print(df)
 
-# ### Latency of Timer Connection
 
-# In[29]:
+        # ### Latency of Timer Connection
 
+        # In[29]:
 
-df = evaluate.get_aggregated_query_statistics(type='timer', name='connection', query_aggregate='Mean').T
 
-display(Markdown("### Latency of Timer Connection [ms]"))
-print(df)
+        df = evaluate.get_aggregated_query_statistics(type='timer', name='connection', query_aggregate='Mean').T
 
+        display(Markdown("### Latency of Timer Connection [ms]"))
+        print(df)
 
-# ### Latency of Timer Data Transfer
 
-# In[30]:
+        # ### Latency of Timer Data Transfer
 
+        # In[30]:
 
-df = evaluate.get_aggregated_query_statistics(type='timer', name='datatransfer', query_aggregate='Mean').T
 
-display(Markdown("### Latency of Timer Data Transfer [ms]"))
-print(df)
+        df = evaluate.get_aggregated_query_statistics(type='timer', name='datatransfer', query_aggregate='Mean').T
 
+        display(Markdown("### Latency of Timer Data Transfer [ms]"))
+        print(df)
 
-# ### Latency of Timer Run - normalized to 1 per Query
 
-# In[31]:
+        # ### Latency of Timer Run - normalized to 1 per Query
 
+        # In[31]:
 
-df = evaluate.get_aggregated_query_statistics(type='timer', name='run', query_aggregate='factor').sort_index().T
 
-display(Markdown("### Latency of Timer Run - normalized to 1 per Query"))
-print(df)
+        df = evaluate.get_aggregated_query_statistics(type='timer', name='run', query_aggregate='factor').sort_index().T
 
+        display(Markdown("### Latency of Timer Run - normalized to 1 per Query"))
+        print(df)
 
-# ### Size of Result Sets per Query
 
-# In[32]:
+        # ### Size of Result Sets per Query
 
+        # In[32]:
 
-df = evaluate.get_total_resultsize().T
 
-display(Markdown("### Size of Result Sets per Query"))
-print(df)
+        df = evaluate.get_total_resultsize().T
 
+        display(Markdown("### Size of Result Sets per Query"))
+        print(df)
 
-# ### Size of Result Sets per Query - normalized to 1
 
-# ### Size of Result Sets per Query - normalized to 1
+        # ### Size of Result Sets per Query - normalized to 1
 
-# In[33]:
+        # ### Size of Result Sets per Query - normalized to 1
 
+        # In[33]:
 
-df = evaluate.get_total_resultsize_normalized()
 
-display(Markdown("### Size of Result Sets per Query - normalized to 1"))
-print(df)
+        df = evaluate.get_total_resultsize_normalized()
 
+        display(Markdown("### Size of Result Sets per Query - normalized to 1"))
+        print(df)
 
-# ### Table of Errors
 
-# In[34]:
+        # ### Table of Errors
 
+        # In[34]:
 
-df = evaluate.get_total_errors().T
 
-display(Markdown("### Table of Errors"))
-print(df)
+        df = evaluate.get_total_errors().T
 
+        display(Markdown("### Table of Errors"))
+        print(df)
 
-# ### Table of Warnings
 
-# In[35]:
+        # ### Table of Warnings
 
+        # In[35]:
 
-df = evaluate.get_total_warnings().T
 
-display(Markdown("### Table of Warnings"))
-print(df)
+        df = evaluate.get_total_warnings().T
 
+        display(Markdown("### Table of Warnings"))
+        print(df)
 
-# ### Total Time [s] per Query
 
-# In[36]:
+        # ### Total Time [s] per Query
 
+        # In[36]:
 
-df = evaluate.get_total_times().T/1000.0
 
-display(Markdown("### Total Time [s] per Query"))
-print(df)
+        df = evaluate.get_total_times().T/1000.0
 
+        display(Markdown("### Total Time [s] per Query"))
+        print(df)
 
-# ### Total Time per Query - normalized to 100%
 
-# In[37]:
+        # ### Total Time per Query - normalized to 100%
 
+        # In[37]:
 
-df = evaluate.get_total_times_normalized().T
 
-display(Markdown("### Total Time per Query - normalized to 100%"))
-print(df)
+        df = evaluate.get_total_times_normalized().T
 
+        display(Markdown("### Total Time per Query - normalized to 100%"))
+        print(df)
 
-# ### Total Time per Query - normalized to 100%
 
-# In[38]:
+        # ### Total Time per Query - normalized to 100%
 
+        # In[38]:
 
-df = evaluate.get_total_times_relative().T
 
-display(Markdown("### Total Time per Query - normalized to 100%"))
-print(df)
+        df = evaluate.get_total_times_relative().T
 
+        display(Markdown("### Total Time per Query - normalized to 100%"))
+        print(df)
 
-# ## Plots
 
-# In[39]:
+        # ## Plots
 
+        # In[39]:
 
-df = (evaluate.get_aggregated_query_statistics(type='timer', name='run', query_aggregate='Mean').T/1000.0).round(2)
-#.sort_index(ascending=False)
-#df=df.T
-#df=df.round(2)
 
-fig1 = ff.create_annotated_heatmap(
-    x=list(df.columns),
-    y=list(df.index),
-    z=df.values.tolist(),
-    showscale=True,
-    colorscale='Reds',
-    xgap=1,
-    ygap=1,
-    )
+        df = (evaluate.get_aggregated_query_statistics(type='timer', name='run', query_aggregate='Mean').T/1000.0).round(2)
+        #.sort_index(ascending=False)
+        #df=df.T
+        #df=df.round(2)
 
-fig1.update_layout(title_text='Timer Run - Mean per Query [s]')
-fig1.layout.xaxis.type = 'category'
-fig1.layout.yaxis.type = 'category'
+        fig1 = ff.create_annotated_heatmap(
+            x=list(df.columns),
+            y=list(df.index),
+            z=df.values.tolist(),
+            showscale=True,
+            colorscale='Reds',
+            xgap=1,
+            ygap=1,
+            )
 
-fig1.show()
+        fig1.update_layout(title_text='Timer Run - Mean per Query [s]')
+        fig1.layout.xaxis.type = 'category'
+        fig1.layout.yaxis.type = 'category'
 
+        #fig1.show()
 
-# In[40]:
 
+        # In[40]:
 
-df = (evaluate.get_aggregated_query_statistics(type='timer', name='run', query_aggregate='Std Dev').T/1000.0).round(2)
-#.sort_index(ascending=False)
-#df=df.T
-#df=df.round(2)
 
-fig1 = ff.create_annotated_heatmap(
-    x=list(df.columns),
-    y=list(df.index),
-    z=df.values.tolist(),
-    showscale=True,
-    colorscale='Reds',
-    xgap=1,
-    ygap=1,
-    )
+        df = (evaluate.get_aggregated_query_statistics(type='timer', name='run', query_aggregate='Std Dev').T/1000.0).round(2)
+        #.sort_index(ascending=False)
+        #df=df.T
+        #df=df.round(2)
 
-fig1.update_layout(title_text='Timer Run - Std Dev per Query [s]')
-fig1.layout.xaxis.type = 'category'
-fig1.layout.yaxis.type = 'category'
+        fig1 = ff.create_annotated_heatmap(
+            x=list(df.columns),
+            y=list(df.index),
+            z=df.values.tolist(),
+            showscale=True,
+            colorscale='Reds',
+            xgap=1,
+            ygap=1,
+            )
 
-fig1.show()
+        fig1.update_layout(title_text='Timer Run - Std Dev per Query [s]')
+        fig1.layout.xaxis.type = 'category'
+        fig1.layout.yaxis.type = 'category'
 
+        #fig1.show()
 
-# In[41]:
 
+        # In[41]:
 
-df = evaluate.get_aggregated_query_statistics(type='timer', name='run', query_aggregate='factor').round(2)
-df=df.sort_index(ascending=True).T
-#df=df.T
-#df=df.round(2)
 
-fig1 = ff.create_annotated_heatmap(
-    x=list(df.columns),
-    y=list(df.index),
-    z=df.values.tolist(),
-    showscale=True,
-    colorscale='Reds',
-    xgap=1,
-    ygap=1,
-    )
+        df = evaluate.get_aggregated_query_statistics(type='timer', name='run', query_aggregate='factor').round(2)
+        df=df.sort_index(ascending=True).T
+        #df=df.T
+        #df=df.round(2)
 
-fig1.update_layout(title_text='Timer Run - Factor per Query [s]')
-fig1.layout.xaxis.type = 'category'
-fig1.layout.yaxis.type = 'category'
+        fig1 = ff.create_annotated_heatmap(
+            x=list(df.columns),
+            y=list(df.index),
+            z=df.values.tolist(),
+            showscale=True,
+            colorscale='Reds',
+            xgap=1,
+            ygap=1,
+            )
 
-fig1.show()
+        fig1.update_layout(title_text='Timer Run - Factor per Query [s]')
+        fig1.layout.xaxis.type = 'category'
+        fig1.layout.yaxis.type = 'category'
 
+        #fig1.show()
 
-# # Inspect Single Queries
-# 
-# ## Measures
 
-# In[42]:
+        # # Inspect Single Queries
+        # 
+        # ## Measures
 
+        # In[42]:
 
-numQuery = 4
 
+        numQuery = 4
 
-# ### Measures of Execution Times
 
-# In[43]:
+        # ### Measures of Execution Times
 
+        # In[43]:
 
-df1, df2 = evaluate.get_measures_and_statistics(numQuery, type='timer', name='execution')
 
-display(Markdown("### Measures of Execution Times - {} Runs of Query {}".format(len(df1.columns), numQuery)))
-df1.sort_index()
+        df1, df2 = evaluate.get_measures_and_statistics(numQuery, type='timer', name='execution')
 
+        display(Markdown("### Measures of Execution Times - {} Runs of Query {}".format(len(df1.columns), numQuery)))
+        print(df1.sort_index())
 
-# ## Statistics
 
-# ### Statistics of Execution Times
+        # ## Statistics
 
-# In[44]:
+        # ### Statistics of Execution Times
 
+        # In[44]:
 
-display(Markdown("### Statistics of Execution Times - {} Runs of Query {}".format(len(df1.columns), numQuery)))
-df2.sort_index()
 
+        display(Markdown("### Statistics of Execution Times - {} Runs of Query {}".format(len(df1.columns), numQuery)))
+        print(df2.sort_index())
 
-# ## Plots
 
-# ### Timer Run - Line Plot
+        # ## Plots
 
-# In[45]:
+        # ### Timer Run - Line Plot
 
+        # In[45]:
 
-df1,df2=evaluate.get_measures_and_statistics(numQuery, type='timer', name='run', warmup=0)
-df1 = df1.sort_index()
 
-# Plots
-fig = go.Figure()
-for i in range(len(df1.index)):
-    t = fig.add_trace(go.Scatter(x=df1.T.index, y=df1.iloc[i], name=df1.index[i], line=dict(color=connection_colors[df1.index[i]], width=1)))
+        df1,df2=evaluate.get_measures_and_statistics(numQuery, type='timer', name='run', warmup=0)
+        df1 = df1.sort_index()
 
-fig.update_layout(title_text='Timer Run [ms] - Query {} ({} Measures)'.format(numQuery, len(df1.columns)))
-fig.show()
+        # Plots
+        fig = go.Figure()
+        for i in range(len(df1.index)):
+            t = fig.add_trace(go.Scatter(x=df1.T.index, y=df1.iloc[i], name=df1.index[i], line=dict(color=connection_colors[df1.index[i]], width=1)))
 
+        fig.update_layout(title_text='Timer Run [ms] - Query {} ({} Measures)'.format(numQuery, len(df1.columns)))
+        #fig.show()
 
-# ### Mean of Timer Run - Bar Plot
 
-# In[46]:
+        # ### Mean of Timer Run - Bar Plot
 
+        # In[46]:
 
-# Bar
-df1, df2 = evaluate.get_measures_and_statistics(numQuery, type='timer', name='run')
-df = tools.dataframehelper.collect(df2, 'Mean', 'timer_run_mean').sort_index()
 
-fig = go.Figure()
-for i in range(len(df.index)):
-    t = fig.add_trace(go.Bar(x=[df.index[i]], y=df.iloc[i], name=df.index[i], marker=dict(color=connection_colors[df.index[i]])))
+        # Bar
+        df1, df2 = evaluate.get_measures_and_statistics(numQuery, type='timer', name='run')
+        df = tools.dataframehelper.collect(df2, 'Mean', 'timer_run_mean').sort_index()
 
-fig.update_layout(title_text='Mean of Timer Run [s] - Query {}'.format(numQuery))
-fig.show()
+        fig = go.Figure()
+        for i in range(len(df.index)):
+            t = fig.add_trace(go.Bar(x=[df.index[i]], y=df.iloc[i], name=df.index[i], marker=dict(color=connection_colors[df.index[i]])))
 
+        fig.update_layout(title_text='Mean of Timer Run [s] - Query {}'.format(numQuery))
+        #fig.show()
 
-# ### Timer Run - Boxplot
 
-# In[47]:
+        # ### Timer Run - Boxplot
 
+        # In[47]:
 
-# Boxplots
-df1, df2 = evaluate.get_measures_and_statistics(numQuery, type='timer', name='run')
-df1 = df1.sort_index()
 
-fig = go.Figure()
-for i in range(len(df1.index)):
-    t = fig.add_trace(go.Box(y=df1.iloc[i], name=df1.index[i], line=dict(color=connection_colors[df1.index[i]], width=1), boxmean='sd'))
+        # Boxplots
+        df1, df2 = evaluate.get_measures_and_statistics(numQuery, type='timer', name='run')
+        df1 = df1.sort_index()
 
-fig.update_layout(title_text='Timer Run [ms] - Query {}'.format(numQuery))
-fig.show()
+        fig = go.Figure()
+        for i in range(len(df1.index)):
+            t = fig.add_trace(go.Box(y=df1.iloc[i], name=df1.index[i], line=dict(color=connection_colors[df1.index[i]], width=1), boxmean='sd'))
 
+        fig.update_layout(title_text='Timer Run [ms] - Query {}'.format(numQuery))
+        #fig.show()
 
-# ### Timer Run Histogram
 
-# In[48]:
+        # ### Timer Run Histogram
 
+        # In[48]:
 
-# Histogram
-numQuery = 1
 
-df1, df2 = evaluate.get_measures_and_statistics(numQuery, type='timer', name='run')
-df1=df1.sort_index()
+        # Histogram
+        numQuery = 1
 
-fig = go.Figure(layout = go.Layout(barmode='overlay'))
-for i in range(len(df1.index)):
-    t = fig.add_trace(go.Histogram(x=df1.iloc[i], name=df1.index[i], opacity=0.75, marker=dict(color=connection_colors[df1.index[i]])))
+        df1, df2 = evaluate.get_measures_and_statistics(numQuery, type='timer', name='run')
+        df1=df1.sort_index()
 
-fig.update_layout(title_text='Timer Run Histogram - Query {}'.format(numQuery))
-fig.show()
+        fig = go.Figure(layout = go.Layout(barmode='overlay'))
+        for i in range(len(df1.index)):
+            t = fig.add_trace(go.Histogram(x=df1.iloc[i], name=df1.index[i], opacity=0.75, marker=dict(color=connection_colors[df1.index[i]])))
 
+        fig.update_layout(title_text='Timer Run Histogram - Query {}'.format(numQuery))
+        #fig.show()
 
-# In[ ]:
 
+        # In[ ]:
+
+        print("EVERYTHING WENT WELL")
+        exit(0)
+
+    except Exception as e:
+        print("SOMETHING WENT WRONG")
+        exit(1)
+    finally:
+        pass
 
 
 

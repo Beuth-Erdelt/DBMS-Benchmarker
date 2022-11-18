@@ -539,7 +539,7 @@ class benchmarker():
 				copyfile(filename, self.path+'/queries.config')
 			else:
 				self.logger.exception('Caught an error: Query file not found')
-				exit()
+				exit(1)
 		with open(filename,'r') as inp:
 			self.queryconfig = ast.literal_eval(inp.read())
 			# global setting in a class variable
@@ -626,7 +626,7 @@ class benchmarker():
 					filename = self.path+'/connections.config'
 			else:
 				self.logger.exception('Caught an error: Connection file not found')
-				exit()
+				exit(1)
 		# read from file
 		with open(filename,'r') as inf:
 			self.connections = ast.literal_eval(inf.read())
