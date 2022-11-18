@@ -24,8 +24,9 @@ if __name__ == '__main__':
                         default='./')  # set your own default path here
     # evaluate args
     args = parser.parse_args()
-    code = args.experiment
     try:
+        code = args.experiment
+        resultfolder = args.result_folder
 
 
         from dbmsbenchmarker import *
@@ -56,7 +57,7 @@ if __name__ == '__main__':
 
 
         # path of folder containing experiment results
-        resultfolder = "results/"
+        #resultfolder = "results/"
 
         # create evaluation object for result folder
         evaluate = inspector.inspector(resultfolder)
