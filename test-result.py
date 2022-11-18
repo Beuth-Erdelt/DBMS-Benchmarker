@@ -28,6 +28,7 @@ if __name__ == '__main__':
         code = args.experiment
         resultfolder = args.result_folder
 
+        ok = True
 
         from dbmsbenchmarker import *
         import pandas as pd
@@ -104,7 +105,11 @@ if __name__ == '__main__':
         # list connections
         list_nodes = evaluate.get_experiment_list_nodes()
         list_dbms = evaluate.get_experiment_list_dbms()
+        # we need at least one dbms
+        ok = ok and (len(list_dbms) > 0)
         list_connections = evaluate.get_experiment_list_connections()
+        # we need at least one connection
+        ok = ok and (len(list_connections) > 0)
         list_connections_node = evaluate.get_experiment_list_connections_by_node()
         list_connections_dbms = evaluate.get_experiment_list_connections_by_dbms()
         list_connections_clients = evaluate.get_experiment_list_connections_by_connectionmanagement('numProcesses')
@@ -256,12 +261,18 @@ if __name__ == '__main__':
 
 
         df = evaluate.get_loading_metrics('total_cpu_memory')
+        df = df.T.max().sort_index()
+        # we need at least some memory used
+        ok = ok and (df.min().min() > 0)
+
         df = evaluate.get_loading_metrics('total_cpu_util_s')
         df = df.T.max().sort_index() - df.T.min().sort_index() # compute difference of counter
 
         display(Markdown("### CPU of Ingestion (via counter)"))
         pd.DataFrame(df)
         print(df)
+        # we need at least some CPU used
+        ok = ok and (df.min().min() > 0)
 
 
         # In[17]:
@@ -281,12 +292,18 @@ if __name__ == '__main__':
 
 
         df = evaluate.get_streaming_metrics('total_cpu_memory')
+        df = df.T.max().sort_index()
+        # we need at least some memory used
+        ok = ok and (df.min().min() > 0)
+
         df = evaluate.get_streaming_metrics('total_cpu_util_s')
         df = df.T.max().sort_index() - df.T.min().sort_index() # compute difference of counter
 
         display(Markdown("### CPU of Stream (via counter)"))
         pd.DataFrame(df)
         print(df)
+        # we need at least some CPU used
+        ok = ok and (df.min().min() > 0)
 
 
         # In[19]:
@@ -312,6 +329,9 @@ if __name__ == '__main__':
 
         display(Markdown("### Mean of Means of Timer Run [s]"))
         print(df)
+        # we need at least some mean of mean
+        ok = ok and (df.min().min() > 0)
+
 
 
         # ### Geometric Mean of Medians of Timer Run
@@ -324,7 +344,8 @@ if __name__ == '__main__':
 
         display(Markdown("### Geometric Mean of Medians of Timer Run [s]"))
         print(df)
-
+        # we need at least some geo mean of medians
+        ok = ok and (df.min().min() > 0)
 
         # ## Plots
 
@@ -361,6 +382,8 @@ if __name__ == '__main__':
 
         display(Markdown("### Means of Timer Runs [ms]"))
         print(df)
+        # we need at least some mean values at some query
+        ok = ok and (df.min().min() > 0)
 
 
         # ### Maximum of Run Throughput
@@ -372,6 +395,8 @@ if __name__ == '__main__':
 
         display(Markdown("### Maximum of Run Throughput [1/s]"))
         print(df)
+        # we need at least some max values at some query
+        ok = ok and (df.min().min() > 0)
 
 
         # ### Latency of Timer Execution
@@ -383,6 +408,8 @@ if __name__ == '__main__':
 
         display(Markdown("### Latency of Timer Execution [ms]"))
         print(df)
+        # we need at least some mean values at some query
+        ok = ok and (df.min().min() > 0)
 
 
         # ### Mean of Latency of Timer Execution per DBMS
@@ -395,6 +422,8 @@ if __name__ == '__main__':
 
         display(Markdown("### Mean of Latency of Timer Execution per DBMS [ms]"))
         print(df)
+        # we need at least some mean values at some query
+        ok = ok and (df.min().min() > 0)
 
 
         # ### Coefficient of Variation of Latency of Timer Execution per DBMS
@@ -407,6 +436,8 @@ if __name__ == '__main__':
 
         display(Markdown("### CV of Latency of Timer Execution per DBMS [%]"))
         print(df)
+        # we need at least some mean values at some query
+        ok = ok and (df.min().min() > 0)
 
 
         # ### Latency of Timer Connection
@@ -440,6 +471,8 @@ if __name__ == '__main__':
 
         display(Markdown("### Latency of Timer Run - normalized to 1 per Query"))
         print(df)
+        # we need at least some mean values at some query
+        ok = ok and (df.min().min() > 0)
 
 
         # ### Size of Result Sets per Query
@@ -497,6 +530,8 @@ if __name__ == '__main__':
 
         display(Markdown("### Total Time [s] per Query"))
         print(df)
+        # we need at least some mean values at some query
+        ok = ok and (df.min().min() > 0)
 
 
         # ### Total Time per Query - normalized to 100%
@@ -605,8 +640,7 @@ if __name__ == '__main__':
         # In[42]:
 
 
-        numQuery = 4
-
+        numQuery = 1
 
         # ### Measures of Execution Times
 
@@ -617,6 +651,8 @@ if __name__ == '__main__':
 
         display(Markdown("### Measures of Execution Times - {} Runs of Query {}".format(len(df1.columns), numQuery)))
         print(df1.sort_index())
+        # we need at least some values at some query
+        ok = ok and (df1.min().min() > 0)
 
 
         # ## Statistics
@@ -704,10 +740,13 @@ if __name__ == '__main__':
 
         # In[ ]:
 
+        print("ok is", ok)
+
         print("EVERYTHING WENT WELL")
         exit(0)
 
     except Exception as e:
+        print(e)
         print("SOMETHING WENT WRONG")
         exit(1)
     finally:
