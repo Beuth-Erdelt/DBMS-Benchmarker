@@ -801,8 +801,13 @@ if __name__ == '__main__':
 
         print("ok is", ok)
 
-        print("EVERYTHING WENT WELL")
-        exit(0)
+        if ok:
+            print("EVERYTHING WENT WELL")
+            exit(0)
+        else:
+        print("SOMETHING WENT WRONG")
+        exit(1)
+
 
     except Exception as e:
         print("SOMETHING WENT WRONG")
