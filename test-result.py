@@ -18,7 +18,6 @@ if __name__ == '__main__':
     # argparse
     parser = argparse.ArgumentParser(description=description)
     parser.add_argument('-db', '--debug', help='dump debug informations', action='store_true')
-    parser.add_argument('-cx', '--context', help='context of Kubernetes (for a multi cluster environment), default is current context', default=None)
     parser.add_argument('-e', '--experiment', help='sets experiment code for continuing started experiment', default=None)
     parser.add_argument('-r', '--result-folder',
                         help='Folder storing benchmark result files.',
@@ -805,8 +804,8 @@ if __name__ == '__main__':
             print("EVERYTHING WENT WELL")
             exit(0)
         else:
-        print("SOMETHING WENT WRONG")
-        exit(1)
+            print("SOMETHING WENT WRONG")
+            exit(1)
 
 
     except Exception as e:
