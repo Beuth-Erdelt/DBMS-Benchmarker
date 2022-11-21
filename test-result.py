@@ -267,7 +267,10 @@ if __name__ == '__main__':
         pd.DataFrame(df)
         print(df)
         # we need at least some memory used
-        ok = ok and (df.min().min() > 0)
+        if not df.empty:
+            ok = ok and (df.min().min() > 0)
+        else:
+            ok = False
 
         df = evaluate.get_loading_metrics('total_cpu_util_s')
         df = df.T.max().sort_index() - df.T.min().sort_index() # compute difference of counter
@@ -276,7 +279,10 @@ if __name__ == '__main__':
         pd.DataFrame(df)
         print(df)
         # we need at least some CPU used
-        ok = ok and (df.min().min() > 0)
+        if not df.empty:
+            ok = ok and (df.min().min() > 0)
+        else:
+            ok = False
 
 
         # In[17]:
@@ -289,7 +295,10 @@ if __name__ == '__main__':
         pd.DataFrame(df)
         print(df)
         # we need at least some CPU used
-        ok = ok and (df.min().min() > 0)
+        if not df.empty:
+            ok = ok and (df.min().min() > 0)
+        else:
+            ok = False
 
 
         # ### Get Hardware Metrics per Stream
@@ -303,7 +312,10 @@ if __name__ == '__main__':
         pd.DataFrame(df)
         print(df)
         # we need at least some memory used
-        ok = ok and (df.min().min() > 0)
+        if not df.empty:
+            ok = ok and (df.min().min() > 0)
+        else:
+            ok = False
 
         df = evaluate.get_streaming_metrics('total_cpu_util_s')
         df = df.T.max().sort_index() - df.T.min().sort_index() # compute difference of counter
@@ -312,7 +324,10 @@ if __name__ == '__main__':
         pd.DataFrame(df)
         print(df)
         # we need at least some CPU used
-        ok = ok and (df.min().min() > 0)
+        if not df.empty:
+            ok = ok and (df.min().min() > 0)
+        else:
+            ok = False
 
 
         # In[19]:
@@ -325,7 +340,10 @@ if __name__ == '__main__':
         pd.DataFrame(df)
         print(df)
         # we need at least some CPU used
-        ok = ok and (df.min().min() > 0)
+        if not df.empty:
+            ok = ok and (df.min().min() > 0)
+        else:
+            ok = False
 
 
         # ## Timing Measures
@@ -341,7 +359,10 @@ if __name__ == '__main__':
         display(Markdown("### Mean of Means of Timer Run [s]"))
         print(df)
         # we need at least some mean of mean
-        ok = ok and (df.min().min() > 0)
+        if not df.empty:
+            ok = ok and (df.min().min() > 0)
+        else:
+            ok = False
 
 
 
@@ -356,7 +377,10 @@ if __name__ == '__main__':
         display(Markdown("### Geometric Mean of Medians of Timer Run [s]"))
         print(df)
         # we need at least some geo mean of medians
-        ok = ok and (df.min().min() > 0)
+        if not df.empty:
+            ok = ok and (df.min().min() > 0)
+        else:
+            ok = False
 
         # ## Plots
 
@@ -394,7 +418,10 @@ if __name__ == '__main__':
         display(Markdown("### Means of Timer Runs [ms]"))
         print(df)
         # we need at least some mean values at some query
-        ok = ok and (df.min().min() > 0)
+        if not df.empty:
+            ok = ok and (df.min().min() > 0)
+        else:
+            ok = False
 
 
         # ### Maximum of Run Throughput
@@ -407,7 +434,10 @@ if __name__ == '__main__':
         display(Markdown("### Maximum of Run Throughput [1/s]"))
         print(df)
         # we need at least some max values at some query
-        ok = ok and (df.min().min() > 0)
+        if not df.empty:
+            ok = ok and (df.min().min() > 0)
+        else:
+            ok = False
 
 
         # ### Latency of Timer Execution
@@ -420,7 +450,10 @@ if __name__ == '__main__':
         display(Markdown("### Latency of Timer Execution [ms]"))
         print(df)
         # we need at least some mean values at some query
-        ok = ok and (df.min().min() > 0)
+        if not df.empty:
+            ok = ok and (df.min().min() > 0)
+        else:
+            ok = False
 
 
         # ### Mean of Latency of Timer Execution per DBMS
@@ -434,7 +467,10 @@ if __name__ == '__main__':
         display(Markdown("### Mean of Latency of Timer Execution per DBMS [ms]"))
         print(df)
         # we need at least some mean values at some query
-        ok = ok and (df.min().min() > 0)
+        if not df.empty:
+            ok = ok and (df.min().min() > 0)
+        else:
+            ok = False
 
 
         # ### Coefficient of Variation of Latency of Timer Execution per DBMS
@@ -448,7 +484,10 @@ if __name__ == '__main__':
         display(Markdown("### CV of Latency of Timer Execution per DBMS [%]"))
         print(df)
         # we need at least some mean values at some query
-        ok = ok and (df.min().min() > 0)
+        if not df.empty:
+            ok = ok and (df.min().min() > 0)
+        else:
+            ok = False
 
 
         # ### Latency of Timer Connection
@@ -483,7 +522,10 @@ if __name__ == '__main__':
         display(Markdown("### Latency of Timer Run - normalized to 1 per Query"))
         print(df)
         # we need at least some mean values at some query
-        ok = ok and (df.min().min() > 0)
+        if not df.empty:
+            ok = ok and (df.min().min() > 0)
+        else:
+            ok = False
 
 
         # ### Size of Result Sets per Query
@@ -542,7 +584,10 @@ if __name__ == '__main__':
         display(Markdown("### Total Time [s] per Query"))
         print(df)
         # we need at least some mean values at some query
-        ok = ok and (df.min().min() > 0)
+        if not df.empty:
+            ok = ok and (df.min().min() > 0)
+        else:
+            ok = False
 
 
         # ### Total Time per Query - normalized to 100%
@@ -663,7 +708,10 @@ if __name__ == '__main__':
         display(Markdown("### Measures of Execution Times - {} Runs of Query {}".format(len(df1.columns), numQuery)))
         print(df1.sort_index())
         # we need at least some values at some query
-        ok = ok and (df1.min().min() > 0)
+        if not df1.empty:
+            ok = ok and (df1.min().min() > 0)
+        else:
+            ok = False
 
 
         # ## Statistics
