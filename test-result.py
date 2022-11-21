@@ -10,6 +10,7 @@
 
 # In[1]:
 import argparse
+import traceback
 
 if __name__ == '__main__':
     description = """Automatically inspect result of experiment for failures.
@@ -262,6 +263,9 @@ if __name__ == '__main__':
 
         df = evaluate.get_loading_metrics('total_cpu_memory')
         df = df.T.max().sort_index()
+        display(Markdown("### RAM of Ingestion"))
+        pd.DataFrame(df)
+        print(df)
         # we need at least some memory used
         ok = ok and (df.min().min() > 0)
 
@@ -284,6 +288,8 @@ if __name__ == '__main__':
         display(Markdown("### CPU of Ingestion (via rate)"))
         pd.DataFrame(df)
         print(df)
+        # we need at least some CPU used
+        ok = ok and (df.min().min() > 0)
 
 
         # ### Get Hardware Metrics per Stream
@@ -293,6 +299,9 @@ if __name__ == '__main__':
 
         df = evaluate.get_streaming_metrics('total_cpu_memory')
         df = df.T.max().sort_index()
+        display(Markdown("### RAM of Stream"))
+        pd.DataFrame(df)
+        print(df)
         # we need at least some memory used
         ok = ok and (df.min().min() > 0)
 
@@ -315,6 +324,8 @@ if __name__ == '__main__':
         display(Markdown("### CPU of Stream (via rate)"))
         pd.DataFrame(df)
         print(df)
+        # we need at least some CPU used
+        ok = ok and (df.min().min() > 0)
 
 
         # ## Timing Measures
@@ -746,8 +757,8 @@ if __name__ == '__main__':
         exit(0)
 
     except Exception as e:
-        print(e)
         print("SOMETHING WENT WRONG")
+        print(traceback.format_exc())
         exit(1)
     finally:
         pass
