@@ -24,6 +24,7 @@ if __name__ == '__main__':
                         default='./')  # set your own default path here
     # evaluate args
     args = parser.parse_args()
+    oks = dict()
     try:
         code = args.experiment
         resultfolder = args.result_folder
@@ -67,6 +68,7 @@ if __name__ == '__main__':
         # evaluate.list_experiments
         # dataframe of experiments
         print(evaluate.get_experiments_preview())
+        oks['previews'] = True
 
 
         # ## Pick an Experiment and load it
@@ -82,6 +84,7 @@ if __name__ == '__main__':
 
         # load it
         evaluate.load_experiment(code)
+        oks['loading'] = True
 
 
         # ## Load general Properties into Variables
@@ -98,16 +101,20 @@ if __name__ == '__main__':
         print("workload_properties", workload_properties)
         print(workload_properties['name'])
         print(workload_properties['info'])
+        oks['workload'] = True
 
         # list queries
         list_queries = evaluate.get_experiment_list_queries()
+        oks['queries'] = len(list_queries)
 
         # list connections
         list_nodes = evaluate.get_experiment_list_nodes()
         list_dbms = evaluate.get_experiment_list_dbms()
+        oks['dbms'] = len(list_dbms)
         # we need at least one dbms
         ok = ok and (len(list_dbms) > 0)
         list_connections = evaluate.get_experiment_list_connections()
+        oks['connections'] = len(list_dbms)
         # we need at least one connection
         ok = ok and (len(list_connections) > 0)
         list_connections_node = evaluate.get_experiment_list_connections_by_node()
@@ -267,9 +274,12 @@ if __name__ == '__main__':
         print(df)
         # we need at least some memory used
         if not df.empty:
-            ok = ok and (df.min().min() > 0)
+            ok_test = (df.min().min() > 0)
+            ok = ok and ok_test
+            oks['loading_total_cpu_memory'] = ok_test
         else:
             ok = False
+            oks['loading_total_cpu_memory'] = False
 
         df = evaluate.get_loading_metrics('total_cpu_util_s')
         df = df.T.max().sort_index() - df.T.min().sort_index() # compute difference of counter
@@ -279,9 +289,12 @@ if __name__ == '__main__':
         print(df)
         # we need at least some CPU used
         if not df.empty:
-            ok = ok and (df.min().min() > 0)
+            ok_test = (df.min().min() > 0)
+            ok = ok and ok_test
+            oks['loading_total_cpu_util_s'] = ok_test
         else:
             ok = False
+            oks['loading_total_cpu_util_s'] = False
 
 
         # In[17]:
@@ -295,9 +308,12 @@ if __name__ == '__main__':
         print(df)
         # we need at least some CPU used
         if not df.empty:
-            ok = ok and (df.min().min() > 0)
+            ok_test = (df.min().min() > 0)
+            ok = ok and ok_test
+            oks['loading_total_cpu_util'] = ok_test
         else:
             ok = False
+            oks['loading_total_cpu_util'] = False
 
 
         # ### Get Hardware Metrics per Stream
@@ -312,9 +328,12 @@ if __name__ == '__main__':
         print(df)
         # we need at least some memory used
         if not df.empty:
-            ok = ok and (df.min().min() > 0)
+            ok_test = (df.min().min() > 0)
+            ok = ok and ok_test
+            oks['streaming_total_cpu_memory'] = ok_test
         else:
             ok = False
+            oks['streaming_total_cpu_memory'] = False
 
         df = evaluate.get_streaming_metrics('total_cpu_util_s')
         df = df.T.max().sort_index() - df.T.min().sort_index() # compute difference of counter
@@ -324,9 +343,12 @@ if __name__ == '__main__':
         print(df)
         # we need at least some CPU used
         if not df.empty:
-            ok = ok and (df.min().min() > 0)
+            ok_test = (df.min().min() > 0)
+            ok = ok and ok_test
+            oks['streaming_total_cpu_util_s'] = ok_test
         else:
             ok = False
+            oks['streaming_total_cpu_util_s'] = False
 
 
         # In[19]:
@@ -340,9 +362,12 @@ if __name__ == '__main__':
         print(df)
         # we need at least some CPU used
         if not df.empty:
-            ok = ok and (df.min().min() > 0)
+            ok_test = (df.min().min() > 0)
+            ok = ok and ok_test
+            oks['streaming_total_cpu_util'] = ok_test
         else:
             ok = False
+            oks['streaming_total_cpu_util'] = False
 
 
         # ## Timing Measures
@@ -359,9 +384,12 @@ if __name__ == '__main__':
         print(df)
         # we need at least some mean of mean
         if not df.empty:
-            ok = ok and (df.min().min() > 0)
+            ok_test = (df.min().min() > 0)
+            ok = ok and ok_test
+            oks['timer_mean_mean'] = ok_test
         else:
             ok = False
+            oks['timer_mean_mean'] = False
 
 
 
@@ -377,9 +405,12 @@ if __name__ == '__main__':
         print(df)
         # we need at least some geo mean of medians
         if not df.empty:
-            ok = ok and (df.min().min() > 0)
+            ok_test = (df.min().min() > 0)
+            ok = ok and ok_test
+            oks['timer_median_geo'] = ok_test
         else:
             ok = False
+            oks['timer_median_geo'] = False
 
         # ## Plots
 
@@ -418,9 +449,12 @@ if __name__ == '__main__':
         print(df)
         # we need at least some mean values at some query
         if not df.empty:
-            ok = ok and (df.min().min() > 0)
+            ok_test = (df.min().min() > 0)
+            ok = ok and ok_test
+            oks['timer_run_mean'] = ok_test
         else:
             ok = False
+            oks['timer_run_mean'] = False
 
 
         # ### Maximum of Run Throughput
@@ -434,9 +468,12 @@ if __name__ == '__main__':
         print(df)
         # we need at least some max values at some query
         if not df.empty:
-            ok = ok and (df.min().min() > 0)
+            ok_test = (df.min().min() > 0)
+            ok = ok and ok_test
+            oks['throughput_run_max'] = ok_test
         else:
             ok = False
+            oks['throughput_run_max'] = False
 
 
         # ### Latency of Timer Execution
@@ -450,9 +487,12 @@ if __name__ == '__main__':
         print(df)
         # we need at least some mean values at some query
         if not df.empty:
-            ok = ok and (df.min().min() > 0)
+            ok_test = (df.min().min() > 0)
+            ok = ok and ok_test
+            oks['latency_execution_mean'] = ok_test
         else:
             ok = False
+            oks['latency_execution_mean'] = False
 
 
         # ### Mean of Latency of Timer Execution per DBMS
@@ -467,9 +507,12 @@ if __name__ == '__main__':
         print(df)
         # we need at least some mean values at some query
         if not df.empty:
-            ok = ok and (df.min().min() > 0)
+            ok_test = (df.min().min() > 0)
+            ok = ok and ok_test
+            oks['latency_execution_mean_per_dbms'] = ok_test
         else:
             ok = False
+            oks['latency_execution_mean_per_dbms'] = False
 
 
         # ### Coefficient of Variation of Latency of Timer Execution per DBMS
@@ -482,11 +525,6 @@ if __name__ == '__main__':
 
         display(Markdown("### CV of Latency of Timer Execution per DBMS [%]"))
         print(df)
-        # we need at least some mean values at some query
-        if not df.empty:
-            ok = ok and (df.min().min() > 0)
-        else:
-            ok = False
 
 
         # ### Latency of Timer Connection
@@ -522,9 +560,12 @@ if __name__ == '__main__':
         print(df)
         # we need at least some mean values at some query
         if not df.empty:
-            ok = ok and (df.min().min() > 0)
+            ok_test = (df.min().min() > 0)
+            ok = ok and ok_test
+            oks['latency_run_factor'] = ok_test
         else:
             ok = False
+            oks['latency_run_factor'] = False
 
 
         # ### Size of Result Sets per Query
@@ -584,9 +625,12 @@ if __name__ == '__main__':
         print(df)
         # we need at least some mean values at some query
         if not df.empty:
-            ok = ok and (df.min().min() > 0)
+            ok_test = (df.min().min() > 0)
+            ok = ok and ok_test
+            oks['total_time'] = ok_test
         else:
             ok = False
+            oks['total_time'] = False
 
 
         # ### Total Time per Query - normalized to 100%
@@ -702,15 +746,18 @@ if __name__ == '__main__':
         # In[43]:
 
 
-        df1, df2 = evaluate.get_measures_and_statistics(numQuery, type='timer', name='execution')
+        df, df2 = evaluate.get_measures_and_statistics(numQuery, type='timer', name='execution')
 
-        display(Markdown("### Measures of Execution Times - {} Runs of Query {}".format(len(df1.columns), numQuery)))
-        print(df1.sort_index())
+        display(Markdown("### Measures of Execution Times - {} Runs of Query {}".format(len(df.columns), numQuery)))
+        print(df.sort_index())
         # we need at least some values at some query
-        if not df1.empty:
-            ok = ok and (df1.min().min() > 0)
+        if not df.empty:
+            ok_test = (df.min().min() > 0)
+            ok = ok and ok_test
+            oks['query_timer_execution'] = ok_test
         else:
             ok = False
+            oks['query_timer_execution'] = False
 
 
         # ## Statistics
@@ -720,7 +767,7 @@ if __name__ == '__main__':
         # In[44]:
 
 
-        display(Markdown("### Statistics of Execution Times - {} Runs of Query {}".format(len(df1.columns), numQuery)))
+        display(Markdown("### Statistics of Execution Times - {} Runs of Query {}".format(len(df.columns), numQuery)))
         print(df2.sort_index())
 
 
@@ -802,15 +849,18 @@ if __name__ == '__main__':
 
         if ok:
             print("EVERYTHING WENT WELL")
+            print(oks)
             exit(0)
         else:
             print("SOMETHING WENT WRONG")
+            print(oks)
             exit(1)
 
 
     except Exception as e:
         print("SOMETHING WENT WRONG")
         print(traceback.format_exc())
+        print(oks)
         exit(1)
     finally:
         pass
