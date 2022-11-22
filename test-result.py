@@ -127,12 +127,6 @@ if __name__ == '__main__':
         list_connections_dbms = evaluate.get_experiment_list_connections_by_dbms()
         connection_colors = evaluate.get_experiment_list_connection_colors(list_connections_dbms)
 
-        # fix some examples:
-        # first connection, first query, first run
-        connection = list_connections[0]
-        numQuery = 1
-        numRun = 0
-
 
         # # Show Properties of the Workload
         # 
@@ -142,10 +136,15 @@ if __name__ == '__main__':
 
 
         #connection = 'MonetDB-1-1'
+        for connection in list_connections:
+            display(Markdown("### Properties of {}".format(connection)))
+            print(evaluator.pretty(evaluate.get_experiment_connection_properties(connection)))
 
-        display(Markdown("### Properties of {}".format(connection)))
-
-        print(evaluator.pretty(evaluate.get_experiment_connection_properties(connection)))
+        # fix some examples:
+        # first connection, first query, first run
+        connection = list_connections[0]
+        numQuery = 1
+        numRun = 0
 
 
         # ## Show Properties of a Query
