@@ -600,6 +600,7 @@ if __name__ == '__main__':
 
         display(Markdown("### Table of Errors"))
         print(df)
+        oks['num_errors'] = df.sum().sum()
 
 
         # ### Table of Warnings
@@ -611,6 +612,7 @@ if __name__ == '__main__':
 
         display(Markdown("### Table of Warnings"))
         print(df)
+        oks['num_warnings'] = df.sum().sum()
 
 
         # ### Total Time [s] per Query
