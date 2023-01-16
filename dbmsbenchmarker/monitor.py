@@ -130,9 +130,9 @@ class metrics():
                 l = l + l2
             else:
                 #print(metric, url+query, r.json())
-                logging.error('Metrics missing: '+url+query, params)
-                logging.error(r)
                 l = [(t,0) for t in range(time_start, time_end+1)]#[(time_start,0)]
+                logging.error('Metrics missing: '+url+query, params)
+                logging.error(r.text)
         except Exception as e:
             logging.exception('Caught an error: %s' % str(e))
         return l
