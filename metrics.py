@@ -38,8 +38,11 @@ if __name__ == '__main__':
     parser.add_argument('-cf', '--connection-file', help='name of connection config file', default='connections.config')
     parser.add_argument('-ts', '--time-start', help='Time loading has started', default=None)
     parser.add_argument('-te', '--time-end', help='Time loading has ended', default=None)
+    parser.add_argument('-db', '--debug', help='dump debug informations', action='store_true')
     args = parser.parse_args()
     # evaluate args
+    if args.debug:
+        logging.basicConfig(level=logging.DEBUG)
     result_path = args.result_folder#'/results'
     code = args.experiment_code#'1616083097'
     connection = args.connection
