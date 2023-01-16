@@ -27,7 +27,6 @@ import time
 
 
 urllib3.disable_warnings()
-logging.basicConfig(level=logging.ERROR)
 
 if __name__ == '__main__':
     # argparse
@@ -43,6 +42,8 @@ if __name__ == '__main__':
     # evaluate args
     if args.debug:
         logging.basicConfig(level=logging.DEBUG)
+    else:
+        logging.basicConfig(level=logging.ERROR)
     result_path = args.result_folder#'/results'
     code = args.experiment_code#'1616083097'
     connection = args.connection
