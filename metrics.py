@@ -34,6 +34,7 @@ if __name__ == '__main__':
     parser.add_argument('-r', '--result-folder', help='folder for storing benchmark result folders', default=None)
     parser.add_argument('-e', '--experiment-code', help='folder for storing benchmark result files, default is given by timestamp', default=None)
     parser.add_argument('-c', '--connection', help='Name of the connection (dbms) to use', default=None)
+    parser.add_argument('-ct', '--component-type', help='Type of the component (loading or stream)', default='loading')
     parser.add_argument('-cf', '--connection-file', help='name of connection config file', default='connections.config')
     parser.add_argument('-ts', '--time-start', help='Time loading has started', default=None)
     parser.add_argument('-te', '--time-end', help='Time loading has ended', default=None)
@@ -47,6 +48,7 @@ if __name__ == '__main__':
     result_path = args.result_folder#'/results'
     code = args.experiment_code#'1616083097'
     connection = args.connection
+    query = args.component_type
     time_start = int(args.time_start)#1616083225
     time_end = int(args.time_end)#1616083310
     print("Interval length {}s".format(time_end-time_start))
@@ -73,7 +75,8 @@ if __name__ == '__main__':
                 print("Found {}, but we only query for {}".format(connection_name, connection))
                 continue
         print("URL", connection_data.connectiondata['monitoring']['prometheus_url'])
-        query='loading'
+        #query='loading'
+        #query='stream'
         for m, metric in connection_data.connectiondata['monitoring']['metrics'].items():
             print("Metric", m)
             monitor.metrics.fetchMetric(query, m, connection_name, connection_data.connectiondata, time_start, time_end, '{result_path}/{code}/'.format(result_path=result_path, code=code))
