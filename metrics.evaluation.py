@@ -88,6 +88,7 @@ class evaluator:
             #print(df_all)
             filename = '/query_{component}_metric_{metric}.csv'.format(component=component, metric=m)
             #print(self.path+filename)
+            print("Generated", self.path+"/"+filename)
             monitor.metrics.saveMetricsDataframe(self.path+"/"+filename, df_all)
     def get_monitoring_metric(self, metric, component="loading"):
         """
@@ -128,7 +129,7 @@ class evaluator:
         list_metrics = self.get_monitoring_metrics()
         for m in list_metrics:
             df = self.get_monitoring_metric(m, component)
-            print(df)
+            print(df.T)
 
 
 
