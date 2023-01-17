@@ -30,7 +30,7 @@ urllib3.disable_warnings()
 
 if __name__ == '__main__':
     # argparse
-    parser = argparse.ArgumentParser(description='A benchmark tool for RDBMS. Fetches loading metrics.')
+    parser = argparse.ArgumentParser(description='A benchmark tool for RDBMS. Fetches loading or stream metrics.')
     parser.add_argument('-r', '--result-folder', help='folder for storing benchmark result folders', default=None)
     parser.add_argument('-e', '--experiment-code', help='folder for storing benchmark result files, default is given by timestamp', default=None)
     parser.add_argument('-c', '--connection', help='Name of the connection (dbms) to use', default=None)
