@@ -33,6 +33,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='A benchmark tool for RDBMS. Fetches loading or stream metrics.')
     parser.add_argument('-r', '--result-folder', help='folder for storing benchmark result folders', default=None)
     parser.add_argument('-e', '--experiment-code', help='folder for storing benchmark result files, default is given by timestamp', default=None)
+    parser.add_argument('-f', '--config-folder', help='folder containing query and connection config files. If set, the names connections.config and queries.config are assumed automatically.', default=None)
     parser.add_argument('-c', '--connection', help='Name of the connection (dbms) to use', default=None)
     parser.add_argument('-ct', '--component-type', help='Type of the component (loading or stream)', default='loading')
     parser.add_argument('-cf', '--connection-file', help='name of connection config file', default='connections.config')
@@ -68,7 +69,7 @@ if __name__ == '__main__':
             #numProcesses=args.numProcesses,
             #seed=args.seed)
     #experiments.getConfig()
-    experiments.getConfig(connectionfile=args.connection_file)
+    experiments.getConfig(args.config_folder, connectionfile=args.connection_file)
     for connection_name, connection_data in experiments.dbms.items():
         if connection is not None:
             if connection_name != connection:
