@@ -600,8 +600,9 @@ class benchmarker():
 		:return: returns nothing
 		"""
 		# If result folder exists: Read from there
-		if path.isfile(self.path+'/connections.config'):
-			filename = self.path+'/connections.config'
+        # CHANGE: Do not force using default connection file if exists
+		#if path.isfile(self.path+'/connections.config'):
+		#	filename = self.path+'/connections.config'
 		# If nothing is given: Try to read from result folder
 		if filename is None:
 			filename = self.path+'/connections.config'
