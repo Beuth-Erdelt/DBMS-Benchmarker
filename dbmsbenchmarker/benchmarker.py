@@ -606,6 +606,9 @@ class benchmarker():
 		# If nothing is given: Try to read from result folder
 		if filename is None:
 			filename = self.path+'/connections.config'
+        # set to default if connection file cannot be found
+        if not path.isfile(filename):
+           filename = self.path+'/connections.config'
 		# If not read from result folder: Copy to result folder
 		if not filename == self.path+'/connections.config':
 			if path.isfile(filename):
