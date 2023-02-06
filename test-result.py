@@ -157,6 +157,15 @@ if __name__ == '__main__':
         numRun = 0
 
 
+        # ## Show Loading times
+
+        display(Markdown("### Loading times"))
+        load_ms = list(map(lambda x: evaluate.get_experiment_connection_properties(x)['times']['load_ms'], list_connections))
+        df = pd.DataFrame(load_ms, index=list_connections, columns=['load_ms'])
+        df = df / 1000
+        df = df.round(decimals=3)
+        print(df)
+
         # ### Show Errors
 
         # In[7]:
