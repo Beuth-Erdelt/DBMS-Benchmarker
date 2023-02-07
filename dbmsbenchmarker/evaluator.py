@@ -178,10 +178,14 @@ class evaluator():
 					evaluation['dbms'][c]['worker'] = self.benchmarker.dbms[c].connectiondata["worker"].copy()
 				evaluation['dbms'][c]['times'] = {}
 				evaluation['dbms'][c]['prices'] = {}
-				if "timeLoad" in self.benchmarker.dbms[c].connectiondata:
-					evaluation['dbms'][c]['times']['load_ms'] = self.benchmarker.dbms[c].connectiondata["timeLoad"]*1000.0
-				else:
-					evaluation['dbms'][c]['times']['load_ms'] = 0
+                if "timeLoad" in self.benchmarker.dbms[c].connectiondata:
+                    evaluation['dbms'][c]['times']['load_ms'] = self.benchmarker.dbms[c].connectiondata["timeLoad"]*1000.0
+                else:
+                    evaluation['dbms'][c]['times']['load_ms'] = 0
+                if "timeGenerate" in self.benchmarker.dbms[c].connectiondata:
+                    evaluation['dbms'][c]['times']['generate_ms'] = self.benchmarker.dbms[c].connectiondata["timeGenerate"]*1000.0
+                else:
+                    evaluation['dbms'][c]['times']['generate_ms'] = 0
 				if c in times:
 					evaluation['dbms'][c]['times']['benchmark_ms'] = times[c]
 					if 'priceperhourdollar' in self.benchmarker.dbms[c].connectiondata:
