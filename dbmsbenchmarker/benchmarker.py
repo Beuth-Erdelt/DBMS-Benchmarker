@@ -478,6 +478,9 @@ class benchmarker():
         # anonymize dbms
         self.anonymize = anonymize# True or False
         self.unanonymize = unanonymize# Name of connection
+        # log times
+        self.time_start = 0
+        self.time_end = 0
     def clearBenchmarks(self):
         """
         Clears all benchmark related protocol data.
@@ -485,7 +488,7 @@ class benchmarker():
 
         :return: returns nothing
         """
-        self.protocol = {'query':{}, 'connection':{}}
+        self.protocol = {'query':{}, 'connection':{}, 'total':{}}
         self.timerExecution = tools.timer("execution")
         self.timerTransfer = tools.timer("datatransfer")
         self.timerConnect = tools.timer("connection")
@@ -1459,12 +1462,24 @@ class benchmarker():
 
         :return: returns nothing
         """
+        # log time of starting benchmark
+        time_now = str(datetime.datetime.now())
+        time_now_int = int(datetime.datetime.timestamp(datetime.datetime.strptime(time_now,'%Y-%m-%d %H:%M:%S.%f')))
+        self.time_start = time_now_int
+        self.protocol['total']['time_start'] = self.time_start
+        self.logger.debug("### Time start: "+self.time_start)
         # clean evaluation dict
         evaluator.evaluator.evaluation = {}
         if self.working == 'query':
             self.runBenchmarksQuery()
         else:
             self.runBenchmarksConnection()
+        # log time of ending benchmark
+        time_now = str(datetime.datetime.now())
+        time_now_int = int(datetime.datetime.timestamp(datetime.datetime.strptime(time_now,'%Y-%m-%d %H:%M:%S.%f')))
+        self.time_end = time_now_int
+        self.protocol['total']['time_end'] = self.time_end
+        self.logger.debug("### Time end: "+self.time_end)
         if self.bBatch:
             # generate reports at the end only
             self.generateReportsAll()
