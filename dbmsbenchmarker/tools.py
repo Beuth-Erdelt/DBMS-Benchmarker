@@ -1580,12 +1580,15 @@ def merge_partial_results(result_path, code):
 	# merged protocol
 	protocol = {}
 	protocol['query'] = {}
-	protocol['connection'] = {}
+    protocol['connection'] = {}
+    protocol['total'] = {}
 	for k,v in protocols[0]['query'].items():
 		if isinstance(v, dict):
 			protocol['query'][k] = {}
 			for p in protocols:
 				protocol['query'][k] = joinDicts(protocol['query'][k], p['query'][k])
+    for p in protocols:
+        protocol['total'] = joinDicts(protocol['total'], p['total'])
 	filename_protocol = '{folder}/protocol.json'.format(folder=folder)
 	with open(filename_protocol, 'w') as f:
 		json.dump(protocol, f)
