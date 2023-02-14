@@ -1486,6 +1486,7 @@ class benchmarker():
         self.logger.debug("### Time end: "+str(self.time_end))
         for connectionname in sorted(self.dbms.keys()):
             self.protocol['total'][connectionname]['time_end'] = self.time_end
+        print("DBMSBenchmarker duration: "+str(self.time_end-self.time_start))
         # write protocol again
         self.reporterStore.writeProtocol()
         if self.bBatch:
