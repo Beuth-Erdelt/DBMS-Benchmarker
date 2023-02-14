@@ -1466,7 +1466,7 @@ class benchmarker():
         time_now = str(datetime.datetime.now())
         time_now_int = int(datetime.datetime.timestamp(datetime.datetime.strptime(time_now,'%Y-%m-%d %H:%M:%S.%f')))
         self.time_start = time_now_int
-        self.logger.debug("### Time start: "+self.time_start)
+        self.logger.debug("### Time start: "+str(self.time_start))
         if not 'total' in self.protocol:
             self.protocol['total'] = {}
         for connectionname in sorted(self.dbms.keys()):
@@ -1483,7 +1483,7 @@ class benchmarker():
         time_now = str(datetime.datetime.now())
         time_now_int = int(datetime.datetime.timestamp(datetime.datetime.strptime(time_now,'%Y-%m-%d %H:%M:%S.%f')))
         self.time_end = time_now_int
-        self.logger.debug("### Time end: "+self.time_end)
+        self.logger.debug("### Time end: "+str(self.time_end))
         for connectionname in sorted(self.dbms.keys()):
             self.protocol['total'][connectionname]['time_end'] = self.time_end
         if self.bBatch:
