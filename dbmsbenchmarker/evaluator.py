@@ -177,8 +177,8 @@ class evaluator():
                 if "worker" in self.benchmarker.dbms[c].connectiondata:
                     evaluation['dbms'][c]['worker'] = self.benchmarker.dbms[c].connectiondata["worker"].copy()
                 evaluation['dbms'][c]['times'] = {}
-                evaluation['dbms'][c]['times']['time_start'] = self.benchmarker.protocol['total']['time_start']#self.benchmarker.time_start
-                evaluation['dbms'][c]['times']['time_end'] = self.benchmarker.protocol['total']['time_end']#self.benchmarker.time_end
+                evaluation['dbms'][c]['times']['total'] = self.benchmarker.protocol['total']#['time_start']#self.benchmarker.time_start
+                #evaluation['dbms'][c]['times']['time_end'] = self.benchmarker.protocol['total']['time_end']#self.benchmarker.time_end
                 evaluation['dbms'][c]['prices'] = {}
                 if "timeLoad" in self.benchmarker.dbms[c].connectiondata:
                     evaluation['dbms'][c]['times']['load_ms'] = self.benchmarker.dbms[c].connectiondata["timeLoad"]*1000.0
