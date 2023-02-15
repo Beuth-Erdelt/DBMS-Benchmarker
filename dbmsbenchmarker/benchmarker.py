@@ -1500,6 +1500,7 @@ class benchmarker():
 
         :return: returns nothing
         """
+        print("Read results")
         self.clearBenchmarks()
         # read from stored results
         self.logger.debug("Read from "+self.path)
@@ -1625,6 +1626,7 @@ class benchmarker():
         :param overwrite: True if existing benchmarks should be overwritten
         :return: returns nothing
         """
+        print("Continue Benchmarks")
         self.overwrite = overwrite
         self.readResultfolder()
         # (Re)create all parameters?

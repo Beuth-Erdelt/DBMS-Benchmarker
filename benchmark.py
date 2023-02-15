@@ -146,7 +146,7 @@ if __name__ == '__main__':
     elif args.mode == 'run':
         if experiments.continuing:
             #experiments.generateAllParameters()
-            experiments.continueBenchmarks(overwrite = True)
+            experiments.continueBenchmarks(overwrite = True, recreate_parameter=args.recreate_parameter)
         else:
             #experiments.generateAllParameters()
             experiments.runBenchmarks()
