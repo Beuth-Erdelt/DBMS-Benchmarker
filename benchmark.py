@@ -140,10 +140,11 @@ if __name__ == '__main__':
         numProcesses=args.numProcesses,
         seed=args.seed)
     experiments.getConfig(args.config_folder, args.connection_file, args.query_file)
-    # switch for args.mode
-    if args.recreate_parameter is not None and args.recreate_parameter == True:
+    # (Re)create all parameters?
+    if args.recreate_parameter is not None and int(args.recreate_parameter) == 1:
         print("(Re)create all parameters")
         experiments.generateAllParameters()
+    # switch for args.mode
     if args.mode == 'read':
         experiments.readBenchmarks()
     elif args.mode == 'run':
