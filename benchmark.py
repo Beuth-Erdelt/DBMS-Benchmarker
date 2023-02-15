@@ -142,6 +142,7 @@ if __name__ == '__main__':
     experiments.getConfig(args.config_folder, args.connection_file, args.query_file)
     # switch for args.mode
     if args.recreate_parameter is not None and args.recreate_parameter == True:
+        print("(Re)create all parameters")
         experiments.generateAllParameters()
     if args.mode == 'read':
         experiments.readBenchmarks()
