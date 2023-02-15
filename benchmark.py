@@ -140,10 +140,6 @@ if __name__ == '__main__':
         numProcesses=args.numProcesses,
         seed=args.seed)
     experiments.getConfig(args.config_folder, args.connection_file, args.query_file)
-    # (Re)create all parameters?
-    if args.recreate_parameter is not None and int(args.recreate_parameter) == 1:
-        print("(Re)create all parameters")
-        experiments.generateAllParameters()
     # switch for args.mode
     if args.mode == 'read':
         experiments.readBenchmarks()
@@ -157,7 +153,7 @@ if __name__ == '__main__':
         print('Experiment {} has been finished'.format(experiments.code))
     elif args.mode == 'continue':
         if experiments.continuing:
-            experiments.continueBenchmarks(overwrite = False)
+            experiments.continueBenchmarks(overwrite = False, recreate_parameter=args.recreate_parameter)
         else:
             print("Continue needs result folder")
     if args.metrics:

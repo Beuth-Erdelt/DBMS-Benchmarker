@@ -1327,12 +1327,12 @@ class benchmarker():
         #   metricsReporter = monitor.metrics(self)
         #   metricsReporter.generatePlotForQuery(numQuery)
         return True
-    def generateAllParameters(self):
+    def generateAllParameters(self, overwrite=False):
         for numQuery in range(1, len(self.queries)+1):
             q = self.queries[numQuery-1]
             query = tools.query(q)
             self.logger.debug("generateAllParameters query={}, parameter={}, protocol={}".format(numQuery, query.parameter, self.protocol['query'][str(numQuery)]['parameter']))
-            if len(query.parameter) > 0 and len(self.protocol['query'][str(numQuery)]['parameter']) == 0:
+            if len(query.parameter) > 0 and (overwrite or len(self.protocol['query'][str(numQuery)]['parameter']) == 0):
                 params = parameter.generateParameters(query.parameter, query.numRun)
                 self.protocol['query'][str(numQuery)]['parameter'] = params
     def startBenchmarkingQuery(self, numQuery):
@@ -1617,7 +1617,7 @@ class benchmarker():
         for r in self.reporter:
             print("Report "+type(r).__name__)
             r.generateAll(self.timers)#[self.timerExecution, self.timerTransfer, self.timerConnect])
-    def continueBenchmarks(self, overwrite = False):
+    def continueBenchmarks(self, overwrite=False, recreate_parameter=None):
         """
         Reads data of previous benchmark from folder.
         Continues performing missing benchmarks, if not all queries were treated completely.
@@ -1627,6 +1627,10 @@ class benchmarker():
         """
         self.overwrite = overwrite
         self.readResultfolder()
+        # (Re)create all parameters?
+        if recreate_parameter is not None and int(recreate_parameter) == 1:
+            print("(Re)create all parameters")
+            self.generateAllParameters(overwrite)
         self.runBenchmarks()
     def getResultSetCSV(self, query, connection):
         filename=self.path+"/query_"+str(query)+"_resultset_"+connection+".csv"
