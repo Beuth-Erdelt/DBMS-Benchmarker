@@ -212,10 +212,12 @@ class evaluator():
                         # load test metrics
                         for m, avg in hardwareAverages[c].items():
                             df = metricsReporter.dfHardwareMetricsLoading(m)
+                            df.drop_duplicates(inplace=True) # TODO: Why are there duplicates sometimes?
                             evaluation['general']['loadingmetrics'][m] = df.to_dict(orient='index')
                         # load streaming metrics
                         for m, avg in hardwareAverages[c].items():
                             df = metricsReporter.dfHardwareMetricsStreaming(m)
+                            df.drop_duplicates(inplace=True) # TODO: Why are there duplicates sometimes?
                             evaluation['general']['streamingmetrics'][m] = df.to_dict(orient='index')
         # appendix start: query survey
         evaluation['query'] = {}
