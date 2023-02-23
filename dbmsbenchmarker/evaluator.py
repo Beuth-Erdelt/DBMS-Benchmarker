@@ -184,6 +184,10 @@ class evaluator():
                     evaluation['dbms'][c]['times']['load_ms'] = self.benchmarker.dbms[c].connectiondata["timeLoad"]*1000.0
                 else:
                     evaluation['dbms'][c]['times']['load_ms'] = 0
+                if "timeIngesting" in self.benchmarker.dbms[c].connectiondata:
+                    evaluation['dbms'][c]['times']['ingest_ms'] = self.benchmarker.dbms[c].connectiondata["timeIngesting"]*1000.0
+                else:
+                    evaluation['dbms'][c]['times']['ingest_ms'] = 0
                 if "timeGenerate" in self.benchmarker.dbms[c].connectiondata:
                     evaluation['dbms'][c]['times']['generate_ms'] = self.benchmarker.dbms[c].connectiondata["timeGenerate"]*1000.0
                 else:
