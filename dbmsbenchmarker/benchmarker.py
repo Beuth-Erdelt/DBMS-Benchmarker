@@ -1439,7 +1439,8 @@ class benchmarker():
                 self.activeConnections[i].connect()
             #print(self.activeConnections)
             # work queries
-            for numQuery in range(1, len(self.queries)+1):
+            ordered_list_of_queries = range(1, len(self.queries)+1)
+            for numQuery in ordered_list_of_queries:
                 bBenchmarkDone = self.runBenchmark(numQuery, connectionname)
                 # if benchmark has been done: store and generate reports
                 if bBenchmarkDone:
