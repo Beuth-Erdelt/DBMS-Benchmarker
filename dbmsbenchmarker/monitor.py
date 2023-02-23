@@ -431,6 +431,7 @@ class metrics():
                 if df_all is None:
                     df_all = df
                 else:
+                    # produces suffixes because of duplicate columns 
                     df_all = df_all.merge(df, how='outer', left_index=True,right_index=True)
             filename = self.benchmarker.path+'/query_loading_metric_'+str(metric)+'.csv'
             metrics.saveMetricsDataframe(filename, df_all)
