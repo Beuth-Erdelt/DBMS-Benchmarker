@@ -192,6 +192,14 @@ class evaluator():
                     evaluation['dbms'][c]['times']['generate_ms'] = self.benchmarker.dbms[c].connectiondata["timeGenerate"]*1000.0
                 else:
                     evaluation['dbms'][c]['times']['generate_ms'] = 0
+                if "timeSchema" in self.benchmarker.dbms[c].connectiondata:
+                    evaluation['dbms'][c]['times']['schema_ms'] = self.benchmarker.dbms[c].connectiondata["timeSchema"]*1000.0
+                else:
+                    evaluation['dbms'][c]['times']['schema_ms'] = 0
+                if "timeIndex" in self.benchmarker.dbms[c].connectiondata:
+                    evaluation['dbms'][c]['times']['index_ms'] = self.benchmarker.dbms[c].connectiondata["timeIndex"]*1000.0
+                else:
+                    evaluation['dbms'][c]['times']['index_ms'] = 0
                 if c in times:
                     evaluation['dbms'][c]['times']['benchmark_ms'] = times[c]
                     if 'priceperhourdollar' in self.benchmarker.dbms[c].connectiondata:
