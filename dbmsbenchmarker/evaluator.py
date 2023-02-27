@@ -180,6 +180,7 @@ class evaluator():
                 evaluation['dbms'][c]['times']['total'] = self.benchmarker.protocol['total']#['time_start']#self.benchmarker.time_start
                 #evaluation['dbms'][c]['times']['time_end'] = self.benchmarker.protocol['total']['time_end']#self.benchmarker.time_end
                 evaluation['dbms'][c]['prices'] = {}
+                # copy timing information from connection infos (create schema, ingest data, create index, ...)
                 if "timeLoad" in self.benchmarker.dbms[c].connectiondata:
                     evaluation['dbms'][c]['times']['load_ms'] = self.benchmarker.dbms[c].connectiondata["timeLoad"]*1000.0
                 else:
@@ -200,6 +201,10 @@ class evaluator():
                     evaluation['dbms'][c]['times']['index_ms'] = self.benchmarker.dbms[c].connectiondata["timeIndex"]*1000.0
                 else:
                     evaluation['dbms'][c]['times']['index_ms'] = 0
+                if "script_times" in self.benchmarker.dbms[c].connectiondata:
+                    evaluation['dbms'][c]['times']['script_times'] = self.benchmarker.dbms[c].connectiondata["script_times"]#*1000.0
+                else:
+                    evaluation['dbms'][c]['times']['script_times'] = []
                 if c in times:
                     evaluation['dbms'][c]['times']['benchmark_ms'] = times[c]
                     if 'priceperhourdollar' in self.benchmarker.dbms[c].connectiondata:
