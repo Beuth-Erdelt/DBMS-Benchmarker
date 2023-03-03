@@ -1,7 +1,6 @@
 [![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://GitHub.com/Beuth-Erdelt/DBMS-Benchmarker/graphs/commit-activity)
 [![GitHub release](https://img.shields.io/github/release/Beuth-Erdelt/DBMS-Benchmarker.svg)](https://GitHub.com/Beuth-Erdelt/DBMS-Benchmarker/releases/)
 [![PyPI version](https://badge.fury.io/py/dbmsbenchmarker.svg)](https://badge.fury.io/py/dbmsbenchmarker)
-[![.github/workflows/draft-pdf.yml](https://github.com/Beuth-Erdelt/DBMS-Benchmarker/actions/workflows/draft-pdf.yml/badge.svg)](https://github.com/Beuth-Erdelt/DBMS-Benchmarker/actions/workflows/draft-pdf.yml)
 [![DOI](https://zenodo.org/badge/213186578.svg)](https://zenodo.org/badge/latestdoi/213186578)
 [![JOSS](https://joss.theoj.org/papers/82d2fa62b5c3ec30014f6307cc731cdd/status.svg)](https://joss.theoj.org/papers/82d2fa62b5c3ec30014f6307cc731cdd)
 
@@ -44,7 +43,7 @@ DBMS-Benchmarker
 For more informations, see a [basic example](#basic-usage) or take a look in the [documentation](https://dbmsbenchmarker.readthedocs.io/en/latest/Docs.html) for a full list of options.
 
 The code uses several Python modules, in particular <a href="https://github.com/baztian/jaydebeapi" target="_blank">jaydebeapi</a> for handling DBMS.
-This module has been tested with Clickhouse, DB2, Exasol, Hyperscale (Citus), Kinetica, MariaDB, MariaDB Columnstore, MemSQL, Mariadb, MonetDB, MySQL, OmniSci, Oracle DB, PostgreSQL, SingleStore, SQL Server, SAP HANA, TimescaleDB and Vertica.
+This module has been tested with Citus Data (Hyperscale), Clickhouse, CockroachDB, Exasol, IBM DB2, MariaDB, MariaDB Columnstore, MemSQL (SingleStore), MonetDB, MySQL, OmniSci (HEAVY.AI), Oracle DB, PostgreSQL, SQL Server, SAP HANA, TimescaleDB, and Vertica.
 
 ## Installation
 
@@ -172,20 +171,25 @@ This module can serve as the **query executor** [2] and **evaluator** [1] for di
 
 ## References
 
-If you use DBMSBenchmarker in work contributing to a scientific publication, we ask that you cite our application note [1]:
+If you use DBMSBenchmarker in work contributing to a scientific publication, we kindly ask that you cite our application note [1] and/or [3]:
 
 
 [1] [A Framework for Supporting Repetition and Evaluation in the Process of Cloud-Based DBMS Performance Benchmarking](https://doi.org/10.1007/978-3-030-84924-5_6)
-
 > Erdelt P.K. (2021)
 > A Framework for Supporting Repetition and Evaluation in the Process of Cloud-Based DBMS Performance Benchmarking.
 > In: Nambiar R., Poess M. (eds) Performance Evaluation and Benchmarking. TPCTC 2020.
 > Lecture Notes in Computer Science, vol 12752. Springer, Cham.
 > https://doi.org/10.1007/978-3-030-84924-5_6
 
-[2] [Orchestrating DBMS Benchmarking in the Cloud with Kubernetes](https://www.researchgate.net/publication/353236865_Orchestrating_DBMS_Benchmarking_in_the_Cloud_with_Kubernetes)
+[2] [Orchestrating DBMS Benchmarking in the Cloud with Kubernetes](https://doi.org/10.1007/978-3-030-94437-7_6)
 > Erdelt P.K. (2022)
 > Orchestrating DBMS Benchmarking in the Cloud with Kubernetes.
 > In: Nambiar R., Poess M. (eds) Performance Evaluation and Benchmarking. TPCTC 2021.
 > Lecture Notes in Computer Science, vol 13169. Springer, Cham.
 > https://doi.org/10.1007/978-3-030-94437-7_6
+
+[3] [DBMS-Benchmarker: Benchmark and Evaluate DBMS in Python](https://doi.org/10.21105/joss.04628)
+> Erdelt P.K., Jestel J. (2022).
+> DBMS-Benchmarker: Benchmark and Evaluate DBMS in Python.
+> Journal of Open Source Software, 7(79), 4628
+> https://doi.org/10.21105/joss.04628

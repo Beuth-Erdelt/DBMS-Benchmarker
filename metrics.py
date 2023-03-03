@@ -27,45 +27,61 @@ import time
 
 
 urllib3.disable_warnings()
-logging.basicConfig(level=logging.ERROR)
 
 if __name__ == '__main__':
-	# argparse
-	parser = argparse.ArgumentParser(description='A benchmark tool for RDBMS. Fetches loading metrics.')
-	parser.add_argument('-r', '--result-folder', help='folder for storing benchmark result files, default is given by timestamp', default=None)
-	parser.add_argument('-c', '--code', help='folder for storing benchmark result files, default is given by timestamp', default=None)
-	parser.add_argument('-ts', '--time-start', help='Time loading has started', default=None)
-	parser.add_argument('-te', '--time-end', help='Time loading has ended', default=None)
-	args = parser.parse_args()
-	# evaluate args
-	result_path = args.result_folder#'/results'
-	code = args.code#'1616083097'
-	time_start = int(args.time_start)#1616083225
-	time_end = int(args.time_end)#1616083310
-	print(time_end-time_start)
-	#url = 'http://bexhoma-monitoring-omnisci-{code}.perdelt.svc.cluster.local:9090/api/v1/'.format(code=code)
-	#metric = {'query': 'container_memory_working_set_bytes{job="monitor-node", container_label_io_kubernetes_container_name="dbms"}/1024/1024', 'title': 'CPU Memory [MiB]'}
-	#monitor.metrics.getMetrics(url, metric, time_start, time_end, 1)
-	experiments = benchmarker.benchmarker(
-			result_path='{result_path}/{code}/'.format(result_path=result_path, code=code))#args.result_folder,
-			#working=args.working,
-			#batch=bBatch,
-			#subfolder=subfolder,#args.subfolder,
-			#fixedQuery=args.query,
-			#fixedConnection=args.connection,
-			#rename_connection=rename_connection,
-			#anonymize=args.anonymize,
-			#unanonymize=args.unanonymize,
-			#numProcesses=args.numProcesses,
-			#seed=args.seed)
-	experiments.getConfig()
-	for c, connection in experiments.dbms.items():
-		print(connection.connectiondata['monitoring']['prometheus_url'])
-		query='loading'
-		for m, metric in connection.connectiondata['monitoring']['metrics'].items():
-			print(m)
-			monitor.metrics.fetchMetric(query, m, c, connection.connectiondata, time_start, time_end, '{result_path}/{code}/'.format(result_path=result_path, code=code))
-			#metrics = monitor.metrics(experiments)
-			#df = metrics.dfHardwareMetricsLoading(m)
-			#print(df)
+    # argparse
+    parser = argparse.ArgumentParser(description='A benchmark tool for RDBMS. Fetches loading or stream metrics.')
+    parser.add_argument('-r', '--result-folder', help='folder for storing benchmark result folders', default=None)
+    parser.add_argument('-e', '--experiment-code', help='folder for storing benchmark result files, default is given by timestamp', default=None)
+    parser.add_argument('-f', '--config-folder', help='folder containing query and connection config files. If set, the names connections.config and queries.config are assumed automatically.', default=None)
+    parser.add_argument('-c', '--connection', help='Name of the connection (dbms) to use', default=None)
+    parser.add_argument('-ct', '--component-type', help='Type of the component (loading or stream)', default='loading')
+    parser.add_argument('-cf', '--connection-file', help='name of connection config file', default='connections.config')
+    parser.add_argument('-ts', '--time-start', help='Time loading has started', default=None)
+    parser.add_argument('-te', '--time-end', help='Time loading has ended', default=None)
+    parser.add_argument('-db', '--debug', help='dump debug informations', action='store_true')
+    args = parser.parse_args()
+    # evaluate args
+    if args.debug:
+        logging.basicConfig(level=logging.DEBUG)
+    else:
+        logging.basicConfig(level=logging.ERROR)
+    result_path = args.result_folder#'/results'
+    code = args.experiment_code#'1616083097'
+    connection = args.connection
+    query = args.component_type
+    time_start = int(args.time_start)#1616083225
+    time_end = int(args.time_end)#1616083310
+    print("Interval length {}s".format(time_end-time_start))
+    #url = 'http://bexhoma-monitoring-omnisci-{code}.perdelt.svc.cluster.local:9090/api/v1/'.format(code=code)
+    #metric = {'query': 'container_memory_working_set_bytes{job="monitor-node", container_label_io_kubernetes_container_name="dbms"}/1024/1024', 'title': 'CPU Memory [MiB]'}
+    #monitor.metrics.getMetrics(url, metric, time_start, time_end, 1)
+    experiments = benchmarker.benchmarker(
+            result_path='{result_path}/{code}/'.format(result_path=result_path, code=code))#args.result_folder,
+            #working=args.working,
+            #batch=bBatch,
+            #subfolder=subfolder,#args.subfolder,
+            #fixedQuery=args.query,
+            #fixedConnection=args.connection,
+            #rename_connection=rename_connection,
+            #anonymize=args.anonymize,
+            #unanonymize=args.unanonymize,
+            #numProcesses=args.numProcesses,
+            #seed=args.seed)
+    #experiments.getConfig()
+    experiments.getConfig(args.config_folder, connectionfile=args.connection_file)
+    for connection_name, connection_data in experiments.dbms.items():
+        if connection is not None:
+            if connection_name != connection:
+                print("Found {}, but we only query for {}".format(connection_name, connection))
+                continue
+        print("URL", connection_data.connectiondata['monitoring']['prometheus_url'])
+        #query='loading'
+        #query='stream'
+        for m, metric in connection_data.connectiondata['monitoring']['metrics'].items():
+            print("Metric", m)
+            monitor.metrics.fetchMetric(query, m, connection_name, connection_data.connectiondata, time_start, time_end, '{result_path}/{code}/'.format(result_path=result_path, code=code))
+            #metrics = monitor.metrics(experiments)
+            #df = metrics.dfHardwareMetricsLoading(m)
+            #print(df)
 

@@ -56,6 +56,28 @@ JDBC driver: https://github.com/ClickHouse/clickhouse-jdbc
 ]
 ```
 
+## CockroachDB
+
+https://www.cockroachlabs.com/
+
+JDBC driver: https://jdbc.postgresql.org/
+
+```
+[
+    {
+        'name': 'CockroachDB',
+        'info': 'This is a demo of CockroachDB',
+        'active': True,
+        'JDBC': {
+            'driver': 'org.postgresql.Driver',
+            'url': 'jdbc:postgresql://localhost:26257/database',
+            'auth': ['user', 'password'],
+            'jar': 'jars/postgresql-42.5.0.jar'
+        }
+    },
+]
+```
+
 ## Exasol
 
 https://www.exasol.com/de/
