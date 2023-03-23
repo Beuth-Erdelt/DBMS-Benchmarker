@@ -396,8 +396,14 @@ class metricer(reporter):
                     logging.info("Hardware metrics for stream of connection {}".format(c))
                     times = self.benchmarker.protocol['query'][str(1)]
                     time_start = int(datetime.timestamp(datetime.strptime(times["starts"][c],'%Y-%m-%d %H:%M:%S.%f')))
-                    times = self.benchmarker.protocol['query'][str(number_of_queries)]
-                    time_end = int(datetime.timestamp(datetime.strptime(times["ends"][c],'%Y-%m-%d %H:%M:%S.%f')))
+                    time_end = time_start
+                    # find the last active query (with end time)
+                    for i in range(number_of_queries, 0, -1):
+                        times = self.benchmarker.protocol['query'][str(i)]
+                        if "ends" in times and c in times["ends"]:
+                            time_end = int(datetime.timestamp(datetime.strptime(times["ends"][c],'%Y-%m-%d %H:%M:%S.%f')))
+                            logging.debug("Last active query is {}".format(i))
+                            break
                     #logging.debug(connection.connectiondata['monitoring']['prometheus_url'])
                     query='stream'
                     if 'metrics' in connection.connectiondata['monitoring']:
