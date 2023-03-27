@@ -423,6 +423,9 @@ class metrics():
                 else:
                     connectionname = c
                 #print(connectionname, df_all)
+                if df_all is not None and connectionname in df_all.columns:
+                    print("We already have the metrics of this instance {c} as {connectionname}".format(c=c, connectionname=connectionname))
+                    continue
                 filename = self.benchmarker.path+'/query_loading_metric_'+str(metric)+'_'+connectionname+'.csv'
                 df = metrics.loadMetricsDataframe(filename)
                 if df is None:
