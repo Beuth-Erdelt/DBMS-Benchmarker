@@ -105,37 +105,50 @@ class metrics():
     @staticmethod
     def getMetrics(url, metric, time_start, time_end, step=1):
         logging.debug("getMetrics from "+url)
-        query = 'query_range'#?query='+metric['query']+'&start='+str(time_start)+'&end='+str(time_end)+'&step='+str(self.step)
-        params = {
-            'query': metric['query'],
-            'start': str(time_start),
-            'end': str(time_end),
-            'step': str(step),
-        }
-        logging.debug("Querying metrics: "+url+query, params)
-        logging.debug(params)
-        #headers = {'Authorization': self.token}
-        l = [(t,0) for t in range(time_start, time_end+1)]#[(time_start,0)]
-        #return l
-        #print(self.url+query)
-        try:
-            #r = requests.post(self.url+query)#, headers=headers)
-            r = requests.get(url+query, params=params)#, headers=headers)
-            #print(r.json())
-            if isinstance(r.json(), dict) and 'data' in r.json() and 'result' in r.json()['data'] and len(r.json()['data']['result']) > 0:
-                l = r.json()['data']['result'][0]['values']
-                # missing values due to end of monitoring?
-                n = time_end-time_start-len(l)+1
-                l2 = [(t+len(l)+time_start, 0) for t in range(n)]
-                l = l + l2
-            else:
-                #print(metric, url+query, r.json())
-                l = [(t,0) for t in range(time_start, time_end+1)]#[(time_start,0)]
-                logging.error('Metrics missing: '+url+query, params)
-                logging.error(r.text)
-        except Exception as e:
-            logging.exception('Caught an error: %s' % str(e))
-        return l
+        def fetch_interval(time_start, time_end, step):
+            query = 'query_range'#?query='+metric['query']+'&start='+str(time_start)+'&end='+str(time_end)+'&step='+str(self.step)
+            params = {
+                'query': metric['query'],
+                'start': str(time_start),
+                'end': str(time_end),
+                'step': str(step),
+            }
+            logging.debug("Querying metrics: "+url+query, params)
+            logging.debug(params)
+            #headers = {'Authorization': self.token}
+            l = [(t,0) for t in range(time_start, time_end+1)]#[(time_start,0)]
+            #return l
+            #print(self.url+query)
+            try:
+                #r = requests.post(self.url+query)#, headers=headers)
+                r = requests.get(url+query, params=params)#, headers=headers)
+                #print(r.json())
+                if isinstance(r.json(), dict) and 'data' in r.json() and 'result' in r.json()['data'] and len(r.json()['data']['result']) > 0:
+                    l = r.json()['data']['result'][0]['values']
+                    # missing values due to end of monitoring?
+                    n = time_end-time_start-len(l)+1
+                    l2 = [(t+len(l)+time_start, 0) for t in range(n)]
+                    l = l + l2
+                else:
+                    #print(metric, url+query, r.json())
+                    l = [(t,0) for t in range(time_start, time_end+1)]#[(time_start,0)]
+                    logging.error('Metrics missing: '+url+query, params)
+                    logging.error(r.text)
+            except Exception as e:
+                logging.exception('Caught an error: %s' % str(e))
+            return l
+        # split the time span into max 9000s intervals
+        list_values = []
+        max_span_len = 9000
+        span = time_end - time_start
+        intervals = span//max_span_len+1
+        for i in range(0, intervals):
+            time_interval_start = i*9000
+            time_interval_end = min((i+1)*9000-1, span)
+            print("Fetch metric interval", time_interval_start, time_interval_end)
+            list_values_interval = fetch_interval(time_interval_start, time_interval_end, step)
+            list_values = list_values + list_values_interval
+        return list_values
     @staticmethod
     def metricsToDataframe(metric, values):
         df = pd.DataFrame.from_records(values)
