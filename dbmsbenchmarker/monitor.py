@@ -145,7 +145,7 @@ class metrics():
         for i in range(0, intervals):
             time_interval_start = i*9000 + time_start
             time_interval_end = min((i+1)*9000-1, span) + time_start
-            print("Fetch metric interval", time_interval_start, time_interval_end)
+            print("Fetch metric interval {} to {} = {} s span".format(time_interval_start, time_interval_end, time_interval_end - time_interval_start))
             list_values_interval = fetch_interval(time_interval_start, time_interval_end, step)
             list_values = list_values + list_values_interval
         return list_values
