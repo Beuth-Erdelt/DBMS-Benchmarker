@@ -355,7 +355,7 @@ class benchmarker():
     """
     Class for running benchmarks
     """
-    def __init__(self, result_path=None, working='query', batch=False, fixedQuery=None, fixedConnection=None, rename_connection='', rename_alias='', fixedAlias='', anonymize=False, unanonymize=[], numProcesses=None, seed=None, code=None, subfolder=None):
+    def __init__(self, result_path=None, working='query', batch=False, fixedQuery=None, fixedConnection=None, rename_connection='', rename_alias='', fixedAlias='', anonymize=False, unanonymize=[], numProcesses=None, seed=None, code=None, subfolder=None, stream_id=None, stream_shuffle=None):
         """
         Construct a new 'benchmarker' object.
         Allocated the reporters store (always called) and printer (if reports are to be generated).
@@ -393,6 +393,10 @@ class benchmarker():
         self.activeConnections = []
         #self.runsPerConnection = 4
         #self.timeout = 600
+        # number of stream, in particular for parallel streams
+        # None = ignore this
+        self.stream_id = stream_id
+        self.stream_shuffle = stream_shuffle
         # there is no general pool
         self.pool = None
         # store number of cpu cores
@@ -1006,6 +1010,8 @@ class benchmarker():
         timeout = connectionmanagement['timeout']#self.timeout
         if timeout is not None:
             jaydebeapi.QUERY_TIMEOUT = timeout
+        if self.stream_id is not None:
+            parameter.defaultParameters['STREAM'] = self.stream_id
         singleConnection = connectionmanagement['singleConnection']
         # overwrite by connection
         #if 'connectionmanagement' in self.dbms[c].connectiondata:
