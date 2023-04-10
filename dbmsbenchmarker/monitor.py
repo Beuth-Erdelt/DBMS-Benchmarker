@@ -197,7 +197,7 @@ class metrics():
         else:
             return ""
     @staticmethod
-    def fetchMetric(query, metric_code, connection, connectiondata, time_start, time_end, path):
+    def fetchMetric(query, metric_code, connection, connectiondata, time_start, time_end, path, container=None):
         #for m, metric in metrics.metrics.items():
         logging.debug("Metric "+metric_code)
         df_all = None
@@ -215,6 +215,12 @@ class metrics():
                 else:
                     metric = metrics.metrics[metric_code]
                 #print(metric)
+                if container is not None:
+                    metric = metric.replace('container_label_io_kubernetes_container_name="dbms"', 'container_label_io_kubernetes_container_name="{}"'.format(container))
+                    metric = metric.replace('container_label_io_kubernetes_container_name!="dbms"', 'container_label_io_kubernetes_container_name!="{}"'.format(container))
+                    # open TODO:
+                    # container_label_component="worker"
+                    # container_label_component="sut"
                 # this yields seconds
                 # is there a global timeshift
                 if 'grafanashift' in connectiondata['monitoring']:
