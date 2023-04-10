@@ -213,11 +213,11 @@ class metrics():
                 if 'metrics' in connectiondata['monitoring'] and metric_code in connectiondata['monitoring']['metrics']:
                     metric = connectiondata['monitoring']['metrics'][metric_code].copy()
                 else:
-                    metric = metrics.metrics[metric_code]
+                    metric = metrics.metrics[metric_code].copy()
                 #print(metric)
                 if container is not None:
-                    metric = metric.replace('container_label_io_kubernetes_container_name="dbms"', 'container_label_io_kubernetes_container_name="{}"'.format(container))
-                    metric = metric.replace('container_label_io_kubernetes_container_name!="dbms"', 'container_label_io_kubernetes_container_name!="{}"'.format(container))
+                    metric['query'] = metric['query'].replace('container_label_io_kubernetes_container_name="dbms"', 'container_label_io_kubernetes_container_name="{}"'.format(container))
+                    metric['query'] = metric['query'].replace('container_label_io_kubernetes_container_name!="dbms"', 'container_label_io_kubernetes_container_name!="{}"'.format(container))
                     # open TODO:
                     # container_label_component="worker"
                     # container_label_component="sut"
