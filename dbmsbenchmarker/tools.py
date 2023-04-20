@@ -1739,7 +1739,7 @@ def merge_partial_results(result_path, code):
             if len(d) > 0:
                 df = pd.DataFrame(d)
                 # convert to csv
-                csv = df.to_csv(index_label=False,index=False,line_terminator='\n')
+                csv = df.to_csv(index_label=False,index=False,lineterminator='\n')
                 # save
                 filename = '{folder}/query_{numQuery}_{timer}.csv'.format(folder=folder, numQuery=numQuery, timer=t)
                 csv_file = open(filename, "w")
