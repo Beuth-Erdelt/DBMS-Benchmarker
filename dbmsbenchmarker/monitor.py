@@ -426,8 +426,17 @@ class metrics():
         #df_all = df_all.iloc[add_interval:-add_interval]
         #print(df_all)
         return df_all.T
+    def dfHardwareMetricsLoader(self, metric):
+        return self.dfHardwareMetricsComponentOriginal(metric, component="loader")
+    def dfHardwareMetricsBenchmarker(self, metric):
+        return self.dfHardwareMetricsComponentOriginal(metric, component="benchmarker")
+    def dfHardwareMetricsDatagenerator(self, metric):
+        return self.dfHardwareMetricsComponentOriginal(metric, component="datagenerator")
     def dfHardwareMetricsLoading(self, metric):
-        filename = self.benchmarker.path+'/query_loading_metric_'+str(metric)+'.csv'
+        return self.dfHardwareMetricsComponentOriginal(metric, component="loading")
+    def dfHardwareMetricsComponentOriginal(self, metric, component="loading"):
+        #filename = self.benchmarker.path+'/query_loading_metric_'+str(metric)+'.csv'
+        filename = "{path}/query_{component}_metric_{metric}.csv".format(path=self.benchmarker.path, component=component, metric=metric)
         #print(filename)
         if os.path.isfile(filename) and not self.benchmarker.overwrite:
             df_all = metrics.loadMetricsDataframe(filename)
@@ -445,7 +454,8 @@ class metrics():
                 if df_all is not None and connectionname in df_all.columns:
                     print("We already have the metrics of this instance {c} as {connectionname}".format(c=c, connectionname=connectionname))
                     continue
-                filename = self.benchmarker.path+'/query_loading_metric_'+str(metric)+'_'+connectionname+'.csv'
+                filename_component = "{path}/query_{component}_metric_{metric}_{connectionname}.csv".format(path=self.benchmarker.path, component=component, metric=metric, connectionname=connectionname)
+                #filename = self.benchmarker.path+'/query_loading_metric_'+str(metric)+'_'+connectionname+'.csv'
                 df = metrics.loadMetricsDataframe(filename)
                 if df is None:
                     continue
@@ -455,7 +465,7 @@ class metrics():
                 else:
                     # produces suffixes because of duplicate columns 
                     df_all = df_all.merge(df, how='outer', left_index=True,right_index=True)
-            filename = self.benchmarker.path+'/query_loading_metric_'+str(metric)+'.csv'
+            #filename = self.benchmarker.path+'/query_loading_metric_'+str(metric)+'.csv'
             metrics.saveMetricsDataframe(filename, df_all)
         if df_all is None:
             return pd.DataFrame()
@@ -476,7 +486,10 @@ class metrics():
         #print(df_all)
         return df_all.T
     def dfHardwareMetricsStreaming(self, metric):
-        filename = self.benchmarker.path+'/query_stream_metric_'+str(metric)+'.csv'
+        return self.dfHardwareMetricsComponentOriginal(metric, component="stream")
+    def dfHardwareMetricsComponent(self, metric, component="stream"):
+        filename = "{path}/query_{component}_metric_{metric}.csv".format(path=self.benchmarker.path, component=component, metric=metric)
+        #filename = self.benchmarker.path+'/query_stream_metric_'+str(metric)+'.csv'
         #print(filename)
         if os.path.isfile(filename) and not self.benchmarker.overwrite:
             df_all = metrics.loadMetricsDataframe(filename)
@@ -487,8 +500,9 @@ class metrics():
             for c in dbms_filter:
                 connectionname = c
                 #print(connectionname, df_all)
-                filename = self.benchmarker.path+'/query_stream_metric_'+str(metric)+'_'+connectionname+'.csv'
-                df = metrics.loadMetricsDataframe(filename)
+                filename_component = "{path}/query_{component}_metric_{metric}_{connectionname}.csv".format(path=self.benchmarker.path, component=component, metric=metric, connectionname=connectionname)
+                #filename = self.benchmarker.path+'/query_stream_metric_'+str(metric)+'_'+connectionname+'.csv'
+                df = metrics.loadMetricsDataframe(filename_component)
                 if df is None:
                     continue
                 df.columns=[connectionname]
@@ -496,25 +510,10 @@ class metrics():
                     df_all = df
                 else:
                     df_all = df_all.merge(df, how='outer', left_index=True,right_index=True)
-            filename = self.benchmarker.path+'/query_stream_metric_'+str(metric)+'.csv'
+            #filename = self.benchmarker.path+'/query_stream_metric_'+str(metric)+'.csv'
             metrics.saveMetricsDataframe(filename, df_all)
         if df_all is None:
             return pd.DataFrame()
-        # remove connection delay (metrics are collected, but nothing happens here)
-        #query = tools.query(self.benchmarker.queries[numQuery-1])
-        #df_all = df_all.iloc[int(query.delay_connect):]
-        #print(df_all)
-        # remove extend
-        #for c, connection in self.benchmarker.dbms.items():
-        #    add_interval = int(connection.connectiondata['monitoring']['grafanaextend'])
-        #    #print(add_interval)
-        #    #print(c)
-        #    #print(df_all[c])
-        #    #df_all[c] = list(df_all[c])[add_interval:-add_interval].extend([0]*(2*add_interval))
-        # take last extend value
-        #df_all = df_all.iloc[add_interval:-add_interval]
-        #print(df_all)
-        #print(df_all)
         return df_all.T
 
 def clean_dataframe(dataframe):

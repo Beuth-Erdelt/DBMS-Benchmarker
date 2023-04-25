@@ -226,16 +226,27 @@ class evaluator():
                         if 'total_gpu_power' in hardwareAverages[c]:
                             # basis: per second average power, total time in ms
                             evaluation['dbms'][c]['hardwaremetrics']['total_gpu_energy'] = hardwareAverages[c]['total_gpu_power']*times[c]/3600000
-                        # load test metrics
                         for m, avg in hardwareAverages[c].items():
+                            # load test metrics
                             df = metricsReporter.dfHardwareMetricsLoading(m)
                             df.drop_duplicates(inplace=True) # TODO: Why are there duplicates sometimes?
                             evaluation['general']['loadingmetrics'][m] = df.to_dict(orient='index')
-                        # load streaming metrics
-                        for m, avg in hardwareAverages[c].items():
+                            # streaming metrics
                             df = metricsReporter.dfHardwareMetricsStreaming(m)
                             df.drop_duplicates(inplace=True) # TODO: Why are there duplicates sometimes?
                             evaluation['general']['streamingmetrics'][m] = df.to_dict(orient='index')
+                            # loader metrics
+                            df = metricsReporter.dfHardwareMetricsLoader(m)
+                            df.drop_duplicates(inplace=True) # TODO: Why are there duplicates sometimes?
+                            evaluation['general']['loadermetrics'][m] = df.to_dict(orient='index')
+                            # benchmarker metrics
+                            df = metricsReporter.dfHardwareMetricsBenchmarker(m)
+                            df.drop_duplicates(inplace=True) # TODO: Why are there duplicates sometimes?
+                            evaluation['general']['benchmarkermetrics'][m] = df.to_dict(orient='index')
+                            #  datagenerator metrics
+                            df = metricsReporter.dfHardwareMetricsDatagenerator(m)
+                            df.drop_duplicates(inplace=True) # TODO: Why are there duplicates sometimes?
+                            evaluation['general']['datageneratormetrics'][m] = df.to_dict(orient='index')
         # appendix start: query survey
         evaluation['query'] = {}
         for i in range(1, len(self.benchmarker.queries)+1):
@@ -597,6 +608,27 @@ def dfLoadingMetric(evaluation, metric):
 def dfStreamingMetric(evaluation, metric):
     if 'streamingmetrics' in evaluation['general'] and metric in evaluation['general']['streamingmetrics']:
         df = pd.DataFrame.from_dict(evaluation['general']['streamingmetrics'][metric]).transpose()
+        df.index.name = 'DBMS'
+    else:
+        df = pd.DataFrame()
+    return df
+def dfLoaderMetric(evaluation, metric):
+    if 'loadermetrics' in evaluation['general'] and metric in evaluation['general']['loadermetrics']:
+        df = pd.DataFrame.from_dict(evaluation['general']['loadermetrics'][metric]).transpose()
+        df.index.name = 'DBMS'
+    else:
+        df = pd.DataFrame()
+    return df
+def dfBenchmarkerMetric(evaluation, metric):
+    if 'benchmarkermetrics' in evaluation['general'] and metric in evaluation['general']['benchmarkermetrics']:
+        df = pd.DataFrame.from_dict(evaluation['general']['benchmarkermetrics'][metric]).transpose()
+        df.index.name = 'DBMS'
+    else:
+        df = pd.DataFrame()
+    return df
+def dfDatageneratorMetric(evaluation, metric):
+    if 'datageneratormetrics' in evaluation['general'] and metric in evaluation['general']['datageneratormetrics']:
+        df = pd.DataFrame.from_dict(evaluation['general']['datageneratormetrics'][metric]).transpose()
         df.index.name = 'DBMS'
     else:
         df = pd.DataFrame()

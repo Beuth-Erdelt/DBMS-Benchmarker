@@ -448,6 +448,12 @@ class inspector():
         return evaluator.dfLoadingMetric(self.e.evaluation, metric)
     def get_streaming_metrics(self, metric):
         return evaluator.dfStreamingMetric(self.e.evaluation, metric)
+    def get_loader_metrics(self, metric):
+        return evaluator.dfLoaderMetric(self.e.evaluation, metric)
+    def get_benchmarker_metrics(self, metric):
+        return evaluator.dfBenchmarkerMetric(self.e.evaluation, metric)
+    def get_datagenerator_metrics(self, metric):
+        return evaluator.dfDatageneratorMetric(self.e.evaluation, metric)
     def get_total_resultsize_normalized(self):
         return tools.dataframehelper.evaluateNormalizedResultsizeToDataFrame(self.e.evaluation).T
     def get_total_resultsize(self):
