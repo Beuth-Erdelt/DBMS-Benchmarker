@@ -456,7 +456,7 @@ class metrics():
                     continue
                 filename_component = "{path}/query_{component}_metric_{metric}_{connectionname}.csv".format(path=self.benchmarker.path, component=component, metric=metric, connectionname=connectionname)
                 #filename = self.benchmarker.path+'/query_loading_metric_'+str(metric)+'_'+connectionname+'.csv'
-                df = metrics.loadMetricsDataframe(filename)
+                df = metrics.loadMetricsDataframe(filename_component)
                 if df is None:
                     continue
                 df.columns=[connectionname]
