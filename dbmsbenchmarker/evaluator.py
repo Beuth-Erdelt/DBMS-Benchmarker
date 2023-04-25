@@ -218,6 +218,9 @@ class evaluator():
                     evaluation['dbms'][c]['hardwaremetrics'] = {}
                     evaluation['general']['loadingmetrics'] = {}
                     evaluation['general']['streamingmetrics'] = {}
+                    evaluation['general']['loadermetrics'] = {}
+                    evaluation['general']['benchmarkermetrics'] = {}
+                    evaluation['general']['datageneratormetrics'] = {}
                     metricsReporter = monitor.metrics(self.benchmarker)
                     hardwareAverages = metricsReporter.computeAverages()
                     if c in hardwareAverages:
