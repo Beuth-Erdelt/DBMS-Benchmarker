@@ -44,7 +44,7 @@ if __name__ == '__main__':
     #parser.add_argument('-u', '--unanonymize', help='unanonymize some dbms, only sensible in combination with anonymize', nargs='*', default=[])
     parser.add_argument('-p', '--numProcesses', help='Number of parallel client processes. Global setting, can be overwritten by connection. If None given, half of all available processes is taken', default=None)
     parser.add_argument('-s', '--seed', help='random seed', default=None)
-    parser.add_argument('-rcp', '--recreate-parameter', help='recreate parameter for randomized queries', default=None)
+    parser.add_argument('-rcp', '--recreate-parameter', help='recreate parameter for randomized queries', default=0)
     parser.add_argument('-cs', '--copy-subfolder', help='copy subfolder of result folder', action='store_true')
     parser.add_argument('-ms', '--max-subfolders', help='maximum number of subfolders of result folder', default=None)
     parser.add_argument('-sl', '--sleep', help='sleep SLEEP seconds before going to work', default=0)
