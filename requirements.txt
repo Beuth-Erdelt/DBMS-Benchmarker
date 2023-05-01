@@ -21,7 +21,7 @@ dash-daq
 dash-html-components
 dash-renderer
 dash-table
-Flask==2.1.0
+Flask==2.3.2
 Flask-Caching
 future>=0.18.2
 idna>=2.9
