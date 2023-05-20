@@ -531,6 +531,8 @@ class dbms():
         self.connectiondata = connectiondata
         self.connection = None
         self.cursor = None
+        self.product = "unknown"
+        self.version = "unknown"
         if not connectiondata['JDBC']['jar'] in dbms.jars:
             if isinstance(connectiondata['JDBC']['jar'], list):
                 # accept list of jars
@@ -598,6 +600,16 @@ class dbms():
                 self.connectiondata['JDBC']['url'],
                 self.connectiondata['JDBC']['auth'],
                 dbms.jars,)
+            try:
+                self.product = self.connection.jconn.getMetaData().getDatabaseProductName()
+                self.version = self.connection.jconn.getMetaData().getDatabaseProductVersion()
+                self.connectiondata['product'] = self.product
+                self.connectiondata['version'] = self.version
+                print("Connected to {} version {}".format(self.product, self.version))
+            except Exception as e:
+                print("Product and version not implemented in JDBC driver")
+            else:
+                pass
             #self.connection.jconn.setAutoCommit(True)
         else:
             raise ValueError('No connection data for '+self.getName())
