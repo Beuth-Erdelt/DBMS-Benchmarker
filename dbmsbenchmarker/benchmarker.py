@@ -650,6 +650,12 @@ class benchmarker():
                 anonymous = False
             self.dbms[c['name']] = tools.dbms(c, anonymous)
         #self.connectDBMSAll()
+    def store_connectiondata(self):
+        connections_content = []
+        for dbms in self.dbms:
+            connections_content.append(dbms.connectiondata)
+        with open(self.path+'/connections_copy.config', "w") as connections_file:
+            connections_file.write(str(connections_content))
     def connectDBMSAll(self):
         """
         Connects to all dbms we have collected connection data of.
@@ -1496,6 +1502,8 @@ class benchmarker():
         print("DBMSBenchmarker duration: "+str(self.time_end-self.time_start))
         # write protocol again
         self.reporterStore.writeProtocol()
+        # store connection data again, it may have changed
+        self.store_connectiondata()
         if self.bBatch:
             # generate reports at the end only
             self.generateReportsAll()
