@@ -533,6 +533,8 @@ class dbms():
         self.cursor = None
         self.product = "unknown"
         self.version = "unknown"
+        self.driver = "unknown"
+        self.driverversion = "unknown"
         if not connectiondata['JDBC']['jar'] in dbms.jars:
             if isinstance(connectiondata['JDBC']['jar'], list):
                 # accept list of jars
@@ -601,11 +603,16 @@ class dbms():
                 self.connectiondata['JDBC']['auth'],
                 dbms.jars,)
             try:
-                self.product = self.connection.jconn.getMetaData().getDatabaseProductName()
-                self.version = self.connection.jconn.getMetaData().getDatabaseProductVersion()
+                self.metadata = self.connection.jconn.getMetaData()
+                self.product = self.metadata.getDatabaseProductName()
+                self.version = self.metadata.getDatabaseProductVersion()
+                self.driver = self.metadata.getDriverName()
+                self.driverversion = self.metadata.getDriverVersion()
                 self.connectiondata['product'] = self.product
                 self.connectiondata['version'] = self.version
-                print("Connected to {} version {}".format(self.product, self.version))
+                self.connectiondata['driver'] = self.driver
+                self.connectiondata['driverversion'] = self.driverversion
+                print("Connected to {} version {} using {} version {}".format(self.product, self.version, self.driver, self.driverversion))
             except Exception as e:
                 print("Product and version not implemented in JDBC driver")
             else:
