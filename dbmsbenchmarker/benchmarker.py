@@ -652,7 +652,7 @@ class benchmarker():
         #self.connectDBMSAll()
     def store_connectiondata(self):
         connections_content = []
-        for dbms in self.dbms:
+        for key, dbms in self.dbms.items():
             connections_content.append(dbms.connectiondata)
         with open(self.path+'/connections_copy.config', "w") as connections_file:
             connections_file.write(str(connections_content))
