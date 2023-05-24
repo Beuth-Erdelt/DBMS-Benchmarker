@@ -654,7 +654,8 @@ class benchmarker():
         connections_content = []
         for key, dbms in self.dbms.items():
             connections_content.append(dbms.connectiondata)
-        with open(self.path+'/connections_copy.config', "w") as connections_file:
+        #with open(self.path+'/connections_copy.config', "w") as connections_file:
+        with open(self.path+'/connections.config', "w") as connections_file:
             connections_file.write(str(connections_content))
     def connectDBMSAll(self):
         """
