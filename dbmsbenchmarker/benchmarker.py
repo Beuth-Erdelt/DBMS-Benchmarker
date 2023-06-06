@@ -382,8 +382,8 @@ class benchmarker():
         #self.connectionmanagement['numProcesses'] = numProcesses
         if self.connectionmanagement['numProcesses'] is None:
             self.connectionmanagement['numProcesses'] = 1#math.ceil(mp.cpu_count()/2) #If None, half of all available processes is taken
-        else:
-            self.connectionmanagement['numProcesses'] = int(self.numProcesses)
+        #else:
+        #    self.connectionmanagement['numProcesses'] = int(self.numProcesses)
         # connection should be renamed (because of copy to subfolder and parallel processing)
         # also rename alias
         self.rename_connection = rename_connection
@@ -895,6 +895,8 @@ class benchmarker():
             if('timeout' in connectionmanagement):# and connectionmanagement['timeout'] != 0):
                 # 0=unlimited
                 timeout = connectionmanagement['timeout']
+            if('singleConnection' in connectionmanagement):# and connectionmanagement['timeout'] != 0):
+                singleConnection = connectionmanagement['singleConnection']
         if numProcesses == 0 or numProcesses is None:
             numProcesses = 1
         if timeout == 0:
@@ -1500,7 +1502,7 @@ class benchmarker():
         self.logger.debug("### Time end: "+str(self.time_end))
         for connectionname in sorted(self.dbms.keys()):
             self.protocol['total'][connectionname]['time_end'] = self.time_end
-        print("DBMSBenchmarker duration: "+str(self.time_end-self.time_start))
+        print("DBMSBenchmarker duration: {} [s]".format(self.time_end-self.time_start))
         # write protocol again
         self.reporterStore.writeProtocol()
         # store connection data again, it may have changed
