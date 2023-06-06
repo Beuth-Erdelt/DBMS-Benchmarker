@@ -1152,12 +1152,25 @@ class benchmarker():
                     lists = [res.get(timeout=timeout) for res in multiple_results]
                     lists = [i for j in lists for i in j]
                 else:
+                    """
                     with mp.Pool(processes=numProcesses) as pool:
                         self.logger.info("POOL of query senders (local pool)")
                         #multiple_results = [pool.apply_async(singleRun, (self.dbms[c].connectiondata, inputConfig, runs[i*batchsize:(i+1)*batchsize], connectionname, numQuery, self.path, JPickler.dumps(self.activeConnections))) for i in range(numBatches)]
                         multiple_results = [pool.apply_async(singleRun, (self.dbms[c].connectiondata, inputConfig, runs[i*batchsize:(i+1)*batchsize], connectionname, numQuery, self.path, [], BENCHMARKER_VERBOSE_QUERIES, BENCHMARKER_VERBOSE_RESULTS, BENCHMARKER_VERBOSE_PROCESS)) for i in range(numBatches)]
                         lists = [res.get(timeout=timeout) for res in multiple_results]
                         lists = [i for j in lists for i in j]
+                        pool.close()
+                    """
+                    with mp.Pool(processes=numProcesses) as pool:
+                        self.logger.info("POOL of query senders (local pool starmap)")
+                        #multiple_results = [pool.apply_async(singleRun, (self.dbms[c].connectiondata, inputConfig, runs[i*batchsize:(i+1)*batchsize], connectionname, numQuery, self.path, JPickler.dumps(self.activeConnections))) for i in range(numBatches)]
+                        args = [(self.dbms[c].connectiondata, inputConfig, runs[i*batchsize:(i+1)*batchsize], connectionname, numQuery, self.path, [], BENCHMARKER_VERBOSE_QUERIES, BENCHMARKER_VERBOSE_RESULTS, BENCHMARKER_VERBOSE_PROCESS) for i in range(numBatches)]
+                        multiple_results = pool.starmap_async(singleRun, args)
+                        lists = multiple_results.get(timeout=timeout)
+                        #lists = [res.get(timeout=timeout) for res in multiple_results]
+                        lists = [i for j in lists for i in j]
+                        pool.close()
+                        pool.join()
             else:
                 # no parallel processes because JVM does not parallize
                 # time the queries and stop early if maxTime is reached
