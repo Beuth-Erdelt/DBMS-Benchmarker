@@ -190,12 +190,14 @@ This tool simulates parallel queries from several clients.
 The option `-p` can be used to change the global setting for the number of parallel processes.
 Moreover each connection can have a local values for this parameter.
 If nothing is specified, the default value 1 is used.
-To bypass Python's GIL, the `multiprocessing` module is used.
-A pool of asynchronous subprocesses is created for each combination of connection and query.
-The subprocesses connect to the DBMS and send the query. Note that this requires reconnecting and creating a JVM.
-When all sub-processes are complete, the results are merged and dbmsbenchmarker can continue with the next query.
-This helps in evaluating query-level concurrency.
-If you want to assess stream-level concurrency, you should start multiple dbmsbenchmarkers.
+To circumvent Python's GIL, the module `multiprocessing` is used.
+For each combination connection/query, a pool of asynchronous subprocesses is spawned.
+The subprocesses connect to the DBMS and send the query.
+Note this implies a reconnection and the creation of a JVM.
+When all subprocesses are finished, results are joined and dbmsbenchmarker may proceed to the next query.
+This helps in evaluating concurrency on a query level.
+You can for example compare performance of 15 clients running TPC-H Q8 at the same time.
+If you want to evaluate concurrency on stream level with a single connection per client, you should start several dbmsbenchmarker. 
 
 ### Random Seed
 The option `-s` can be used to specify a random seed.
