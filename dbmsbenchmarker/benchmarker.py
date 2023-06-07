@@ -1429,10 +1429,13 @@ class benchmarker():
                     numProcesses = 1
                     i = 0
                     #connectionname = c
-                    print("More active connections from {} to {} for {}".format(len(self.activeConnections), numProcesses, connectionname))
-                    self.activeConnections.append(tools.dbms(self.dbms[connectionname].connectiondata))
-                    print("Establish global connection #"+str(i))
-                    self.activeConnections[i].connect()
+                    if (self.fixedQuery is not None and self.fixedQuery != numQuery) or (self.fixedConnection is not None and self.fixedConnection != connectionname):
+                        continue
+                    else:
+                        print("More active connections from {} to {} for {}".format(len(self.activeConnections), numProcesses, connectionname))
+                        self.activeConnections.append(tools.dbms(self.dbms[connectionname].connectiondata))
+                        print("Establish global connection #"+str(i))
+                        self.activeConnections[i].connect()
                 # run benchmark, current query and connection
                 bBenchmarkDoneForThisQuery = self.runBenchmark(numQuery, connectionname)
                 # close global connection
@@ -1468,10 +1471,13 @@ class benchmarker():
                 numProcesses = 1
                 i = 0
                 #connectionname = c
-                print("More active connections from {} to {} for {}".format(len(self.activeConnections), numProcesses, connectionname))
-                self.activeConnections.append(tools.dbms(self.dbms[connectionname].connectiondata))
-                print("Establish global connection #"+str(i))
-                self.activeConnections[i].connect()
+                if (self.fixedConnection is not None and self.fixedConnection != connectionname):
+                    continue
+                else:
+                    print("More active connections from {} to {} for {}".format(len(self.activeConnections), numProcesses, connectionname))
+                    self.activeConnections.append(tools.dbms(self.dbms[connectionname].connectiondata))
+                    print("Establish global connection #"+str(i))
+                    self.activeConnections[i].connect()
             #print(self.activeConnections)
             # work queries
             ordered_list_of_queries = range(1, len(self.queries)+1)
