@@ -380,6 +380,7 @@ class benchmarker():
         if numProcesses is not None:
             # we cannot handle a single connection if there are multiple processes
             singleConnection = False
+            numProcesses = int(numProcesses)
         else:
             # default is 1 connection per stream
             singleConnection = True

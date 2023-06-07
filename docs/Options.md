@@ -67,7 +67,7 @@ optional arguments:
   -w {query,connection}, --working {query,connection}
                         working per query or connection
   -p NUMPROCESSES, --numProcesses NUMPROCESSES
-                        Number of parallel client processes. Global setting, can be overwritten by connection. If None given, half of all available processes is taken
+                        Number of parallel client processes. Global setting, can be overwritten by connection.  Default is 1.
   -s SEED, --seed SEED  random seed
   -cs, --copy-subfolder
                         copy subfolder of result folder
@@ -189,7 +189,13 @@ and processing `-w connection` is
 This tool simulates parallel queries from several clients.
 The option `-p` can be used to change the global setting for the number of parallel processes.
 Moreover each connection can have a local values for this parameter.
-If nothing is specified, the default value is used, which is half of the number of processors.
+If nothing is specified, the default value 1 is used.
+To bypass Python's GIL, the `multiprocessing` module is used.
+A pool of asynchronous subprocesses is created for each combination of connection and query.
+The subprocesses connect to the DBMS and send the query. Note that this requires reconnecting and creating a JVM.
+When all sub-processes are complete, the results are merged and dbmsbenchmarker can continue with the next query.
+This helps in evaluating query-level concurrency.
+If you want to assess stream-level concurrency, you should start multiple dbmsbenchmarkers.
 
 ### Random Seed
 The option `-s` can be used to specify a random seed.

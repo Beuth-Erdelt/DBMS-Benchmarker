@@ -42,7 +42,7 @@ def run_benchmarker():
 	parser.add_argument('-w', '--working', help='working per query or connection', default='query', choices=['query','connection'])
 	#parser.add_argument('-a', '--anonymize', help='anonymize all dbms', action='store_true', default=False)
 	#parser.add_argument('-u', '--unanonymize', help='unanonymize some dbms, only sensible in combination with anonymize', nargs='*', default=[])
-	parser.add_argument('-p', '--numProcesses', help='Number of parallel client processes. Global setting, can be overwritten by connection. If None given, half of all available processes is taken', default=None)
+	parser.add_argument('-p', '--numProcesses', help='Number of parallel client processes. Global setting, can be overwritten by connection. Default is 1.', default=None)
 	parser.add_argument('-s', '--seed', help='random seed', default=None)
 	parser.add_argument('-cs', '--copy-subfolder', help='copy subfolder of result folder', action='store_true')
 	parser.add_argument('-ms', '--max-subfolders', help='maximum number of subfolders of result folder', default=None)
