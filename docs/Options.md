@@ -469,6 +469,7 @@ Example for `CONNECTION_FILE`:
       'auth': ["username", "password"],
       'jar': "mysql-connector-java-8.0.13.jar"
     },
+    'init_SQL': "USE tpch",
     'connectionmanagement': {
       'timeout': 600,
       'numProcesses': 4,
@@ -507,6 +508,7 @@ Example for `CONNECTION_FILE`:
 * `alias`: Alias for anonymized reports (optional default is a random name)
 * `dialect`: Key for (optional) alternative SQL statements in the query file
 * `driver`, `url`, `auth`, `jar`: JDBC data
+* `init_SQL`: Optional command, that is sent once, when the connection has been established
 * Additional information useful for reporting and also used for computations
   * `timeload`: Time for ingest (in milliseconds), because not part of the benchmark
   * `priceperhourdollar`: Used to compute total cost based on total time (optional)
