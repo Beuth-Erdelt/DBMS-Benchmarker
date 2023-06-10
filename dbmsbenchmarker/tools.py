@@ -618,13 +618,16 @@ class dbms():
             else:
                 pass
             if 'init_SQL' in self.connectiondata:
-                query_init = self.connectiondata['init_SQL']
-                print('init_SQL', query_init)
-                self.openCursor()
-                self.executeQuery(query_init)
-                init_result = self.fetchResult()
-                self.closeCursor()
-                #print(init_result)
+                try:
+                    query_init = self.connectiondata['init_SQL']
+                    print('init_SQL:', query_init)
+                    self.openCursor()
+                    self.executeQuery(query_init)
+                    #init_result = self.fetchResult()
+                    self.closeCursor()
+                except Exception as e:
+                    print("Error when running init_SQL:", query_init)
+                    #print(init_result)
             #self.connection.jconn.setAutoCommit(True)
         else:
             raise ValueError('No connection data for '+self.getName())
