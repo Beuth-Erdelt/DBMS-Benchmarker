@@ -105,37 +105,50 @@ class metrics():
     @staticmethod
     def getMetrics(url, metric, time_start, time_end, step=1):
         logging.debug("getMetrics from "+url)
-        query = 'query_range'#?query='+metric['query']+'&start='+str(time_start)+'&end='+str(time_end)+'&step='+str(self.step)
-        params = {
-            'query': metric['query'],
-            'start': str(time_start),
-            'end': str(time_end),
-            'step': str(step),
-        }
-        logging.debug("Querying metrics: "+url+query, params)
-        logging.debug(params)
-        #headers = {'Authorization': self.token}
-        l = [(t,0) for t in range(time_start, time_end+1)]#[(time_start,0)]
-        #return l
-        #print(self.url+query)
-        try:
-            #r = requests.post(self.url+query)#, headers=headers)
-            r = requests.get(url+query, params=params)#, headers=headers)
-            #print(r.json())
-            if isinstance(r.json(), dict) and 'data' in r.json() and 'result' in r.json()['data'] and len(r.json()['data']['result']) > 0:
-                l = r.json()['data']['result'][0]['values']
-                # missing values due to end of monitoring?
-                n = time_end-time_start-len(l)+1
-                l2 = [(t+len(l)+time_start, 0) for t in range(n)]
-                l = l + l2
-            else:
-                #print(metric, url+query, r.json())
-                l = [(t,0) for t in range(time_start, time_end+1)]#[(time_start,0)]
-                logging.error('Metrics missing: '+url+query, params)
-                logging.error(r.text)
-        except Exception as e:
-            logging.exception('Caught an error: %s' % str(e))
-        return l
+        def fetch_interval(time_start, time_end, step):
+            query = 'query_range'#?query='+metric['query']+'&start='+str(time_start)+'&end='+str(time_end)+'&step='+str(self.step)
+            params = {
+                'query': metric['query'],
+                'start': str(time_start),
+                'end': str(time_end),
+                'step': str(step),
+            }
+            logging.debug("Querying metrics: "+url+query, params)
+            logging.debug(params)
+            #headers = {'Authorization': self.token}
+            l = [(t,0) for t in range(time_start, time_end+1)]#[(time_start,0)]
+            #return l
+            #print(self.url+query)
+            try:
+                #r = requests.post(self.url+query)#, headers=headers)
+                r = requests.get(url+query, params=params)#, headers=headers)
+                #print(r.json())
+                if isinstance(r.json(), dict) and 'data' in r.json() and 'result' in r.json()['data'] and len(r.json()['data']['result']) > 0:
+                    l = r.json()['data']['result'][0]['values']
+                    # missing values due to end of monitoring?
+                    n = time_end-time_start-len(l)+1
+                    l2 = [(t+len(l)+time_start, 0) for t in range(n)]
+                    l = l + l2
+                else:
+                    #print(metric, url+query, r.json())
+                    l = [(t,0) for t in range(time_start, time_end+1)]#[(time_start,0)]
+                    logging.error('Metrics missing: '+url+query, params)
+                    logging.error(r.text)
+            except Exception as e:
+                logging.exception('Caught an error: %s' % str(e))
+            return l
+        # split the time span into max 9000s intervals
+        list_values = []
+        max_span_len = 9000
+        span = time_end - time_start
+        intervals = span//max_span_len+1
+        for i in range(0, intervals):
+            time_interval_start = i*9000 + time_start
+            time_interval_end = min((i+1)*9000-1, span) + time_start
+            print("Fetch metric interval {} to {} = {} s span".format(time_interval_start, time_interval_end, time_interval_end - time_interval_start))
+            list_values_interval = fetch_interval(time_interval_start, time_interval_end, step)
+            list_values = list_values + list_values_interval
+        return list_values
     @staticmethod
     def metricsToDataframe(metric, values):
         df = pd.DataFrame.from_records(values)
@@ -184,7 +197,7 @@ class metrics():
         else:
             return ""
     @staticmethod
-    def fetchMetric(query, metric_code, connection, connectiondata, time_start, time_end, path):
+    def fetchMetric(query, metric_code, connection, connectiondata, time_start, time_end, path, container=None):
         #for m, metric in metrics.metrics.items():
         logging.debug("Metric "+metric_code)
         df_all = None
@@ -200,8 +213,14 @@ class metrics():
                 if 'metrics' in connectiondata['monitoring'] and metric_code in connectiondata['monitoring']['metrics']:
                     metric = connectiondata['monitoring']['metrics'][metric_code].copy()
                 else:
-                    metric = metrics.metrics[metric_code]
+                    metric = metrics.metrics[metric_code].copy()
                 #print(metric)
+                if container is not None:
+                    metric['query'] = metric['query'].replace('container_label_io_kubernetes_container_name="dbms"', 'container_label_io_kubernetes_container_name="{}"'.format(container))
+                    metric['query'] = metric['query'].replace('container_label_io_kubernetes_container_name!="dbms"', 'container_label_io_kubernetes_container_name!="{}"'.format(container))
+                    # open TODO:
+                    # container_label_component="worker"
+                    # container_label_component="sut"
                 # this yields seconds
                 # is there a global timeshift
                 if 'grafanashift' in connectiondata['monitoring']:
@@ -407,8 +426,17 @@ class metrics():
         #df_all = df_all.iloc[add_interval:-add_interval]
         #print(df_all)
         return df_all.T
+    def dfHardwareMetricsLoader(self, metric):
+        return self.dfHardwareMetricsComponentOriginal(metric, component="loader")
+    def dfHardwareMetricsBenchmarker(self, metric):
+        return self.dfHardwareMetricsComponentOriginal(metric, component="benchmarker")
+    def dfHardwareMetricsDatagenerator(self, metric):
+        return self.dfHardwareMetricsComponentOriginal(metric, component="datagenerator")
     def dfHardwareMetricsLoading(self, metric):
-        filename = self.benchmarker.path+'/query_loading_metric_'+str(metric)+'.csv'
+        return self.dfHardwareMetricsComponentOriginal(metric, component="loading")
+    def dfHardwareMetricsComponentOriginal(self, metric, component="loading"):
+        #filename = self.benchmarker.path+'/query_loading_metric_'+str(metric)+'.csv'
+        filename = "{path}/query_{component}_metric_{metric}.csv".format(path=self.benchmarker.path, component=component, metric=metric)
         #print(filename)
         if os.path.isfile(filename) and not self.benchmarker.overwrite:
             df_all = metrics.loadMetricsDataframe(filename)
@@ -423,8 +451,12 @@ class metrics():
                 else:
                     connectionname = c
                 #print(connectionname, df_all)
-                filename = self.benchmarker.path+'/query_loading_metric_'+str(metric)+'_'+connectionname+'.csv'
-                df = metrics.loadMetricsDataframe(filename)
+                if df_all is not None and connectionname in df_all.columns:
+                    print("We already have the metrics of this instance {c} as {connectionname}".format(c=c, connectionname=connectionname))
+                    continue
+                filename_component = "{path}/query_{component}_metric_{metric}_{connectionname}.csv".format(path=self.benchmarker.path, component=component, metric=metric, connectionname=connectionname)
+                #filename = self.benchmarker.path+'/query_loading_metric_'+str(metric)+'_'+connectionname+'.csv'
+                df = metrics.loadMetricsDataframe(filename_component)
                 if df is None:
                     continue
                 df.columns=[connectionname]
@@ -433,7 +465,7 @@ class metrics():
                 else:
                     # produces suffixes because of duplicate columns 
                     df_all = df_all.merge(df, how='outer', left_index=True,right_index=True)
-            filename = self.benchmarker.path+'/query_loading_metric_'+str(metric)+'.csv'
+            #filename = self.benchmarker.path+'/query_loading_metric_'+str(metric)+'.csv'
             metrics.saveMetricsDataframe(filename, df_all)
         if df_all is None:
             return pd.DataFrame()
@@ -454,7 +486,10 @@ class metrics():
         #print(df_all)
         return df_all.T
     def dfHardwareMetricsStreaming(self, metric):
-        filename = self.benchmarker.path+'/query_stream_metric_'+str(metric)+'.csv'
+        return self.dfHardwareMetricsComponentOriginal(metric, component="stream")
+    def dfHardwareMetricsComponent(self, metric, component="stream"):
+        filename = "{path}/query_{component}_metric_{metric}.csv".format(path=self.benchmarker.path, component=component, metric=metric)
+        #filename = self.benchmarker.path+'/query_stream_metric_'+str(metric)+'.csv'
         #print(filename)
         if os.path.isfile(filename) and not self.benchmarker.overwrite:
             df_all = metrics.loadMetricsDataframe(filename)
@@ -465,8 +500,9 @@ class metrics():
             for c in dbms_filter:
                 connectionname = c
                 #print(connectionname, df_all)
-                filename = self.benchmarker.path+'/query_stream_metric_'+str(metric)+'_'+connectionname+'.csv'
-                df = metrics.loadMetricsDataframe(filename)
+                filename_component = "{path}/query_{component}_metric_{metric}_{connectionname}.csv".format(path=self.benchmarker.path, component=component, metric=metric, connectionname=connectionname)
+                #filename = self.benchmarker.path+'/query_stream_metric_'+str(metric)+'_'+connectionname+'.csv'
+                df = metrics.loadMetricsDataframe(filename_component)
                 if df is None:
                     continue
                 df.columns=[connectionname]
@@ -474,25 +510,10 @@ class metrics():
                     df_all = df
                 else:
                     df_all = df_all.merge(df, how='outer', left_index=True,right_index=True)
-            filename = self.benchmarker.path+'/query_stream_metric_'+str(metric)+'.csv'
+            #filename = self.benchmarker.path+'/query_stream_metric_'+str(metric)+'.csv'
             metrics.saveMetricsDataframe(filename, df_all)
         if df_all is None:
             return pd.DataFrame()
-        # remove connection delay (metrics are collected, but nothing happens here)
-        #query = tools.query(self.benchmarker.queries[numQuery-1])
-        #df_all = df_all.iloc[int(query.delay_connect):]
-        #print(df_all)
-        # remove extend
-        #for c, connection in self.benchmarker.dbms.items():
-        #    add_interval = int(connection.connectiondata['monitoring']['grafanaextend'])
-        #    #print(add_interval)
-        #    #print(c)
-        #    #print(df_all[c])
-        #    #df_all[c] = list(df_all[c])[add_interval:-add_interval].extend([0]*(2*add_interval))
-        # take last extend value
-        #df_all = df_all.iloc[add_interval:-add_interval]
-        #print(df_all)
-        #print(df_all)
         return df_all.T
 
 def clean_dataframe(dataframe):

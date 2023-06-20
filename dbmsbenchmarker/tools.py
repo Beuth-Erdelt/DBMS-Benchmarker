@@ -531,6 +531,10 @@ class dbms():
         self.connectiondata = connectiondata
         self.connection = None
         self.cursor = None
+        self.product = "unknown"
+        self.version = "unknown"
+        self.driver = "unknown"
+        self.driverversion = "unknown"
         if not connectiondata['JDBC']['jar'] in dbms.jars:
             if isinstance(connectiondata['JDBC']['jar'], list):
                 # accept list of jars
@@ -598,6 +602,32 @@ class dbms():
                 self.connectiondata['JDBC']['url'],
                 self.connectiondata['JDBC']['auth'],
                 dbms.jars,)
+            try:
+                self.metadata = self.connection.jconn.getMetaData()
+                self.product = self.metadata.getDatabaseProductName()
+                self.version = self.metadata.getDatabaseProductVersion()
+                self.driver = self.metadata.getDriverName()
+                self.driverversion = self.metadata.getDriverVersion()
+                self.connectiondata['product'] = self.product
+                self.connectiondata['version'] = self.version
+                self.connectiondata['driver'] = self.driver
+                self.connectiondata['driverversion'] = self.driverversion
+                print("Connected to {} version {} using {} version {}".format(self.product, self.version, self.driver, self.driverversion))
+            except Exception as e:
+                print("Product and version not implemented in JDBC driver")
+            else:
+                pass
+            if 'init_SQL' in self.connectiondata:
+                try:
+                    query_init = self.connectiondata['init_SQL']
+                    print('init_SQL:', query_init)
+                    self.openCursor()
+                    self.executeQuery(query_init)
+                    #init_result = self.fetchResult()
+                    self.closeCursor()
+                except Exception as e:
+                    print("Error when running init_SQL:", query_init)
+                    #print(init_result)
             #self.connection.jconn.setAutoCommit(True)
         else:
             raise ValueError('No connection data for '+self.getName())
@@ -1739,7 +1769,7 @@ def merge_partial_results(result_path, code):
             if len(d) > 0:
                 df = pd.DataFrame(d)
                 # convert to csv
-                csv = df.to_csv(index_label=False,index=False,line_terminator='\n')
+                csv = df.to_csv(index_label=False,index=False,lineterminator='\n')
                 # save
                 filename = '{folder}/query_{numQuery}_{timer}.csv'.format(folder=folder, numQuery=numQuery, timer=t)
                 csv_file = open(filename, "w")

@@ -67,7 +67,7 @@ optional arguments:
   -w {query,connection}, --working {query,connection}
                         working per query or connection
   -p NUMPROCESSES, --numProcesses NUMPROCESSES
-                        Number of parallel client processes. Global setting, can be overwritten by connection. If None given, half of all available processes is taken
+                        Number of parallel client processes. Global setting, can be overwritten by connection.  Default is 1.
   -s SEED, --seed SEED  random seed
   -cs, --copy-subfolder
                         copy subfolder of result folder
@@ -189,7 +189,15 @@ and processing `-w connection` is
 This tool simulates parallel queries from several clients.
 The option `-p` can be used to change the global setting for the number of parallel processes.
 Moreover each connection can have a local values for this parameter.
-If nothing is specified, the default value is used, which is half of the number of processors.
+If nothing is specified, the default value 1 is used.
+To circumvent Python's GIL, the module `multiprocessing` is used.
+For each combination connection/query, a pool of asynchronous subprocesses is spawned.
+The subprocesses connect to the DBMS and send the query.
+Note this implies a reconnection and the creation of a JVM.
+When all subprocesses are finished, results are joined and dbmsbenchmarker may proceed to the next query.
+This helps in evaluating concurrency on a query level.
+You can for example compare performance of 15 clients running TPC-H Q8 at the same time.
+If you want to evaluate concurrency on stream level with a single connection per client, you should start several dbmsbenchmarker. 
 
 ### Random Seed
 The option `-s` can be used to specify a random seed.
@@ -461,6 +469,7 @@ Example for `CONNECTION_FILE`:
       'auth': ["username", "password"],
       'jar': "mysql-connector-java-8.0.13.jar"
     },
+    'init_SQL': "USE tpch",
     'connectionmanagement': {
       'timeout': 600,
       'numProcesses': 4,
@@ -499,6 +508,7 @@ Example for `CONNECTION_FILE`:
 * `alias`: Alias for anonymized reports (optional default is a random name)
 * `dialect`: Key for (optional) alternative SQL statements in the query file
 * `driver`, `url`, `auth`, `jar`: JDBC data
+* `init_SQL`: Optional command, that is sent once, when the connection has been established
 * Additional information useful for reporting and also used for computations
   * `timeload`: Time for ingest (in milliseconds), because not part of the benchmark
   * `priceperhourdollar`: Used to compute total cost based on total time (optional)
