@@ -1,6 +1,6 @@
 JayDeBeApi>=1.1.1
 matplotlib>=3.1.1
-numpy>=1.14.1
+numpy>=1.22.2
 pandas>=0.25.1
 tabulate>=0.8.2
 tqdm>=4.28.1
@@ -39,3 +39,4 @@ uuid>=1.30
 Werkzeug>=2.2.3
 m2r2
 myst_parser
+mistune>=2.0.3 # not directly required, pinned by Snyk to avoid a vulnerability
