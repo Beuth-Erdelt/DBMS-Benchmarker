@@ -6,8 +6,8 @@ project = 'DBMSBenchmarker'
 copyright = '2021, Patrick Erdelt'
 author = 'Patrick Erdelt'
 
-release = '0.1'
-version = '0.1.0'
+release = '0.13.2'
+version = '0.13.2'
 
 # -- General configuration
 
@@ -17,9 +17,11 @@ extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.autosummary',
     'sphinx.ext.intersphinx',
+    'sphinx_mdinclude',
     #'myst_parser',
-    'm2r2',
+    #'m2r2',
 ]
+
 
 intersphinx_mapping = {
     'python': ('https://docs.python.org/3/', None),
@@ -38,3 +40,10 @@ html_static_path = ['_static']
 epub_show_urls = 'footnote'
 
 #source_suffix = ['.rst', '.md']
+
+todo_include_todos = True
+
+import os
+import sys
+#sys.path.insert(0, os.path.abspath('.'))
+sys.path.insert(0, os.path.abspath('../'))

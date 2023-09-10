@@ -136,12 +136,12 @@ class inspector():
                 finally:
                     pass
         return pd.DataFrame(workload_preview).T
-    def load_experiment(self, code, anonymize=None, load=True):
+    def load_experiment(self, code, anonymize=None, load=True, silent=True):
         if anonymize is not None:
             self.anonymize = anonymize
         # TODO: force clean dbms aliases
         self.queries_successful = []
-        self.benchmarks = benchmarker.inspector(self.result_path, code, anonymize=self.anonymize)
+        self.benchmarks = benchmarker.inspector(self.result_path, code, anonymize=self.anonymize, silent=silent)
         self.benchmarks.computeTimerRun()
         self.benchmarks.computeTimerSession()
         self.e = evaluator.evaluator(self.benchmarks, load=load, force=True)

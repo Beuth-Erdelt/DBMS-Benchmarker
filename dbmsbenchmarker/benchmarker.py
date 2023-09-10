@@ -476,7 +476,7 @@ class benchmarker():
             if path.isfile(self.resultfolder_base+'/protocol.json'):
                 copyfile(self.resultfolder_base+'/protocol.json', self.path+'/protocol.json')
                 self.continuing = True
-        print("Benchmarking in folder "+self.path)
+        print("Results in folder "+self.path)
         # querywise or connectionwise
         self.working = working
         # batch mode, different output
@@ -1867,14 +1867,15 @@ class inspector(benchmarker):
     """
     Class for inspecting done benchmarks
     """
-    def __init__(self, result_path, code, anonymize=False):
+    def __init__(self, result_path, code, anonymize=False, silent=False):
         benchmarker.__init__(self,result_path=result_path+"/"+str(code), anonymize=anonymize)
         self.getConfig()
         self.readResultfolder()
-        print("Connections:")
-        for c in self.connections:
-            print(c['name'])
-        print("Queries:")
-        for i,q in enumerate(self.queries):
-            if 'active' in q and q['active']:
-                print(str(i)+": Q"+str(i+1)+" = "+q['title'])
+        if not silent:
+            print("Connections:")
+            for c in self.connections:
+                print(c['name'])
+            print("Queries:")
+            for i,q in enumerate(self.queries):
+                if 'active' in q and q['active']:
+                    print(str(i)+": Q"+str(i+1)+" = "+q['title'])
