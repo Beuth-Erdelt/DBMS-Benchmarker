@@ -14,7 +14,7 @@ chardet>=3.0.4
 click>=6.7
 colour>=0.1.5
 cycler>=0.10.0
-dash==2.10.2
+dash==2.14.1
 dash-auth
 dash-core-components
 dash-daq
@@ -40,4 +40,4 @@ Werkzeug>=3.0.1
 #m2r2
 #myst_parser
 mistune>=2.0.3 # not directly required, pinned by Snyk to avoid a vulnerability
-pillow>=10.0.0 # not directly required, pinned by Snyk to avoid a vulnerability
+pillow>=10.0.1 # not directly required, pinned by Snyk to avoid a vulnerability
