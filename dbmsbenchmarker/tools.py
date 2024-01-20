@@ -760,7 +760,8 @@ class dataframehelper():
         # drop rows of only 0 (starting after factor and n)
         dataframe = dataframe[(dataframe.T[3:] != "0.00").any()]
         # replace string by float
-        dataframe = dataframe.replace("0.00", 0.00)
+        dataframe = dataframe.astype(float)
+        #dataframe = dataframe.replace("0.00", 0.00)
         # anonymize dbms
         dataframe.iloc[0:,0] = dataframe.iloc[0:,0].map(dbms.anonymizer)
         dataframe = dataframe.set_index(dataframe.columns[0])
