@@ -51,7 +51,6 @@ logging.basicConfig(level=logging.ERROR)
 
 
 
-print("HERE")
 parser = argparse.ArgumentParser(description='Dashboard for interactive inspection of dbmsbenchmarker results.')
 parser.add_argument('-r', '--result-folder',
                     help='Folder storing benchmark result files.',
