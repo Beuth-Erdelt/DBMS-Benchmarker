@@ -1492,7 +1492,7 @@ class benchmarker():
                     print(ordered_list_of_queries)
                 else:
                     print("We shuffle randomly")#
-                    random.shuffle(ordered_list_of_queries)
+                    random.shuffle(list(ordered_list_of_queries))
                     print(ordered_list_of_queries)
             for numQuery in ordered_list_of_queries:
                 bBenchmarkDone = self.runBenchmark(numQuery, connectionname)
