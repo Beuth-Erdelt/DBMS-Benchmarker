@@ -355,7 +355,7 @@ class benchmarker():
     """
     Class for running benchmarks
     """
-    def __init__(self, result_path=None, working='query', batch=False, fixedQuery=None, fixedConnection=None, rename_connection='', rename_alias='', fixedAlias='', anonymize=False, unanonymize=[], numProcesses=None, seed=None, code=None, subfolder=None, stream_id=None, stream_shuffle=None):
+    def __init__(self, result_path=None, working='query', batch=False, fixedQuery=None, fixedConnection=None, rename_connection='', rename_alias='', fixedAlias='', anonymize=False, unanonymize=[], numProcesses=None, seed=None, code=None, subfolder=None, stream_id=None, stream_shuffle=False):
         """
         Construct a new 'benchmarker' object.
         Allocated the reporters store (always called) and printer (if reports are to be generated).
@@ -1414,7 +1414,7 @@ class benchmarker():
         :return: returns nothing
         """
         ordered_list_of_queries = range(1, len(self.queries)+1)
-        if self.stream_shuffle is not None and self.stream_id is not None and int(self.stream_id) > 0:
+        if self.stream_shuffle is not None and self.stream_shuffle and self.stream_id is not None and int(self.stream_id) > 0:
             print("User wants shuffling")
             if 'stream_ordering' in self.queryconfig and len(self.queryconfig['stream_ordering']) > 0:
                 print("Query file provides shuffling")
@@ -1497,7 +1497,7 @@ class benchmarker():
             #print(self.activeConnections)
             # work queries
             ordered_list_of_queries = range(1, len(self.queries)+1)
-            if self.stream_shuffle is not None and self.stream_id is not None and int(self.stream_id) > 0:
+            if self.stream_shuffle is not None and self.stream_shuffle and self.stream_id is not None and int(self.stream_id) > 0:
                 print("User wants shuffling")
                 if 'stream_ordering' in self.queryconfig and len(self.queryconfig['stream_ordering']) > 0:
                     print("Query file provides shuffling")
