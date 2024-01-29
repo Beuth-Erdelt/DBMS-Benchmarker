@@ -1481,6 +1481,19 @@ class benchmarker():
             #print(self.activeConnections)
             # work queries
             ordered_list_of_queries = range(1, len(self.queries)+1)
+            if self.stream_shuffle is not None and self.stream_id is not None and int(self.stream_id) > 0:
+                print("User wants shuffling")
+                if 'stream_ordering' in self.queryconfig and len(self.queryconfig['stream_ordering']) > 0:
+                    print("Query file provides shuffling")
+                    num_total_streams = len(self.queryconfig['stream_ordering'])
+                    # stream ids start at 1 and are limited by the number of streams in the ordering list
+                    num_current_stream = (int(self.stream_id)-1)%num_total_streams+1
+                    ordered_list_of_queries = self.queryconfig['stream_ordering'][num_current_stream]
+                    print(ordered_list_of_queries)
+                else:
+                    print("We shuffle randomly")#
+                    random.shuffle(ordered_list_of_queries)
+                    print(ordered_list_of_queries)
             for numQuery in ordered_list_of_queries:
                 bBenchmarkDone = self.runBenchmark(numQuery, connectionname)
                 # if benchmark has been done: store and generate reports
