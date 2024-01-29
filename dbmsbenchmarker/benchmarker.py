@@ -710,7 +710,7 @@ class benchmarker():
         """
         newdataframe = dataframe
         for index, row in dataframe.iterrows():
-            if not self.dbms[row[0]].connectiondata['active']:
+            if not self.dbms.iloc[row[0]].connectiondata['active']:
                 newdataframe = newdataframe.drop([index], axis=0)
         newdataframe.reset_index(drop=True, inplace=True)
         return newdataframe
