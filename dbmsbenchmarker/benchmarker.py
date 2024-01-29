@@ -1418,16 +1418,17 @@ class benchmarker():
             print("User wants shuffling")
             if 'stream_ordering' in self.queryconfig and len(self.queryconfig['stream_ordering']) > 0:
                 print("Query file provides shuffling")
+                print("We are on stream {}".format(int(self.stream_id)))
                 num_total_streams = len(self.queryconfig['stream_ordering'])
                 # stream ids start at 1 and are limited by the number of streams in the ordering list
                 num_current_stream = (int(self.stream_id)-1)%num_total_streams+1
                 ordered_list_of_queries = self.queryconfig['stream_ordering'][num_current_stream]
-                print(ordered_list_of_queries)
+                print("Ordering:", ordered_list_of_queries)
             else:
                 print("We shuffle randomly")
                 ordered_list_of_queries = list(ordered_list_of_queries)
                 random.shuffle(ordered_list_of_queries)
-                print(ordered_list_of_queries)
+                print("Ordering:", ordered_list_of_queries)
         for numQuery in ordered_list_of_queries:
             if self.overwrite and not (self.fixedQuery is not None and self.fixedQuery != numQuery):# or (self.fixedConnection is not None and self.fixedConnection != connectionname):
                 # rerun this query
@@ -1500,16 +1501,17 @@ class benchmarker():
                 print("User wants shuffling")
                 if 'stream_ordering' in self.queryconfig and len(self.queryconfig['stream_ordering']) > 0:
                     print("Query file provides shuffling")
+                    print("We are on stream {}".format(int(self.stream_id)))
                     num_total_streams = len(self.queryconfig['stream_ordering'])
                     # stream ids start at 1 and are limited by the number of streams in the ordering list
                     num_current_stream = (int(self.stream_id)-1)%num_total_streams+1
                     ordered_list_of_queries = self.queryconfig['stream_ordering'][num_current_stream]
-                    print(ordered_list_of_queries)
+                    print("Ordering:", ordered_list_of_queries)
                 else:
                     print("We shuffle randomly")
                     ordered_list_of_queries = list(ordered_list_of_queries)
                     random.shuffle(ordered_list_of_queries)
-                    print(ordered_list_of_queries)
+                    print("Ordering:", ordered_list_of_queries)
             for numQuery in ordered_list_of_queries:
                 bBenchmarkDone = self.runBenchmark(numQuery, connectionname)
                 # if benchmark has been done: store and generate reports
