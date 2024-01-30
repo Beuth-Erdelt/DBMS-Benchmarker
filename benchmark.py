@@ -128,11 +128,10 @@ if __name__ == '__main__':
     # handle parallel streams
     stream_id = args.stream_id
     stream_shuffle = args.stream_shuffle
-    print(stream_shuffle, stream_id)
-    if stream_shuffle is not None and stream_shuffle:
-        print("User wants shuffled queries")
-    if stream_id is not None and stream_id:
-        print("This is stream {}".format(stream_id))
+    #if stream_shuffle is not None and stream_shuffle:
+    #    print("User wants shuffled queries")
+    #if stream_id is not None and stream_id:
+    #    print("This is stream {}".format(stream_id))
     # overwrite parameters
     if int(args.num_run) > 0:
         querymanagement = {
