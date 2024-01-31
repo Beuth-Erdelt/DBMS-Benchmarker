@@ -394,16 +394,38 @@ class metricer(reporter):
             for c, connection in self.benchmarker.dbms.items():
                 if connection.hasHardwareMetrics():
                     logging.info("Hardware metrics for stream of connection {}".format(c))
-                    times = self.benchmarker.protocol['query'][str(1)]
-                    time_start = int(datetime.timestamp(datetime.strptime(times["starts"][c],'%Y-%m-%d %H:%M:%S.%f')))
-                    time_end = time_start
-                    # find the last active query (with end time)
+                    # find lowest start time
+                    times_start = dict()
+                    times_end = dict()
                     for i in range(number_of_queries, 0, -1):
                         times = self.benchmarker.protocol['query'][str(i)]
                         if "ends" in times and c in times["ends"]:
+                            time_start = int(datetime.timestamp(datetime.strptime(times["starts"][c],'%Y-%m-%d %H:%M:%S.%f')))
                             time_end = int(datetime.timestamp(datetime.strptime(times["ends"][c],'%Y-%m-%d %H:%M:%S.%f')))
-                            logging.debug("Last active query is {}".format(i))
-                            break
+                            times_start[time_start] = i
+                            times_end[time_end] = i
+                            #logging.debug("Last active query is {}".format(i))
+                            #break
+                    logging.debug("Start times: {}".format(times_start))
+                    if len(times_start) == 0:
+                        logging.info("No successful query")
+                        return
+                    time_start = min(times_start.keys())
+                    print("First query Q{} at {}".format(times_start[time_start], time_start))
+                    logging.debug("End times: {}".format(times_end))
+                    time_end = max(times_end.keys())
+                    print("Last query Q{} at {}".format(times_end[time_end], time_end))
+                    # find highest end time
+                    #times = self.benchmarker.protocol['query'][str(1)]
+                    #time_start = int(datetime.timestamp(datetime.strptime(times["starts"][c],'%Y-%m-%d %H:%M:%S.%f')))
+                    #time_end = time_start
+                    ## find the last active query (with end time)
+                    #for i in range(number_of_queries, 0, -1):
+                    #    times = self.benchmarker.protocol['query'][str(i)]
+                    #    if "ends" in times and c in times["ends"]:
+                    #        time_end = int(datetime.timestamp(datetime.strptime(times["ends"][c],'%Y-%m-%d %H:%M:%S.%f')))
+                    #        logging.debug("Last active query is {}".format(i))
+                    #        break
                     #logging.debug(connection.connectiondata['monitoring']['prometheus_url'])
                     query='stream'
                     if 'metrics' in connection.connectiondata['monitoring']:
