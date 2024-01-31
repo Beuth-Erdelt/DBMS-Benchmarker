@@ -1414,7 +1414,7 @@ class benchmarker():
         :return: returns nothing
         """
         ordered_list_of_queries = range(1, len(self.queries)+1)
-        if self.stream_shuffle is not None and self.stream_shuffle and self.stream_id is not None and int(self.stream_id) > 0:
+        if self.stream_shuffle is not None and int(self.stream_shuffle) > 0 and self.stream_id is not None and int(self.stream_id) > 0:
             print("User wants shuffling")
             if 'stream_ordering' in self.queryconfig and len(self.queryconfig['stream_ordering']) > 0:
                 print("Query file provides shuffling")
@@ -1497,7 +1497,7 @@ class benchmarker():
             #print(self.activeConnections)
             # work queries
             ordered_list_of_queries = range(1, len(self.queries)+1)
-            if self.stream_shuffle is not None and self.stream_shuffle and self.stream_id is not None and int(self.stream_id) > 0:
+            if self.stream_shuffle is not None and int(self.stream_shuffle) > 0 and self.stream_id is not None and int(self.stream_id) > 0:
                 print("User wants shuffling")
                 if 'stream_ordering' in self.queryconfig and len(self.queryconfig['stream_ordering']) > 0:
                     print("Query file provides shuffling")
