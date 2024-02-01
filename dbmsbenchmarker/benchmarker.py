@@ -476,7 +476,8 @@ class benchmarker():
             if path.isfile(self.resultfolder_base+'/protocol.json'):
                 copyfile(self.resultfolder_base+'/protocol.json', self.path+'/protocol.json')
                 self.continuing = True
-        print("Results in folder "+self.path)
+        #print("Results in folder {}".format(self.path))
+        self.logger.debug("Results in folder {}".format(self.path))
         # querywise or connectionwise
         self.working = working
         # batch mode, different output
