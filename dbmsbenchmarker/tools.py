@@ -759,8 +759,9 @@ class dataframehelper():
         dataframe = dataframe.replace(0.00, "0.00")
         # drop rows of only 0 (starting after factor and n)
         dataframe = dataframe[(dataframe.T[3:] != "0.00").any()]
-        # replace string by float
-        dataframe = dataframe.replace("0.00", 0.00)
+        # replace string by float, except for first column (dbms names)
+        dataframe = dataframe.astype({col: float for col in dataframe.columns[1:]})
+        #dataframe = dataframe.replace("0.00", 0.00)
         # anonymize dbms
         dataframe.iloc[0:,0] = dataframe.iloc[0:,0].map(dbms.anonymizer)
         dataframe = dataframe.set_index(dataframe.columns[0])

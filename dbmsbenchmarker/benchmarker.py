@@ -355,7 +355,7 @@ class benchmarker():
     """
     Class for running benchmarks
     """
-    def __init__(self, result_path=None, working='query', batch=False, fixedQuery=None, fixedConnection=None, rename_connection='', rename_alias='', fixedAlias='', anonymize=False, unanonymize=[], numProcesses=None, seed=None, code=None, subfolder=None, stream_id=None, stream_shuffle=None):
+    def __init__(self, result_path=None, working='query', batch=False, fixedQuery=None, fixedConnection=None, rename_connection='', rename_alias='', fixedAlias='', anonymize=False, unanonymize=[], numProcesses=None, seed=None, code=None, subfolder=None, stream_id=None, stream_shuffle=False):
         """
         Construct a new 'benchmarker' object.
         Allocated the reporters store (always called) and printer (if reports are to be generated).
@@ -476,7 +476,8 @@ class benchmarker():
             if path.isfile(self.resultfolder_base+'/protocol.json'):
                 copyfile(self.resultfolder_base+'/protocol.json', self.path+'/protocol.json')
                 self.continuing = True
-        print("Results in folder "+self.path)
+        #print("Results in folder {}".format(self.path))
+        self.logger.debug("Results in folder {}".format(self.path))
         # querywise or connectionwise
         self.working = working
         # batch mode, different output
@@ -710,7 +711,7 @@ class benchmarker():
         """
         newdataframe = dataframe
         for index, row in dataframe.iterrows():
-            if not self.dbms[row[0]].connectiondata['active']:
+            if not self.dbms[row.iloc[0]].connectiondata['active']:
                 newdataframe = newdataframe.drop([index], axis=0)
         newdataframe.reset_index(drop=True, inplace=True)
         return newdataframe
@@ -1413,7 +1414,23 @@ class benchmarker():
 
         :return: returns nothing
         """
-        for numQuery in range(1, len(self.queries)+1):
+        ordered_list_of_queries = range(1, len(self.queries)+1)
+        if self.stream_shuffle is not None and int(self.stream_shuffle) > 0 and self.stream_id is not None and int(self.stream_id) > 0:
+            print("User wants shuffling")
+            if 'stream_ordering' in self.queryconfig and len(self.queryconfig['stream_ordering']) > 0:
+                print("Query file provides shuffling")
+                print("We are on stream {}".format(int(self.stream_id)))
+                num_total_streams = len(self.queryconfig['stream_ordering'])
+                # stream ids start at 1 and are limited by the number of streams in the ordering list
+                num_current_stream = (int(self.stream_id)-1)%num_total_streams+1
+                ordered_list_of_queries = self.queryconfig['stream_ordering'][num_current_stream]
+                print("Ordering:", ordered_list_of_queries)
+            else:
+                print("We shuffle randomly")
+                ordered_list_of_queries = list(ordered_list_of_queries)
+                random.shuffle(ordered_list_of_queries)
+                print("Ordering:", ordered_list_of_queries)
+        for numQuery in ordered_list_of_queries:
             if self.overwrite and not (self.fixedQuery is not None and self.fixedQuery != numQuery):# or (self.fixedConnection is not None and self.fixedConnection != connectionname):
                 # rerun this query
                 self.cleanProtocol(numQuery)
@@ -1481,6 +1498,21 @@ class benchmarker():
             #print(self.activeConnections)
             # work queries
             ordered_list_of_queries = range(1, len(self.queries)+1)
+            if self.stream_shuffle is not None and int(self.stream_shuffle) > 0 and self.stream_id is not None and int(self.stream_id) > 0:
+                print("User wants shuffling")
+                if 'stream_ordering' in self.queryconfig and len(self.queryconfig['stream_ordering']) > 0:
+                    print("Query file provides shuffling")
+                    print("We are on stream {}".format(int(self.stream_id)))
+                    num_total_streams = len(self.queryconfig['stream_ordering'])
+                    # stream ids start at 1 and are limited by the number of streams in the ordering list
+                    num_current_stream = (int(self.stream_id)-1)%num_total_streams+1
+                    ordered_list_of_queries = self.queryconfig['stream_ordering'][num_current_stream]
+                    print("Ordering:", ordered_list_of_queries)
+                else:
+                    print("We shuffle randomly")
+                    ordered_list_of_queries = list(ordered_list_of_queries)
+                    random.shuffle(ordered_list_of_queries)
+                    print("Ordering:", ordered_list_of_queries)
             for numQuery in ordered_list_of_queries:
                 bBenchmarkDone = self.runBenchmark(numQuery, connectionname)
                 # if benchmark has been done: store and generate reports
