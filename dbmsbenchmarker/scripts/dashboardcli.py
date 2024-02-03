@@ -51,7 +51,6 @@ logging.basicConfig(level=logging.ERROR)
 
 
 
-print("HERE")
 parser = argparse.ArgumentParser(description='Dashboard for interactive inspection of dbmsbenchmarker results.')
 parser.add_argument('-r', '--result-folder',
                     help='Folder storing benchmark result files.',
@@ -981,7 +980,7 @@ class Graph:
                     df_text = df.replace({0: '', 1: 'error'})
 
                     for index, row in df_text.iterrows():
-                        for column, value in row.iteritems():
+                        for column, value in row.items():
                             if value:
                                 try:
                                     numQuery = int(column.replace('Q', ''))
@@ -1005,7 +1004,7 @@ class Graph:
                     df = df.replace({False: 0, True: 1})
 
                     for index, row in df_text.iterrows():
-                        for column, value in row.iteritems():
+                        for column, value in row.items():
                             if value:
                                 try:
                                     numQuery = int(column.replace('Q', ''))
