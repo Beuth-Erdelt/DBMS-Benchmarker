@@ -1606,6 +1606,8 @@ class benchmarker():
         self.readResultfolder()
         # generate reports
         self.generateReportsAll()
+        # stop logging multiprocessing
+        mp.log_to_stderr(logging.ERROR)
     def computeTimerRun(self):
         """
         Adds a timer for total time per run.
