@@ -1570,17 +1570,19 @@ class benchmarker():
             self.generateReportsAll()
         # stop logging multiprocessing
         mp.log_to_stderr(logging.ERROR)
-    def readResultfolder(self):
+    def readResultfolder(self, silent=False):
         """
         Reads data of previous benchmark from folder.
 
+        :param silent: No output of status
         :return: returns nothing
         """
-        print("Read results")
+        if not silent:
+            print("Read results")
         self.clearBenchmarks()
         # read from stored results
         self.logger.debug("Read from "+self.path)
-        self.reporterStore.readProtocol()
+        self.reporterStore.readProtocol(silent)
         for numQuery,q in enumerate(self.queries):
             query = tools.query(q)
             loaded = self.reporterStore.load(query, numQuery+1, [self.timerExecution, self.timerTransfer, self.timerConnect])
@@ -1904,7 +1906,7 @@ class inspector(benchmarker):
     def __init__(self, result_path, code, anonymize=False, silent=False):
         benchmarker.__init__(self,result_path=result_path+"/"+str(code), anonymize=anonymize)
         self.getConfig()
-        self.readResultfolder()
+        self.readResultfolder(silent=silent)
         if not silent:
             print("Connections:")
             for c in self.connections:
