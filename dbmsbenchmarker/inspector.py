@@ -26,6 +26,7 @@ from colour import Color
 from numpy import nan
 from datetime import datetime, timezone
 import copy
+import re
 
 from dbmsbenchmarker import benchmarker, tools, evaluator, monitor
 
