@@ -451,7 +451,7 @@ class inspector():
         :return: List of monitoring metrics
         """
         filename = '/query_{component}_metric_{metric}.csv'.format(component=component, metric=metric)
-        if os.path.isfile(self.benchmarks.path+"/"+filename):
+        if isfile(self.benchmarks.path+"/"+filename):
             df = pd.read_csv(self.benchmarks.path+"/"+filename).T
             #print(df)
             df = df.reindex(index=natural_sort(df.index))
