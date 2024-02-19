@@ -150,7 +150,7 @@ class inspector():
         self.benchmarks = benchmarker.inspector(self.result_path, code, anonymize=self.anonymize, silent=silent)
         self.benchmarks.computeTimerRun()
         self.benchmarks.computeTimerSession()
-        self.e = evaluator.evaluator(self.benchmarks, load=load, force=True)
+        self.e = evaluator.evaluator(self.benchmarks, load=load, force=True, silent=silent)
         self.workload = copy.deepcopy(self.e.evaluation['general'])
         # remove metrics
         if 'loadingmetrics' in self.workload:
