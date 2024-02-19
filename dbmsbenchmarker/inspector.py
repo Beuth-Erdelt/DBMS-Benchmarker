@@ -95,6 +95,11 @@ def list_intersection(lst1, lst2):
     """
     lst3 = [value for value in lst1 if value in lst2] 
     return lst3 
+def natural_sort(l): 
+    convert = lambda text: int(text) if text.isdigit() else text.lower()
+    alphanum_key = lambda key: [convert(c) for c in re.split('([0-9]+)', key)]
+    return sorted(l, key=alphanum_key)
+
 
 
 class inspector():
