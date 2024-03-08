@@ -832,7 +832,11 @@ class benchmarker():
             queryPart = []
             for queryTemplate in queryString:
                 if len(self.protocol['query'][str(numQuery)]['parameter']) > 0:
+                    # parametrized
                     queryPart.append(parametrize(queryTemplate, numQuery, numRun))
+                else:
+                    # not parametrized
+                    queryPart.append(queryTemplate)
             #print(queryPart)
             queryString = queryPart
         else:
