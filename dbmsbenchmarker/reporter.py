@@ -179,10 +179,11 @@ class storer(reporter):
         filename = self.benchmarker.path+'/protocol.json'
         with open(filename, 'w') as f:
             json.dump(self.benchmarker.protocol, f)
-    def readProtocol(self):
+    def readProtocol(self, silent=False):
         """
         Loads procol of benchmarker in JSON format.
 
+        :param silent: No output of status
         :return: returns nothing
         """
         try:

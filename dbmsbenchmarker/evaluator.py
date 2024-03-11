@@ -39,11 +39,12 @@ class evaluator():
     """
     Class for generating evaluation cube.
     """
-    def __init__(self, benchmarker, load=False, force=False):
+    def __init__(self, benchmarker, load=False, force=False, silent=False):
         """
         Construct a new 'evaluator' object.
 
         :param benchmarker: Object of benchmarker containing information about queries, connections and benchmark times
+        :param silent: No output of status
         :return: returns nothing
         """
         self.benchmarker = benchmarker
@@ -51,11 +52,11 @@ class evaluator():
             evaluator.evaluation = {}
         if len(evaluator.evaluation) == 0:
             if load:
-                self.load()
+                self.load(silent)
             else:
                 evaluator.evaluation = self.generate()
                 # force to use stored format
-                self.load()
+                self.load(silent)
     def get_evaluation(self):
         return evaluator.evaluation
     def generate(self):
@@ -414,8 +415,9 @@ class evaluator():
         with open(filename, 'w') as f:
             json.dump(evaluation, f)
         return evaluation
-    def load(self):
-        print("Load Evaluation")
+    def load(self, silent=False):
+        if not silent:
+            print("Load Evaluation")
         filename = self.benchmarker.path+'/evaluation.json'
         with open(filename,'r') as f:
             evaluator.evaluation = json.load(f)
