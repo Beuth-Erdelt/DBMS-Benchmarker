@@ -380,7 +380,7 @@ class query():
         :return: returns nothing
         """
         self.maxTime = None
-        self.numRunStd = 5
+        self.numRunStd = 1
         self.numRun = 0
         self.numParallel = 1
         self.warmup = 0
