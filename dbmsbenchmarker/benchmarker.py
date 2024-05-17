@@ -1325,14 +1325,14 @@ class benchmarker():
                             keepResultsets = True
                             break
                             #raise ValueError('Received differing result set')
-            #if len(self.resultfolder_subfolder) > 0:
-            # always store complete resultset for subfolders
-            filename = self.path+"/query_"+str(numQuery)+"_resultset_complete_"+connectionname+".pickle"
-            if BENCHMARKER_VERBOSE_PROCESS:
-                self.logger.info("Store pickle of complete result set to "+filename)
-            f = open(filename, "wb")
-            pickle.dump(data, f)
-            f.close()
+            # TODO: why always store complete resultset for subfolders, even if there is none?
+            if not self.resultfolder_subfolder is None and len(self.resultfolder_subfolder) > 0:
+                filename = self.path+"/query_"+str(numQuery)+"_resultset_complete_"+connectionname+".pickle"
+                if BENCHMARKER_VERBOSE_PROCESS:
+                    self.logger.info("Store pickle of complete result set to "+filename)
+                f = open(filename, "wb")
+                pickle.dump(data, f)
+                f.close()
         except Exception as e:
             self.logger.exception('Caught an error: %s' % str(e))
             self.protocol['query'][str(numQuery)]['errors'][c] = 'ERROR ({}) - {}'.format(type(e).__name__, e)
