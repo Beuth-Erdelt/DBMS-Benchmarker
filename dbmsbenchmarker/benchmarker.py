@@ -832,7 +832,11 @@ class benchmarker():
             queryPart = []
             for queryTemplate in queryString:
                 if len(self.protocol['query'][str(numQuery)]['parameter']) > 0:
+                    # parametrized
                     queryPart.append(parametrize(queryTemplate, numQuery, numRun))
+                else:
+                    # not parametrized
+                    queryPart.append(queryTemplate)
             #print(queryPart)
             queryString = queryPart
         else:
@@ -1110,7 +1114,10 @@ class benchmarker():
             # start connecting
             self.timerExecution.startTimer(numQuery, query, connectionname)
             self.timerTransfer.startTimer(numQuery, query, connectionname)
-            if not query.withConnect:
+            if singleConnection and len(self.activeConnections):
+                # we have a global connection
+                self.timerConnect.skipTimer(numQuery, query, connectionname)
+            elif not query.withConnect:
                 # we do not benchmark connection time, so we connect directly and once
                 self.timerConnect.skipTimer(numQuery, query, connectionname)
                 self.connectDBMS(c)
@@ -1318,14 +1325,14 @@ class benchmarker():
                             keepResultsets = True
                             break
                             #raise ValueError('Received differing result set')
-            #if len(self.resultfolder_subfolder) > 0:
-            # always store complete resultset for subfolders
-            filename = self.path+"/query_"+str(numQuery)+"_resultset_complete_"+connectionname+".pickle"
-            if BENCHMARKER_VERBOSE_PROCESS:
-                self.logger.info("Store pickle of complete result set to "+filename)
-            f = open(filename, "wb")
-            pickle.dump(data, f)
-            f.close()
+            # TODO: why always store complete resultset for subfolders, even if there is none?
+            if not self.resultfolder_subfolder is None and len(self.resultfolder_subfolder) > 0:
+                filename = self.path+"/query_"+str(numQuery)+"_resultset_complete_"+connectionname+".pickle"
+                if BENCHMARKER_VERBOSE_PROCESS:
+                    self.logger.info("Store pickle of complete result set to "+filename)
+                f = open(filename, "wb")
+                pickle.dump(data, f)
+                f.close()
         except Exception as e:
             self.logger.exception('Caught an error: %s' % str(e))
             self.protocol['query'][str(numQuery)]['errors'][c] = 'ERROR ({}) - {}'.format(type(e).__name__, e)
@@ -1570,17 +1577,19 @@ class benchmarker():
             self.generateReportsAll()
         # stop logging multiprocessing
         mp.log_to_stderr(logging.ERROR)
-    def readResultfolder(self):
+    def readResultfolder(self, silent=False):
         """
         Reads data of previous benchmark from folder.
 
+        :param silent: No output of status
         :return: returns nothing
         """
-        print("Read results")
+        if not silent:
+            print("Read results")
         self.clearBenchmarks()
         # read from stored results
         self.logger.debug("Read from "+self.path)
-        self.reporterStore.readProtocol()
+        self.reporterStore.readProtocol(silent)
         for numQuery,q in enumerate(self.queries):
             query = tools.query(q)
             loaded = self.reporterStore.load(query, numQuery+1, [self.timerExecution, self.timerTransfer, self.timerConnect])
@@ -1904,7 +1913,7 @@ class inspector(benchmarker):
     def __init__(self, result_path, code, anonymize=False, silent=False):
         benchmarker.__init__(self,result_path=result_path+"/"+str(code), anonymize=anonymize)
         self.getConfig()
-        self.readResultfolder()
+        self.readResultfolder(silent=silent)
         if not silent:
             print("Connections:")
             for c in self.connections:

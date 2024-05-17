@@ -380,7 +380,7 @@ class query():
         :return: returns nothing
         """
         self.maxTime = None
-        self.numRunStd = 5
+        self.numRunStd = 1
         self.numRun = 0
         self.numParallel = 1
         self.warmup = 0
@@ -462,20 +462,31 @@ class query():
             if 'compare' in self.timer['datatransfer'] and self.timer['datatransfer']['compare']:
                 self.result = self.timer['datatransfer']['compare']
                 self.storeData = True
+                self.storeResultSet = True
+                self.storeResultSetFormat = 'dataframe'
             if 'precision' in self.timer['datatransfer']:
                 self.restrict_precision = self.timer['datatransfer']['precision']
                 self.storeData = True
+                self.storeResultSet = True
+                self.storeResultSetFormat = 'dataframe'
             if 'sorted' in self.timer['datatransfer']:
                 self.sorted = self.timer['datatransfer']['sorted']
                 self.storeData = True
-            if 'store' in self.timer['datatransfer'] and not self.timer['datatransfer']['store'] == False:
                 self.storeResultSet = True
-                self.storeData = True
-                if not self.timer['datatransfer']['store'] == True:
-                    if isinstance(self.timer['datatransfer']['store'], str):
-                        self.storeResultSetFormat = [self.timer['datatransfer']['store']]
-                    else:
-                        self.storeResultSetFormat = self.timer['datatransfer']['store']
+                self.storeResultSetFormat = 'dataframe'
+            if 'store' in self.timer['datatransfer']:
+                if self.timer['datatransfer']['store'] == False:
+                    self.storeResultSet = False
+                    self.storeData = False
+                    self.storeResultSetFormat = ''
+                else:
+                    self.storeResultSet = True
+                    self.storeData = True
+                    if not self.timer['datatransfer']['store'] == True:
+                        if isinstance(self.timer['datatransfer']['store'], str):
+                            self.storeResultSetFormat = [self.timer['datatransfer']['store']]
+                        else:
+                            self.storeResultSetFormat = self.timer['datatransfer']['store']
         # timerConnect
         if 'connection' in self.timer:
             if self.timer['connection']['active']:
