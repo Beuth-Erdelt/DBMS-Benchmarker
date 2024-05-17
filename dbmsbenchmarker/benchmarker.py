@@ -1114,7 +1114,10 @@ class benchmarker():
             # start connecting
             self.timerExecution.startTimer(numQuery, query, connectionname)
             self.timerTransfer.startTimer(numQuery, query, connectionname)
-            if not query.withConnect:
+            if singleConnection and len(self.activeConnections):
+                # we have a global connection
+                self.timerConnect.skipTimer(numQuery, query, connectionname)
+            elif not query.withConnect:
                 # we do not benchmark connection time, so we connect directly and once
                 self.timerConnect.skipTimer(numQuery, query, connectionname)
                 self.connectDBMS(c)
