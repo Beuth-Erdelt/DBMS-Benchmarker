@@ -1911,7 +1911,8 @@ class inspector(benchmarker):
     Class for inspecting done benchmarks
     """
     def __init__(self, result_path, code, anonymize=False, silent=False):
-        benchmarker.__init__(self,result_path=result_path+"/"+str(code), anonymize=anonymize)
+        path = (result_path+"/"+str(code)).replace("//", "/")
+        benchmarker.__init__(self,result_path=path, anonymize=anonymize)
         self.getConfig()
         self.readResultfolder(silent=silent)
         if not silent:
