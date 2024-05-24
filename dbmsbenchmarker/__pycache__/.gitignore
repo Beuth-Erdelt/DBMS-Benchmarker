@@ -2,3 +2,5 @@
 *.cpython-37.pyc
 *.cpython-38.pyc
 *.cpython-39.pyc
+*.cpython-310.pyc
+*.cpython-311.pyc

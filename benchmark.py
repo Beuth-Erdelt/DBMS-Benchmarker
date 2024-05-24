@@ -59,6 +59,7 @@ if __name__ == '__main__':
     parser.add_argument('-mps', '--metrics-per-stream', help='collect hardware metrics per stream', action='store_true', default=False)
     parser.add_argument('-sid', '--stream-id', help='id of a stream in parallel execution of streams', default=None)
     parser.add_argument('-ssh', '--stream-shuffle', help='shuffle query execution based on id of stream', default=None)
+    parser.add_argument('-wli', '--workload-intro', help='intro text for workload description', default='')
     #parser.add_argument('-pt', '--timeout', help='Parameter: Timeout in seconds', default=0)
     args = parser.parse_args()
     # evaluate args
@@ -132,7 +133,7 @@ if __name__ == '__main__':
     #    print("User wants shuffled queries")
     #if stream_id is not None and stream_id:
     #    print("This is stream {}".format(stream_id))
-    # overwrite parameters
+    # overwrite parameters of workload queries
     if int(args.num_run) > 0:
         querymanagement = {
              'numRun': int(args.num_run),
@@ -155,6 +156,9 @@ if __name__ == '__main__':
         stream_id=stream_id,
         stream_shuffle=stream_shuffle,
         seed=args.seed)
+    # overwrite parameters of workload header
+    if len(args.workload_intro):
+        experiments.workload['intro'] = args.workload_intro
     experiments.getConfig(args.config_folder, args.connection_file, args.query_file)
     # switch for args.mode
     if args.mode == 'read':

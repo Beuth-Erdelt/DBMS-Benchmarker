@@ -422,6 +422,8 @@ class benchmarker():
         self.clearBenchmarks()
         # should result folder be created
         self.continuing = False
+        # overwrite header of workload file
+        self.workload = {}
         self.path = ""
         if result_path is None:
             if code is None:
@@ -558,7 +560,11 @@ class benchmarker():
         with open(filename,'r') as inp:
             self.queryconfig = ast.literal_eval(inp.read())
             # global setting in a class variable
-            # overwrites parts of query file
+            # overwrites parts of query file - header
+            if len(self.workload) > 0:
+                for k,v in self.workload.items():
+                    self.queryconfig[k] = v
+            # overwrites parts of query file - queries
             if tools.query.template is not None:
                 for i,q in enumerate(self.queryconfig['queries']):
                     self.queryconfig['queries'][i] = {**q, **tools.query.template}
