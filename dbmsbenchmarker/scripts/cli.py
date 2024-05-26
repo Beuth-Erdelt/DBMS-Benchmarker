@@ -56,7 +56,8 @@ def run_benchmarker():
     parser.add_argument('-pn', '--num-run', help='Parameter: Number of executions per query', default=0)
     parser.add_argument('-m', '--metrics', help='collect hardware metrics per query', action='store_true', default=False)
     parser.add_argument('-mps', '--metrics-per-stream', help='collect hardware metrics per stream', action='store_true', default=False)
-    parser.add_argument('-wli', '--workload-intro', help='intro text for workload description', default='')
+    parser.add_argument('-wli', '--workload-intro', help='meta data: intro text for workload description', default='')
+    parser.add_argument('-wln', '--workload-name', help='meta data: name of workload', default='')
     #parser.add_argument('-pt', '--timeout', help='Parameter: Timeout in seconds', default=0)
     logger = logging.getLogger('dbmsbenchmarker')
     args = parser.parse_args()
@@ -141,6 +142,8 @@ def run_benchmarker():
     # overwrite parameters of workload header
     if len(args.workload_intro):
         experiments.workload['intro'] = args.workload_intro
+    if len(args.workload_name):
+        experiments.workload['name'] = args.workload_name
     experiments.getConfig(args.config_folder, args.connection_file, args.query_file)
     # switch for args.mode
     if args.mode == 'read':
