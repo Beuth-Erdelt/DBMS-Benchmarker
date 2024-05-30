@@ -110,7 +110,7 @@ class inspector():
     def __init__(self, result_path, anonymize=False):
         self.result_path = result_path
         self.anonymize = anonymize
-        self.list_experiments = [f for f in listdir(self.result_path) if isdir(join(self.result_path, f)) and f.isdigit()]
+        self.list_experiments = list(reversed(sorted([f for f in listdir(self.result_path) if isdir(join(self.result_path, f)) and f.isdigit()])))
         self.queries_successful = []
     def get_experiments_preview(self):
         workload_preview = {}
