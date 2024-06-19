@@ -34,7 +34,8 @@ python-dateutil>=2.8.1
 pytz>=2020.1
 retrying>=1.3.3
 six>=1.14.0
-urllib3==1.26.19
+#urllib3==1.26.19 # old fix because newer versions do not work
+urllib3>=2.2.2
 uuid>=1.30
 Werkzeug>=3.0.1
 #m2r2
