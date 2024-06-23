@@ -21,6 +21,7 @@ import time
 from os import makedirs, path
 import random
 from datetime import datetime, timedelta
+import pandas as pd
 
 from dbmsbenchmarker import *
 
@@ -190,4 +191,31 @@ if __name__ == '__main__':
     if args.generate_evaluation == 'yes':
         # generate evaluation cube
         experiments.overwrite = True
+        # show some evaluations
         evaluator.evaluator(experiments, load=False, force=True)
+        result_folder = args.result_folder if not args.result_folder is None else "./"
+        num_processes = min(float(args.numProcesses if not args.numProcesses is None else 1), float(args.num_run) if int(args.num_run) > 0 else 1)
+        evaluate = inspector.inspector(result_folder)
+        evaluate.load_experiment(experiments.code)
+        #list_queries = evaluate.get_experiment_queries_successful() # evaluate.get_experiment_list_queries()
+        list_queries = evaluate.get_survey_successful(timername='execution')
+        #print(list_queries, len(list_queries))
+        print("Number of runs per query:", int(args.num_run) if int(args.num_run) > 0 else 1)
+        print("Number of successful queries:", len(list_queries))
+        print("Number of max. parallel clients:", int(num_processes))
+        df = evaluate.get_aggregated_experiment_statistics(type='timer', name='execution', query_aggregate='Median', total_aggregate='Geo')
+        df = (df/1000.0).sort_index()
+        print("### Geometric Mean of Medians of Timer Run (only successful) [s]")
+        df.columns = ['average execution time [s]']
+        print(df)
+        df = evaluate.get_aggregated_experiment_statistics(type='timer', name='execution', query_aggregate='Max', total_aggregate='Sum').astype('float')/1000.
+        print("### Sum of Maximum Execution Times per Query (only successful) [s]")
+        df.columns = ['sum of max execution times [s]']
+        print(df)
+        df = num_processes*float(len(list_queries))*3600./df
+        print("### Queries per Hour (only successful) [QpH]")
+        df.columns = ['queries per hour [Qph]']
+        print(df)
+
+
+
