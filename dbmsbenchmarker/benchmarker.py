@@ -50,7 +50,7 @@ BENCHMARKER_VERBOSE_STATISTICS = False
 BENCHMARKER_VERBOSE_RESULTS = False
 BENCHMARKER_VERBOSE_PROCESS = False
 
-logger = mp.log_to_stderr(logging.INFO)
+logger = mp.log_to_stderr(logging.WARNING)
 
 class singleRunInput:
     """
@@ -1027,7 +1027,7 @@ class benchmarker():
         print("Connection: "+connectionname)
         # prepare multiprocessing
         logger = mp.log_to_stderr()
-        logger.setLevel(logging.INFO)
+        logger.setLevel(logging.WARNING)
         # prepare query object
         query = tools.query(q)
         # connection management for parallel connections
