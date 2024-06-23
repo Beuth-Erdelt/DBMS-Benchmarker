@@ -289,7 +289,7 @@ def singleResult(connectiondata, inputConfig, numRuns, connectionname, numQuery,
                     logger.debug(workername+"Begin sorting")
                     data = sorted(data, key=itemgetter(*list(range(0,len(data[0])))))
                     logger.debug(workername+"Finished sorting")
-                logger.info(workername+"Size of processed result list retrieved: "+str(sys.getsizeof(data))+" bytes")
+                logger.debug(workername+"Size of processed result list retrieved: "+str(sys.getsizeof(data))+" bytes")
             # convert to dataframe
             #columnnames = [[i[0].upper() for i in connection.cursor.description]]
             df = pd.DataFrame.from_records(data=data, coerce_float=True)
