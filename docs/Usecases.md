@@ -259,6 +259,7 @@ The result (the number of rows in table test) is stored and should be the same f
 
 That is we allow 20 (`-p`) parallel clients, which connect to the DBMS host to run 1 single instance of query 1 (`-q`) each, so we have a total of 20 runs (`-pn`).
 Note the host of the benchmarking tool must be capable of 20 parallel processes.
+Also note this synchs all clients after each query (c.f. [Options](Options.html))
 
 Excerpt from `examples/tpch/queries.config`:
 ```
@@ -315,6 +316,14 @@ That is each simulated user runs the (randomized) TPC-H query number 1.
 The result sets will be truncated to no decimals, sorted and compared by their hash values.
 The result set of the first run will be stored to disk as a pickled pandas dataframe.
 The time for connection, execution and data transfer will be measured.
+
+## Reconnect after each Query
+
+`dbmsbenchmarker run -f tpc-h -e yes -b -w query`
+
+
+This is the same as the common TPC-H power test, but it works query-wise, that is it makes a reconnect after each query.
+
 
 ## Few Users / Several simple Queries
 
