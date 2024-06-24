@@ -26,6 +26,7 @@ from colour import Color
 from numpy import nan
 from datetime import datetime, timezone
 import copy
+import re
 
 from dbmsbenchmarker import benchmarker, tools, evaluator, monitor
 
@@ -95,6 +96,11 @@ def list_intersection(lst1, lst2):
     """
     lst3 = [value for value in lst1 if value in lst2] 
     return lst3 
+def natural_sort(l): 
+    convert = lambda text: int(text) if text.isdigit() else text.lower()
+    alphanum_key = lambda key: [convert(c) for c in re.split('([0-9]+)', key)]
+    return sorted(l, key=alphanum_key)
+
 
 
 class inspector():
@@ -104,7 +110,7 @@ class inspector():
     def __init__(self, result_path, anonymize=False):
         self.result_path = result_path
         self.anonymize = anonymize
-        self.list_experiments = [f for f in listdir(self.result_path) if isdir(join(self.result_path, f)) and f.isdigit()]
+        self.list_experiments = list(reversed(sorted([f for f in listdir(self.result_path) if isdir(join(self.result_path, f)) and f.isdigit()])))
         self.queries_successful = []
     def get_experiments_preview(self):
         workload_preview = {}
@@ -144,7 +150,7 @@ class inspector():
         self.benchmarks = benchmarker.inspector(self.result_path, code, anonymize=self.anonymize, silent=silent)
         self.benchmarks.computeTimerRun()
         self.benchmarks.computeTimerSession()
-        self.e = evaluator.evaluator(self.benchmarks, load=load, force=True)
+        self.e = evaluator.evaluator(self.benchmarks, load=load, force=True, silent=silent)
         self.workload = copy.deepcopy(self.e.evaluation['general'])
         # remove metrics
         if 'loadingmetrics' in self.workload:
@@ -444,6 +450,20 @@ class inspector():
                 else:
                     break
         return script
+    def get_monitoring_metric(self, metric, component="loading"):
+        """
+        Returns list of names of metrics using during monitoring.
+
+        :return: List of monitoring metrics
+        """
+        filename = '/query_{component}_metric_{metric}.csv'.format(component=component, metric=metric)
+        if isfile(self.benchmarks.path+"/"+filename):
+            df = pd.read_csv(self.benchmarks.path+"/"+filename).T
+            #print(df)
+            df = df.reindex(index=natural_sort(df.index))
+            return df.T
+        else:
+            return pd.DataFrame()
     def get_loading_metrics(self, metric):
         return evaluator.dfLoadingMetric(self.e.evaluation, metric)
     def get_streaming_metrics(self, metric):

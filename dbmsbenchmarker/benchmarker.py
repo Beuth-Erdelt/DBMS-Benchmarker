@@ -50,7 +50,7 @@ BENCHMARKER_VERBOSE_STATISTICS = False
 BENCHMARKER_VERBOSE_RESULTS = False
 BENCHMARKER_VERBOSE_PROCESS = False
 
-logger = mp.log_to_stderr(logging.INFO)
+logger = mp.log_to_stderr(logging.WARNING)
 
 class singleRunInput:
     """
@@ -289,7 +289,7 @@ def singleResult(connectiondata, inputConfig, numRuns, connectionname, numQuery,
                     logger.debug(workername+"Begin sorting")
                     data = sorted(data, key=itemgetter(*list(range(0,len(data[0])))))
                     logger.debug(workername+"Finished sorting")
-                logger.info(workername+"Size of processed result list retrieved: "+str(sys.getsizeof(data))+" bytes")
+                logger.debug(workername+"Size of processed result list retrieved: "+str(sys.getsizeof(data))+" bytes")
             # convert to dataframe
             #columnnames = [[i[0].upper() for i in connection.cursor.description]]
             df = pd.DataFrame.from_records(data=data, coerce_float=True)
@@ -422,6 +422,8 @@ class benchmarker():
         self.clearBenchmarks()
         # should result folder be created
         self.continuing = False
+        # overwrite header of workload file
+        self.workload = {}
         self.path = ""
         if result_path is None:
             if code is None:
@@ -558,7 +560,11 @@ class benchmarker():
         with open(filename,'r') as inp:
             self.queryconfig = ast.literal_eval(inp.read())
             # global setting in a class variable
-            # overwrites parts of query file
+            # overwrites parts of query file - header
+            if len(self.workload) > 0:
+                for k,v in self.workload.items():
+                    self.queryconfig[k] = v
+            # overwrites parts of query file - queries
             if tools.query.template is not None:
                 for i,q in enumerate(self.queryconfig['queries']):
                     self.queryconfig['queries'][i] = {**q, **tools.query.template}
@@ -832,7 +838,11 @@ class benchmarker():
             queryPart = []
             for queryTemplate in queryString:
                 if len(self.protocol['query'][str(numQuery)]['parameter']) > 0:
+                    # parametrized
                     queryPart.append(parametrize(queryTemplate, numQuery, numRun))
+                else:
+                    # not parametrized
+                    queryPart.append(queryTemplate)
             #print(queryPart)
             queryString = queryPart
         else:
@@ -1010,14 +1020,14 @@ class benchmarker():
                     self.logger.debug("Benchmarks of Q"+str(numQuery)+" at dbms "+connectionname+" not wanted right now")
                     return False
         # prepare basic setting
-        self.logger.info("Starting benchmarks of Q"+str(numQuery)+" at dbms "+connectionname)
+        self.logger.debug("Starting benchmarks of Q"+str(numQuery)+" at dbms "+connectionname)
         self.startBenchmarkingQuery(numQuery)
         q = self.queries[numQuery-1]
         c = connectionname
         print("Connection: "+connectionname)
         # prepare multiprocessing
         logger = mp.log_to_stderr()
-        logger.setLevel(logging.INFO)
+        logger.setLevel(logging.WARNING)
         # prepare query object
         query = tools.query(q)
         # connection management for parallel connections
@@ -1030,6 +1040,7 @@ class benchmarker():
         if self.stream_id is not None:
             parameter.defaultParameters['STREAM'] = self.stream_id
         singleConnection = connectionmanagement['singleConnection']
+        #print(connectionmanagement)
         # overwrite by connection
         #if 'connectionmanagement' in self.dbms[c].connectiondata:
         #   connectionmanagement = self.dbms[c].connectiondata['connectionmanagement']
@@ -1110,7 +1121,10 @@ class benchmarker():
             # start connecting
             self.timerExecution.startTimer(numQuery, query, connectionname)
             self.timerTransfer.startTimer(numQuery, query, connectionname)
-            if not query.withConnect:
+            if singleConnection and len(self.activeConnections):
+                # we have a global connection
+                self.timerConnect.skipTimer(numQuery, query, connectionname)
+            elif not query.withConnect:
                 # we do not benchmark connection time, so we connect directly and once
                 self.timerConnect.skipTimer(numQuery, query, connectionname)
                 self.connectDBMS(c)
@@ -1170,7 +1184,7 @@ class benchmarker():
                         pool.close()
                     """
                     with mp.Pool(processes=numProcesses) as pool:
-                        self.logger.info("POOL of query senders (local pool starmap)")
+                        self.logger.info("POOL of query senders (local pool starmap {} workers)".format(numProcesses))
                         #multiple_results = [pool.apply_async(singleRun, (self.dbms[c].connectiondata, inputConfig, runs[i*batchsize:(i+1)*batchsize], connectionname, numQuery, self.path, JPickler.dumps(self.activeConnections))) for i in range(numBatches)]
                         args = [(self.dbms[c].connectiondata, inputConfig, runs[i*batchsize:(i+1)*batchsize], connectionname, numQuery, self.path, [], BENCHMARKER_VERBOSE_QUERIES, BENCHMARKER_VERBOSE_RESULTS, BENCHMARKER_VERBOSE_PROCESS) for i in range(numBatches)]
                         multiple_results = pool.starmap_async(singleRun, args)
@@ -1318,14 +1332,14 @@ class benchmarker():
                             keepResultsets = True
                             break
                             #raise ValueError('Received differing result set')
-            #if len(self.resultfolder_subfolder) > 0:
-            # always store complete resultset for subfolders
-            filename = self.path+"/query_"+str(numQuery)+"_resultset_complete_"+connectionname+".pickle"
-            if BENCHMARKER_VERBOSE_PROCESS:
-                self.logger.info("Store pickle of complete result set to "+filename)
-            f = open(filename, "wb")
-            pickle.dump(data, f)
-            f.close()
+            # TODO: why always store complete resultset for subfolders, even if there is none?
+            if not self.resultfolder_subfolder is None and len(self.resultfolder_subfolder) > 0:
+                filename = self.path+"/query_"+str(numQuery)+"_resultset_complete_"+connectionname+".pickle"
+                if BENCHMARKER_VERBOSE_PROCESS:
+                    self.logger.info("Store pickle of complete result set to "+filename)
+                f = open(filename, "wb")
+                pickle.dump(data, f)
+                f.close()
         except Exception as e:
             self.logger.exception('Caught an error: %s' % str(e))
             self.protocol['query'][str(numQuery)]['errors'][c] = 'ERROR ({}) - {}'.format(type(e).__name__, e)
@@ -1570,17 +1584,19 @@ class benchmarker():
             self.generateReportsAll()
         # stop logging multiprocessing
         mp.log_to_stderr(logging.ERROR)
-    def readResultfolder(self):
+    def readResultfolder(self, silent=False):
         """
         Reads data of previous benchmark from folder.
 
+        :param silent: No output of status
         :return: returns nothing
         """
-        print("Read results")
+        if not silent:
+            print("Read results")
         self.clearBenchmarks()
         # read from stored results
         self.logger.debug("Read from "+self.path)
-        self.reporterStore.readProtocol()
+        self.reporterStore.readProtocol(silent)
         for numQuery,q in enumerate(self.queries):
             query = tools.query(q)
             loaded = self.reporterStore.load(query, numQuery+1, [self.timerExecution, self.timerTransfer, self.timerConnect])
@@ -1606,6 +1622,8 @@ class benchmarker():
         self.readResultfolder()
         # generate reports
         self.generateReportsAll()
+        # stop logging multiprocessing
+        mp.log_to_stderr(logging.ERROR)
     def computeTimerRun(self):
         """
         Adds a timer for total time per run.
@@ -1900,9 +1918,10 @@ class inspector(benchmarker):
     Class for inspecting done benchmarks
     """
     def __init__(self, result_path, code, anonymize=False, silent=False):
-        benchmarker.__init__(self,result_path=result_path+"/"+str(code), anonymize=anonymize)
+        path = (result_path+"/"+str(code)).replace("//", "/")
+        benchmarker.__init__(self,result_path=path, anonymize=anonymize)
         self.getConfig()
-        self.readResultfolder()
+        self.readResultfolder(silent=silent)
         if not silent:
             print("Connections:")
             for c in self.connections:

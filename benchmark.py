@@ -21,6 +21,7 @@ import time
 from os import makedirs, path
 import random
 from datetime import datetime, timedelta
+import pandas as pd
 
 from dbmsbenchmarker import *
 
@@ -39,7 +40,7 @@ if __name__ == '__main__':
     parser.add_argument('-f', '--config-folder', help='folder containing query and connection config files. If set, the names connections.config and queries.config are assumed automatically.', default=None)
     parser.add_argument('-r', '--result-folder', help='folder for storing benchmark result files, default is given by timestamp', default=None)
     parser.add_argument('-e', '--generate-evaluation', help='generate new evaluation file', default='no', choices=['no','yes'])
-    parser.add_argument('-w', '--working', help='working per query or connection', default='query', choices=['query','connection'])
+    parser.add_argument('-w', '--working', help='working per query or connection', default='connection', choices=['query','connection'])
     #parser.add_argument('-a', '--anonymize', help='anonymize all dbms', action='store_true', default=False)
     #parser.add_argument('-u', '--unanonymize', help='unanonymize some dbms, only sensible in combination with anonymize', nargs='*', default=[])
     parser.add_argument('-p', '--numProcesses', help='Number of parallel client processes. Global setting, can be overwritten by connection. Default is 1.', default=None)
@@ -59,6 +60,8 @@ if __name__ == '__main__':
     parser.add_argument('-mps', '--metrics-per-stream', help='collect hardware metrics per stream', action='store_true', default=False)
     parser.add_argument('-sid', '--stream-id', help='id of a stream in parallel execution of streams', default=None)
     parser.add_argument('-ssh', '--stream-shuffle', help='shuffle query execution based on id of stream', default=None)
+    parser.add_argument('-wli', '--workload-intro', help='meta data: intro text for workload description', default='')
+    parser.add_argument('-wln', '--workload-name', help='meta data: name of workload', default='')
     #parser.add_argument('-pt', '--timeout', help='Parameter: Timeout in seconds', default=0)
     args = parser.parse_args()
     # evaluate args
@@ -132,7 +135,7 @@ if __name__ == '__main__':
     #    print("User wants shuffled queries")
     #if stream_id is not None and stream_id:
     #    print("This is stream {}".format(stream_id))
-    # overwrite parameters
+    # overwrite parameters of workload queries
     if int(args.num_run) > 0:
         querymanagement = {
              'numRun': int(args.num_run),
@@ -155,6 +158,11 @@ if __name__ == '__main__':
         stream_id=stream_id,
         stream_shuffle=stream_shuffle,
         seed=args.seed)
+    # overwrite parameters of workload header
+    if len(args.workload_intro):
+        experiments.workload['intro'] = args.workload_intro
+    if len(args.workload_name):
+        experiments.workload['name'] = args.workload_name
     experiments.getConfig(args.config_folder, args.connection_file, args.query_file)
     # switch for args.mode
     if args.mode == 'read':
@@ -183,4 +191,31 @@ if __name__ == '__main__':
     if args.generate_evaluation == 'yes':
         # generate evaluation cube
         experiments.overwrite = True
+        # show some evaluations
         evaluator.evaluator(experiments, load=False, force=True)
+        result_folder = args.result_folder if not args.result_folder is None else "./"
+        num_processes = min(float(args.numProcesses if not args.numProcesses is None else 1), float(args.num_run) if int(args.num_run) > 0 else 1)
+        evaluate = inspector.inspector(result_folder)
+        evaluate.load_experiment(experiments.code)
+        #list_queries = evaluate.get_experiment_queries_successful() # evaluate.get_experiment_list_queries()
+        list_queries = evaluate.get_survey_successful(timername='execution')
+        #print(list_queries, len(list_queries))
+        print("Number of runs per query:", int(args.num_run) if int(args.num_run) > 0 else 1)
+        print("Number of successful queries:", len(list_queries))
+        print("Number of max. parallel clients:", int(num_processes))
+        df = evaluate.get_aggregated_experiment_statistics(type='timer', name='execution', query_aggregate='Median', total_aggregate='Geo')
+        df = (df/1000.0).sort_index()
+        print("### Geometric Mean of Medians of Timer Run (only successful) [s]")
+        df.columns = ['average execution time [s]']
+        print(df)
+        df = evaluate.get_aggregated_experiment_statistics(type='timer', name='execution', query_aggregate='Max', total_aggregate='Sum').astype('float')/1000.
+        print("### Sum of Maximum Execution Times per Query (only successful) [s]")
+        df.columns = ['sum of max execution times [s]']
+        print(df)
+        df = num_processes*float(len(list_queries))*3600./df
+        print("### Queries per Hour (only successful) [QpH]")
+        df.columns = ['queries per hour [Qph]']
+        print(df)
+
+
+

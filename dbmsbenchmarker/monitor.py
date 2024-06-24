@@ -218,6 +218,8 @@ class metrics():
                 if container is not None:
                     metric['query'] = metric['query'].replace('container_label_io_kubernetes_container_name="dbms"', 'container_label_io_kubernetes_container_name="{}"'.format(container))
                     metric['query'] = metric['query'].replace('container_label_io_kubernetes_container_name!="dbms"', 'container_label_io_kubernetes_container_name!="{}"'.format(container))
+                    metric['query'] = metric['query'].replace('container="dbms"', 'container="{}"'.format(container))
+                    metric['query'] = metric['query'].replace('container!="dbms"', 'container!="{}"'.format(container))
                     # open TODO:
                     # container_label_component="worker"
                     # container_label_component="sut"

@@ -184,6 +184,8 @@ and processing `-w connection` is
     * save results
     * generate reports
 
+Default is `connection`-wise.
+
 ### Client processes
 
 This tool simulates parallel queries from several clients.
@@ -198,6 +200,9 @@ When all subprocesses are finished, results are joined and dbmsbenchmarker may p
 This helps in evaluating concurrency on a query level.
 You can for example compare performance of 15 clients running TPC-H Q8 at the same time.
 If you want to evaluate concurrency on stream level with a single connection per client, you should start several dbmsbenchmarker. 
+
+This should be changed in align with the number of runs per query (`-pn`), that is, the number of runs must be higher than the number of clients.
+Ideally, the number of runs should be a multiple of the number of parallel clients.
 
 ### Random Seed
 The option `-s` can be used to specify a random seed.

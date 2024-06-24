@@ -6,10 +6,7 @@
 * [Compare 2 Databases in 1 DBMS](#compare-2-databases-in-1-dbms)
 * [Compare 1 Query in 2 DBMS](#compare-1-query-in-2-dbms)  
 and combinations like compare `n` queries in `m` DBMS.
-* [Benchmarking DBMS Configurations](#benchmarking-dbms-configurations)
-
-[Scenarios](#scenarios) may be
-* [Many Users / Few, Complex Queries](#many-users--few-complex-queries)
+* [Many Users / Few, Complex Queries](#simulate-many-users--few-complex-queries)
 * [Few Users / Several simple Queries](#few-users--several-simple-queries)
 * [Updated Database](#updated-database)
 
@@ -256,22 +253,14 @@ The result (the number of rows in table test) is stored and should be the same f
 }
 ```
 
-# Scenarios
+## Simulate Many Users and Few, Complex Queries
 
-## Many Users / Few, Complex Queries
+`dbmsbenchmarker run -f tpc-h -e yes -b -p 20 -pn 20 -q 1`
 
-Excerpt from `connections.config`:
-```
-'connectionmanagement': {
-  'timeout': 600,
-  'numProcesses': 20,
-  'runsPerConnection': 1
-},
-```
-That is we allow 20 parallel clients, which connect to the DBMS host to run 1 single query each.  
+That is we allow 20 (`-p`) parallel clients, which connect to the DBMS host to run 1 single instance of query 1 (`-q`) each, so we have a total of 20 runs (`-pn`).
 Note the host of the benchmarking tool must be capable of 20 parallel processes.
 
-Excerpt from `queries.config`:
+Excerpt from `examples/tpch/queries.config`:
 ```
 {
   'title': "Pricing Summary Report (TPC-H Q1)",
@@ -329,7 +318,10 @@ The time for connection, execution and data transfer will be measured.
 
 ## Few Users / Several simple Queries
 
-Excerpt from `connections.config`:
+
+`dbmsbenchmarker run -f examples/demo -e yes -b -p 4 -pn 20 -q 1`
+
+Excerpt from `examples/demo/connections.config`:
 ```
 'connectionmanagement': {
   'timeout': 600,
@@ -337,9 +329,10 @@ Excerpt from `connections.config`:
   'runsPerConnection': 5
 },
 ```
+
 That is we allow only one client at a time, which connects to the DBMS host to run 5 single queries.  
 
-Excerpt from `queries.config`:
+Excerpt from `examples/demo/queries.config`:
 ```
 {
   'title': "Count rows in nation",
