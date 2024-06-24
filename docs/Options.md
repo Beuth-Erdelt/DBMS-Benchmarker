@@ -32,14 +32,15 @@ This is inspired by [TPC-H](http://www.tpc.org/tpch/) and [TPC-DS](http://www.tp
 
 How to configure the benchmarker can be illustrated best by looking at the source code of the command line tool `benchmark.py`, which will be described in the following.
 
-`python3 benchmark.py -h`
+`python benchmark.py -h`
 
 ```
-usage: dbmsbenchmarker [-h] [-d] [-b] [-qf QUERY_FILE] [-cf CONNECTION_FILE] [-q QUERY] [-c CONNECTION] [-ca CONNECTION_ALIAS] [-f CONFIG_FOLDER] [-r RESULT_FOLDER] [-e {no,yes}] [-w {query,connection}] [-p NUMPROCESSES] [-s SEED]
-                       [-cs] [-ms MAX_SUBFOLDERS] [-sl SLEEP] [-st START_TIME] [-sf SUBFOLDER] [-vq] [-vs] [-vr] [-vp] [-pn NUM_RUN] [-m] [-mps]
-                       {run,read,continue}
+usage: benchmark.py [-h] [-d] [-b] [-qf QUERY_FILE] [-cf CONNECTION_FILE] [-q QUERY] [-c CONNECTION] [-ca CONNECTION_ALIAS] [-f CONFIG_FOLDER] [-r RESULT_FOLDER] [-e {no,yes}] [-w {query,connection}] [-p NUMPROCESSES] [-s SEED] [-rcp RECREATE_PARAMETER] [-cs]
+                    [-ms MAX_SUBFOLDERS] [-sl SLEEP] [-st START_TIME] [-sf SUBFOLDER] [-sd {None,csv,pandas}] [-vq] [-vs] [-vr] [-vp] [-pn NUM_RUN] [-m] [-mps] [-sid STREAM_ID] [-ssh STREAM_SHUFFLE] [-wli WORKLOAD_INTRO] [-wln WORKLOAD_NAME]
+                    {run,read,continue}
 
-A benchmark tool for RDBMS. It connects to a given list of RDBMS via JDBC and runs a given list benchmark queries. Optionally some reports are generated.
+DBMS-Benchmarker is a Python-based application-level blackbox benchmark tool for Database Management Systems (DBMS). It connects to a given list of DBMS (via JDBC) and runs a given list of parametrized and randomized (SQL) benchmark queries. Evaluations are available
+via Python interface, in reports and at an interactive multi-dimensional dashboard.
 
 positional arguments:
   {run,read,continue}   run benchmarks and save results, or just read benchmark results from folder, or continue with missing benchmarks only
@@ -67,8 +68,10 @@ optional arguments:
   -w {query,connection}, --working {query,connection}
                         working per query or connection
   -p NUMPROCESSES, --numProcesses NUMPROCESSES
-                        Number of parallel client processes. Global setting, can be overwritten by connection.  Default is 1.
+                        Number of parallel client processes. Global setting, can be overwritten by connection. Default is 1.
   -s SEED, --seed SEED  random seed
+  -rcp RECREATE_PARAMETER, --recreate-parameter RECREATE_PARAMETER
+                        recreate parameter for randomized queries
   -cs, --copy-subfolder
                         copy subfolder of result folder
   -ms MAX_SUBFOLDERS, --max-subfolders MAX_SUBFOLDERS
@@ -79,6 +82,8 @@ optional arguments:
                         sleep until START-TIME before beginning benchmarking
   -sf SUBFOLDER, --subfolder SUBFOLDER
                         stores results in a SUBFOLDER of the result folder
+  -sd {None,csv,pandas}, --store-data {None,csv,pandas}
+                        store result of first execution of each query
   -vq, --verbose-queries
                         print every query that is sent
   -vs, --verbose-statistics
@@ -92,6 +97,14 @@ optional arguments:
   -m, --metrics         collect hardware metrics per query
   -mps, --metrics-per-stream
                         collect hardware metrics per stream
+  -sid STREAM_ID, --stream-id STREAM_ID
+                        id of a stream in parallel execution of streams
+  -ssh STREAM_SHUFFLE, --stream-shuffle STREAM_SHUFFLE
+                        shuffle query execution based on id of stream
+  -wli WORKLOAD_INTRO, --workload-intro WORKLOAD_INTRO
+                        meta data: intro text for workload description
+  -wln WORKLOAD_NAME, --workload-name WORKLOAD_NAME
+                        meta data: name of workload
 ```
 
 ### Result folder
@@ -184,6 +197,8 @@ and processing `-w connection` is
     * save results
     * generate reports
 
+Default is `connection`-wise.
+
 ### Client processes
 
 This tool simulates parallel queries from several clients.
@@ -198,6 +213,9 @@ When all subprocesses are finished, results are joined and dbmsbenchmarker may p
 This helps in evaluating concurrency on a query level.
 You can for example compare performance of 15 clients running TPC-H Q8 at the same time.
 If you want to evaluate concurrency on stream level with a single connection per client, you should start several dbmsbenchmarker. 
+
+This should be changed in align with the number of runs per query (`-pn`), that is, the number of runs must be higher than the number of clients.
+Ideally, the number of runs should be a multiple of the number of parallel clients.
 
 ### Random Seed
 The option `-s` can be used to specify a random seed.

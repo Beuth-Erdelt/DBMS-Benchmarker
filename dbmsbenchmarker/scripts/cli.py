@@ -49,13 +49,16 @@ def run_benchmarker():
     parser.add_argument('-sl', '--sleep', help='sleep SLEEP seconds before going to work', default=0)
     parser.add_argument('-st', '--start-time', help='sleep until START-TIME before beginning benchmarking', default=None)
     parser.add_argument('-sf', '--subfolder', help='stores results in a SUBFOLDER of the result folder', default=None)
+    parser.add_argument('-sd', '--store-data', help='store result of first execution of each query', default=None, choices=[None, 'csv', 'pandas'])
     parser.add_argument('-vq', '--verbose-queries', help='print every query that is sent', action='store_true', default=False)
-    parser.add_argument('-vs', '--verbose-statistics', help='print statistics about query that have been sent', action='store_true', default=False)
-    parser.add_argument('-vr', '--verbose-results', help='print result sets of every query that have been sent', action='store_true', default=False)
-    parser.add_argument('-vp', '--verbose-process', help='print result sets of every query that have been sent', action='store_true', default=False)
+    parser.add_argument('-vs', '--verbose-statistics', help='print statistics about queries that have been sent', action='store_true', default=False)
+    parser.add_argument('-vr', '--verbose-results', help='print result sets of every query that has been sent', action='store_true', default=False)
+    parser.add_argument('-vp', '--verbose-process', help='print result sets of every query that has been sent', action='store_true', default=False)
     parser.add_argument('-pn', '--num-run', help='Parameter: Number of executions per query', default=0)
     parser.add_argument('-m', '--metrics', help='collect hardware metrics per query', action='store_true', default=False)
     parser.add_argument('-mps', '--metrics-per-stream', help='collect hardware metrics per stream', action='store_true', default=False)
+    parser.add_argument('-sid', '--stream-id', help='id of a stream in parallel execution of streams', default=None)
+    parser.add_argument('-ssh', '--stream-shuffle', help='shuffle query execution based on id of stream', default=None)
     parser.add_argument('-wli', '--workload-intro', help='meta data: intro text for workload description', default='')
     parser.add_argument('-wln', '--workload-name', help='meta data: name of workload', default='')
     #parser.add_argument('-pt', '--timeout', help='Parameter: Timeout in seconds', default=0)
@@ -118,12 +121,27 @@ def run_benchmarker():
         benchmarker.BENCHMARKER_VERBOSE_RESULTS = True
     if args.verbose_process:
         benchmarker.BENCHMARKER_VERBOSE_PROCESS = True
+    # handle parallel streams
+    stream_id = args.stream_id
+    stream_shuffle = args.stream_shuffle
+    #if stream_shuffle is not None and stream_shuffle:
+    #    print("User wants shuffled queries")
+    #if stream_id is not None and stream_id:
+    #    print("This is stream {}".format(stream_id))
     # overwrite parameters of workload queries
     if int(args.num_run) > 0:
-        querymanagement = {
-             'numRun': int(args.num_run),
-         }
-        tools.query.template = querymanagement
+        #querymanagement = {
+        #     'numRun': int(args.num_run),
+        #     'timer': {'datatransfer': {'store': 'csv'}},
+        #}
+        #tools.query.template = querymanagement
+        if not isinstance(tools.query.template, dict):
+            tools.query.template = {}
+        tools.query.template['numRun'] = int(args.num_run)
+    if args.store_data is not None:
+        if not isinstance(tools.query.template, dict):
+            tools.query.template = {}
+        tools.query.template['timer'] = {'datatransfer': {'store': args.store_data}}
     # dbmsbenchmarker with reporter
     experiments = benchmarker.benchmarker(
         result_path=args.result_folder,
@@ -138,6 +156,8 @@ def run_benchmarker():
         #anonymize=args.anonymize,
         #unanonymize=args.unanonymize,
         numProcesses=args.numProcesses,
+        stream_id=stream_id,
+        stream_shuffle=stream_shuffle,
         seed=args.seed)
     # overwrite parameters of workload header
     if len(args.workload_intro):

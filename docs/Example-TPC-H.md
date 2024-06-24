@@ -49,7 +49,7 @@ If necessary, adjust the settings in the file `example/connections.py`:
 
 Run the command:
 
-`python benchmark.py run -e yes -b -f example/tpch`
+`dbmsbenchmarker run -e yes -b -f example/tpch`
 
 * `-e yes`: This will precompile some evaluations and generate the timer cube.
 * `-b`: This will suppress some output
@@ -77,6 +77,6 @@ Visit the address in a browser and select the experiment `<code>`.
 ## Where to go
 
 * Use different [DBMS](DBMS.html)
-* Add metadata
-* SF
-* Use Bexhoma: https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager
+* Add metadata: `-wli "This is my first test"`
+* Shuffle parameters: `-sid 2 -ssh True`: Sets the id of the stream to 2 and shuffles the ordering of query execution according to TPC-H
+* Use Bexhoma for management inside a kubernetes cluster: https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager

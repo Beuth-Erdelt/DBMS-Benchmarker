@@ -567,7 +567,8 @@ class benchmarker():
             # overwrites parts of query file - queries
             if tools.query.template is not None:
                 for i,q in enumerate(self.queryconfig['queries']):
-                    self.queryconfig['queries'][i] = {**q, **tools.query.template}
+                    self.queryconfig['queries'][i] = tools.joinDicts(q, tools.query.template)
+                    #self.queryconfig['queries'][i] = {**q, **tools.query.template}
                     with open(self.path+'/queries.config','w') as outp:
                         pprint.pprint(self.queryconfig, outp)
             self.queries = self.queryconfig["queries"].copy()
@@ -1184,7 +1185,7 @@ class benchmarker():
                         pool.close()
                     """
                     with mp.Pool(processes=numProcesses) as pool:
-                        self.logger.info("POOL of query senders (local pool starmap)")
+                        self.logger.info("POOL of query senders (local pool starmap {} workers)".format(numProcesses))
                         #multiple_results = [pool.apply_async(singleRun, (self.dbms[c].connectiondata, inputConfig, runs[i*batchsize:(i+1)*batchsize], connectionname, numQuery, self.path, JPickler.dumps(self.activeConnections))) for i in range(numBatches)]
                         args = [(self.dbms[c].connectiondata, inputConfig, runs[i*batchsize:(i+1)*batchsize], connectionname, numQuery, self.path, [], BENCHMARKER_VERBOSE_QUERIES, BENCHMARKER_VERBOSE_RESULTS, BENCHMARKER_VERBOSE_PROCESS) for i in range(numBatches)]
                         multiple_results = pool.starmap_async(singleRun, args)
