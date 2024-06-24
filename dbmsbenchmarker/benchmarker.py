@@ -1020,7 +1020,7 @@ class benchmarker():
                     self.logger.debug("Benchmarks of Q"+str(numQuery)+" at dbms "+connectionname+" not wanted right now")
                     return False
         # prepare basic setting
-        self.logger.info("Starting benchmarks of Q"+str(numQuery)+" at dbms "+connectionname)
+        self.logger.debug("Starting benchmarks of Q"+str(numQuery)+" at dbms "+connectionname)
         self.startBenchmarkingQuery(numQuery)
         q = self.queries[numQuery-1]
         c = connectionname
@@ -1040,6 +1040,7 @@ class benchmarker():
         if self.stream_id is not None:
             parameter.defaultParameters['STREAM'] = self.stream_id
         singleConnection = connectionmanagement['singleConnection']
+        #print(connectionmanagement)
         # overwrite by connection
         #if 'connectionmanagement' in self.dbms[c].connectiondata:
         #   connectionmanagement = self.dbms[c].connectiondata['connectionmanagement']
