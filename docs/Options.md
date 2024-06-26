@@ -35,12 +35,11 @@ How to configure the benchmarker can be illustrated best by looking at the sourc
 `python benchmark.py -h`
 
 ```
-usage: benchmark.py [-h] [-d] [-b] [-qf QUERY_FILE] [-cf CONNECTION_FILE] [-q QUERY] [-c CONNECTION] [-ca CONNECTION_ALIAS] [-f CONFIG_FOLDER] [-r RESULT_FOLDER] [-e {no,yes}] [-w {query,connection}] [-p NUMPROCESSES] [-s SEED] [-rcp RECREATE_PARAMETER] [-cs]
-                    [-ms MAX_SUBFOLDERS] [-sl SLEEP] [-st START_TIME] [-sf SUBFOLDER] [-sd {None,csv,pandas}] [-vq] [-vs] [-vr] [-vp] [-pn NUM_RUN] [-m] [-mps] [-sid STREAM_ID] [-ssh STREAM_SHUFFLE] [-wli WORKLOAD_INTRO] [-wln WORKLOAD_NAME]
-                    {run,read,continue}
+usage: dbmsbenchmarker [-h] [-d] [-b] [-qf QUERY_FILE] [-cf CONNECTION_FILE] [-q QUERY] [-c CONNECTION] [-ca CONNECTION_ALIAS] [-f CONFIG_FOLDER] [-r RESULT_FOLDER] [-e {no,yes}] [-w {query,connection}] [-p NUMPROCESSES] [-s SEED] [-cs] [-ms MAX_SUBFOLDERS]
+                       [-sl SLEEP] [-st START_TIME] [-sf SUBFOLDER] [-sd {None,csv,pandas}] [-vq] [-vs] [-vr] [-vp] [-pn NUM_RUN] [-m] [-mps] [-sid STREAM_ID] [-ssh STREAM_SHUFFLE] [-wli WORKLOAD_INTRO] [-wln WORKLOAD_NAME]
+                       {run,read,continue}
 
-DBMS-Benchmarker is a Python-based application-level blackbox benchmark tool for Database Management Systems (DBMS). It connects to a given list of DBMS (via JDBC) and runs a given list of parametrized and randomized (SQL) benchmark queries. Evaluations are available
-via Python interface, in reports and at an interactive multi-dimensional dashboard.
+A benchmark tool for RDBMS. It connects to a given list of RDBMS via JDBC and runs a given list benchmark queries. Optionally some reports are generated.
 
 positional arguments:
   {run,read,continue}   run benchmarks and save results, or just read benchmark results from folder, or continue with missing benchmarks only
@@ -70,8 +69,6 @@ optional arguments:
   -p NUMPROCESSES, --numProcesses NUMPROCESSES
                         Number of parallel client processes. Global setting, can be overwritten by connection. Default is 1.
   -s SEED, --seed SEED  random seed
-  -rcp RECREATE_PARAMETER, --recreate-parameter RECREATE_PARAMETER
-                        recreate parameter for randomized queries
   -cs, --copy-subfolder
                         copy subfolder of result folder
   -ms MAX_SUBFOLDERS, --max-subfolders MAX_SUBFOLDERS
@@ -87,11 +84,11 @@ optional arguments:
   -vq, --verbose-queries
                         print every query that is sent
   -vs, --verbose-statistics
-                        print statistics about query that have been sent
+                        print statistics about queries that have been sent
   -vr, --verbose-results
-                        print result sets of every query that have been sent
+                        print result sets of every query that has been sent
   -vp, --verbose-process
-                        print result sets of every query that have been sent
+                        print result sets of every query that has been sent
   -pn NUM_RUN, --num-run NUM_RUN
                         Parameter: Number of executions per query
   -m, --metrics         collect hardware metrics per query
