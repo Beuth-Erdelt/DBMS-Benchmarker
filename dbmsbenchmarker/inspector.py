@@ -528,14 +528,14 @@ class inspector():
         #else:
         self.queries_successful = tools.findSuccessfulQueriesAllDBMS(self.benchmarks, None, self.benchmarks.timers, dbms_filter)
         return self.queries_successful
-    def get_survey_successful(self, timername=None):
+    def get_survey_successful(self, timername=None, dbms_filter=[]):
         # list of active queries for timer e[0] = execution
         if not timername is None:
             epos = [i for i,t in enumerate(self.benchmarks.timers) if t.name==timername]
-            l = self.get_experiment_queries_successful()[epos[0]]
+            l = self.get_experiment_queries_successful(dbms_filter=dbms_filter)[epos[0]]
             return l
         else:
-            return self.get_experiment_queries_successful()
+            return self.get_experiment_queries_successful(dbms_filter=dbms_filter)
     def get_hardware_metrics(self, numQuery, metric, warmup=0, cooldown=0):
         return evaluator.dfMonitoringQ(numQuery, metric, warmup, cooldown)
         #hw = monitor.metrics(self.benchmarks)
