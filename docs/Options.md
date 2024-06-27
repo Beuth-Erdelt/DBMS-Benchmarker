@@ -261,12 +261,11 @@ For convenience, you can overwrite some metadata via command line.
 Metadata of a workload is set inside the query config file.
 There is a section, that defines if result sets should be retrieved and what happens after retrieval.
 For convenience, you can overwrite via command line, if result sets should be stored on disk locally.
-The parameter`--store-data` allows the settings csv or pandas (for pickled pandas DataFrame) to activate local storage and to set the format.
+The parameter `--store-data` allows the settings csv or pandas (for pickled pandas DataFrame) to activate local storage and to set the format.
 
 
 
 
-` --store-data`
 
 ## Query File
 
