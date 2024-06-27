@@ -21,7 +21,7 @@ We need
 * a suitable MySQL JDBC driver jar file
 * JDK 8 installed
 
-If necessary, adjust the settings in the file `example/connections.py`:
+If necessary, adjust the settings in the file `example/tpc-h/connections.py`:
 
 ```
 [
@@ -62,7 +62,7 @@ After benchmarking has been finished will see a message like
 Experiment <code> has been finished
 ```
 
-The script has created a result folder in the current directory containing the results. `<code>` is the name of the folder.
+The script has created a result folder in the current directory containing the results. `code` is the name of the folder.
 
 
 ### Evaluate Results in Dashboard
@@ -77,6 +77,6 @@ Visit the address in a browser and select the experiment `<code>`.
 ## Where to go
 
 * Use different [DBMS](DBMS.html)
-* Add metadata: `-wli "This is my first test"`
+* Add metadata: `-wli 'This is my first test'`
 * Shuffle parameters: `-sid 2 -ssh True`: Sets the id of the stream to 2 and shuffles the ordering of query execution according to TPC-H
 * Use Bexhoma for management inside a kubernetes cluster: https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager

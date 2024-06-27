@@ -261,7 +261,7 @@ That is we allow 20 (`-p`) parallel clients, which connect to the DBMS host to r
 Note the host of the benchmarking tool must be capable of 20 parallel processes.
 Also note this synchs all clients after each query (c.f. [Options](Options.html))
 
-Excerpt from `examples/tpch/queries.config`:
+Excerpt from `example/tpch/queries.config`:
 ```
 {
   'title': "Pricing Summary Report (TPC-H Q1)",
@@ -325,7 +325,7 @@ The time for connection, execution and data transfer will be measured.
 This is the same as the common TPC-H power test, but it works query-wise, that is it makes a reconnect after each query.
 
 
-## Few Users / Several simple Queries
+## Simulate Few Users / Several Simple Queries
 
 
 `dbmsbenchmarker run -f example/demo -e yes -b -p 4 -pn 20`
@@ -417,7 +417,7 @@ Excerpt from `queries.config`:
 
 ## Run benchmarks
 
-`python3 benchmark.py run -f test` generates a folder containing result files: csv of benchmarks per query.
+`dbmsbenchmarker run -f test` generates a folder containing result files: csv of benchmarks per query.
 The example uses `test/connections.config` and `test/queries.config` as config files.
 
 Example: This produces a folder containing
@@ -445,7 +445,7 @@ where
 
 ## Run benchmarks and generate evaluations
 
-`python3 benchmark.py run -e yes -f test` is the same as above, and additionally generates evaluation cube files.
+`dbmsbenchmarker run -e yes -f test` is the same as above, and additionally generates evaluation cube files.
 
 ```
 evaluation.dict
@@ -455,48 +455,48 @@ These can be inspected comfortably using the dashboard or the Python API.
 
 ## Read stored benchmarks
 
-`python3 benchmark.py read  -r 12345` reads files from folder `12345`containing result files and shows summaries of the results.       
+`dbmsbenchmarker read  -r 12345` reads files from folder `12345`containing result files and shows summaries of the results.       
 
 ## Generate evaluation of stored benchmarks
 
-`python3 benchmark.py read -r 12345 -e yes` reads files from folder `12345`  containing result files, and generates evaluation cubes.
+`dbmsbenchmarker read -r 12345 -e yes` reads files from folder `12345`  containing result files, and generates evaluation cubes.
 The example uses `12345/connections.config` and `12345/queries.config` as config files.
 
 ## Continue benchmarks
 
-`python3 benchmark.py continue -r 12345 -e yes` reads files from folder `12345` containing result files, continues to perform possibly missing benchmarks and generates evaluation cubes.
+`dbmsbenchmarker continue -r 12345 -e yes` reads files from folder `12345` containing result files, continues to perform possibly missing benchmarks and generates evaluation cubes.
 This is useful if a run had to be stopped. It continues automatically at the first missing query.
 It can be restricted to specific queries or connections using `-q` and `c` resp.
 The example uses `12345/connections.config` and `12345/queries.config` as config files.
 
 ### Continue benchmarks for more queries
 You would go to a result folder, say `12345`, and add queries to the query file.
-`python3 benchmark.py continue -r 12345 -g yes` then reads files from folder `12345` and continue benchmarking the new (missing) queries.
+`dbmsbenchmarker continue -r 12345 -g yes` then reads files from folder `12345` and continue benchmarking the new (missing) queries.
 
 **Do not remove existing queries, since results are mapped to queries via their number (position). Use `active` instead.**
 
 ### Continue benchmarks for more connections
 You would go to a result folder, say `12345`, and add connections to the connection file.
-`python3 benchmark.py continue -r 12345 -g yes` then reads files from folder `12345` and continue benchmarking the new (missing) connections.
+`dbmsbenchmarker continue -r 12345 -g yes` then reads files from folder `12345` and continue benchmarking the new (missing) connections.
 
 **Do not remove existing connections, since their results would not make any sense anymore. Use `active` instead.**
 
 ## Rerun benchmarks
 
-`python3 benchmark.py run -r 12345 -e yes` reads files from folder `12345` containing result files, performs benchmarks again and generates evaluation cubes.
+`dbmsbenchmarker run -r 12345 -e yes` reads files from folder `12345` containing result files, performs benchmarks again and generates evaluation cubes.
 It also performs benchmarks of missing queries.
 It can be restricted to specific queries or connections using `-q` and `c` resp.
 The example uses `12345/connections.config` and `12345/queries.config` as config files.
 
 ### Rerun benchmarks for one query
 
-`python3 benchmark.py run -r 12345 -e yes -q 5` reads files from folder `12345`containing result files, performs benchmarks again and generates evaluation cubes.
+`dbmsbenchmarker run -r 12345 -e yes -q 5` reads files from folder `12345`containing result files, performs benchmarks again and generates evaluation cubes.
 The example uses `12345/connections.config` and `12345/queries.config` as config files.
 In this example, query number 5 is benchmarked (again) in any case.
 
 ### Rerun benchmarks for one connection
 
-`python3 benchmark.py run -r 12345 -g yes -c MySQL` reads files from folder `12345`containing result files, performs benchmarks again and generates evaluation cubes.
+`dbmsbenchmarker run -r 12345 -g yes -c MySQL` reads files from folder `12345`containing result files, performs benchmarks again and generates evaluation cubes.
 The example uses `12345/connections.config` and `12345/queries.config` as config files.
 In this example, the connection named MySQL is benchmarked (again) in any case.
 

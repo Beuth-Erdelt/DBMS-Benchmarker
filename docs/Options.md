@@ -240,6 +240,34 @@ DBMSBenchmarker will wait until the given time is reached.
 
 This is in particular used by https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager for synching jobs of parallel benchmarker.
 
+### Shuffle Queries
+
+The default behaviour is, all queries are run in the order given by the query config file.
+The parameter `--stream-shuffle` shuffles the ordering randomly.
+In the query config file can be a section that predefines the (changed) ordering based on the number of the current stream (a la TPC).
+The number of the current stream can be set via `--stream-id`.
+Inside the query templates, there is a query parameter `STREAM`, that has default value of 1.
+If the id of the current stream has been changed via `--stream-id`, this parameter reflects that value.
+
+### Tag Results with Metadata
+
+Metadata of a workload is set inside the query config file.
+For convenience, you can overwrite some metadata via command line.
+`--workload-name` sets the name of the workload.
+`--workload-intro` sets some introduction information of the workload.
+
+### Store Result Sets
+
+Metadata of a workload is set inside the query config file.
+There is a section, that defines if result sets should be retrieved and what happens after retrieval.
+For convenience, you can overwrite via command line, if result sets should be stored on disk locally.
+The parameter`--store-data` allows the settings csv or pandas (for pickled pandas DataFrame) to activate local storage and to set the format.
+
+
+
+
+` --store-data`
+
 ## Query File
 
 Contains the queries to benchmark.

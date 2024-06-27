@@ -202,7 +202,7 @@ def run_benchmarker():
         dbms_filter = []
         if not args.connection is None:
             dbms_filter = [args.connection]
-        print(dbms_filter)
+        #print(dbms_filter)
         #list_queries = evaluate.get_experiment_queries_successful() # evaluate.get_experiment_list_queries()
         list_queries = evaluate.get_survey_successful(timername='execution', dbms_filter=dbms_filter)
         #print(list_queries, len(list_queries))
@@ -232,7 +232,7 @@ def run_benchmarker():
         #####################
         df = num_processes*float(len(list_queries))*3600./df
         if not df.empty:
-            print("### Queries per Hour (only successful) [QpH]")
+            print("### Queries per Hour (only successful) [QpH] - {}*{}*3600/(sum of max execution times)".format(int(num_processes), int(len(list_queries))))
             df.columns = ['queries per hour [Qph]']
             print(df)
 
