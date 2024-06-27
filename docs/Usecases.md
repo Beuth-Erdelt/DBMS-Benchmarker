@@ -317,30 +317,27 @@ The result sets will be truncated to no decimals, sorted and compared by their h
 The result set of the first run will be stored to disk as a pickled pandas dataframe.
 The time for connection, execution and data transfer will be measured.
 
+
 ## Reconnect after each Query
 
-`dbmsbenchmarker run -f tpc-h -e yes -b -w query`
+The parameter `--numProcesses`  can also be used to enforce a reconnect after each query.
+The follwing is the same as the common TPC-H power test, but it works query-wise, that is it makes a reconnect after each query.
 
+`dbmsbenchmarker run -f tpc-h -e yes -b -pn 1`
 
-This is the same as the common TPC-H power test, but it works query-wise, that is it makes a reconnect after each query.
+This behaviour might cahnge in future.
 
 
 ## Simulate Few Users / Several Simple Queries
 
-
 `dbmsbenchmarker run -f example/demo -e yes -b -p 4 -pn 20`
 
-That is we allow only one client at a time, which connects to the DBMS host to run 5 single queries.  
+That is we allow four clients at a time, which connect to the DBMS host to run 5 single queries each one after the other.  
 
 Excerpt from `example/demo/queries.config`:
 ```
 {
   'name': 'Demo query',
-  'connectionmanagement': {
-    'timeout': 600,
-    'numProcesses': 1,
-    'runsPerConnection': 5
-  },
   'queries':
   [
     {
@@ -367,10 +364,11 @@ Excerpt from `example/demo/queries.config`:
   ]
 }
 ```
-That is each simulated user counts the number of rows in table nations (five times per connection). We want to have 20 counts in total, so the simulated user (re)connects four times one after the other.
+That is each simulated user counts the number of rows in table nations (five times per connection).
 The result sets will be truncated to 4 decimals, sorted and compared.
 The result set of the first run will be stored to disk as a pickled pandas dataframe.
 The time for connection, execution and data transfer will be measured.
+
 
 ## Updated Database
 
