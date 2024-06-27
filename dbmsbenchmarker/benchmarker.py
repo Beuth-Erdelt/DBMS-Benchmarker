@@ -567,7 +567,8 @@ class benchmarker():
             # overwrites parts of query file - queries
             if tools.query.template is not None:
                 for i,q in enumerate(self.queryconfig['queries']):
-                    self.queryconfig['queries'][i] = {**q, **tools.query.template}
+                    self.queryconfig['queries'][i] = tools.joinDicts(q, tools.query.template)
+                    #self.queryconfig['queries'][i] = {**q, **tools.query.template}
                     with open(self.path+'/queries.config','w') as outp:
                         pprint.pprint(self.queryconfig, outp)
             self.queries = self.queryconfig["queries"].copy()
@@ -1444,6 +1445,8 @@ class benchmarker():
                 ordered_list_of_queries = list(ordered_list_of_queries)
                 random.shuffle(ordered_list_of_queries)
                 print("Ordering:", ordered_list_of_queries)
+        # a dict of connections, each carrying a list of connections to the dbms
+        connectionpool = dict()
         for numQuery in ordered_list_of_queries:
             if self.overwrite and not (self.fixedQuery is not None and self.fixedQuery != numQuery):# or (self.fixedConnection is not None and self.fixedConnection != connectionname):
                 # rerun this query
@@ -1456,23 +1459,33 @@ class benchmarker():
                     if('singleConnection' in connectionmanagement):# and connectionmanagement['timeout'] != 0):
                         singleConnection = connectionmanagement['singleConnection']
                 if singleConnection:
+                    if not connectionname in connectionpool:
+                        connectionpool[connectionname] = []
                     # we assume all queries should share a connection
                     numProcesses = 1
-                    i = 0
+                    i = len(connectionpool[connectionname])
+                    #i = 0
                     #connectionname = c
-                    if (self.fixedQuery is not None and self.fixedQuery != numQuery) or (self.fixedConnection is not None and self.fixedConnection != connectionname):
-                        continue
-                    else:
-                        print("More active connections from {} to {} for {}".format(len(self.activeConnections), numProcesses, connectionname))
-                        self.activeConnections.append(tools.dbms(self.dbms[connectionname].connectiondata))
-                        print("Establish global connection #"+str(i))
-                        self.activeConnections[i].connect()
+                    if i == 0:
+                        if (self.fixedQuery is not None and self.fixedQuery != numQuery) or (self.fixedConnection is not None and self.fixedConnection != connectionname):
+                            continue
+                        else:
+                            #print("More active connections from {} to {} for {}".format(len(self.activeConnections), numProcesses, connectionname))
+                            print("More active connections from {} to {} for {}".format(len(connectionpool[connectionname]), numProcesses, connectionname))
+                            #self.activeConnections.append(tools.dbms(self.dbms[connectionname].connectiondata))
+                            connectionpool[connectionname].append(tools.dbms(self.dbms[connectionname].connectiondata))
+                            print("Establish global connection #"+str(i))
+                            #self.activeConnections[i].connect()
+                            connectionpool[connectionname][i].connect()
+                    self.activeConnections = connectionpool[connectionname]
                 # run benchmark, current query and connection
                 bBenchmarkDoneForThisQuery = self.runBenchmark(numQuery, connectionname)
                 # close global connection
                 if singleConnection:
-                    print("Closed connection for", connectionname)
-                    self.activeConnections[i].disconnect()
+                    #print("Closed connection for", connectionname)
+                    #self.activeConnections[i].disconnect()
+                    #self.activeConnections = []
+                    #connectionpool[connectionname][i].disconnect()
                     self.activeConnections = []
                 # if benchmark has been done: store and generate reports
                 if bBenchmarkDoneForThisQuery:
@@ -1483,6 +1496,11 @@ class benchmarker():
                         for r in self.reporter:
                             r.init()
                             r.generate(numQuery, [self.timerExecution, self.timerTransfer, self.timerConnect])
+        if len(connectionpool):
+            # close all connections in pool
+            for connectionname in connectionpool.keys():
+                for i in range(len(connectionpool[connectionname])):
+                    connectionpool[connectionname][i].disconnect()
     def runBenchmarksConnection(self):
         """
         Performs connectionwise benchmark runs.

@@ -51,10 +51,11 @@ if __name__ == '__main__':
     parser.add_argument('-sl', '--sleep', help='sleep SLEEP seconds before going to work', default=0)
     parser.add_argument('-st', '--start-time', help='sleep until START-TIME before beginning benchmarking', default=None)
     parser.add_argument('-sf', '--subfolder', help='stores results in a SUBFOLDER of the result folder', default=None)
+    parser.add_argument('-sd', '--store-data', help='store result of first execution of each query', default=None, choices=[None, 'csv', 'pandas'])
     parser.add_argument('-vq', '--verbose-queries', help='print every query that is sent', action='store_true', default=False)
-    parser.add_argument('-vs', '--verbose-statistics', help='print statistics about query that have been sent', action='store_true', default=False)
-    parser.add_argument('-vr', '--verbose-results', help='print result sets of every query that have been sent', action='store_true', default=False)
-    parser.add_argument('-vp', '--verbose-process', help='print result sets of every query that have been sent', action='store_true', default=False)
+    parser.add_argument('-vs', '--verbose-statistics', help='print statistics about queries that have been sent', action='store_true', default=False)
+    parser.add_argument('-vr', '--verbose-results', help='print result sets of every query that has been sent', action='store_true', default=False)
+    parser.add_argument('-vp', '--verbose-process', help='print result sets of every query that has been sent', action='store_true', default=False)
     parser.add_argument('-pn', '--num-run', help='Parameter: Number of executions per query', default=0)
     parser.add_argument('-m', '--metrics', help='collect hardware metrics per query', action='store_true', default=False)
     parser.add_argument('-mps', '--metrics-per-stream', help='collect hardware metrics per stream', action='store_true', default=False)
@@ -137,10 +138,18 @@ if __name__ == '__main__':
     #    print("This is stream {}".format(stream_id))
     # overwrite parameters of workload queries
     if int(args.num_run) > 0:
-        querymanagement = {
-             'numRun': int(args.num_run),
-         }
-        tools.query.template = querymanagement
+        #querymanagement = {
+        #     'numRun': int(args.num_run),
+        #     'timer': {'datatransfer': {'store': 'csv'}},
+        #}
+        #tools.query.template = querymanagement
+        if not isinstance(tools.query.template, dict):
+            tools.query.template = {}
+        tools.query.template['numRun'] = int(args.num_run)
+    if args.store_data is not None:
+        if not isinstance(tools.query.template, dict):
+            tools.query.template = {}
+        tools.query.template['timer'] = {'datatransfer': {'store': args.store_data}}
     # dbmsbenchmarker with reporter
     experiments = benchmarker.benchmarker(
         result_path=args.result_folder,
@@ -197,25 +206,42 @@ if __name__ == '__main__':
         num_processes = min(float(args.numProcesses if not args.numProcesses is None else 1), float(args.num_run) if int(args.num_run) > 0 else 1)
         evaluate = inspector.inspector(result_folder)
         evaluate.load_experiment(experiments.code)
+        dbms_filter = []
+        if not args.connection is None:
+            dbms_filter = [args.connection]
+        #print(dbms_filter)
         #list_queries = evaluate.get_experiment_queries_successful() # evaluate.get_experiment_list_queries()
-        list_queries = evaluate.get_survey_successful(timername='execution')
+        list_queries = evaluate.get_survey_successful(timername='execution', dbms_filter=dbms_filter)
         #print(list_queries, len(list_queries))
+        #####################
         print("Number of runs per query:", int(args.num_run) if int(args.num_run) > 0 else 1)
         print("Number of successful queries:", len(list_queries))
         print("Number of max. parallel clients:", int(num_processes))
-        df = evaluate.get_aggregated_experiment_statistics(type='timer', name='execution', query_aggregate='Median', total_aggregate='Geo')
+        #####################
+        print("\n### Errors (failed queries)")
+        print(evaluate.get_total_errors().T)
+        #####################
+        print("\n### Warnings (result mismatch)")
+        print(evaluate.get_total_warnings().T)
+        #####################
+        df = evaluate.get_aggregated_experiment_statistics(type='timer', name='execution', query_aggregate='Median', total_aggregate='Geo', dbms_filter=dbms_filter)
         df = (df/1000.0).sort_index()
-        print("### Geometric Mean of Medians of Timer Run (only successful) [s]")
-        df.columns = ['average execution time [s]']
-        print(df)
-        df = evaluate.get_aggregated_experiment_statistics(type='timer', name='execution', query_aggregate='Max', total_aggregate='Sum').astype('float')/1000.
-        print("### Sum of Maximum Execution Times per Query (only successful) [s]")
-        df.columns = ['sum of max execution times [s]']
-        print(df)
+        if not df.empty:
+            print("### Geometric Mean of Medians of Timer Run (only successful) [s]")
+            df.columns = ['average execution time [s]']
+            print(df)
+        #####################
+        df = evaluate.get_aggregated_experiment_statistics(type='timer', name='execution', query_aggregate='Max', total_aggregate='Sum', dbms_filter=dbms_filter).astype('float')/1000.
+        if not df.empty:
+            print("### Sum of Maximum Execution Times per Query (only successful) [s]")
+            df.columns = ['sum of max execution times [s]']
+            print(df)
+        #####################
         df = num_processes*float(len(list_queries))*3600./df
-        print("### Queries per Hour (only successful) [QpH]")
-        df.columns = ['queries per hour [Qph]']
-        print(df)
+        if not df.empty:
+            print("### Queries per Hour (only successful) [QpH] - {}*{}*3600/(sum of max execution times)".format(int(num_processes), int(len(list_queries))))
+            df.columns = ['queries per hour [Qph]']
+            print(df)
 
 
 

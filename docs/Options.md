@@ -32,11 +32,11 @@ This is inspired by [TPC-H](http://www.tpc.org/tpch/) and [TPC-DS](http://www.tp
 
 How to configure the benchmarker can be illustrated best by looking at the source code of the command line tool `benchmark.py`, which will be described in the following.
 
-`python3 benchmark.py -h`
+`python benchmark.py -h`
 
 ```
-usage: dbmsbenchmarker [-h] [-d] [-b] [-qf QUERY_FILE] [-cf CONNECTION_FILE] [-q QUERY] [-c CONNECTION] [-ca CONNECTION_ALIAS] [-f CONFIG_FOLDER] [-r RESULT_FOLDER] [-e {no,yes}] [-w {query,connection}] [-p NUMPROCESSES] [-s SEED]
-                       [-cs] [-ms MAX_SUBFOLDERS] [-sl SLEEP] [-st START_TIME] [-sf SUBFOLDER] [-vq] [-vs] [-vr] [-vp] [-pn NUM_RUN] [-m] [-mps]
+usage: dbmsbenchmarker [-h] [-d] [-b] [-qf QUERY_FILE] [-cf CONNECTION_FILE] [-q QUERY] [-c CONNECTION] [-ca CONNECTION_ALIAS] [-f CONFIG_FOLDER] [-r RESULT_FOLDER] [-e {no,yes}] [-w {query,connection}] [-p NUMPROCESSES] [-s SEED] [-cs] [-ms MAX_SUBFOLDERS]
+                       [-sl SLEEP] [-st START_TIME] [-sf SUBFOLDER] [-sd {None,csv,pandas}] [-vq] [-vs] [-vr] [-vp] [-pn NUM_RUN] [-m] [-mps] [-sid STREAM_ID] [-ssh STREAM_SHUFFLE] [-wli WORKLOAD_INTRO] [-wln WORKLOAD_NAME]
                        {run,read,continue}
 
 A benchmark tool for RDBMS. It connects to a given list of RDBMS via JDBC and runs a given list benchmark queries. Optionally some reports are generated.
@@ -67,7 +67,7 @@ optional arguments:
   -w {query,connection}, --working {query,connection}
                         working per query or connection
   -p NUMPROCESSES, --numProcesses NUMPROCESSES
-                        Number of parallel client processes. Global setting, can be overwritten by connection.  Default is 1.
+                        Number of parallel client processes. Global setting, can be overwritten by connection. Default is 1.
   -s SEED, --seed SEED  random seed
   -cs, --copy-subfolder
                         copy subfolder of result folder
@@ -79,19 +79,29 @@ optional arguments:
                         sleep until START-TIME before beginning benchmarking
   -sf SUBFOLDER, --subfolder SUBFOLDER
                         stores results in a SUBFOLDER of the result folder
+  -sd {None,csv,pandas}, --store-data {None,csv,pandas}
+                        store result of first execution of each query
   -vq, --verbose-queries
                         print every query that is sent
   -vs, --verbose-statistics
-                        print statistics about query that have been sent
+                        print statistics about queries that have been sent
   -vr, --verbose-results
-                        print result sets of every query that have been sent
+                        print result sets of every query that has been sent
   -vp, --verbose-process
-                        print result sets of every query that have been sent
+                        print result sets of every query that has been sent
   -pn NUM_RUN, --num-run NUM_RUN
                         Parameter: Number of executions per query
   -m, --metrics         collect hardware metrics per query
   -mps, --metrics-per-stream
                         collect hardware metrics per stream
+  -sid STREAM_ID, --stream-id STREAM_ID
+                        id of a stream in parallel execution of streams
+  -ssh STREAM_SHUFFLE, --stream-shuffle STREAM_SHUFFLE
+                        shuffle query execution based on id of stream
+  -wli WORKLOAD_INTRO, --workload-intro WORKLOAD_INTRO
+                        meta data: intro text for workload description
+  -wln WORKLOAD_NAME, --workload-name WORKLOAD_NAME
+                        meta data: name of workload
 ```
 
 ### Result folder
@@ -229,6 +239,34 @@ The parameter `--sleep` can be used to set a start time.
 DBMSBenchmarker will wait until the given time is reached.
 
 This is in particular used by https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager for synching jobs of parallel benchmarker.
+
+### Shuffle Queries
+
+The default behaviour is, all queries are run in the order given by the query config file.
+The parameter `--stream-shuffle` shuffles the ordering randomly.
+In the query config file can be a section that predefines the (changed) ordering based on the number of the current stream (a la TPC).
+The number of the current stream can be set via `--stream-id`.
+Inside the query templates, there is a query parameter `STREAM`, that has default value of 1.
+If the id of the current stream has been changed via `--stream-id`, this parameter reflects that value.
+
+### Tag Results with Metadata
+
+Metadata of a workload is set inside the query config file.
+For convenience, you can overwrite some metadata via command line.
+`--workload-name` sets the name of the workload.
+`--workload-intro` sets some introduction information of the workload.
+
+### Store Result Sets
+
+Metadata of a workload is set inside the query config file.
+There is a section, that defines if result sets should be retrieved and what happens after retrieval.
+For convenience, you can overwrite via command line, if result sets should be stored on disk locally.
+The parameter`--store-data` allows the settings csv or pandas (for pickled pandas DataFrame) to activate local storage and to set the format.
+
+
+
+
+` --store-data`
 
 ## Query File
 
