@@ -202,10 +202,10 @@ if __name__ == '__main__':
         experiments.overwrite = True
         # show some evaluations
         evaluator.evaluator(experiments, load=False, force=True)
-        result_folder = args.result_folder if not args.result_folder is None else "./"
+        result_folder = experiments.path #args.result_folder if not args.result_folder is None else "./"
         num_processes = min(float(args.numProcesses if not args.numProcesses is None else 1), float(args.num_run) if int(args.num_run) > 0 else 1)
         evaluate = inspector.inspector(result_folder)
-        evaluate.load_experiment(experiments.code)
+        evaluate.load_experiment("")#experiments.code)
         dbms_filter = []
         if not args.connection is None:
             dbms_filter = [args.connection]
@@ -229,19 +229,29 @@ if __name__ == '__main__':
         if not df.empty:
             print("### Geometric Mean of Medians of Timer Run (only successful) [s]")
             df.columns = ['average execution time [s]']
-            print(df)
+            print(df.round(2))
+        #####################
+        #df = evaluate.get_aggregated_query_statistics(type='timer', name='connection', query_aggregate='Median', dbms_filter=dbms_filter)
+        df = evaluate.get_aggregated_experiment_statistics(type='timer', name='connection', query_aggregate='Median', total_aggregate='Geo', dbms_filter=dbms_filter)
+        df = (df/1000.0).sort_index()
+        if not df.empty:
+            print("### Geometric Mean of Medians of Timer Connection (only successful) [s]")
+            df.columns = ['average connection time [s]']
+            print(df.round(2))
+            #print("### Statistics of Timer Connection (only successful) [s]")
+            #df_stat = evaluator.addStatistics(df, drop_nan=False, drop_measures=True)
+            #print(df_stat.round(2))
         #####################
         df = evaluate.get_aggregated_experiment_statistics(type='timer', name='execution', query_aggregate='Max', total_aggregate='Sum', dbms_filter=dbms_filter).astype('float')/1000.
         if not df.empty:
             print("### Sum of Maximum Execution Times per Query (only successful) [s]")
             df.columns = ['sum of max execution times [s]']
-            print(df)
+            print(df.round(2))
         #####################
         df = num_processes*float(len(list_queries))*3600./df
         if not df.empty:
             print("### Queries per Hour (only successful) [QpH] - {}*{}*3600/(sum of max execution times)".format(int(num_processes), int(len(list_queries))))
             df.columns = ['queries per hour [Qph]']
-            print(df)
-
+            print(df.round(2))
 
 

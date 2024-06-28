@@ -315,7 +315,7 @@ class inspector():
             print("Unknown type")
             return None, None
         if df_stat.empty:
-            print("No data")
+            #print("No data")
             return df, df_stat
         if len(factor_base) > 0:
             df_stat = evaluator.addFactor(df_stat, factor_base)
