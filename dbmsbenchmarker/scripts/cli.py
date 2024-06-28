@@ -196,18 +196,25 @@ def run_benchmarker():
         # show some evaluations
         evaluator.evaluator(experiments, load=False, force=True)
         result_folder = experiments.path #args.result_folder if not args.result_folder is None else "./"
-        num_processes = min(float(args.numProcesses if not args.numProcesses is None else 1), float(args.num_run) if int(args.num_run) > 0 else 1)
+        #num_processes = min(float(args.numProcesses if not args.numProcesses is None else 1), float(args.num_run) if int(args.num_run) > 0 else 1)
         evaluate = inspector.inspector(result_folder)
         evaluate.load_experiment("")#experiments.code)
         dbms_filter = []
         if not args.connection is None:
             dbms_filter = [args.connection]
+        df = evaluate.get_timer(1, "execution")
+        if len(list(df.index)) > 0:
+            dbms_filter = list(df.index)
         #print(dbms_filter)
         #list_queries = evaluate.get_experiment_queries_successful() # evaluate.get_experiment_list_queries()
         list_queries = evaluate.get_survey_successful(timername='execution', dbms_filter=dbms_filter)
         #print(list_queries, len(list_queries))
+        num_run = experiments.connectionmanagement['numRun']
+        num_processes = experiments.connectionmanagement['numProcesses']
         #####################
-        print("Number of runs per query:", int(args.num_run) if int(args.num_run) > 0 else 1)
+        if len(dbms_filter) > 0:
+            print("Limited to:", dbms_filter)
+        print("Number of runs per query:", num_run)
         print("Number of successful queries:", len(list_queries))
         print("Number of max. parallel clients:", int(num_processes))
         #####################
@@ -217,23 +224,34 @@ def run_benchmarker():
         print("\n### Warnings (result mismatch)")
         print(evaluate.get_total_warnings().T)
         #####################
-        df = evaluate.get_aggregated_experiment_statistics(type='timer', name='execution', query_aggregate='Median', total_aggregate='Geo', dbms_filter=dbms_filter)
-        df = (df/1000.0).sort_index()
-        if not df.empty:
-            print("### Geometric Mean of Medians of Timer Run (only successful) [s]")
-            df.columns = ['average execution time [s]']
-            print(df.round(2))
-        #####################
         #df = evaluate.get_aggregated_query_statistics(type='timer', name='connection', query_aggregate='Median', dbms_filter=dbms_filter)
         df = evaluate.get_aggregated_experiment_statistics(type='timer', name='connection', query_aggregate='Median', total_aggregate='Geo', dbms_filter=dbms_filter)
         df = (df/1000.0).sort_index()
         if not df.empty:
-            print("### Geometric Mean of Medians of Timer Connection (only successful) [s]")
+            print("### Geometric Mean of Medians of Connection Times (only successful) [s]")
             df.columns = ['average connection time [s]']
             print(df.round(2))
             #print("### Statistics of Timer Connection (only successful) [s]")
             #df_stat = evaluator.addStatistics(df, drop_nan=False, drop_measures=True)
             #print(df_stat.round(2))
+        #####################
+        #df = evaluate.get_aggregated_query_statistics(type='timer', name='connection', query_aggregate='Median', dbms_filter=dbms_filter)
+        df = evaluate.get_aggregated_experiment_statistics(type='timer', name='connection', query_aggregate='Max', total_aggregate='Max', dbms_filter=dbms_filter)
+        df = (df/1000.0).sort_index()
+        if not df.empty:
+            print("### Max of Connection Times (only successful) [s]")
+            df.columns = ['average connection time [s]']
+            print(df.round(2))
+            #print("### Statistics of Timer Connection (only successful) [s]")
+            #df_stat = evaluator.addStatistics(df, drop_nan=False, drop_measures=True)
+            #print(df_stat.round(2))
+        #####################
+        df = evaluate.get_aggregated_experiment_statistics(type='timer', name='execution', query_aggregate='Median', total_aggregate='Geo', dbms_filter=dbms_filter)
+        df = (df/1000.0).sort_index()
+        if not df.empty:
+            print("### Geometric Mean of Medians of Execution Times (only successful) [s]")
+            df.columns = ['average execution time [s]']
+            print(df.round(2))
         #####################
         df = evaluate.get_aggregated_experiment_statistics(type='timer', name='execution', query_aggregate='Max', total_aggregate='Sum', dbms_filter=dbms_filter).astype('float')/1000.
         if not df.empty:

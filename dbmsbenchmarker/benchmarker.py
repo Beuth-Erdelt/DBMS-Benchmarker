@@ -391,6 +391,8 @@ class benchmarker():
             self.connectionmanagement['numProcesses'] = 1#math.ceil(mp.cpu_count()/2) #If None, half of all available processes is taken
         #else:
         #    self.connectionmanagement['numProcesses'] = int(self.numProcesses)
+        if not tools.query.template is None and 'numRun' in tools.query.template:
+            self.connectionmanagement['numRun'] = tools.query.template['numRun'] # store global setting about number of runs per query for archive purposes
         # connection should be renamed (because of copy to subfolder and parallel processing)
         # also rename alias
         self.rename_connection = rename_connection
@@ -600,6 +602,9 @@ class benchmarker():
                     self.queryconfig['defaultParameters'] = parameter.defaultParameters.copy()
             if 'defaultParameters' in self.queryconfig:
                 parameter.defaultParameters = self.queryconfig['defaultParameters']
+            self.queryconfig["connectionmanagement"] = self.connectionmanagement
+        # store query config again, since it might have been changed
+        self.store_querydata()
         for numQuery in range(1, len(self.queries)+1):
             self.protocol['query'][str(numQuery)] = {'errors':{}, 'warnings':{}, 'durations':{}, 'duration':0.0, 'start':'', 'end':'', 'dataStorage': [], 'resultSets': {}, 'parameter': [], 'sizes': {}, 'starts': {}, 'ends': {}, 'runs': []}
     def cleanProtocol(self, numQuery):
@@ -672,6 +677,10 @@ class benchmarker():
         #with open(self.path+'/connections_copy.config', "w") as connections_file:
         with open(self.path+'/connections.config', "w") as connections_file:
             connections_file.write(str(connections_content))
+    def store_querydata(self):
+        #print("store_querydata")
+        with open(self.path+'/queries.config', "w") as queries_file:
+            queries_file.write(str(self.queryconfig))
     def connectDBMSAll(self):
         """
         Connects to all dbms we have collected connection data of.
