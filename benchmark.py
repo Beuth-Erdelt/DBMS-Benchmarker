@@ -225,6 +225,7 @@ if __name__ == '__main__':
         print("Number of successful queries:", len(list_queries))
         print("Number of max. parallel clients:", int(num_processes))
         #####################
+        # , query_filter=list_queries
         print("\n### Errors (failed queries)")
         print(evaluate.get_total_errors(dbms_filter=dbms_filter).T)
         #####################

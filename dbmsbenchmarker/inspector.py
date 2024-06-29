@@ -478,14 +478,15 @@ class inspector():
         return tools.dataframehelper.evaluateNormalizedResultsizeToDataFrame(self.e.evaluation).T
     def get_total_resultsize(self):
         return tools.dataframehelper.evaluateResultsizeToDataFrame(self.e.evaluation).T
-    def get_total_errors(self, dbms_filter=[]):
+    def get_total_errors(self, dbms_filter=[], query_filter=[]):
         df = tools.dataframehelper.evaluateErrorsToDataFrame(self.e.evaluation).T
         if df is None:
             return pd.DataFrame()
         if len(dbms_filter)>0:
             df = df[df.index.isin(dbms_filter)]
+        # currently ignored: print(query_filter)
         return df
-    def get_total_warnings(self, dbms_filter=[]):
+    def get_total_warnings(self, dbms_filter=[], query_filter=[]):
         df = tools.dataframehelper.evaluateWarningsToDataFrame(self.e.evaluation).T
         if df is None:
             return pd.DataFrame()
