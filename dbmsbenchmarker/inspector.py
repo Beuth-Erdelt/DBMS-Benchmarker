@@ -478,10 +478,20 @@ class inspector():
         return tools.dataframehelper.evaluateNormalizedResultsizeToDataFrame(self.e.evaluation).T
     def get_total_resultsize(self):
         return tools.dataframehelper.evaluateResultsizeToDataFrame(self.e.evaluation).T
-    def get_total_errors(self):
-        return tools.dataframehelper.evaluateErrorsToDataFrame(self.e.evaluation).T
-    def get_total_warnings(self):
-        return tools.dataframehelper.evaluateWarningsToDataFrame(self.e.evaluation).T
+    def get_total_errors(self, dbms_filter=[]):
+        df = tools.dataframehelper.evaluateErrorsToDataFrame(self.e.evaluation).T
+        if df is None:
+            return pd.DataFrame()
+        if len(dbms_filter)>0:
+            df = df[df.index.isin(dbms_filter)]
+        return df
+    def get_total_warnings(self, dbms_filter=[]):
+        df = tools.dataframehelper.evaluateWarningsToDataFrame(self.e.evaluation).T
+        if df is None:
+            return pd.DataFrame()
+        if len(dbms_filter)>0:
+            df = df[df.index.isin(dbms_filter)]
+        return df
     def get_total_times(self, dbms_filter=[]):
         df, title = tools.dataframehelper.totalTimes(self.benchmarks, dbms_filter)
         if df is None:

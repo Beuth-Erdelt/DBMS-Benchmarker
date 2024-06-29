@@ -226,10 +226,10 @@ if __name__ == '__main__':
         print("Number of max. parallel clients:", int(num_processes))
         #####################
         print("\n### Errors (failed queries)")
-        print(evaluate.get_total_errors().T)
+        print(evaluate.get_total_errors(dbms_filter=dbms_filter).T)
         #####################
         print("\n### Warnings (result mismatch)")
-        print(evaluate.get_total_warnings().T)
+        print(evaluate.get_total_warnings(dbms_filter=dbms_filter).T)
         #####################
         #df = evaluate.get_aggregated_query_statistics(type='timer', name='connection', query_aggregate='Median', dbms_filter=dbms_filter)
         df = evaluate.get_aggregated_experiment_statistics(type='timer', name='connection', query_aggregate='Median', total_aggregate='Geo', dbms_filter=dbms_filter)
