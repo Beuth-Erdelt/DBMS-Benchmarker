@@ -21,6 +21,7 @@ import time
 from os import makedirs, path
 import random
 from datetime import datetime, timedelta
+import shutil
 
 from dbmsbenchmarker import *
 
@@ -62,8 +63,13 @@ def run_benchmarker():
     parser.add_argument('-wli', '--workload-intro', help='meta data: intro text for workload description', default='')
     parser.add_argument('-wln', '--workload-name', help='meta data: name of workload', default='')
     #parser.add_argument('-pt', '--timeout', help='Parameter: Timeout in seconds', default=0)
-    logger = logging.getLogger('dbmsbenchmarker')
+    #logger = logging.getLogger('dbmsbenchmarker')
     args = parser.parse_args()
+    command_args = vars(args)
+    benchmarker.run_cli(command_args)
+    #print(args)
+    exit()
+    """
     # evaluate args
     if args.debug:
         logging.basicConfig(level=logging.DEBUG)
@@ -76,29 +82,37 @@ def run_benchmarker():
         logger.debug("Sleeping {} seconds before going to work".format(int(args.sleep)))
         time.sleep(int(args.sleep))
     # make a copy of result folder
+    if not args.result_folder is None and not path.isdir(args.result_folder):
+        makedirs(args.result_folder)
+        shutil.copyfile(args.config_folder+'/connections.config', args.result_folder+'/connections.config')#args.connection_file)
+        shutil.copyfile(args.config_folder+'/queries.config', args.result_folder+'/queries.config')#args.query_file)
     subfolder = args.subfolder
     rename_connection = ''
     rename_alias = ''
     if args.copy_subfolder and len(subfolder) > 0:
-        client = 1
+        if args.stream_id is not None:
+            client = int(args.stream_id)
+        else:
+            client = 1
         while True:
             if args.max_subfolders is not None and client > int(args.max_subfolders):
                 exit()
             resultpath = args.result_folder+'/'+subfolder+'-'+str(client)
-            logger.debug("Checking if {} is suitable folder for free job number".format(resultpath))
+            print("Checking if {} is suitable folder for free job number".format(resultpath))
             if path.isdir(resultpath):
                 client = client + 1
                 waiting = random.randint(1, 10)
-                logger.debug("Sleeping {} seconds before checking for next free job number".format(waiting))
+                print("Sleeping {} seconds before checking for next free job number".format(waiting))
                 time.sleep(waiting)
             else:
+                print("{} is a suitable folder for free job number".format(resultpath))
                 makedirs(resultpath)
                 break
         subfolder = subfolder+'-'+str(client)
         rename_connection = args.connection+'-'+str(client)
-        logger.debug("Rename connection {} to {}".format(args.connection, rename_connection))
+        print("Rename connection {} to {}".format(args.connection, rename_connection))
         rename_alias = args.connection_alias+'-'+str(client)
-        logger.debug("Rename alias {} to {}".format(args.connection_alias, rename_alias))
+        print("Rename alias {} to {}".format(args.connection_alias, rename_alias))
     # sleep before going to work
     if args.start_time is not None:
         #logger.debug(args.start_time)
@@ -275,6 +289,7 @@ def run_benchmarker():
             print("### Queries per Hour (only successful) [QpH] - {}*{}*3600/(sum of max execution times)".format(int(num_processes), int(len(list_queries))))
             df.columns = ['queries per hour [Qph]']
             print(df.round(2))
+    """
 
 
 
