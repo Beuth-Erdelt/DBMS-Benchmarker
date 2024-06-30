@@ -199,12 +199,17 @@ def run_benchmarker():
         #num_processes = min(float(args.numProcesses if not args.numProcesses is None else 1), float(args.num_run) if int(args.num_run) > 0 else 1)
         evaluate = inspector.inspector(result_folder)
         evaluate.load_experiment("")#experiments.code)
+        list_queries_all = evaluate.get_experiment_list_queries()
+        #print(list_queries_all)
         dbms_filter = []
         if not args.connection is None:
             dbms_filter = [args.connection]
-        df = evaluate.get_timer(1, "execution")
-        if len(list(df.index)) > 0:
-            dbms_filter = list(df.index)
+        for q in list_queries_all:
+            df = evaluate.get_timer(q, "execution")
+            if len(list(df.index)) > 0:
+                dbms_filter = list(df.index)
+                print("First successful query: {}".format(q))
+                break
         #print(dbms_filter)
         #list_queries = evaluate.get_experiment_queries_successful() # evaluate.get_experiment_list_queries()
         list_queries = evaluate.get_survey_successful(timername='execution', dbms_filter=dbms_filter)
