@@ -221,8 +221,14 @@ if __name__ == '__main__':
         #list_queries = evaluate.get_experiment_queries_successful() # evaluate.get_experiment_list_queries()
         list_queries = evaluate.get_survey_successful(timername='execution', dbms_filter=dbms_filter)
         #print(list_queries, len(list_queries))
-        num_run = experiments.connectionmanagement['numRun']
-        num_processes = experiments.connectionmanagement['numProcesses']
+        if 'numRun' in experiments.connectionmanagement:
+            num_run = experiments.connectionmanagement['numRun']
+        else:
+            num_run = 1
+        if 'num_processes' in experiments.connectionmanagement:
+            num_processes = experiments.connectionmanagement['numProcesses']
+        else:
+            num_processes = 1
         #####################
         if len(dbms_filter) > 0:
             print("Limited to:", dbms_filter)
