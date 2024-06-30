@@ -481,6 +481,8 @@ def dfLatQ(query, warmup=0, cooldown=0):
     return df
 def addStatistics(dataframe, drop_nan=True, drop_measures=False):
     df = dataframe.copy().T
+    # treat 0 as missing value
+    df = df.replace(0., np.NaN)
     if drop_nan and df.isnull().any().any():
         #print("Missing!")
         with_nan = True
@@ -501,7 +503,9 @@ def addStatistics(dataframe, drop_nan=True, drop_measures=False):
     stat_last = df.iloc[len(df.dropna().index)-1]
     stat_sum = df.sum()
     #stat_geo = np.exp(np.log(df.prod(axis=0))/df.notna().sum(1))
-    stat_geo = stats.gmean(df.dropna(), axis=0)
+    #print("Geo", df)
+    # remove 0 and nan
+    stat_geo = stats.gmean(df.replace(0., np.NaN).dropna(), axis=0)
     stat_n = df.count(axis=0).array
     #df.loc['n']= len(df.index)
     df.loc['n']= stat_n

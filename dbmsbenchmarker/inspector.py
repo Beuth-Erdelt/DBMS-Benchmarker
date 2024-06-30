@@ -334,6 +334,7 @@ class inspector():
         for q in queries:
             column_new = 'Q{}'.format(q+1)
             df_measures, df_statistics = self.get_measures_and_statistics(q+1, type, name, dbms_filter, warmup, cooldown, factor_base)
+            #print(df_measures, df_statistics)
             if df_statistics.empty:
                 return pd.DataFrame()
             if df_aggregated is None:
@@ -349,6 +350,7 @@ class inspector():
                 return pd.DataFrame()
             if df.empty:
                 return df
+            #print(df)
             df_stat = evaluator.addStatistics(df, drop_nan=False, drop_measures=True)
             return pd.DataFrame(df_stat[total_aggregate]).rename(columns = {total_aggregate: "total_"+type+"_"+name})
         else:
