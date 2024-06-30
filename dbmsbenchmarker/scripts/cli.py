@@ -218,7 +218,7 @@ def run_benchmarker():
             num_run = experiments.connectionmanagement['numRun']
         else:
             num_run = 1
-        if 'num_processes' in experiments.connectionmanagement:
+        if 'numProcesses' in experiments.connectionmanagement:
             num_processes = experiments.connectionmanagement['numProcesses']
         else:
             num_processes = 1
