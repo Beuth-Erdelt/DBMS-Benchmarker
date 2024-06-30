@@ -240,7 +240,7 @@ def run_benchmarker():
         df = (df/1000.0).sort_index()
         if not df.empty:
             print("### Max of Connection Times (only successful) [s]")
-            df.columns = ['average connection time [s]']
+            df.columns = ['max connection time [s]']
             print(df.round(2))
             #print("### Statistics of Timer Connection (only successful) [s]")
             #df_stat = evaluator.addStatistics(df, drop_nan=False, drop_measures=True)

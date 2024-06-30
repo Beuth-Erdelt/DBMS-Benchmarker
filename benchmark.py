@@ -225,7 +225,6 @@ if __name__ == '__main__':
         print("Number of successful queries:", len(list_queries))
         print("Number of max. parallel clients:", int(num_processes))
         #####################
-        # , query_filter=list_queries
         print("\n### Errors (failed queries)")
         print(evaluate.get_total_errors(dbms_filter=dbms_filter).T)
         #####################
@@ -248,7 +247,7 @@ if __name__ == '__main__':
         df = (df/1000.0).sort_index()
         if not df.empty:
             print("### Max of Connection Times (only successful) [s]")
-            df.columns = ['average connection time [s]']
+            df.columns = ['max connection time [s]']
             print(df.round(2))
             #print("### Statistics of Timer Connection (only successful) [s]")
             #df_stat = evaluator.addStatistics(df, drop_nan=False, drop_measures=True)
@@ -272,3 +271,4 @@ if __name__ == '__main__':
             print("### Queries per Hour (only successful) [QpH] - {}*{}*3600/(sum of max execution times)".format(int(num_processes), int(len(list_queries))))
             df.columns = ['queries per hour [Qph]']
             print(df.round(2))
+
