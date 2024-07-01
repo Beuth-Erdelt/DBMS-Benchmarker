@@ -2034,6 +2034,11 @@ def run_cli(parameter):
         command_args['parallel_processes'] = False
         command_args['numProcesses'] = None
         command_args['result_folder'] = code
+        # Get the current UTC time
+        current_time = datetime.datetime.utcnow()
+        # Add 5 seconds to the current time
+        start_time = current_time + datetime.timedelta(seconds=5)
+        command_args['start_time'] = start_time.strftime('%Y-%m-%d %H:%M:%S')
         #command_args['stream_id'] = 1
         pool_args = []#(dict(command_args),)]*numProcesses
         for i in range(numProcesses):
@@ -2088,7 +2093,22 @@ def run_cli(parameter):
             )
             experiments.getConfig()
             experiments.readBenchmarks()
-            run_evaluation(experiments)
+            evaluate = run_evaluation(experiments)
+            #print(evaluate)
+            #list_connections = evaluate.get_experiment_list_connections()
+            #print(list_connections)
+            """
+            benchmarker_times = evaluate.get_experiment_connection_properties(list_connections[0])['times']['total']
+            # compute min of start and max of end for timespan
+            times_start=[]
+            times_end=[]
+            for t in benchmarker_times:
+                times_start.append(benchmarker_times[t]['time_start'])
+                times_end.append(benchmarker_times[t]['time_end'])
+            time_start = min(times_start)
+            time_end = max(times_end)
+            print(time_start, time_end, time_end-time_start)
+            """
             return experiments
     else:
         if args.mode != 'read':
@@ -2128,16 +2148,16 @@ def run_cli(parameter):
             # sleep before going to work
             if args.start_time is not None:
                 #logger.debug(args.start_time)
-                now = datetime.utcnow()
+                now = datetime.datetime.utcnow()
                 try:
-                    start = datetime.strptime(args.start_time, '%Y-%m-%d %H:%M:%S')
+                    start = datetime.datetime.strptime(args.start_time, '%Y-%m-%d %H:%M:%S')
                     if start > now:
                         wait = (start-now).seconds
                         now_string = now.strftime('%Y-%m-%d %H:%M:%S')
-                        logger.debug("Sleeping until {} before going to work ({} seconds, it is {} now)".format(args.start_time, wait, now_string))
+                        print("Sleeping until {} before going to work ({} seconds, it is {} now)".format(args.start_time, wait, now_string))
                         time.sleep(int(wait))
                 except Exception as e:
-                    logger.debug("Invalid format: {}".format(args.start_time))
+                    print("Invalid format: {}".format(args.start_time))
         # set verbose level
         if args.verbose_queries:
             benchmarker.BENCHMARKER_VERBOSE_QUERIES = True
@@ -2289,24 +2309,88 @@ def run_evaluation(experiments):
             #df_stat = evaluator.addStatistics(df, drop_nan=False, drop_measures=True)
             #print(df_stat.round(2))
         #####################
-        df = evaluate.get_aggregated_experiment_statistics(type='timer', name='execution', query_aggregate='Median', total_aggregate='Geo', dbms_filter=dbms_filter)
+        df = evaluate.get_aggregated_experiment_statistics(type='timer', name='run', query_aggregate='Median', total_aggregate='Geo', dbms_filter=dbms_filter)
         df = (df/1000.0).sort_index()
         if not df.empty:
-            print("### Geometric Mean of Medians of Execution Times (only successful) [s]")
-            df.columns = ['average execution time [s]']
+            print("### Geometric Mean of Medians of Run Times (only successful) [s]")
+            df.columns = ['average run time [s]']
             print(df.round(2))
         #####################
-        df = evaluate.get_aggregated_experiment_statistics(type='timer', name='execution', query_aggregate='Max', total_aggregate='Sum', dbms_filter=dbms_filter).astype('float')/1000.
+        df = evaluate.get_aggregated_experiment_statistics(type='timer', name='run', query_aggregate='Max', total_aggregate='Sum', dbms_filter=dbms_filter).astype('float')/1000.
         if not df.empty:
-            print("### Sum of Maximum Execution Times per Query (only successful) [s]")
-            df.columns = ['sum of max execution times [s]']
+            print("### Sum of Maximum Run Times per Query (only successful) [s]")
+            df.columns = ['sum of max run times [s]']
             print(df.round(2))
         #####################
         df = num_processes*float(len(list_queries))*3600./df
         if not df.empty:
-            print("### Queries per Hour (only successful) [QpH] - {}*{}*3600/(sum of max execution times)".format(int(num_processes), int(len(list_queries))))
+            print("### Queries per Hour (only successful) [QpH] - {}*{}*3600/(sum of max run times)".format(int(num_processes), int(len(list_queries))))
             df.columns = ['queries per hour [Qph]']
             print(df.round(2))
+        df_tpx = df.copy()
+        #####################
+        times_start = dict()
+        times_end = dict()
+        times_numbers = dict()
+        tpx_sum = dict()
+        #times = experiments.protocol['query']
+        #print(times)
+        for connection_nr, connection in evaluate.benchmarks.dbms.items():
+            df_time = pd.DataFrame()
+            c = connection.connectiondata
+            #print(c)
+            #connection_name = c['name']
+            #orig_name = c['orig_name']
+            benchmarker_times = evaluate.get_experiment_connection_properties(c['name'])['times']['total']
+            #print(benchmarker_times)
+            if 'orig_name' in c:
+                if not c['orig_name'] in tpx_sum:
+                    tpx_sum[c['orig_name']] = 0
+                tpx_sum[c['orig_name']] = tpx_sum[c['orig_name']] + df_tpx.loc[c['name']]['queries per hour [Qph]']
+                #print(c['orig_name'])
+                if not c['orig_name'] in times_start:
+                    times_start[c['orig_name']] = []
+                    times_end[c['orig_name']] = []
+                    times_numbers[c['orig_name']] = 0
+                times_numbers[c['orig_name']] = times_numbers[c['orig_name']] + 1
+                for q in experiments.protocol['query']:
+                    #print(experiments.protocol['query'][q])
+                    #print(q, experiments.protocol['query'][q]['starts'], experiments.protocol['query'][q]['ends'])
+                    times = experiments.protocol['query'][q]
+                    if "ends" in times and c['name'] in times["ends"]:
+                        time_start = int(datetime.datetime.timestamp(datetime.datetime.strptime(times["starts"][c['name']],'%Y-%m-%d %H:%M:%S.%f')))
+                        time_end = int(datetime.datetime.timestamp(datetime.datetime.strptime(times["ends"][c['name']],'%Y-%m-%d %H:%M:%S.%f')))
+                        times_start[c['orig_name']].append(time_start)
+                        times_end[c['orig_name']].append(time_end)
+                        #times_start[time_start] = i
+                        #times_end[time_end] = i
+                #for t in benchmarker_times:
+                #    times_start[c['orig_name']].append(benchmarker_times[t]['time_start'])
+                #    times_end[c['orig_name']].append(benchmarker_times[t]['time_end'])
+        if len(tpx_sum) > 0:
+            print("### Queries per Hour (only successful) [QpH] - Sum per DBMS")
+            df = pd.DataFrame.from_dict(tpx_sum, orient='index', columns=['queries per hour [Qph]'])
+            df.index.name = 'DBMS'
+            print(df.round(2))
+        tpx_total = dict()
+        if len(times_start) > 0:
+            for c in times_start:
+                #print(c, times_start[c], times_end[c])
+                time_start = min(times_start[c])
+                time_end = max(times_end[c])
+                time_span = time_end-time_start
+                num_results = times_numbers[c]
+                tpx = round(num_results*float(len(list_queries))*3600./(time_span), 2)
+                #print(c, time_start, time_end, time_span, tpx)
+                #print("{}: {}*{}*3600/{} = {}".format(c, num_results, int(len(list_queries)), time_span, tpx))
+                tpx_total[c] = {'queries per hour [Qph]': tpx, 'formula': "{}*{}*3600/{}".format(num_results, int(len(list_queries)), time_span)}
+            #print(tpx_total)
+            if len(tpx_total) > 0:
+                print("### Queries per Hour (only successful) [QpH] - (max end - min start)")
+                df = pd.DataFrame.from_dict(tpx_total, orient='index')#, columns=['queries per hour [Qph]'])
+                df.index.name = 'DBMS'
+                print(df)
+        return evaluate
 
 
 
