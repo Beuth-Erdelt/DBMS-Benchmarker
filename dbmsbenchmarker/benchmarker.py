@@ -2219,6 +2219,7 @@ def run_cli(parameter):
             # generate evaluation cube
             experiments.overwrite = True
             evaluator.evaluator(experiments, load=False, force=True)
+            run_evaluation(experiments)
         return experiments
 
 def run_evaluation(experiments):
