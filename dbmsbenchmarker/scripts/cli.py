@@ -44,6 +44,7 @@ def run_benchmarker():
     #parser.add_argument('-a', '--anonymize', help='anonymize all dbms', action='store_true', default=False)
     #parser.add_argument('-u', '--unanonymize', help='unanonymize some dbms, only sensible in combination with anonymize', nargs='*', default=[])
     parser.add_argument('-p', '--numProcesses', help='Number of parallel client processes. Global setting, can be overwritten by connection. Default is 1.', default=None)
+    parser.add_argument('-pp', '--parallel-processes', help='if parallel execution should be organized as independent processes', action='store_true')
     parser.add_argument('-s', '--seed', help='random seed', default=None)
     parser.add_argument('-cs', '--copy-subfolder', help='copy subfolder of result folder', action='store_true')
     parser.add_argument('-ms', '--max-subfolders', help='maximum number of subfolders of result folder', default=None)
@@ -66,7 +67,9 @@ def run_benchmarker():
     #logger = logging.getLogger('dbmsbenchmarker')
     args = parser.parse_args()
     command_args = vars(args)
-    benchmarker.run_cli(command_args)
+    experiments = benchmarker.run_cli(command_args)
+    #if args.generate_evaluation == 'yes':
+    #    benchmarker.run_evaluation(experiments)
     #print(args)
     exit()
     """

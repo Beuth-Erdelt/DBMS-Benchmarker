@@ -2016,136 +2016,214 @@ def run_cli(parameter):
     else:
         logging.basicConfig(level=logging.INFO)
         bBatch = args.batch
-    # sleep before going to work
-    if int(args.sleep) > 0:
-        logger.debug("Sleeping {} seconds before going to work".format(int(args.sleep)))
-        time.sleep(int(args.sleep))
-    # make a copy of result folder
-    if not args.result_folder is None and not path.isdir(args.result_folder):
-        makedirs(args.result_folder)
-        shutil.copyfile(args.config_folder+'/connections.config', args.result_folder+'/connections.config')#args.connection_file)
-        shutil.copyfile(args.config_folder+'/queries.config', args.result_folder+'/queries.config')#args.query_file)
     subfolder = args.subfolder
     rename_connection = ''
     rename_alias = ''
-    if args.copy_subfolder and len(subfolder) > 0:
-        if args.stream_id is not None:
-            client = int(args.stream_id)
-        else:
-            client = 1
-        while True:
-            if args.max_subfolders is not None and client > int(args.max_subfolders):
-                exit()
-            resultpath = args.result_folder+'/'+subfolder+'-'+str(client)
-            print("Checking if {} is suitable folder for free job number".format(resultpath))
-            if path.isdir(resultpath):
-                client = client + 1
-                waiting = random.randint(1, 10)
-                print("Sleeping {} seconds before checking for next free job number".format(waiting))
-                time.sleep(waiting)
+    if args.parallel_processes and args.numProcesses is not None:
+        numProcesses = int(args.numProcesses)
+        print("Start {} independent processes".format(numProcesses))
+        code = str(round(time.time()))
+        # make a copy of result folder
+        #if not args.result_folder is None and not path.isdir(args.result_folder):
+        result_folder = code
+        makedirs(result_folder)
+        copyfile(args.config_folder+'/connections.config', result_folder+'/connections.config')#args.connection_file)
+        copyfile(args.config_folder+'/queries.config', result_folder+'/queries.config')#args.query_file)
+        command_args = vars(args)
+        #del command_args['parallel_processes']
+        command_args['parallel_processes'] = False
+        command_args['numProcesses'] = None
+        command_args['result_folder'] = code
+        #command_args['stream_id'] = 1
+        pool_args = []#(dict(command_args),)]*numProcesses
+        for i in range(numProcesses):
+            command_args['stream_id'] = i+1
+            pool_args.append((dict(command_args),))
+            #pool_args[i][0]['stream_id'] = i+1
+        #print(pool_args[0][0]['stream_id'])
+        #exit()
+        #print(command_args)
+        #print(pool_args)
+        #exit()
+        # Create a pool of subprocesses
+        #with Pool(processes=4) as pool:  # Adjust the number of processes as needed
+        with mp.Pool(processes=int(numProcesses)) as pool:
+            # Map the arguments to the subprocess function
+            #results = pool.map("scripts.cli", [command_args]*4)  # Run the same args in 4 subprocesses
+            multiple_results = pool.starmap_async(run_cli, pool_args)
+            #multiple_results = pool.starmap_async(benchmarker.run_cli, [(k:v) for k,d in command_args.items()])
+            lists = multiple_results.get()#timeout=timeout)
+            #lists = [res.get(timeout=timeout) for res in multiple_results]
+            #lists = [i for j in lists for i in j]
+            #print(lists)
+            pool.close()
+            pool.join()
+        # Print results
+        #for stdout, stderr in multiple_results:
+        #    print("STDOUT:", stdout)
+        #    print("STDERR:", stderr)
+        tools.merge_partial_results("./", code)
+        if args.generate_evaluation == 'yes':
+            #evaluator.evaluation = {}
+            #command_args['mode'] = 'read'
+            #command_args['result_folder'] = code
+            #experiments = benchmarker.run_cli(command_args)
+            experiments = benchmarker(
+                result_path=args.result_folder,
+                code=code,
+                #working=args.working,
+                batch=bBatch,
+                #subfolder=subfolder,#args.subfolder,
+                fixedQuery=args.query,
+                fixedConnection=args.connection,
+                fixedAlias=args.connection_alias,
+                #rename_connection=rename_connection,
+                #rename_alias=rename_alias,
+                #anonymize=args.anonymize,
+                #unanonymize=args.unanonymize,
+                #numProcesses=args.numProcesses,
+                #stream_id=stream_id,
+                #stream_shuffle=stream_shuffle,
+                #seed=args.seed
+            )
+            experiments.getConfig()
+            experiments.readBenchmarks()
+            run_evaluation(experiments)
+            return experiments
+    else:
+        if args.mode != 'read':
+            # sleep before going to work
+            if int(args.sleep) > 0:
+                logger.debug("Sleeping {} seconds before going to work".format(int(args.sleep)))
+                time.sleep(int(args.sleep))
+            # make a copy of result folder
+            if not args.result_folder is None and not path.isdir(args.result_folder):
+                makedirs(args.result_folder)
+                copyfile(args.config_folder+'/connections.config', args.result_folder+'/connections.config')#args.connection_file)
+                copyfile(args.config_folder+'/queries.config', args.result_folder+'/queries.config')#args.query_file)
+            if args.copy_subfolder and len(subfolder) > 0:
+                if args.stream_id is not None:
+                    client = int(args.stream_id)
+                else:
+                    client = 1
+                while True:
+                    if args.max_subfolders is not None and client > int(args.max_subfolders):
+                        exit()
+                    resultpath = args.result_folder+'/'+subfolder+'-'+str(client)
+                    print("Checking if {} is suitable folder for free job number".format(resultpath))
+                    if path.isdir(resultpath):
+                        client = client + 1
+                        waiting = random.randint(1, 10)
+                        print("Sleeping {} seconds before checking for next free job number".format(waiting))
+                        time.sleep(waiting)
+                    else:
+                        print("{} is a suitable folder for free job number".format(resultpath))
+                        makedirs(resultpath)
+                        break
+                subfolder = subfolder+'-'+str(client)
+                rename_connection = args.connection+'-'+str(client)
+                print("Rename connection {} to {}".format(args.connection, rename_connection))
+                rename_alias = args.connection_alias+'-'+str(client)
+                print("Rename alias {} to {}".format(args.connection_alias, rename_alias))
+            # sleep before going to work
+            if args.start_time is not None:
+                #logger.debug(args.start_time)
+                now = datetime.utcnow()
+                try:
+                    start = datetime.strptime(args.start_time, '%Y-%m-%d %H:%M:%S')
+                    if start > now:
+                        wait = (start-now).seconds
+                        now_string = now.strftime('%Y-%m-%d %H:%M:%S')
+                        logger.debug("Sleeping until {} before going to work ({} seconds, it is {} now)".format(args.start_time, wait, now_string))
+                        time.sleep(int(wait))
+                except Exception as e:
+                    logger.debug("Invalid format: {}".format(args.start_time))
+        # set verbose level
+        if args.verbose_queries:
+            benchmarker.BENCHMARKER_VERBOSE_QUERIES = True
+        if args.verbose_statistics:
+            benchmarker.BENCHMARKER_VERBOSE_STATISTICS = True
+        if args.verbose_results:
+            benchmarker.BENCHMARKER_VERBOSE_RESULTS = True
+        if args.verbose_process:
+            benchmarker.BENCHMARKER_VERBOSE_PROCESS = True
+        # handle parallel streams
+        stream_id = args.stream_id
+        stream_shuffle = args.stream_shuffle
+        #if stream_shuffle is not None and stream_shuffle:
+        #    print("User wants shuffled queries")
+        #if stream_id is not None and stream_id:
+        #    print("This is stream {}".format(stream_id))
+        # overwrite parameters of workload queries
+        if int(args.num_run) > 0:
+            #querymanagement = {
+            #     'numRun': int(args.num_run),
+            #     'timer': {'datatransfer': {'store': 'csv'}},
+            #}
+            #tools.query.template = querymanagement
+            if not isinstance(tools.query.template, dict):
+                tools.query.template = {}
+            tools.query.template['numRun'] = int(args.num_run)
+        if args.store_data is not None:
+            if not isinstance(tools.query.template, dict):
+                tools.query.template = {}
+            tools.query.template['timer'] = {'datatransfer': {'store': args.store_data}}
+        # dbmsbenchmarker with reporter
+        experiments = benchmarker(
+            result_path=args.result_folder,
+            working=args.working,
+            batch=bBatch,
+            subfolder=subfolder,#args.subfolder,
+            fixedQuery=args.query,
+            fixedConnection=args.connection,
+            fixedAlias=args.connection_alias,
+            rename_connection=rename_connection,
+            rename_alias=rename_alias,
+            #anonymize=args.anonymize,
+            #unanonymize=args.unanonymize,
+            numProcesses=args.numProcesses,
+            stream_id=stream_id,
+            stream_shuffle=stream_shuffle,
+            seed=args.seed)
+        # overwrite parameters of workload header
+        if len(args.workload_intro):
+            experiments.workload['intro'] = args.workload_intro
+        if len(args.workload_name):
+            experiments.workload['name'] = args.workload_name
+        experiments.getConfig(args.config_folder, args.connection_file, args.query_file)
+        # switch for args.mode
+        if args.mode == 'read':
+            experiments.readBenchmarks()
+        elif args.mode == 'run':
+            if experiments.continuing:
+                #experiments.generateAllParameters()
+                experiments.continueBenchmarks(overwrite = True)
             else:
-                print("{} is a suitable folder for free job number".format(resultpath))
-                makedirs(resultpath)
-                break
-        subfolder = subfolder+'-'+str(client)
-        rename_connection = args.connection+'-'+str(client)
-        print("Rename connection {} to {}".format(args.connection, rename_connection))
-        rename_alias = args.connection_alias+'-'+str(client)
-        print("Rename alias {} to {}".format(args.connection_alias, rename_alias))
-    # sleep before going to work
-    if args.start_time is not None:
-        #logger.debug(args.start_time)
-        now = datetime.utcnow()
-        try:
-            start = datetime.strptime(args.start_time, '%Y-%m-%d %H:%M:%S')
-            if start > now:
-                wait = (start-now).seconds
-                now_string = now.strftime('%Y-%m-%d %H:%M:%S')
-                logger.debug("Sleeping until {} before going to work ({} seconds, it is {} now)".format(args.start_time, wait, now_string))
-                time.sleep(int(wait))
-        except Exception as e:
-            logger.debug("Invalid format: {}".format(args.start_time))
-    # set verbose level
-    if args.verbose_queries:
-        benchmarker.BENCHMARKER_VERBOSE_QUERIES = True
-    if args.verbose_statistics:
-        benchmarker.BENCHMARKER_VERBOSE_STATISTICS = True
-    if args.verbose_results:
-        benchmarker.BENCHMARKER_VERBOSE_RESULTS = True
-    if args.verbose_process:
-        benchmarker.BENCHMARKER_VERBOSE_PROCESS = True
-    # handle parallel streams
-    stream_id = args.stream_id
-    stream_shuffle = args.stream_shuffle
-    #if stream_shuffle is not None and stream_shuffle:
-    #    print("User wants shuffled queries")
-    #if stream_id is not None and stream_id:
-    #    print("This is stream {}".format(stream_id))
-    # overwrite parameters of workload queries
-    if int(args.num_run) > 0:
-        #querymanagement = {
-        #     'numRun': int(args.num_run),
-        #     'timer': {'datatransfer': {'store': 'csv'}},
-        #}
-        #tools.query.template = querymanagement
-        if not isinstance(tools.query.template, dict):
-            tools.query.template = {}
-        tools.query.template['numRun'] = int(args.num_run)
-    if args.store_data is not None:
-        if not isinstance(tools.query.template, dict):
-            tools.query.template = {}
-        tools.query.template['timer'] = {'datatransfer': {'store': args.store_data}}
-    # dbmsbenchmarker with reporter
-    experiments = benchmarker(
-        result_path=args.result_folder,
-        working=args.working,
-        batch=bBatch,
-        subfolder=subfolder,#args.subfolder,
-        fixedQuery=args.query,
-        fixedConnection=args.connection,
-        fixedAlias=args.connection_alias,
-        rename_connection=rename_connection,
-        rename_alias=rename_alias,
-        #anonymize=args.anonymize,
-        #unanonymize=args.unanonymize,
-        numProcesses=args.numProcesses,
-        stream_id=stream_id,
-        stream_shuffle=stream_shuffle,
-        seed=args.seed)
-    # overwrite parameters of workload header
-    if len(args.workload_intro):
-        experiments.workload['intro'] = args.workload_intro
-    if len(args.workload_name):
-        experiments.workload['name'] = args.workload_name
-    experiments.getConfig(args.config_folder, args.connection_file, args.query_file)
-    # switch for args.mode
-    if args.mode == 'read':
-        experiments.readBenchmarks()
-    elif args.mode == 'run':
-        if experiments.continuing:
-            #experiments.generateAllParameters()
-            experiments.continueBenchmarks(overwrite = True)
-        else:
-            #experiments.generateAllParameters()
-            experiments.runBenchmarks()
-        print('Experiment {} has been finished'.format(experiments.code))
-    elif args.mode == 'continue':
-        if experiments.continuing:
-            experiments.continueBenchmarks(overwrite = False)
-        else:
-            print("Continue needs result folder")
-    if args.metrics:
-        # collect hardware metrics
-        experiments.reporter.append(metricer(experiments))
-        experiments.generateReportsAll()
-    if args.metrics_per_stream:
-        # collect hardware metrics
-        experiments.reporter.append(metricer(experiments, per_stream=True))
-        experiments.generateReportsAll()
-    if args.generate_evaluation == 'yes':
+                #experiments.generateAllParameters()
+                experiments.runBenchmarks()
+            print('Experiment {} has been finished'.format(experiments.code))
+        elif args.mode == 'continue':
+            if experiments.continuing:
+                experiments.continueBenchmarks(overwrite = False)
+            else:
+                print("Continue needs result folder")
+        if args.metrics:
+            # collect hardware metrics
+            experiments.reporter.append(metricer(experiments))
+            experiments.generateReportsAll()
+        if args.metrics_per_stream:
+            # collect hardware metrics
+            experiments.reporter.append(metricer(experiments, per_stream=True))
+            experiments.generateReportsAll()
+        if args.generate_evaluation == 'yes':
+            # generate evaluation cube
+            experiments.overwrite = True
+            evaluator.evaluator(experiments, load=False, force=True)
+        return experiments
+
+def run_evaluation(experiments):
         # generate evaluation cube
         experiments.overwrite = True
-        evaluator.evaluator(experiments, load=False, force=True)
         # show some evaluations
         evaluator.evaluator(experiments, load=False, force=True)
         result_folder = experiments.path #args.result_folder if not args.result_folder is None else "./"
@@ -2155,8 +2233,8 @@ def run_cli(parameter):
         list_queries_all = evaluate.get_experiment_list_queries()
         #print(list_queries_all)
         dbms_filter = []
-        if not args.connection is None:
-            dbms_filter = [args.connection]
+        #if not args.connection is None:
+        #    dbms_filter = [args.connection]
         for q in list_queries_all:
             df = evaluate.get_timer(q, "execution")
             if len(list(df.index)) > 0:

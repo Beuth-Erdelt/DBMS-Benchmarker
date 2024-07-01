@@ -22,9 +22,9 @@ from os import makedirs, path
 import random
 from datetime import datetime, timedelta
 import pandas as pd
-from multiprocessing import Pool
-import multiprocessing as mp
-import shutil
+#from multiprocessing import Pool
+#import multiprocessing as mp
+#import shutil
 
 from dbmsbenchmarker import *
 
@@ -79,53 +79,10 @@ if __name__ == '__main__':
     else:
         logging.basicConfig(level=logging.INFO)
         bBatch = args.batch
-    if args.parallel_processes and args.numProcesses is not None:
-        numProcesses = int(args.numProcesses)
-        print("Start {} independent processes".format(numProcesses))
-        code = str(round(time.time()))
-        # make a copy of result folder
-        #if not args.result_folder is None and not path.isdir(args.result_folder):
-        result_folder = code
-        makedirs(result_folder)
-        shutil.copyfile(args.config_folder+'/connections.config', result_folder+'/connections.config')#args.connection_file)
-        shutil.copyfile(args.config_folder+'/queries.config', result_folder+'/queries.config')#args.query_file)
-        command_args = vars(args)
-        del command_args['parallel_processes']
-        command_args['numProcesses'] = None
-        command_args['result_folder'] = code
-        #command_args['stream_id'] = 1
-        pool_args = []#(dict(command_args),)]*numProcesses
-        for i in range(numProcesses):
-            command_args['stream_id'] = i+1
-            pool_args.append((dict(command_args),))
-            #pool_args[i][0]['stream_id'] = i+1
-        #print(pool_args[0][0]['stream_id'])
-        #exit()
-        #print(command_args)
-        #print(pool_args)
-        #exit()
-        # Create a pool of subprocesses
-        #with Pool(processes=4) as pool:  # Adjust the number of processes as needed
-        with mp.Pool(processes=int(numProcesses)) as pool:
-            # Map the arguments to the subprocess function
-            #results = pool.map("scripts.cli", [command_args]*4)  # Run the same args in 4 subprocesses
-            multiple_results = pool.starmap_async(benchmarker.run_cli, pool_args)
-            #multiple_results = pool.starmap_async(benchmarker.run_cli, [(k:v) for k,d in command_args.items()])
-            lists = multiple_results.get()#timeout=timeout)
-            #lists = [res.get(timeout=timeout) for res in multiple_results]
-            #lists = [i for j in lists for i in j]
-            #print(lists)
-            pool.close()
-            pool.join()
-        # Print results
-        #for stdout, stderr in multiple_results:
-        #    print("STDOUT:", stdout)
-        #    print("STDERR:", stderr)
-        tools.merge_partial_results("./", code)
-        exit()
-    else:
-        command_args = vars(args)
-        benchmarker.run_cli(command_args)
+    command_args = vars(args)
+    experiments = benchmarker.run_cli(command_args)
+    #if args.generate_evaluation == 'yes':
+    #    benchmarker.run_evaluation(experiments)
     """
     # sleep before going to work
     if int(args.sleep) > 0:
