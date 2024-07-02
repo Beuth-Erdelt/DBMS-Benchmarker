@@ -38,7 +38,7 @@ import multiprocessing as mp
 from timeit import default_timer
 import random
 from operator import add
-from dbmsbenchmarker import tools, reporter, parameter, monitor, evaluator, inspector
+from dbmsbenchmarker import tools, reporter, parameter, monitor, evaluator, inspector, metricer
 import dbmsbenchmarker
 import pprint
 # for query timeout
