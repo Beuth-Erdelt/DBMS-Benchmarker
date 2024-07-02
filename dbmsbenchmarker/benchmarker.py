@@ -38,7 +38,7 @@ import multiprocessing as mp
 from timeit import default_timer
 import random
 from operator import add
-from dbmsbenchmarker import tools, reporter, parameter, monitor, evaluator, inspector, metricer
+from dbmsbenchmarker import tools, reporter, parameter, monitor, evaluator, inspector
 import dbmsbenchmarker
 import pprint
 # for query timeout
@@ -2234,11 +2234,11 @@ def run_cli(parameter):
                 print("Continue needs result folder")
         if args.metrics:
             # collect hardware metrics
-            experiments.reporter.append(metricer(experiments))
+            experiments.reporter.append(reporter.metricer(experiments))
             experiments.generateReportsAll()
         if args.metrics_per_stream:
             # collect hardware metrics
-            experiments.reporter.append(metricer(experiments, per_stream=True))
+            experiments.reporter.append(reporter.metricer(experiments, per_stream=True))
             experiments.generateReportsAll()
         if args.generate_evaluation == 'yes':
             # generate evaluation cube
