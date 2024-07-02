@@ -2030,85 +2030,100 @@ def run_cli(parameter):
         copyfile(args.config_folder+'/connections.config', result_folder+'/connections.config')#args.connection_file)
         copyfile(args.config_folder+'/queries.config', result_folder+'/queries.config')#args.query_file)
         command_args = vars(args)
-        #del command_args['parallel_processes']
-        command_args['parallel_processes'] = False
-        command_args['numProcesses'] = None
-        command_args['result_folder'] = code
-        # Get the current UTC time
-        current_time = datetime.datetime.utcnow()
-        # Add 5 seconds to the current time
-        start_time = current_time + datetime.timedelta(seconds=5)
-        command_args['start_time'] = start_time.strftime('%Y-%m-%d %H:%M:%S')
-        #command_args['stream_id'] = 1
-        pool_args = []#(dict(command_args),)]*numProcesses
-        for i in range(numProcesses):
-            command_args['stream_id'] = i+1
-            pool_args.append((dict(command_args),))
-            #pool_args[i][0]['stream_id'] = i+1
-        #print(pool_args[0][0]['stream_id'])
-        #exit()
-        #print(command_args)
-        #print(pool_args)
-        #exit()
-        # Create a pool of subprocesses
-        #with Pool(processes=4) as pool:  # Adjust the number of processes as needed
-        with mp.Pool(processes=int(numProcesses)) as pool:
-            # Map the arguments to the subprocess function
-            #results = pool.map("scripts.cli", [command_args]*4)  # Run the same args in 4 subprocesses
-            multiple_results = pool.starmap_async(run_cli, pool_args)
-            #multiple_results = pool.starmap_async(benchmarker.run_cli, [(k:v) for k,d in command_args.items()])
-            lists = multiple_results.get()#timeout=timeout)
-            #lists = [res.get(timeout=timeout) for res in multiple_results]
-            #lists = [i for j in lists for i in j]
-            #print(lists)
-            pool.close()
-            pool.join()
-        # Print results
-        #for stdout, stderr in multiple_results:
-        #    print("STDOUT:", stdout)
-        #    print("STDERR:", stderr)
-        tools.merge_partial_results("./", code)
-        if args.generate_evaluation == 'yes':
-            #evaluator.evaluation = {}
-            #command_args['mode'] = 'read'
-            #command_args['result_folder'] = code
-            #experiments = benchmarker.run_cli(command_args)
-            experiments = benchmarker(
-                result_path=args.result_folder,
-                code=code,
-                #working=args.working,
-                batch=bBatch,
-                #subfolder=subfolder,#args.subfolder,
-                fixedQuery=args.query,
-                fixedConnection=args.connection,
-                fixedAlias=args.connection_alias,
-                #rename_connection=rename_connection,
-                #rename_alias=rename_alias,
-                #anonymize=args.anonymize,
-                #unanonymize=args.unanonymize,
-                #numProcesses=args.numProcesses,
-                #stream_id=stream_id,
-                #stream_shuffle=stream_shuffle,
-                #seed=args.seed
-            )
-            experiments.getConfig()
-            experiments.readBenchmarks()
-            evaluate = run_evaluation(experiments)
-            #print(evaluate)
-            #list_connections = evaluate.get_experiment_list_connections()
-            #print(list_connections)
-            """
-            benchmarker_times = evaluate.get_experiment_connection_properties(list_connections[0])['times']['total']
-            # compute min of start and max of end for timespan
-            times_start=[]
-            times_end=[]
-            for t in benchmarker_times:
-                times_start.append(benchmarker_times[t]['time_start'])
-                times_end.append(benchmarker_times[t]['time_end'])
-            time_start = min(times_start)
-            time_end = max(times_end)
-            print(time_start, time_end, time_end-time_start)
-            """
+        if not args.connection is None:
+            connections = [args.connection]
+        else:
+            #connection = args.connection
+            #print("Parallel execution must be limited to single DBMS")
+            with open(result_folder+'/connections.config', "r") as connections_file:
+                connections_content = ast.literal_eval(connections_file.read())
+            #print(connections_content)
+            connections = [c['name'] for c in connections_content]
+            print(connections)
+            #exit()
+        for connection in connections:
+            #del command_args['parallel_processes']
+            command_args['parallel_processes'] = False
+            command_args['numProcesses'] = None
+            command_args['result_folder'] = code
+            command_args['copy_subfolder'] = True
+            command_args['subfolder'] = connection
+            command_args['connection'] = connection
+            # Get the current UTC time
+            current_time = datetime.datetime.utcnow()
+            # Add 5 seconds to the current time
+            start_time = current_time + datetime.timedelta(seconds=5)
+            command_args['start_time'] = start_time.strftime('%Y-%m-%d %H:%M:%S')
+            #command_args['stream_id'] = 1
+            pool_args = []#(dict(command_args),)]*numProcesses
+            for i in range(numProcesses):
+                command_args['stream_id'] = i+1
+                pool_args.append((dict(command_args),))
+                #pool_args[i][0]['stream_id'] = i+1
+            #print(pool_args[0][0]['stream_id'])
+            #exit()
+            #print(command_args)
+            #print(pool_args)
+            #exit()
+            # Create a pool of subprocesses
+            #with Pool(processes=4) as pool:  # Adjust the number of processes as needed
+            with mp.Pool(processes=int(numProcesses)) as pool:
+                # Map the arguments to the subprocess function
+                #results = pool.map("scripts.cli", [command_args]*4)  # Run the same args in 4 subprocesses
+                multiple_results = pool.starmap_async(run_cli, pool_args)
+                #multiple_results = pool.starmap_async(benchmarker.run_cli, [(k:v) for k,d in command_args.items()])
+                lists = multiple_results.get()#timeout=timeout)
+                #lists = [res.get(timeout=timeout) for res in multiple_results]
+                #lists = [i for j in lists for i in j]
+                #print(lists)
+                pool.close()
+                pool.join()
+            # Print results
+            #for stdout, stderr in multiple_results:
+            #    print("STDOUT:", stdout)
+            #    print("STDERR:", stderr)
+            tools.merge_partial_results("./", code)
+            if args.generate_evaluation == 'yes':
+                #evaluator.evaluation = {}
+                #command_args['mode'] = 'read'
+                #command_args['result_folder'] = code
+                #experiments = benchmarker.run_cli(command_args)
+                experiments = benchmarker(
+                    result_path=args.result_folder,
+                    code=code,
+                    #working=args.working,
+                    batch=bBatch,
+                    #subfolder=subfolder,#args.subfolder,
+                    fixedQuery=args.query,
+                    fixedConnection=args.connection,
+                    fixedAlias=args.connection_alias,
+                    #rename_connection=rename_connection,
+                    #rename_alias=rename_alias,
+                    #anonymize=args.anonymize,
+                    #unanonymize=args.unanonymize,
+                    #numProcesses=args.numProcesses,
+                    #stream_id=stream_id,
+                    #stream_shuffle=stream_shuffle,
+                    #seed=args.seed
+                )
+                experiments.getConfig()
+                experiments.readBenchmarks()
+                evaluate = run_evaluation(experiments)
+                #print(evaluate)
+                #list_connections = evaluate.get_experiment_list_connections()
+                #print(list_connections)
+                """
+                benchmarker_times = evaluate.get_experiment_connection_properties(list_connections[0])['times']['total']
+                # compute min of start and max of end for timespan
+                times_start=[]
+                times_end=[]
+                for t in benchmarker_times:
+                    times_start.append(benchmarker_times[t]['time_start'])
+                    times_end.append(benchmarker_times[t]['time_end'])
+                time_start = min(times_start)
+                time_end = max(times_end)
+                print(time_start, time_end, time_end-time_start)
+                """
             return experiments
     else:
         if args.mode != 'read':
