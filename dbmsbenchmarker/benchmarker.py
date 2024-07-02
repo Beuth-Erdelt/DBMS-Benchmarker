@@ -2026,10 +2026,10 @@ def run_cli(parameter):
         # make a copy of result folder
         #if not args.result_folder is None and not path.isdir(args.result_folder):
         result_folder = code
+        command_args = vars(args)
         makedirs(result_folder)
         copyfile(args.config_folder+'/connections.config', result_folder+'/connections.config')#args.connection_file)
         copyfile(args.config_folder+'/queries.config', result_folder+'/queries.config')#args.query_file)
-        command_args = vars(args)
         if not args.connection is None:
             connections = [args.connection]
         else:
@@ -2042,6 +2042,9 @@ def run_cli(parameter):
             print(connections)
             #exit()
         for connection in connections:
+            # only neccessary after merge
+            #copyfile(args.config_folder+'/connections.config', result_folder+'/connections.config')#args.connection_file)
+            #copyfile(args.config_folder+'/queries.config', result_folder+'/queries.config')#args.query_file)
             #del command_args['parallel_processes']
             command_args['parallel_processes'] = False
             command_args['numProcesses'] = None
@@ -2082,49 +2085,49 @@ def run_cli(parameter):
             #for stdout, stderr in multiple_results:
             #    print("STDOUT:", stdout)
             #    print("STDERR:", stderr)
-            tools.merge_partial_results("./", code)
-            if args.generate_evaluation == 'yes':
-                #evaluator.evaluation = {}
-                #command_args['mode'] = 'read'
-                #command_args['result_folder'] = code
-                #experiments = benchmarker.run_cli(command_args)
-                experiments = benchmarker(
-                    result_path=args.result_folder,
-                    code=code,
-                    #working=args.working,
-                    batch=bBatch,
-                    #subfolder=subfolder,#args.subfolder,
-                    fixedQuery=args.query,
-                    fixedConnection=args.connection,
-                    fixedAlias=args.connection_alias,
-                    #rename_connection=rename_connection,
-                    #rename_alias=rename_alias,
-                    #anonymize=args.anonymize,
-                    #unanonymize=args.unanonymize,
-                    #numProcesses=args.numProcesses,
-                    #stream_id=stream_id,
-                    #stream_shuffle=stream_shuffle,
-                    #seed=args.seed
-                )
-                experiments.getConfig()
-                experiments.readBenchmarks()
-                evaluate = run_evaluation(experiments)
-                #print(evaluate)
-                #list_connections = evaluate.get_experiment_list_connections()
-                #print(list_connections)
-                """
-                benchmarker_times = evaluate.get_experiment_connection_properties(list_connections[0])['times']['total']
-                # compute min of start and max of end for timespan
-                times_start=[]
-                times_end=[]
-                for t in benchmarker_times:
-                    times_start.append(benchmarker_times[t]['time_start'])
-                    times_end.append(benchmarker_times[t]['time_end'])
-                time_start = min(times_start)
-                time_end = max(times_end)
-                print(time_start, time_end, time_end-time_start)
-                """
-            return experiments
+        tools.merge_partial_results("./", code)
+        if args.generate_evaluation == 'yes':
+            #evaluator.evaluation = {}
+            #command_args['mode'] = 'read'
+            #command_args['result_folder'] = code
+            #experiments = benchmarker.run_cli(command_args)
+            experiments = benchmarker(
+                result_path=args.result_folder,
+                code=code,
+                #working=args.working,
+                batch=bBatch,
+                #subfolder=subfolder,#args.subfolder,
+                fixedQuery=args.query,
+                fixedConnection=args.connection,
+                fixedAlias=args.connection_alias,
+                #rename_connection=rename_connection,
+                #rename_alias=rename_alias,
+                #anonymize=args.anonymize,
+                #unanonymize=args.unanonymize,
+                #numProcesses=args.numProcesses,
+                #stream_id=stream_id,
+                #stream_shuffle=stream_shuffle,
+                #seed=args.seed
+            )
+            experiments.getConfig()
+            experiments.readBenchmarks()
+            evaluate = run_evaluation(experiments)
+            #print(evaluate)
+            #list_connections = evaluate.get_experiment_list_connections()
+            #print(list_connections)
+            """
+            benchmarker_times = evaluate.get_experiment_connection_properties(list_connections[0])['times']['total']
+            # compute min of start and max of end for timespan
+            times_start=[]
+            times_end=[]
+            for t in benchmarker_times:
+                times_start.append(benchmarker_times[t]['time_start'])
+                times_end.append(benchmarker_times[t]['time_end'])
+            time_start = min(times_start)
+            time_end = max(times_end)
+            print(time_start, time_end, time_end-time_start)
+            """
+        return experiments
     else:
         if args.mode != 'read':
             # sleep before going to work
