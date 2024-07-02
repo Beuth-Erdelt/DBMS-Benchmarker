@@ -1593,6 +1593,8 @@ def merge_partial_results(result_path, code):
                     content=ast.literal_eval(inf.read())
                     #print(content)
                     connections.append(content)
+            filename = '{folder}/{connection}/queries.config'.format(folder=folder, connection=connection)
+            copyfile(filename, folder+'/queries.config')
         except Exception as e:
             print(e)
     # join to single list

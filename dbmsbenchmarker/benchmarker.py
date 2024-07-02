@@ -2385,10 +2385,10 @@ def run_evaluation(experiments):
                 time_end = max(times_end[c])
                 time_span = time_end-time_start
                 num_results = times_numbers[c]
-                tpx = round(num_results*float(len(list_queries))*3600./(time_span), 2)
+                tpx = round(num_run*num_results*float(len(list_queries))*3600./(time_span), 2)
                 #print(c, time_start, time_end, time_span, tpx)
                 #print("{}: {}*{}*3600/{} = {}".format(c, num_results, int(len(list_queries)), time_span, tpx))
-                tpx_total[c] = {'queries per hour [Qph]': tpx, 'formula': "{}*{}*3600/{}".format(num_results, int(len(list_queries)), time_span)}
+                tpx_total[c] = {'queries per hour [Qph]': tpx, 'formula': "{}*{}*{}*3600/{}".format(num_run, num_results, int(len(list_queries)), time_span)}
             #print(tpx_total)
             if len(tpx_total) > 0:
                 print("### Queries per Hour (only successful) [QpH] - (max end - min start)")
