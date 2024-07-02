@@ -1593,6 +1593,8 @@ def merge_partial_results(result_path, code):
                     content=ast.literal_eval(inf.read())
                     #print(content)
                     connections.append(content)
+            filename = '{folder}/{connection}/queries.config'.format(folder=folder, connection=connection)
+            copyfile(filename, folder+'/queries.config')
         except Exception as e:
             print(e)
     # join to single list
@@ -1648,7 +1650,7 @@ def merge_partial_results(result_path, code):
                 print("Looking for", filename)
                 if isfile(filename):
                     # result set of all runs
-                    print(connection+": ", end='')#, df)
+                    #print(connection+": ", end='')#, df)
                     with open(filename, 'r') as f:
                         data = pickle.load( open( filename, "rb" ) )
                         if data_first is None:
@@ -1698,7 +1700,8 @@ def merge_partial_results(result_path, code):
                                 #print("result", result)
                                 #print("storage", storage)
                                 if result == storage:
-                                    print("same\n")
+                                    #print("same\n")
+                                    pass
                                 #    #exit()
                                 #if numQuery=='3':
                                 #    print(df_first)
