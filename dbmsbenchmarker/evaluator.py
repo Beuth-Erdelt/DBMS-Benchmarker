@@ -277,6 +277,7 @@ class evaluator():
                 for connection, error in self.benchmarker.protocol['query'][str(i)]['errors'].items():
                     if len(error) > 0 and self.benchmarker.dbms[connection].connectiondata['active']:
                         evaluation['query'][i]['dbms'][connection]['error'] = error
+            #print(self.benchmarker.dbms)
             if 'warnings' in self.benchmarker.protocol['query'][str(i)]:
                 for connection, warning in self.benchmarker.protocol['query'][str(i)]['warnings'].items():
                     if len(warning) > 0 and self.benchmarker.dbms[connection].connectiondata['active']:

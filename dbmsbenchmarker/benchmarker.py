@@ -2016,10 +2016,10 @@ def run_cli(parameter):
     else:
         logging.basicConfig(level=logging.INFO)
         bBatch = args.batch
-    subfolder = args.subfolder
+    subfolder = None
     rename_connection = ''
     rename_alias = ''
-    if args.parallel_processes and args.numProcesses is not None:
+    if args.mode != 'read' and args.parallel_processes and args.numProcesses is not None:
         numProcesses = int(args.numProcesses)
         print("Start {} independent processes".format(numProcesses))
         code = str(round(time.time()))
@@ -2121,6 +2121,7 @@ def run_cli(parameter):
                 makedirs(args.result_folder)
                 copyfile(args.config_folder+'/connections.config', args.result_folder+'/connections.config')#args.connection_file)
                 copyfile(args.config_folder+'/queries.config', args.result_folder+'/queries.config')#args.query_file)
+            subfolder = args.subfolder
             if args.copy_subfolder and len(subfolder) > 0:
                 if args.stream_id is not None:
                     client = int(args.stream_id)
@@ -2210,7 +2211,11 @@ def run_cli(parameter):
             experiments.workload['intro'] = args.workload_intro
         if len(args.workload_name):
             experiments.workload['name'] = args.workload_name
-        experiments.getConfig(args.config_folder, args.connection_file, args.query_file)
+        if args.result_folder is not None:
+            config_folder = args.result_folder
+        else:
+            config_folder = args.config_folder
+        experiments.getConfig(config_folder, args.connection_file, args.query_file)
         # switch for args.mode
         if args.mode == 'read':
             experiments.readBenchmarks()
