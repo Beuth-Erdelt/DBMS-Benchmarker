@@ -1569,6 +1569,7 @@ from operator import itemgetter
 #code = '1613110870'
 
 def merge_partial_results(result_path, code):
+    logger = logging.getLogger('dbmsbenchmarker')
     # result folder
     folder = result_path+code
     # connection subfolders 
@@ -1609,12 +1610,13 @@ def merge_partial_results(result_path, code):
                 connection_config.append(c)
                 connection_names.append(c['name'])
     for connection in connection_config:
-        print("merged connection: ", connection['name'])
+        print("Merged connection: ", connection['name'])
     # store merged config
     filename = folder+'/connections.config'
     with open(filename,'w') as inf:
         inf.write(str(connection_config))
     # merging protocols
+    print("Merge protocols")
     # load partial protocols
     protocols = []
     for connection in list_connections:
@@ -1637,6 +1639,7 @@ def merge_partial_results(result_path, code):
     with open(filename_protocol, 'w') as f:
         json.dump(protocol, f)
     # compare result sets
+    print("Merge result sets")
     for numQuery, query in protocol['query'].items():
         #if int(numQuery) > 3:
         #    exit()
@@ -1647,7 +1650,7 @@ def merge_partial_results(result_path, code):
         for connection in list_connections:
             try:
                 filename = '{folder}/{connection}/query_{numQuery}_resultset_complete_{connection}.pickle'.format(folder=folder, connection=connection, numQuery=numQuery)
-                print("Looking for", filename)
+                logger.debug("Looking for", filename)
                 if isfile(filename):
                     # result set of all runs
                     #print(connection+": ", end='')#, df)
@@ -1700,14 +1703,14 @@ def merge_partial_results(result_path, code):
                                 #print("result", result)
                                 #print("storage", storage)
                                 if result == storage:
-                                    #print("same\n")
+                                    logger.debug("same\n")
                                     pass
                                 #    #exit()
                                 #if numQuery=='3':
                                 #    print(df_first)
                                 #    print(df)
                                 if not df_1.empty or not df_2.empty:
-                                    print("different\n")#, df_1, df_2)
+                                    logger.debug("different\n")#, df_1, df_2)
                                     #print("result", result)
                                     #print("storage", storage)
                                     #exit()
@@ -1764,6 +1767,7 @@ def merge_partial_results(result_path, code):
     with open(filename_protocol, 'w') as f:
         json.dump(protocol, f)
     # merge timers
+    print("Merge timers")
     # load partial timers, join and save
     timer = ['connection', 'execution', 'datatransfer']
     numQuery = 1
@@ -1790,7 +1794,7 @@ def merge_partial_results(result_path, code):
                 csv_file = open(filename, "w")
                 csv_file.write(csv)
                 csv_file.close()
-                print("Merged timer", filename)
+                logger.debug("Merged timer", filename)
     # merge metrics
     # copy partial metrics
     for connection in list_connections:
