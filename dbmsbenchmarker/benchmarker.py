@@ -452,6 +452,7 @@ class benchmarker():
                         self.code = str(int(code))
                     #self.code = str(round(time.time()))
                     self.path = result_path+"/"+self.code
+                    #print("path", self.pathee)
                     if not path.isdir(self.path):
                         makedirs(self.path)
             else:
@@ -633,12 +634,14 @@ class benchmarker():
         #if path.isfile(self.path+'/connections.config'):
         #   filename = self.path+'/connections.config'
         # If nothing is given: Try to read from result folder
+        #print(filename, self.path+'/connections.config')
         if filename is None:
             filename = self.path+'/connections.config'
         # set to default if connection file cannot be found
         if not path.isfile(filename):
             filename = self.path+'/connections.config'
         # If not read from result folder: Copy to result folder
+        #print(filename, self.path+'/connections.config')
         if not filename == self.path+'/connections.config':
             if path.isfile(filename):
                 copyfile(filename, self.path+'/connections.config')
@@ -2025,17 +2028,20 @@ def run_cli(parameter):
         code = str(round(time.time()))
         # make a copy of result folder
         #if not args.result_folder is None and not path.isdir(args.result_folder):
-        result_folder = code
+        if args.result_folder is None:
+            result_folder = './'
+        else:
+            result_folder = args.result_folder
         command_args = vars(args)
-        makedirs(result_folder)
-        copyfile(args.config_folder+'/connections.config', result_folder+'/connections.config')#args.connection_file)
-        copyfile(args.config_folder+'/queries.config', result_folder+'/queries.config')#args.query_file)
+        makedirs(result_folder+"/"+code)
+        copyfile(args.config_folder+'/connections.config', result_folder+"/"+code+'/connections.config')#args.connection_file)
+        copyfile(args.config_folder+'/queries.config', result_folder+"/"+code+'/queries.config')#args.query_file)
         if not args.connection is None:
             connections = [args.connection]
         else:
             #connection = args.connection
             #print("Parallel execution must be limited to single DBMS")
-            with open(result_folder+'/connections.config', "r") as connections_file:
+            with open(result_folder+"/"+code+'/connections.config', "r") as connections_file:
                 connections_content = ast.literal_eval(connections_file.read())
             #print(connections_content)
             connections = [c['name'] for c in connections_content]
@@ -2048,7 +2054,7 @@ def run_cli(parameter):
             #del command_args['parallel_processes']
             command_args['parallel_processes'] = False
             command_args['numProcesses'] = None
-            command_args['result_folder'] = code
+            command_args['result_folder'] = result_folder+"/"+code
             command_args['copy_subfolder'] = True
             command_args['subfolder'] = connection
             command_args['connection'] = connection
@@ -2085,7 +2091,7 @@ def run_cli(parameter):
             #for stdout, stderr in multiple_results:
             #    print("STDOUT:", stdout)
             #    print("STDERR:", stderr)
-        tools.merge_partial_results("./", code)
+        tools.merge_partial_results(result_folder+"/", code)
         if args.generate_evaluation == 'yes':
             #evaluator.evaluation = {}
             #command_args['mode'] = 'read'
@@ -2229,11 +2235,12 @@ def run_cli(parameter):
             experiments.workload['intro'] = args.workload_intro
         if len(args.workload_name):
             experiments.workload['name'] = args.workload_name
-        if args.result_folder is not None:
-            config_folder = args.result_folder
-        else:
-            config_folder = args.config_folder
-        experiments.getConfig(config_folder, args.connection_file, args.query_file)
+        # why?
+        #if args.result_folder is not None:
+        #    config_folder = args.result_folder
+        #else:
+        #    config_folder = args.config_folder
+        experiments.getConfig(args.config_folder, args.connection_file, args.query_file)
         # switch for args.mode
         if args.mode == 'read':
             experiments.readBenchmarks()
