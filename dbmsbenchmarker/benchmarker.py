@@ -2147,6 +2147,10 @@ def run_cli(parameter):
                 copyfile(args.config_folder+'/queries.config', args.result_folder+'/queries.config')#args.query_file)
             subfolder = args.subfolder
             if args.copy_subfolder and len(subfolder) > 0:
+                if args.result_folder is None:
+                    print("Subfolder logic only makes sense for existing result folders or for parallel processes. Sorry!")
+                    print("Hint: 1) add -pp, or 2) add -r, or 3) remove -cs and -sf")
+                    exit()
                 if args.stream_id is not None:
                     client = int(args.stream_id)
                 else:
