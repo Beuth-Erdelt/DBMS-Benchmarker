@@ -35,14 +35,19 @@ How to configure the benchmarker can be illustrated best by looking at the sourc
 `python benchmark.py -h`
 
 ```
-usage: dbmsbenchmarker [-h] [-d] [-b] [-qf QUERY_FILE] [-cf CONNECTION_FILE] [-q QUERY] [-c CONNECTION] [-ca CONNECTION_ALIAS] [-f CONFIG_FOLDER] [-r RESULT_FOLDER] [-e {no,yes}] [-w {query,connection}] [-p NUMPROCESSES] [-s SEED] [-cs] [-ms MAX_SUBFOLDERS]
-                       [-sl SLEEP] [-st START_TIME] [-sf SUBFOLDER] [-sd {None,csv,pandas}] [-vq] [-vs] [-vr] [-vp] [-pn NUM_RUN] [-m] [-mps] [-sid STREAM_ID] [-ssh STREAM_SHUFFLE] [-wli WORKLOAD_INTRO] [-wln WORKLOAD_NAME]
+usage: dbmsbenchmarker [-h] [-d] [-b] [-qf QUERY_FILE] [-cf CONNECTION_FILE] [-q QUERY] [-c CONNECTION] [-ca CONNECTION_ALIAS]
+                       [-f CONFIG_FOLDER] [-r RESULT_FOLDER] [-e {no,yes}] [-w {query,connection}] [-p NUMPROCESSES] [-pp]
+                       [-s SEED] [-cs] [-ms MAX_SUBFOLDERS] [-sl SLEEP] [-st START_TIME] [-sf SUBFOLDER] [-sd {None,csv,pandas}]
+                       [-vq] [-vs] [-vr] [-vp] [-pn NUM_RUN] [-m] [-mps] [-sid STREAM_ID] [-ssh STREAM_SHUFFLE]
+                       [-wli WORKLOAD_INTRO] [-wln WORKLOAD_NAME]
                        {run,read,continue}
 
-A benchmark tool for RDBMS. It connects to a given list of RDBMS via JDBC and runs a given list benchmark queries. Optionally some reports are generated.
+A benchmark tool for RDBMS. It connects to a given list of RDBMS via JDBC and runs a given list benchmark queries. Optionally some
+reports are generated.
 
 positional arguments:
-  {run,read,continue}   run benchmarks and save results, or just read benchmark results from folder, or continue with missing benchmarks only
+  {run,read,continue}   run benchmarks and save results, or just read benchmark results from folder, or continue with missing
+                        benchmarks only
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -59,7 +64,8 @@ optional arguments:
   -ca CONNECTION_ALIAS, --connection-alias CONNECTION_ALIAS
                         alias of connection to benchmark
   -f CONFIG_FOLDER, --config-folder CONFIG_FOLDER
-                        folder containing query and connection config files. If set, the names connections.config and queries.config are assumed automatically.
+                        folder containing query and connection config files. If set, the names connections.config and
+                        queries.config are assumed automatically.
   -r RESULT_FOLDER, --result-folder RESULT_FOLDER
                         folder for storing benchmark result files, default is given by timestamp
   -e {no,yes}, --generate-evaluation {no,yes}
@@ -68,6 +74,8 @@ optional arguments:
                         working per query or connection
   -p NUMPROCESSES, --numProcesses NUMPROCESSES
                         Number of parallel client processes. Global setting, can be overwritten by connection. Default is 1.
+  -pp, --parallel-processes
+                        if parallel execution should be organized as independent processes
   -s SEED, --seed SEED  random seed
   -cs, --copy-subfolder
                         copy subfolder of result folder
@@ -104,7 +112,7 @@ optional arguments:
                         meta data: name of workload
 ```
 
-### Result folder
+### Result Folder
 
 This optional argument is the name of a folder.
 
@@ -118,10 +126,11 @@ Input files for connections and queries are copied to this folder.
 Example: `-r /tmp/dbmsresults/`, and a subfolder, say `1234`, will be generated containing results.
 
 
-### Config folder
+### Config Folder
 
 Name of folder containing query and connection config files.
 If set, the names `connections.config` and `queries.config` are assumed automatically.
+
 
 ### Monitoring
 
@@ -133,12 +142,14 @@ More information about monitoring and metrics can be found here: https://github.
 The parameter `--metrics-per-stream` does the same, but collects the metrics per stream - not per query.
 This is useful when queries are very fast.
 
+
 ### Query
 
 This parameter sets reading or running benchmarks to one fixed query.
 For `mode=run` this means the fixed query is benchmarked (again), no matter if benchmarks already exist for this query.
 For `mode=continue` this means missing benchmarks are performed for this fixed query only.
 Queries are numbered starting at 1.
+
 
 ### Connection
 
@@ -147,25 +158,31 @@ For `mode=run` this means the fixed DBMS is benchmarked (again), no matter if be
 For `mode=continue` this means missing benchmarks are performed for this fixed DBMS only.
 Connections are called by name.
 
+
 ### Generate evaluation
 
 If set to yes, an evaluation file is generated. This is a JSON file containing most of the [evaluations](Evaluations.html).
 It can be accessed most easily using the inspection class or the interactive dashboard.
+This also prints some statistics the experiment (like latency or throughput).
+
 
 ### Debug
 
 This flag activates output of debug infos.
+
 
 ### Sleep
 
 Time in seconds to wait before starting to operate.
 This is handy when we want to wait for other systems (e.g. a DBMS) to startup completely.
 
+
 ### Batch
 
 This flag changes the output slightly and should be used for logging if script runs in background.
 This also means reports are generated only at the end of processing.
 Batch mode is automatically turned on if debug mode is used.
+
 
 ### Verbosity Level
 
@@ -174,7 +191,8 @@ Using the flags `-vr` means each result set that is received is dumped to stdout
 Using the flags `-vp` means more information about the process and connections are dumped to stdout.
 Using the flags `-vs` means after each query that has been finished, some statistics are dumped to stdout.
 
-### Working querywise or connectionswise
+
+### Working Querywise or Connectionswise
 
 This options sets if benchmarks are performed per query (one after the other is completed) or per connection (one after the other is completed).
 
@@ -196,7 +214,8 @@ and processing `-w connection` is
 
 Default is `connection`-wise.
 
-### Client processes
+
+### Client Processes
 
 This tool simulates parallel queries from several clients.
 The option `-p` can be used to change the global setting for the number of parallel processes.
@@ -214,9 +233,19 @@ If you want to evaluate concurrency on stream level with a single connection per
 This should be changed in align with the number of runs per query (`-pn`), that is, the number of runs must be higher than the number of clients.
 Ideally, the number of runs should be a multiple of the number of parallel clients.
 
+
+### Client Processes in Parallel Streams
+
+The option `-pp` can be used to let the client processes run independently and in parallel.
+Example: `dbmsbenchmarker run -e yes -b -f example/tpc-h -p 2 -pp -s 1234`
+
+This runs two streams of the TPC-H workload in parallel agains the same DBMS and with a common random seed of 1234).
+
+
 ### Random Seed
 The option `-s` can be used to specify a random seed.
 This should guarantee reproducible results for randomized queries.
+
 
 ### Subfolders
 
@@ -233,12 +262,13 @@ If that folder already exists, `/tmp/dbmsresults/1234/MySQL-2` will be used etc.
 
 This is in particular used by https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager for jobs of parallel benchmarker.
 
-### Delay start
+### Delay Start
 
 The parameter `--sleep` can be used to set a start time.
 DBMSBenchmarker will wait until the given time is reached.
 
 This is in particular used by https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager for synching jobs of parallel benchmarker.
+
 
 ### Shuffle Queries
 
@@ -249,12 +279,14 @@ The number of the current stream can be set via `--stream-id`.
 Inside the query templates, there is a query parameter `STREAM`, that has default value of 1.
 If the id of the current stream has been changed via `--stream-id`, this parameter reflects that value.
 
+
 ### Tag Results with Metadata
 
 Metadata of a workload is set inside the query config file.
 For convenience, you can overwrite some metadata via command line.
 `--workload-name` sets the name of the workload.
 `--workload-intro` sets some introduction information of the workload.
+
 
 ### Store Result Sets
 

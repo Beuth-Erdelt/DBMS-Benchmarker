@@ -405,10 +405,10 @@ JDBC driver: https://www.vertica.com/download/vertica/client-drivers/
         'info': 'This is a demo of Vertica',
         'active': True,
         'JDBC': {
-            'driver': "com.vertica.jdbc.Driver",
+            'driver': 'com.vertica.jdbc.Driver',
             'url': 'jdbc:vertica://localhost:5433/database',
-            'auth': ["user", "password"],
-            'jar': "jars/vertica-jdbc-11.1.0-0.jar"
+            'auth': ['user', 'password'],
+            'jar': 'jars/vertica-jdbc-11.1.0-0.jar'
         },
     },
 ]

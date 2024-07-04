@@ -315,7 +315,7 @@ class inspector():
             print("Unknown type")
             return None, None
         if df_stat.empty:
-            print("No data")
+            #print("No data")
             return df, df_stat
         if len(factor_base) > 0:
             df_stat = evaluator.addFactor(df_stat, factor_base)
@@ -334,6 +334,7 @@ class inspector():
         for q in queries:
             column_new = 'Q{}'.format(q+1)
             df_measures, df_statistics = self.get_measures_and_statistics(q+1, type, name, dbms_filter, warmup, cooldown, factor_base)
+            #print(df_measures, df_statistics)
             if df_statistics.empty:
                 return pd.DataFrame()
             if df_aggregated is None:
@@ -349,6 +350,7 @@ class inspector():
                 return pd.DataFrame()
             if df.empty:
                 return df
+            #print(df)
             df_stat = evaluator.addStatistics(df, drop_nan=False, drop_measures=True)
             return pd.DataFrame(df_stat[total_aggregate]).rename(columns = {total_aggregate: "total_"+type+"_"+name})
         else:
@@ -478,10 +480,21 @@ class inspector():
         return tools.dataframehelper.evaluateNormalizedResultsizeToDataFrame(self.e.evaluation).T
     def get_total_resultsize(self):
         return tools.dataframehelper.evaluateResultsizeToDataFrame(self.e.evaluation).T
-    def get_total_errors(self):
-        return tools.dataframehelper.evaluateErrorsToDataFrame(self.e.evaluation).T
-    def get_total_warnings(self):
-        return tools.dataframehelper.evaluateWarningsToDataFrame(self.e.evaluation).T
+    def get_total_errors(self, dbms_filter=[], query_filter=[]):
+        df = tools.dataframehelper.evaluateErrorsToDataFrame(self.e.evaluation).T
+        if df is None:
+            return pd.DataFrame()
+        if len(dbms_filter)>0:
+            df = df[df.index.isin(dbms_filter)]
+        # currently ignored: print(query_filter)
+        return df
+    def get_total_warnings(self, dbms_filter=[], query_filter=[]):
+        df = tools.dataframehelper.evaluateWarningsToDataFrame(self.e.evaluation).T
+        if df is None:
+            return pd.DataFrame()
+        if len(dbms_filter)>0:
+            df = df[df.index.isin(dbms_filter)]
+        return df
     def get_total_times(self, dbms_filter=[]):
         df, title = tools.dataframehelper.totalTimes(self.benchmarks, dbms_filter)
         if df is None:

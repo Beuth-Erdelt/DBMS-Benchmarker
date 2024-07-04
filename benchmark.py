@@ -22,6 +22,9 @@ from os import makedirs, path
 import random
 from datetime import datetime, timedelta
 import pandas as pd
+#from multiprocessing import Pool
+#import multiprocessing as mp
+#import shutil
 
 from dbmsbenchmarker import *
 
@@ -44,6 +47,7 @@ if __name__ == '__main__':
     #parser.add_argument('-a', '--anonymize', help='anonymize all dbms', action='store_true', default=False)
     #parser.add_argument('-u', '--unanonymize', help='unanonymize some dbms, only sensible in combination with anonymize', nargs='*', default=[])
     parser.add_argument('-p', '--numProcesses', help='Number of parallel client processes. Global setting, can be overwritten by connection. Default is 1.', default=None)
+    parser.add_argument('-pp', '--parallel-processes', help='if parallel execution should be organized as independent processes', action='store_true')
     parser.add_argument('-s', '--seed', help='random seed', default=None)
     parser.add_argument('-rcp', '--recreate-parameter', help='recreate parameter for randomized queries', default=0)
     parser.add_argument('-cs', '--copy-subfolder', help='copy subfolder of result folder', action='store_true')
@@ -75,11 +79,20 @@ if __name__ == '__main__':
     else:
         logging.basicConfig(level=logging.INFO)
         bBatch = args.batch
+    command_args = vars(args)
+    experiments = benchmarker.run_cli(command_args)
+    #if args.generate_evaluation == 'yes':
+    #    benchmarker.run_evaluation(experiments)
+    """
     # sleep before going to work
     if int(args.sleep) > 0:
         print("Sleeping {} seconds before going to work".format(int(args.sleep)))
         time.sleep(int(args.sleep))
     # make a copy of result folder
+    if not args.result_folder is None and not path.isdir(args.result_folder):
+        makedirs(args.result_folder)
+        shutil.copyfile(args.config_folder+'/connections.config', args.result_folder+'/connections.config')#args.connection_file)
+        shutil.copyfile(args.config_folder+'/queries.config', args.result_folder+'/queries.config')#args.query_file)
     subfolder = args.subfolder
     rename_connection = ''
     rename_alias = ''
@@ -202,46 +215,85 @@ if __name__ == '__main__':
         experiments.overwrite = True
         # show some evaluations
         evaluator.evaluator(experiments, load=False, force=True)
-        result_folder = args.result_folder if not args.result_folder is None else "./"
-        num_processes = min(float(args.numProcesses if not args.numProcesses is None else 1), float(args.num_run) if int(args.num_run) > 0 else 1)
+        result_folder = experiments.path #args.result_folder if not args.result_folder is None else "./"
+        #num_processes = min(float(args.numProcesses if not args.numProcesses is None else 1), float(args.num_run) if int(args.num_run) > 0 else 1)
         evaluate = inspector.inspector(result_folder)
-        evaluate.load_experiment(experiments.code)
+        evaluate.load_experiment("")#experiments.code)
+        list_queries_all = evaluate.get_experiment_list_queries()
+        #print(list_queries_all)
         dbms_filter = []
         if not args.connection is None:
             dbms_filter = [args.connection]
+        for q in list_queries_all:
+            df = evaluate.get_timer(q, "execution")
+            if len(list(df.index)) > 0:
+                dbms_filter = list(df.index)
+                print("First successful query: {}".format(q))
+                break
         #print(dbms_filter)
         #list_queries = evaluate.get_experiment_queries_successful() # evaluate.get_experiment_list_queries()
         list_queries = evaluate.get_survey_successful(timername='execution', dbms_filter=dbms_filter)
         #print(list_queries, len(list_queries))
+        if 'numRun' in experiments.connectionmanagement:
+            num_run = experiments.connectionmanagement['numRun']
+        else:
+            num_run = 1
+        if 'numProcesses' in experiments.connectionmanagement:
+            num_processes = experiments.connectionmanagement['numProcesses']
+        else:
+            num_processes = 1
         #####################
-        print("Number of runs per query:", int(args.num_run) if int(args.num_run) > 0 else 1)
+        if len(dbms_filter) > 0:
+            print("Limited to:", dbms_filter)
+        print("Number of runs per query:", num_run)
         print("Number of successful queries:", len(list_queries))
         print("Number of max. parallel clients:", int(num_processes))
         #####################
         print("\n### Errors (failed queries)")
-        print(evaluate.get_total_errors().T)
+        print(evaluate.get_total_errors(dbms_filter=dbms_filter).T)
         #####################
         print("\n### Warnings (result mismatch)")
-        print(evaluate.get_total_warnings().T)
+        print(evaluate.get_total_warnings(dbms_filter=dbms_filter).T)
+        #####################
+        #df = evaluate.get_aggregated_query_statistics(type='timer', name='connection', query_aggregate='Median', dbms_filter=dbms_filter)
+        df = evaluate.get_aggregated_experiment_statistics(type='timer', name='connection', query_aggregate='Median', total_aggregate='Geo', dbms_filter=dbms_filter)
+        df = (df/1000.0).sort_index()
+        if not df.empty:
+            print("### Geometric Mean of Medians of Connection Times (only successful) [s]")
+            df.columns = ['average connection time [s]']
+            print(df.round(2))
+            #print("### Statistics of Timer Connection (only successful) [s]")
+            #df_stat = evaluator.addStatistics(df, drop_nan=False, drop_measures=True)
+            #print(df_stat.round(2))
+        #####################
+        #df = evaluate.get_aggregated_query_statistics(type='timer', name='connection', query_aggregate='Median', dbms_filter=dbms_filter)
+        df = evaluate.get_aggregated_experiment_statistics(type='timer', name='connection', query_aggregate='Max', total_aggregate='Max', dbms_filter=dbms_filter)
+        df = (df/1000.0).sort_index()
+        if not df.empty:
+            print("### Max of Connection Times (only successful) [s]")
+            df.columns = ['max connection time [s]']
+            print(df.round(2))
+            #print("### Statistics of Timer Connection (only successful) [s]")
+            #df_stat = evaluator.addStatistics(df, drop_nan=False, drop_measures=True)
+            #print(df_stat.round(2))
         #####################
         df = evaluate.get_aggregated_experiment_statistics(type='timer', name='execution', query_aggregate='Median', total_aggregate='Geo', dbms_filter=dbms_filter)
         df = (df/1000.0).sort_index()
         if not df.empty:
-            print("### Geometric Mean of Medians of Timer Run (only successful) [s]")
+            print("### Geometric Mean of Medians of Execution Times (only successful) [s]")
             df.columns = ['average execution time [s]']
-            print(df)
+            print(df.round(2))
         #####################
         df = evaluate.get_aggregated_experiment_statistics(type='timer', name='execution', query_aggregate='Max', total_aggregate='Sum', dbms_filter=dbms_filter).astype('float')/1000.
         if not df.empty:
             print("### Sum of Maximum Execution Times per Query (only successful) [s]")
             df.columns = ['sum of max execution times [s]']
-            print(df)
+            print(df.round(2))
         #####################
         df = num_processes*float(len(list_queries))*3600./df
         if not df.empty:
             print("### Queries per Hour (only successful) [QpH] - {}*{}*3600/(sum of max execution times)".format(int(num_processes), int(len(list_queries))))
             df.columns = ['queries per hour [Qph]']
-            print(df)
-
-
+            print(df.round(2))
+    """
 
