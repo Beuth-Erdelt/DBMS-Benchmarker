@@ -23,7 +23,7 @@ We need
 
 If necessary, adjust the settings in the file `example/tpc-h/connections.py`:
 
-```
+```bash
 [
     {
         'name': 'PostgreSQL',
@@ -64,7 +64,7 @@ The script has created a result folder in the current directory containing the r
 
 If the `-e yes` option is used, you will see something like
 
-```
+```bash
 First successful query: 1
 Limited to: ['PostgreSQL']
 Number of runs per query: 1
@@ -146,10 +146,10 @@ PostgreSQL                  9900.0  1*1*22*3600/8
 
 Run the command:
 
-`python dashboard.py`
+`dbmsdashboard`
 
 This will start the evaluation dashboard at `localhost:8050`.
-Visit the address in a browser and select the experiment `<code>`.
+Visit the address in a browser and select the experiment `code`.
 
 
 ## Where to go
