@@ -2118,6 +2118,7 @@ def run_cli(parameter):
             experiments.getConfig()
             experiments.readBenchmarks()
             evaluate = run_evaluation(experiments)
+            print("Experiment {} has been finished".format(experiments.code))
             #print(evaluate)
             #list_connections = evaluate.get_experiment_list_connections()
             #print(list_connections)
@@ -2374,19 +2375,25 @@ def run_evaluation(experiments):
             c = connection.connectiondata
             #print(c)
             #connection_name = c['name']
-            #orig_name = c['orig_name']
+            if 'orig_name' in c:
+                orig_name = c['orig_name']
+            else:
+                orig_name = c['name']
             benchmarker_times = evaluate.get_experiment_connection_properties(c['name'])['times']['total']
             #print(benchmarker_times)
-            if 'orig_name' in c:
-                if not c['orig_name'] in tpx_sum:
-                    tpx_sum[c['orig_name']] = 0
-                tpx_sum[c['orig_name']] = tpx_sum[c['orig_name']] + df_tpx.loc[c['name']]['queries per hour [Qph]']
-                #print(c['orig_name'])
-                if not c['orig_name'] in times_start:
-                    times_start[c['orig_name']] = []
-                    times_end[c['orig_name']] = []
-                    times_numbers[c['orig_name']] = 0
-                times_numbers[c['orig_name']] = times_numbers[c['orig_name']] + 1
+            if len(orig_name) > 0: #'orig_name' in c:
+                if not orig_name in tpx_sum:
+                    tpx_sum[orig_name] = 0
+                if c['name'] in df_tpx.index:
+                    tpx_sum[orig_name] = tpx_sum[orig_name] + df_tpx.loc[c['name']]['queries per hour [Qph]']
+                else:
+                    del tpx_sum[orig_name]
+                #print(orig_name)
+                if not orig_name in times_start:
+                    times_start[orig_name] = []
+                    times_end[orig_name] = []
+                    times_numbers[orig_name] = 0
+                times_numbers[orig_name] = times_numbers[orig_name] + 1
                 for q in experiments.protocol['query']:
                     #print(experiments.protocol['query'][q])
                     #print(q, experiments.protocol['query'][q]['starts'], experiments.protocol['query'][q]['ends'])
@@ -2394,13 +2401,13 @@ def run_evaluation(experiments):
                     if "ends" in times and c['name'] in times["ends"]:
                         time_start = int(datetime.datetime.timestamp(datetime.datetime.strptime(times["starts"][c['name']],'%Y-%m-%d %H:%M:%S.%f')))
                         time_end = int(datetime.datetime.timestamp(datetime.datetime.strptime(times["ends"][c['name']],'%Y-%m-%d %H:%M:%S.%f')))
-                        times_start[c['orig_name']].append(time_start)
-                        times_end[c['orig_name']].append(time_end)
+                        times_start[orig_name].append(time_start)
+                        times_end[orig_name].append(time_end)
                         #times_start[time_start] = i
                         #times_end[time_end] = i
                 #for t in benchmarker_times:
-                #    times_start[c['orig_name']].append(benchmarker_times[t]['time_start'])
-                #    times_end[c['orig_name']].append(benchmarker_times[t]['time_end'])
+                #    times_start[orig_name].append(benchmarker_times[t]['time_start'])
+                #    times_end[orig_name].append(benchmarker_times[t]['time_end'])
         if len(tpx_sum) > 0:
             print("### Queries per Hour (only successful) [QpH] - Sum per DBMS")
             df = pd.DataFrame.from_dict(tpx_sum, orient='index', columns=['queries per hour [Qph]'])
@@ -2410,14 +2417,15 @@ def run_evaluation(experiments):
         if len(times_start) > 0:
             for c in times_start:
                 #print(c, times_start[c], times_end[c])
-                time_start = min(times_start[c])
-                time_end = max(times_end[c])
-                time_span = time_end-time_start
-                num_results = times_numbers[c]
-                tpx = round(num_run*num_results*float(len(list_queries))*3600./(time_span), 2)
-                #print(c, time_start, time_end, time_span, tpx)
-                #print("{}: {}*{}*3600/{} = {}".format(c, num_results, int(len(list_queries)), time_span, tpx))
-                tpx_total[c] = {'queries per hour [Qph]': tpx, 'formula': "{}*{}*{}*3600/{}".format(num_run, num_results, int(len(list_queries)), time_span)}
+                if len(times_start[c]) > 0:
+                    time_start = min(times_start[c])
+                    time_end = max(times_end[c])
+                    time_span = time_end-time_start
+                    num_results = times_numbers[c]
+                    tpx = round(num_run*num_results*float(len(list_queries))*3600./(time_span), 2)
+                    #print(c, time_start, time_end, time_span, tpx)
+                    #print("{}: {}*{}*3600/{} = {}".format(c, num_results, int(len(list_queries)), time_span, tpx))
+                    tpx_total[c] = {'queries per hour [Qph]': tpx, 'formula': "{}*{}*{}*3600/{}".format(num_run, num_results, int(len(list_queries)), time_span)}
             #print(tpx_total)
             if len(tpx_total) > 0:
                 print("### Queries per Hour (only successful) [QpH] - (max end - min start)")
