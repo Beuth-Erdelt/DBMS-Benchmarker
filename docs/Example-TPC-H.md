@@ -9,7 +9,7 @@ Official TPC-H benchmark - http://www.tpc.org/tpch
 **Content**:
 * [Prerequisites](#prerequisites)
 * [Perform Benchmark](#perform-benchmark)
-* [Evaluate Results in Dashboard](#evaluate-results-in-dashboard)
+* [Evaluate Results](#evaluate-results-in-dashboard)
 * [Where to go](#where-to-go)
 
 ## Prerequisites
@@ -159,6 +159,12 @@ Visit the address in a browser and select the experiment `<code>`.
 `dbmsbenchmarker run -e yes -b -f example/tpc-h -r ~/benchmarks`
 
 All results will be stored in subfolders of `~/benchmarks`.
+
+### Show Results Again
+
+`dbmsbenchmarker read -e yes -r ~/benchmarks/12345`
+
+This shows the evaluation of experiment 12345 in folder `~/benchmarks` again.
 
 ### Limit to Single DBMS
 
