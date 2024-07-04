@@ -158,6 +158,7 @@ JDBC driver: https://mariadb.com/kb/en/about-mariadb-connector-j/
         'name': 'MariaDB',
         'info': 'This is a demo of MariaDB',
         'active': True,
+        'dialect': 'MySQL',
         'JDBC': {
             'driver': 'org.mariadb.jdbc.Driver',
             'url': 'jdbc:mariadb://localhost:3306/database',
@@ -247,6 +248,7 @@ JDBC driver: https://dev.mysql.com/downloads/connector/j/
         'name': 'MySQL',
         'info': 'This is a demo of MySQL',
         'active': True,
+        'dialect': 'MySQL',
         'JDBC': {
             'driver': 'com.mysql.cj.jdbc.Driver',
             'url': 'jdbc:mysql://localhost:3306/database?serverTimezone=Europe/Berlin',
@@ -291,6 +293,7 @@ JDBC driver: https://jdbc.postgresql.org/
         'name': 'PostgreSQL',
         'info': 'This is a demo of PostgreSQL',
         'active': True,
+        'dialect': 'PostgreSQL',
         'JDBC': {
             'driver': 'org.postgresql.Driver',
             'url': 'jdbc:postgresql://localhost:5432/database',
@@ -402,10 +405,10 @@ JDBC driver: https://www.vertica.com/download/vertica/client-drivers/
         'info': 'This is a demo of Vertica',
         'active': True,
         'JDBC': {
-            'driver': "com.vertica.jdbc.Driver",
+            'driver': 'com.vertica.jdbc.Driver',
             'url': 'jdbc:vertica://localhost:5433/database',
-            'auth': ["user", "password"],
-            'jar': "jars/vertica-jdbc-11.1.0-0.jar"
+            'auth': ['user', 'password'],
+            'jar': 'jars/vertica-jdbc-11.1.0-0.jar'
         },
     },
 ]

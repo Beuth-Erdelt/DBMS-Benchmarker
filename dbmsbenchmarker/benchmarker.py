@@ -38,10 +38,12 @@ import multiprocessing as mp
 from timeit import default_timer
 import random
 from operator import add
-from dbmsbenchmarker import tools, reporter, parameter, monitor, evaluator
+from dbmsbenchmarker import tools, reporter, parameter, monitor, evaluator, inspector
+import dbmsbenchmarker
 import pprint
 # for query timeout
 import jaydebeapi
+from types import SimpleNamespace
 
 #activeConnections = []
 
@@ -50,7 +52,7 @@ BENCHMARKER_VERBOSE_STATISTICS = False
 BENCHMARKER_VERBOSE_RESULTS = False
 BENCHMARKER_VERBOSE_PROCESS = False
 
-logger = mp.log_to_stderr(logging.INFO)
+logger = mp.log_to_stderr(logging.WARNING)
 
 class singleRunInput:
     """
@@ -289,7 +291,7 @@ def singleResult(connectiondata, inputConfig, numRuns, connectionname, numQuery,
                     logger.debug(workername+"Begin sorting")
                     data = sorted(data, key=itemgetter(*list(range(0,len(data[0])))))
                     logger.debug(workername+"Finished sorting")
-                logger.info(workername+"Size of processed result list retrieved: "+str(sys.getsizeof(data))+" bytes")
+                logger.debug(workername+"Size of processed result list retrieved: "+str(sys.getsizeof(data))+" bytes")
             # convert to dataframe
             #columnnames = [[i[0].upper() for i in connection.cursor.description]]
             df = pd.DataFrame.from_records(data=data, coerce_float=True)
@@ -391,6 +393,8 @@ class benchmarker():
             self.connectionmanagement['numProcesses'] = 1#math.ceil(mp.cpu_count()/2) #If None, half of all available processes is taken
         #else:
         #    self.connectionmanagement['numProcesses'] = int(self.numProcesses)
+        if not tools.query.template is None and 'numRun' in tools.query.template:
+            self.connectionmanagement['numRun'] = tools.query.template['numRun'] # store global setting about number of runs per query for archive purposes
         # connection should be renamed (because of copy to subfolder and parallel processing)
         # also rename alias
         self.rename_connection = rename_connection
@@ -448,6 +452,7 @@ class benchmarker():
                         self.code = str(int(code))
                     #self.code = str(round(time.time()))
                     self.path = result_path+"/"+self.code
+                    #print("path", self.pathee)
                     if not path.isdir(self.path):
                         makedirs(self.path)
             else:
@@ -567,7 +572,8 @@ class benchmarker():
             # overwrites parts of query file - queries
             if tools.query.template is not None:
                 for i,q in enumerate(self.queryconfig['queries']):
-                    self.queryconfig['queries'][i] = {**q, **tools.query.template}
+                    self.queryconfig['queries'][i] = tools.joinDicts(q, tools.query.template)
+                    #self.queryconfig['queries'][i] = {**q, **tools.query.template}
                     with open(self.path+'/queries.config','w') as outp:
                         pprint.pprint(self.queryconfig, outp)
             self.queries = self.queryconfig["queries"].copy()
@@ -599,6 +605,9 @@ class benchmarker():
                     self.queryconfig['defaultParameters'] = parameter.defaultParameters.copy()
             if 'defaultParameters' in self.queryconfig:
                 parameter.defaultParameters = self.queryconfig['defaultParameters']
+            self.queryconfig["connectionmanagement"] = self.connectionmanagement
+        # store query config again, since it might have been changed
+        self.store_querydata()
         for numQuery in range(1, len(self.queries)+1):
             self.protocol['query'][str(numQuery)] = {'errors':{}, 'warnings':{}, 'durations':{}, 'duration':0.0, 'start':'', 'end':'', 'dataStorage': [], 'resultSets': {}, 'parameter': [], 'sizes': {}, 'starts': {}, 'ends': {}, 'runs': []}
     def cleanProtocol(self, numQuery):
@@ -625,12 +634,14 @@ class benchmarker():
         #if path.isfile(self.path+'/connections.config'):
         #   filename = self.path+'/connections.config'
         # If nothing is given: Try to read from result folder
+        #print(filename, self.path+'/connections.config')
         if filename is None:
             filename = self.path+'/connections.config'
         # set to default if connection file cannot be found
         if not path.isfile(filename):
             filename = self.path+'/connections.config'
         # If not read from result folder: Copy to result folder
+        #print(filename, self.path+'/connections.config')
         if not filename == self.path+'/connections.config':
             if path.isfile(filename):
                 copyfile(filename, self.path+'/connections.config')
@@ -671,6 +682,10 @@ class benchmarker():
         #with open(self.path+'/connections_copy.config', "w") as connections_file:
         with open(self.path+'/connections.config', "w") as connections_file:
             connections_file.write(str(connections_content))
+    def store_querydata(self):
+        #print("store_querydata")
+        with open(self.path+'/queries.config', "w") as queries_file:
+            queries_file.write(str(self.queryconfig))
     def connectDBMSAll(self):
         """
         Connects to all dbms we have collected connection data of.
@@ -1020,14 +1035,14 @@ class benchmarker():
                     self.logger.debug("Benchmarks of Q"+str(numQuery)+" at dbms "+connectionname+" not wanted right now")
                     return False
         # prepare basic setting
-        self.logger.info("Starting benchmarks of Q"+str(numQuery)+" at dbms "+connectionname)
+        self.logger.debug("Starting benchmarks of Q"+str(numQuery)+" at dbms "+connectionname)
         self.startBenchmarkingQuery(numQuery)
         q = self.queries[numQuery-1]
         c = connectionname
         print("Connection: "+connectionname)
         # prepare multiprocessing
         logger = mp.log_to_stderr()
-        logger.setLevel(logging.INFO)
+        logger.setLevel(logging.WARNING)
         # prepare query object
         query = tools.query(q)
         # connection management for parallel connections
@@ -1040,6 +1055,7 @@ class benchmarker():
         if self.stream_id is not None:
             parameter.defaultParameters['STREAM'] = self.stream_id
         singleConnection = connectionmanagement['singleConnection']
+        #print(connectionmanagement)
         # overwrite by connection
         #if 'connectionmanagement' in self.dbms[c].connectiondata:
         #   connectionmanagement = self.dbms[c].connectiondata['connectionmanagement']
@@ -1183,7 +1199,7 @@ class benchmarker():
                         pool.close()
                     """
                     with mp.Pool(processes=numProcesses) as pool:
-                        self.logger.info("POOL of query senders (local pool starmap)")
+                        self.logger.info("POOL of query senders (local pool starmap {} workers)".format(numProcesses))
                         #multiple_results = [pool.apply_async(singleRun, (self.dbms[c].connectiondata, inputConfig, runs[i*batchsize:(i+1)*batchsize], connectionname, numQuery, self.path, JPickler.dumps(self.activeConnections))) for i in range(numBatches)]
                         args = [(self.dbms[c].connectiondata, inputConfig, runs[i*batchsize:(i+1)*batchsize], connectionname, numQuery, self.path, [], BENCHMARKER_VERBOSE_QUERIES, BENCHMARKER_VERBOSE_RESULTS, BENCHMARKER_VERBOSE_PROCESS) for i in range(numBatches)]
                         multiple_results = pool.starmap_async(singleRun, args)
@@ -1443,6 +1459,8 @@ class benchmarker():
                 ordered_list_of_queries = list(ordered_list_of_queries)
                 random.shuffle(ordered_list_of_queries)
                 print("Ordering:", ordered_list_of_queries)
+        # a dict of connections, each carrying a list of connections to the dbms
+        connectionpool = dict()
         for numQuery in ordered_list_of_queries:
             if self.overwrite and not (self.fixedQuery is not None and self.fixedQuery != numQuery):# or (self.fixedConnection is not None and self.fixedConnection != connectionname):
                 # rerun this query
@@ -1455,23 +1473,33 @@ class benchmarker():
                     if('singleConnection' in connectionmanagement):# and connectionmanagement['timeout'] != 0):
                         singleConnection = connectionmanagement['singleConnection']
                 if singleConnection:
+                    if not connectionname in connectionpool:
+                        connectionpool[connectionname] = []
                     # we assume all queries should share a connection
                     numProcesses = 1
-                    i = 0
+                    i = len(connectionpool[connectionname])
+                    #i = 0
                     #connectionname = c
-                    if (self.fixedQuery is not None and self.fixedQuery != numQuery) or (self.fixedConnection is not None and self.fixedConnection != connectionname):
-                        continue
-                    else:
-                        print("More active connections from {} to {} for {}".format(len(self.activeConnections), numProcesses, connectionname))
-                        self.activeConnections.append(tools.dbms(self.dbms[connectionname].connectiondata))
-                        print("Establish global connection #"+str(i))
-                        self.activeConnections[i].connect()
+                    if i == 0:
+                        if (self.fixedQuery is not None and self.fixedQuery != numQuery) or (self.fixedConnection is not None and self.fixedConnection != connectionname):
+                            continue
+                        else:
+                            #print("More active connections from {} to {} for {}".format(len(self.activeConnections), numProcesses, connectionname))
+                            print("More active connections from {} to {} for {}".format(len(connectionpool[connectionname]), numProcesses, connectionname))
+                            #self.activeConnections.append(tools.dbms(self.dbms[connectionname].connectiondata))
+                            connectionpool[connectionname].append(tools.dbms(self.dbms[connectionname].connectiondata))
+                            print("Establish global connection #"+str(i))
+                            #self.activeConnections[i].connect()
+                            connectionpool[connectionname][i].connect()
+                    self.activeConnections = connectionpool[connectionname]
                 # run benchmark, current query and connection
                 bBenchmarkDoneForThisQuery = self.runBenchmark(numQuery, connectionname)
                 # close global connection
                 if singleConnection:
-                    print("Closed connection for", connectionname)
-                    self.activeConnections[i].disconnect()
+                    #print("Closed connection for", connectionname)
+                    #self.activeConnections[i].disconnect()
+                    #self.activeConnections = []
+                    #connectionpool[connectionname][i].disconnect()
                     self.activeConnections = []
                 # if benchmark has been done: store and generate reports
                 if bBenchmarkDoneForThisQuery:
@@ -1482,6 +1510,11 @@ class benchmarker():
                         for r in self.reporter:
                             r.init()
                             r.generate(numQuery, [self.timerExecution, self.timerTransfer, self.timerConnect])
+        if len(connectionpool):
+            # close all connections in pool
+            for connectionname in connectionpool.keys():
+                for i in range(len(connectionpool[connectionname])):
+                    connectionpool[connectionname][i].disconnect()
     def runBenchmarksConnection(self):
         """
         Performs connectionwise benchmark runs.
@@ -1929,3 +1962,477 @@ class inspector(benchmarker):
             for i,q in enumerate(self.queries):
                 if 'active' in q and q['active']:
                     print(str(i)+": Q"+str(i+1)+" = "+q['title'])
+
+
+
+
+
+def run_cli(parameter):
+    # argparse
+    """
+    parser = argparse.ArgumentParser(description='A benchmark tool for RDBMS. It connects to a given list of RDBMS via JDBC and runs a given list benchmark queries. Optionally some reports are generated.')
+    parser.add_argument('mode', help='run benchmarks and save results, or just read benchmark results from folder, or continue with missing benchmarks only', choices=['run', 'read', 'continue'])
+    parser.add_argument('-d', '--debug', help='dump debug informations', action='store_true')
+    parser.add_argument('-b', '--batch', help='batch mode (more protocol-like output), automatically on for debug mode', action='store_true')
+    parser.add_argument('-qf', '--query-file', help='name of query config file', default='queries.config')
+    parser.add_argument('-cf', '--connection-file', help='name of connection config file', default='connections.config')
+    parser.add_argument('-q', '--query', help='number of query to benchmark', default=None)
+    parser.add_argument('-c', '--connection', help='name of connection to benchmark', default=None)
+    parser.add_argument('-ca', '--connection-alias', help='alias of connection to benchmark', default='')
+    parser.add_argument('-f', '--config-folder', help='folder containing query and connection config files. If set, the names connections.config and queries.config are assumed automatically.', default=None)
+    parser.add_argument('-r', '--result-folder', help='folder for storing benchmark result files, default is given by timestamp', default=None)
+    parser.add_argument('-e', '--generate-evaluation', help='generate new evaluation file', default='no', choices=['no','yes'])
+    parser.add_argument('-w', '--working', help='working per query or connection', default='connection', choices=['query','connection'])
+    #parser.add_argument('-a', '--anonymize', help='anonymize all dbms', action='store_true', default=False)
+    #parser.add_argument('-u', '--unanonymize', help='unanonymize some dbms, only sensible in combination with anonymize', nargs='*', default=[])
+    parser.add_argument('-p', '--numProcesses', help='Number of parallel client processes. Global setting, can be overwritten by connection. Default is 1.', default=None)
+    parser.add_argument('-s', '--seed', help='random seed', default=None)
+    parser.add_argument('-cs', '--copy-subfolder', help='copy subfolder of result folder', action='store_true')
+    parser.add_argument('-ms', '--max-subfolders', help='maximum number of subfolders of result folder', default=None)
+    parser.add_argument('-sl', '--sleep', help='sleep SLEEP seconds before going to work', default=0)
+    parser.add_argument('-st', '--start-time', help='sleep until START-TIME before beginning benchmarking', default=None)
+    parser.add_argument('-sf', '--subfolder', help='stores results in a SUBFOLDER of the result folder', default=None)
+    parser.add_argument('-sd', '--store-data', help='store result of first execution of each query', default=None, choices=[None, 'csv', 'pandas'])
+    parser.add_argument('-vq', '--verbose-queries', help='print every query that is sent', action='store_true', default=False)
+    parser.add_argument('-vs', '--verbose-statistics', help='print statistics about queries that have been sent', action='store_true', default=False)
+    parser.add_argument('-vr', '--verbose-results', help='print result sets of every query that has been sent', action='store_true', default=False)
+    parser.add_argument('-vp', '--verbose-process', help='print result sets of every query that has been sent', action='store_true', default=False)
+    parser.add_argument('-pn', '--num-run', help='Parameter: Number of executions per query', default=0)
+    parser.add_argument('-m', '--metrics', help='collect hardware metrics per query', action='store_true', default=False)
+    parser.add_argument('-mps', '--metrics-per-stream', help='collect hardware metrics per stream', action='store_true', default=False)
+    parser.add_argument('-sid', '--stream-id', help='id of a stream in parallel execution of streams', default=None)
+    parser.add_argument('-ssh', '--stream-shuffle', help='shuffle query execution based on id of stream', default=None)
+    parser.add_argument('-wli', '--workload-intro', help='meta data: intro text for workload description', default='')
+    parser.add_argument('-wln', '--workload-name', help='meta data: name of workload', default='')
+    #parser.add_argument('-pt', '--timeout', help='Parameter: Timeout in seconds', default=0)
+    args = parser.parse_args()
+    """
+    #print(parameter)
+    args = SimpleNamespace(**parameter)
+    #print(args)
+    #exit()
+    logger = logging.getLogger('dbmsbenchmarker')
+    # evaluate args
+    if args.debug:
+        logging.basicConfig(level=logging.DEBUG)
+        bBatch = True
+    else:
+        logging.basicConfig(level=logging.INFO)
+        bBatch = args.batch
+    subfolder = None
+    rename_connection = ''
+    rename_alias = ''
+    if args.mode != 'read' and args.parallel_processes and args.numProcesses is not None:
+        numProcesses = int(args.numProcesses)
+        print("Start {} independent processes".format(numProcesses))
+        code = str(round(time.time()))
+        # make a copy of result folder
+        #if not args.result_folder is None and not path.isdir(args.result_folder):
+        if args.result_folder is None:
+            result_folder = './'
+        else:
+            result_folder = args.result_folder
+        command_args = vars(args)
+        makedirs(result_folder+"/"+code)
+        copyfile(args.config_folder+'/connections.config', result_folder+"/"+code+'/connections.config')#args.connection_file)
+        copyfile(args.config_folder+'/queries.config', result_folder+"/"+code+'/queries.config')#args.query_file)
+        if not args.connection is None:
+            connections = [args.connection]
+        else:
+            #connection = args.connection
+            #print("Parallel execution must be limited to single DBMS")
+            with open(result_folder+"/"+code+'/connections.config', "r") as connections_file:
+                connections_content = ast.literal_eval(connections_file.read())
+            #print(connections_content)
+            connections = [c['name'] for c in connections_content]
+            print(connections)
+            #exit()
+        for connection in connections:
+            # only neccessary after merge
+            #copyfile(args.config_folder+'/connections.config', result_folder+'/connections.config')#args.connection_file)
+            #copyfile(args.config_folder+'/queries.config', result_folder+'/queries.config')#args.query_file)
+            #del command_args['parallel_processes']
+            command_args['parallel_processes'] = False
+            command_args['numProcesses'] = None
+            command_args['result_folder'] = result_folder+"/"+code
+            command_args['copy_subfolder'] = True
+            command_args['subfolder'] = connection
+            command_args['connection'] = connection
+            # Get the current UTC time
+            current_time = datetime.datetime.utcnow()
+            # Add 5 seconds to the current time
+            start_time = current_time + datetime.timedelta(seconds=5)
+            command_args['start_time'] = start_time.strftime('%Y-%m-%d %H:%M:%S')
+            #command_args['stream_id'] = 1
+            pool_args = []#(dict(command_args),)]*numProcesses
+            for i in range(numProcesses):
+                command_args['stream_id'] = i+1
+                pool_args.append((dict(command_args),))
+                #pool_args[i][0]['stream_id'] = i+1
+            #print(pool_args[0][0]['stream_id'])
+            #exit()
+            #print(command_args)
+            #print(pool_args)
+            #exit()
+            # Create a pool of subprocesses
+            #with Pool(processes=4) as pool:  # Adjust the number of processes as needed
+            with mp.Pool(processes=int(numProcesses)) as pool:
+                # Map the arguments to the subprocess function
+                #results = pool.map("scripts.cli", [command_args]*4)  # Run the same args in 4 subprocesses
+                multiple_results = pool.starmap_async(run_cli, pool_args)
+                #multiple_results = pool.starmap_async(benchmarker.run_cli, [(k:v) for k,d in command_args.items()])
+                lists = multiple_results.get()#timeout=timeout)
+                #lists = [res.get(timeout=timeout) for res in multiple_results]
+                #lists = [i for j in lists for i in j]
+                #print(lists)
+                pool.close()
+                pool.join()
+            # Print results
+            #for stdout, stderr in multiple_results:
+            #    print("STDOUT:", stdout)
+            #    print("STDERR:", stderr)
+        tools.merge_partial_results(result_folder+"/", code)
+        if args.generate_evaluation == 'yes':
+            #evaluator.evaluation = {}
+            #command_args['mode'] = 'read'
+            #command_args['result_folder'] = code
+            #experiments = benchmarker.run_cli(command_args)
+            experiments = benchmarker(
+                result_path=args.result_folder,
+                code=code,
+                #working=args.working,
+                batch=bBatch,
+                #subfolder=subfolder,#args.subfolder,
+                fixedQuery=args.query,
+                fixedConnection=args.connection,
+                fixedAlias=args.connection_alias,
+                #rename_connection=rename_connection,
+                #rename_alias=rename_alias,
+                #anonymize=args.anonymize,
+                #unanonymize=args.unanonymize,
+                #numProcesses=args.numProcesses,
+                #stream_id=stream_id,
+                #stream_shuffle=stream_shuffle,
+                #seed=args.seed
+            )
+            experiments.getConfig()
+            experiments.readBenchmarks()
+            evaluate = run_evaluation(experiments)
+            print("Experiment {} has been finished".format(experiments.code))
+            #print(evaluate)
+            #list_connections = evaluate.get_experiment_list_connections()
+            #print(list_connections)
+            """
+            benchmarker_times = evaluate.get_experiment_connection_properties(list_connections[0])['times']['total']
+            # compute min of start and max of end for timespan
+            times_start=[]
+            times_end=[]
+            for t in benchmarker_times:
+                times_start.append(benchmarker_times[t]['time_start'])
+                times_end.append(benchmarker_times[t]['time_end'])
+            time_start = min(times_start)
+            time_end = max(times_end)
+            print(time_start, time_end, time_end-time_start)
+            """
+        return experiments
+    else:
+        if args.mode != 'read':
+            # sleep before going to work
+            if int(args.sleep) > 0:
+                logger.debug("Sleeping {} seconds before going to work".format(int(args.sleep)))
+                time.sleep(int(args.sleep))
+            # make a copy of result folder
+            if not args.result_folder is None and not path.isdir(args.result_folder):
+                makedirs(args.result_folder)
+                copyfile(args.config_folder+'/connections.config', args.result_folder+'/connections.config')#args.connection_file)
+                copyfile(args.config_folder+'/queries.config', args.result_folder+'/queries.config')#args.query_file)
+            subfolder = args.subfolder
+            if args.copy_subfolder and len(subfolder) > 0:
+                if args.result_folder is None:
+                    print("Subfolder logic only makes sense for existing result folders or for parallel processes. Sorry!")
+                    print("Hint: 1) add -pp, or 2) add -r, or 3) remove -cs and -sf")
+                    exit()
+                if args.stream_id is not None:
+                    client = int(args.stream_id)
+                else:
+                    client = 1
+                while True:
+                    if args.max_subfolders is not None and client > int(args.max_subfolders):
+                        exit()
+                    resultpath = args.result_folder+'/'+subfolder+'-'+str(client)
+                    print("Checking if {} is suitable folder for free job number".format(resultpath))
+                    if path.isdir(resultpath):
+                        client = client + 1
+                        waiting = random.randint(1, 10)
+                        print("Sleeping {} seconds before checking for next free job number".format(waiting))
+                        time.sleep(waiting)
+                    else:
+                        print("{} is a suitable folder for free job number".format(resultpath))
+                        makedirs(resultpath)
+                        break
+                subfolder = subfolder+'-'+str(client)
+                rename_connection = args.connection+'-'+str(client)
+                print("Rename connection {} to {}".format(args.connection, rename_connection))
+                rename_alias = args.connection_alias+'-'+str(client)
+                print("Rename alias {} to {}".format(args.connection_alias, rename_alias))
+            # sleep before going to work
+            if args.start_time is not None:
+                #logger.debug(args.start_time)
+                now = datetime.datetime.utcnow()
+                try:
+                    start = datetime.datetime.strptime(args.start_time, '%Y-%m-%d %H:%M:%S')
+                    if start > now:
+                        wait = (start-now).seconds
+                        now_string = now.strftime('%Y-%m-%d %H:%M:%S')
+                        print("Sleeping until {} before going to work ({} seconds, it is {} now)".format(args.start_time, wait, now_string))
+                        time.sleep(int(wait))
+                except Exception as e:
+                    print("Invalid format: {}".format(args.start_time))
+        # set verbose level
+        if args.verbose_queries:
+            benchmarker.BENCHMARKER_VERBOSE_QUERIES = True
+        if args.verbose_statistics:
+            benchmarker.BENCHMARKER_VERBOSE_STATISTICS = True
+        if args.verbose_results:
+            benchmarker.BENCHMARKER_VERBOSE_RESULTS = True
+        if args.verbose_process:
+            benchmarker.BENCHMARKER_VERBOSE_PROCESS = True
+        # handle parallel streams
+        stream_id = args.stream_id
+        stream_shuffle = args.stream_shuffle
+        #if stream_shuffle is not None and stream_shuffle:
+        #    print("User wants shuffled queries")
+        #if stream_id is not None and stream_id:
+        #    print("This is stream {}".format(stream_id))
+        # overwrite parameters of workload queries
+        if int(args.num_run) > 0:
+            #querymanagement = {
+            #     'numRun': int(args.num_run),
+            #     'timer': {'datatransfer': {'store': 'csv'}},
+            #}
+            #tools.query.template = querymanagement
+            if not isinstance(tools.query.template, dict):
+                tools.query.template = {}
+            tools.query.template['numRun'] = int(args.num_run)
+        if args.store_data is not None:
+            if not isinstance(tools.query.template, dict):
+                tools.query.template = {}
+            tools.query.template['timer'] = {'datatransfer': {'store': args.store_data}}
+        # dbmsbenchmarker with reporter
+        experiments = benchmarker(
+            result_path=args.result_folder,
+            working=args.working,
+            batch=bBatch,
+            subfolder=subfolder,#args.subfolder,
+            fixedQuery=args.query,
+            fixedConnection=args.connection,
+            fixedAlias=args.connection_alias,
+            rename_connection=rename_connection,
+            rename_alias=rename_alias,
+            #anonymize=args.anonymize,
+            #unanonymize=args.unanonymize,
+            numProcesses=args.numProcesses,
+            stream_id=stream_id,
+            stream_shuffle=stream_shuffle,
+            seed=args.seed)
+        # overwrite parameters of workload header
+        if len(args.workload_intro):
+            experiments.workload['intro'] = args.workload_intro
+        if len(args.workload_name):
+            experiments.workload['name'] = args.workload_name
+        # why?
+        #if args.result_folder is not None:
+        #    config_folder = args.result_folder
+        #else:
+        #    config_folder = args.config_folder
+        experiments.getConfig(args.config_folder, args.connection_file, args.query_file)
+        # switch for args.mode
+        if args.mode == 'read':
+            experiments.readBenchmarks()
+        elif args.mode == 'run':
+            if experiments.continuing:
+                #experiments.generateAllParameters()
+                experiments.continueBenchmarks(overwrite = True)
+            else:
+                #experiments.generateAllParameters()
+                experiments.runBenchmarks()
+            print('Experiment {} has been finished'.format(experiments.code))
+        elif args.mode == 'continue':
+            if experiments.continuing:
+                experiments.continueBenchmarks(overwrite = False)
+            else:
+                print("Continue needs result folder")
+        if args.metrics:
+            # collect hardware metrics
+            experiments.reporter.append(reporter.metricer(experiments))
+            experiments.generateReportsAll()
+        if args.metrics_per_stream:
+            # collect hardware metrics
+            experiments.reporter.append(reporter.metricer(experiments, per_stream=True))
+            experiments.generateReportsAll()
+        if args.generate_evaluation == 'yes':
+            # generate evaluation cube
+            experiments.overwrite = True
+            evaluator.evaluator(experiments, load=False, force=True)
+            run_evaluation(experiments)
+        return experiments
+
+def run_evaluation(experiments):
+        # generate evaluation cube
+        experiments.overwrite = True
+        # show some evaluations
+        evaluator.evaluator(experiments, load=False, force=True)
+        result_folder = experiments.path #args.result_folder if not args.result_folder is None else "./"
+        #num_processes = min(float(args.numProcesses if not args.numProcesses is None else 1), float(args.num_run) if int(args.num_run) > 0 else 1)
+        evaluate = dbmsbenchmarker.inspector.inspector(result_folder)
+        evaluate.load_experiment("")#experiments.code)
+        list_queries_all = evaluate.get_experiment_list_queries()
+        #print(list_queries_all)
+        dbms_filter = []
+        #if not args.connection is None:
+        #    dbms_filter = [args.connection]
+        for q in list_queries_all:
+            df = evaluate.get_timer(q, "execution")
+            if len(list(df.index)) > 0:
+                dbms_filter = list(df.index)
+                print("First successful query: {}".format(q))
+                break
+        #print(dbms_filter)
+        #list_queries = evaluate.get_experiment_queries_successful() # evaluate.get_experiment_list_queries()
+        list_queries = evaluate.get_survey_successful(timername='execution', dbms_filter=dbms_filter)
+        #print(list_queries, len(list_queries))
+        if 'numRun' in experiments.connectionmanagement:
+            num_run = experiments.connectionmanagement['numRun']
+        else:
+            num_run = 1
+        if 'numProcesses' in experiments.connectionmanagement:
+            num_processes = experiments.connectionmanagement['numProcesses']
+        else:
+            num_processes = 1
+        #####################
+        if len(dbms_filter) > 0:
+            print("Limited to:", dbms_filter)
+        print("Number of runs per query:", num_run)
+        print("Number of successful queries:", len(list_queries))
+        print("Number of max. parallel clients:", int(num_processes))
+        #####################
+        print("\n### Errors (failed queries)")
+        print(evaluate.get_total_errors(dbms_filter=dbms_filter).T)
+        #####################
+        print("\n### Warnings (result mismatch)")
+        print(evaluate.get_total_warnings(dbms_filter=dbms_filter).T)
+        #####################
+        #df = evaluate.get_aggregated_query_statistics(type='timer', name='connection', query_aggregate='Median', dbms_filter=dbms_filter)
+        df = evaluate.get_aggregated_experiment_statistics(type='timer', name='connection', query_aggregate='Median', total_aggregate='Geo', dbms_filter=dbms_filter)
+        df = (df/1000.0).sort_index()
+        if not df.empty:
+            print("### Geometric Mean of Medians of Connection Times (only successful) [s]")
+            df.columns = ['average connection time [s]']
+            print(df.round(2))
+            #print("### Statistics of Timer Connection (only successful) [s]")
+            #df_stat = evaluator.addStatistics(df, drop_nan=False, drop_measures=True)
+            #print(df_stat.round(2))
+        #####################
+        #df = evaluate.get_aggregated_query_statistics(type='timer', name='connection', query_aggregate='Median', dbms_filter=dbms_filter)
+        df = evaluate.get_aggregated_experiment_statistics(type='timer', name='connection', query_aggregate='Max', total_aggregate='Max', dbms_filter=dbms_filter)
+        df = (df/1000.0).sort_index()
+        if not df.empty:
+            print("### Max of Connection Times (only successful) [s]")
+            df.columns = ['max connection time [s]']
+            print(df.round(2))
+            #print("### Statistics of Timer Connection (only successful) [s]")
+            #df_stat = evaluator.addStatistics(df, drop_nan=False, drop_measures=True)
+            #print(df_stat.round(2))
+        #####################
+        df = evaluate.get_aggregated_experiment_statistics(type='timer', name='run', query_aggregate='Median', total_aggregate='Geo', dbms_filter=dbms_filter)
+        df = (df/1000.0).sort_index()
+        if not df.empty:
+            print("### Geometric Mean of Medians of Run Times (only successful) [s]")
+            df.columns = ['average run time [s]']
+            print(df.round(2))
+        #####################
+        df = evaluate.get_aggregated_experiment_statistics(type='timer', name='run', query_aggregate='Max', total_aggregate='Sum', dbms_filter=dbms_filter).astype('float')/1000.
+        if not df.empty:
+            print("### Sum of Maximum Run Times per Query (only successful) [s]")
+            df.columns = ['sum of max run times [s]']
+            print(df.round(2))
+        #####################
+        df = num_processes*float(len(list_queries))*3600./df
+        if not df.empty:
+            print("### Queries per Hour (only successful) [QpH] - {}*{}*3600/(sum of max run times)".format(int(num_processes), int(len(list_queries))))
+            df.columns = ['queries per hour [Qph]']
+            print(df.round(2))
+        df_tpx = df.copy()
+        #####################
+        times_start = dict()
+        times_end = dict()
+        times_numbers = dict()
+        tpx_sum = dict()
+        #times = experiments.protocol['query']
+        #print(times)
+        for connection_nr, connection in evaluate.benchmarks.dbms.items():
+            df_time = pd.DataFrame()
+            c = connection.connectiondata
+            #print(c)
+            #connection_name = c['name']
+            if 'orig_name' in c:
+                orig_name = c['orig_name']
+            else:
+                orig_name = c['name']
+            benchmarker_times = evaluate.get_experiment_connection_properties(c['name'])['times']['total']
+            #print(benchmarker_times)
+            if len(orig_name) > 0: #'orig_name' in c:
+                if not orig_name in tpx_sum:
+                    tpx_sum[orig_name] = 0
+                if c['name'] in df_tpx.index:
+                    tpx_sum[orig_name] = tpx_sum[orig_name] + df_tpx.loc[c['name']]['queries per hour [Qph]']
+                else:
+                    del tpx_sum[orig_name]
+                #print(orig_name)
+                if not orig_name in times_start:
+                    times_start[orig_name] = []
+                    times_end[orig_name] = []
+                    times_numbers[orig_name] = 0
+                times_numbers[orig_name] = times_numbers[orig_name] + 1
+                for q in experiments.protocol['query']:
+                    #print(experiments.protocol['query'][q])
+                    #print(q, experiments.protocol['query'][q]['starts'], experiments.protocol['query'][q]['ends'])
+                    times = experiments.protocol['query'][q]
+                    if "ends" in times and c['name'] in times["ends"]:
+                        time_start = int(datetime.datetime.timestamp(datetime.datetime.strptime(times["starts"][c['name']],'%Y-%m-%d %H:%M:%S.%f')))
+                        time_end = int(datetime.datetime.timestamp(datetime.datetime.strptime(times["ends"][c['name']],'%Y-%m-%d %H:%M:%S.%f')))
+                        times_start[orig_name].append(time_start)
+                        times_end[orig_name].append(time_end)
+                        #times_start[time_start] = i
+                        #times_end[time_end] = i
+                #for t in benchmarker_times:
+                #    times_start[orig_name].append(benchmarker_times[t]['time_start'])
+                #    times_end[orig_name].append(benchmarker_times[t]['time_end'])
+        if len(tpx_sum) > 0:
+            print("### Queries per Hour (only successful) [QpH] - Sum per DBMS")
+            df = pd.DataFrame.from_dict(tpx_sum, orient='index', columns=['queries per hour [Qph]'])
+            df.index.name = 'DBMS'
+            print(df.round(2))
+        tpx_total = dict()
+        if len(times_start) > 0:
+            for c in times_start:
+                #print(c, times_start[c], times_end[c])
+                if len(times_start[c]) > 0:
+                    time_start = min(times_start[c])
+                    time_end = max(times_end[c])
+                    time_span = time_end-time_start
+                    num_results = times_numbers[c]
+                    tpx = round(num_run*num_results*float(len(list_queries))*3600./(time_span), 2)
+                    #print(c, time_start, time_end, time_span, tpx)
+                    #print("{}: {}*{}*3600/{} = {}".format(c, num_results, int(len(list_queries)), time_span, tpx))
+                    tpx_total[c] = {'queries per hour [Qph]': tpx, 'formula': "{}*{}*{}*3600/{}".format(num_run, num_results, int(len(list_queries)), time_span)}
+            #print(tpx_total)
+            if len(tpx_total) > 0:
+                print("### Queries per Hour (only successful) [QpH] - (max end - min start)")
+                df = pd.DataFrame.from_dict(tpx_total, orient='index')#, columns=['queries per hour [Qph]'])
+                df.index.name = 'DBMS'
+                print(df)
+        return evaluate
+
+
+
