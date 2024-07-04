@@ -35,14 +35,19 @@ How to configure the benchmarker can be illustrated best by looking at the sourc
 `python benchmark.py -h`
 
 ```
-usage: dbmsbenchmarker [-h] [-d] [-b] [-qf QUERY_FILE] [-cf CONNECTION_FILE] [-q QUERY] [-c CONNECTION] [-ca CONNECTION_ALIAS] [-f CONFIG_FOLDER] [-r RESULT_FOLDER] [-e {no,yes}] [-w {query,connection}] [-p NUMPROCESSES] [-s SEED] [-cs] [-ms MAX_SUBFOLDERS]
-                       [-sl SLEEP] [-st START_TIME] [-sf SUBFOLDER] [-sd {None,csv,pandas}] [-vq] [-vs] [-vr] [-vp] [-pn NUM_RUN] [-m] [-mps] [-sid STREAM_ID] [-ssh STREAM_SHUFFLE] [-wli WORKLOAD_INTRO] [-wln WORKLOAD_NAME]
+usage: dbmsbenchmarker [-h] [-d] [-b] [-qf QUERY_FILE] [-cf CONNECTION_FILE] [-q QUERY] [-c CONNECTION] [-ca CONNECTION_ALIAS]
+                       [-f CONFIG_FOLDER] [-r RESULT_FOLDER] [-e {no,yes}] [-w {query,connection}] [-p NUMPROCESSES] [-pp]
+                       [-s SEED] [-cs] [-ms MAX_SUBFOLDERS] [-sl SLEEP] [-st START_TIME] [-sf SUBFOLDER] [-sd {None,csv,pandas}]
+                       [-vq] [-vs] [-vr] [-vp] [-pn NUM_RUN] [-m] [-mps] [-sid STREAM_ID] [-ssh STREAM_SHUFFLE]
+                       [-wli WORKLOAD_INTRO] [-wln WORKLOAD_NAME]
                        {run,read,continue}
 
-A benchmark tool for RDBMS. It connects to a given list of RDBMS via JDBC and runs a given list benchmark queries. Optionally some reports are generated.
+A benchmark tool for RDBMS. It connects to a given list of RDBMS via JDBC and runs a given list benchmark queries. Optionally some
+reports are generated.
 
 positional arguments:
-  {run,read,continue}   run benchmarks and save results, or just read benchmark results from folder, or continue with missing benchmarks only
+  {run,read,continue}   run benchmarks and save results, or just read benchmark results from folder, or continue with missing
+                        benchmarks only
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -59,7 +64,8 @@ optional arguments:
   -ca CONNECTION_ALIAS, --connection-alias CONNECTION_ALIAS
                         alias of connection to benchmark
   -f CONFIG_FOLDER, --config-folder CONFIG_FOLDER
-                        folder containing query and connection config files. If set, the names connections.config and queries.config are assumed automatically.
+                        folder containing query and connection config files. If set, the names connections.config and
+                        queries.config are assumed automatically.
   -r RESULT_FOLDER, --result-folder RESULT_FOLDER
                         folder for storing benchmark result files, default is given by timestamp
   -e {no,yes}, --generate-evaluation {no,yes}
@@ -68,6 +74,8 @@ optional arguments:
                         working per query or connection
   -p NUMPROCESSES, --numProcesses NUMPROCESSES
                         Number of parallel client processes. Global setting, can be overwritten by connection. Default is 1.
+  -pp, --parallel-processes
+                        if parallel execution should be organized as independent processes
   -s SEED, --seed SEED  random seed
   -cs, --copy-subfolder
                         copy subfolder of result folder
