@@ -2032,7 +2032,7 @@ def run_cli(parameter):
             result_folder = './'
         else:
             result_folder = args.result_folder
-        command_args = vars(args)
+        command_args = vars(args).copy()
         makedirs(result_folder+"/"+code)
         copyfile(args.config_folder+'/connections.config', result_folder+"/"+code+'/connections.config')#args.connection_file)
         copyfile(args.config_folder+'/queries.config', result_folder+"/"+code+'/queries.config')#args.query_file)
@@ -2058,10 +2058,14 @@ def run_cli(parameter):
             command_args['copy_subfolder'] = True
             command_args['subfolder'] = connection
             command_args['connection'] = connection
+            #if 'generate_evaluation' in command_args:
+            #    del command_args['generate_evaluation']
+            command_args['generate_evaluation'] = 'no'
             # Get the current UTC time
             current_time = datetime.datetime.utcnow()
             # Add 5 seconds to the current time
-            start_time = current_time + datetime.timedelta(seconds=5)
+            seconds = 5 if 5 > numProcesses else numProcesses
+            start_time = current_time + datetime.timedelta(seconds=seconds)
             command_args['start_time'] = start_time.strftime('%Y-%m-%d %H:%M:%S')
             #command_args['stream_id'] = 1
             pool_args = []#(dict(command_args),)]*numProcesses
@@ -2093,6 +2097,7 @@ def run_cli(parameter):
             #    print("STDERR:", stderr)
         tools.merge_partial_results(result_folder+"/", code)
         if args.generate_evaluation == 'yes':
+            print("HERE")
             #evaluator.evaluation = {}
             #command_args['mode'] = 'read'
             #command_args['result_folder'] = code
@@ -2134,7 +2139,8 @@ def run_cli(parameter):
             time_end = max(times_end)
             print(time_start, time_end, time_end-time_start)
             """
-        return experiments
+            return experiments
+        return None
     else:
         if args.mode != 'read':
             # sleep before going to work
