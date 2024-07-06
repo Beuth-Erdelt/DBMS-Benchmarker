@@ -2295,11 +2295,11 @@ def run_evaluation(experiments):
             df = evaluate.get_timer(q, "execution")
             if len(list(df.index)) > 0:
                 dbms_filter = list(df.index)
-                print("First successful query: {}".format(q))
+                print("First successful query: Q{}".format(q))
                 break
         #print(dbms_filter)
         #list_queries = evaluate.get_experiment_queries_successful() # evaluate.get_experiment_list_queries()
-        list_queries = evaluate.get_survey_successful(timername='execution', dbms_filter=dbms_filter)
+        list_queries = evaluate.get_survey_successful(timername='run', dbms_filter=dbms_filter)
         #print(list_queries, len(list_queries))
         if 'numRun' in experiments.connectionmanagement:
             num_run = experiments.connectionmanagement['numRun']

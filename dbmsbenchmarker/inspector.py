@@ -544,7 +544,11 @@ class inspector():
     def get_survey_successful(self, timername=None, dbms_filter=[]):
         # list of active queries for timer e[0] = execution
         if not timername is None:
+            #print(self.benchmarks.timers)
+            #timers = [(i, t.name) for i,t in enumerate(self.benchmarks.timers)]
+            #print(timers)
             epos = [i for i,t in enumerate(self.benchmarks.timers) if t.name==timername]
+            #print(epos, self.get_experiment_queries_successful(dbms_filter=dbms_filter))
             l = self.get_experiment_queries_successful(dbms_filter=dbms_filter)[epos[0]]
             return l
         else:

@@ -27,6 +27,7 @@ import ast
 from os import path
 import matplotlib.pyplot as plt
 import pickle
+import traceback
 
 from dbmsbenchmarker import inspector
 
@@ -1278,7 +1279,8 @@ class dataframehelper():
         d = df.replace(0, np.nan).min()
         df = df.T
         df.index = ['Q'+j for i,j in enumerate(df.index)]
-        df.columns = list(l["1"].keys())
+        # find first active query
+        df.columns = list(l[list(l.keys())[0]].keys())
         df.columns = df.columns.map(dbms.anonymizer)
         df = df.reindex(sorted(df.columns), axis=1)
         return df
@@ -1292,7 +1294,8 @@ class dataframehelper():
         df = df.div(d).replace(0,np.nan)
         df = df.T
         df.index = ['Q'+j for i,j in enumerate(df.index)]
-        df.columns = list(l["1"].keys())
+        # find first active query
+        df.columns = list(l[list(l.keys())[0]].keys())
         df.columns = df.columns.map(dbms.anonymizer)
         df = df.reindex(sorted(df.columns), axis=1)
         return df
@@ -1302,7 +1305,8 @@ class dataframehelper():
         df = pd.DataFrame(l)
         df = df.T
         df.index = ['Q'+j for i,j in enumerate(df.index)]
-        df.columns = list(l["1"].keys())
+        # find first active query
+        df.columns = list(l[list(l.keys())[0]].keys())
         df.columns = df.columns.map(dbms.anonymizer)
         df = df.reindex(sorted(df.columns), axis=1)
         return df
@@ -1312,7 +1316,8 @@ class dataframehelper():
         df = pd.DataFrame(l)
         df = df.T
         df.index = ['Q'+j for i,j in enumerate(df.index)]
-        df.columns = list(l["1"].keys())
+        # find first active query
+        df.columns = list(l[list(l.keys())[0]].keys())
         df.columns = df.columns.map(dbms.anonymizer)
         df = df.reindex(sorted(df.columns), axis=1)
         return df
@@ -1434,6 +1439,7 @@ def findSuccessfulQueriesAllDBMS(benchmarker, numQuery, timer, dbms_filter=[]):
                 if not bIgnoreQuery:
                     # no active dbms missing for this timer and query
                     validQueries[numTimer].append(i)
+                    logging.debug("Query is successful: {}".format(i))
     return validQueries
 
 
@@ -1647,6 +1653,7 @@ def merge_partial_results(result_path, code):
         data_first = None
         df_first = None
         connection_first = None
+        titles_result = []
         for connection in list_connections:
             try:
                 filename = '{folder}/{connection}/query_{numQuery}_resultset_complete_{connection}.pickle'.format(folder=folder, connection=connection, numQuery=numQuery)
@@ -1659,7 +1666,9 @@ def merge_partial_results(result_path, code):
                         if data_first is None:
                             protocol['query'][numQuery]['dataStorage'] = data.copy()
                             protocol['query'][numQuery]['warnings'][connection] = ''
-                            titles_result = protocol['query'][numQuery]['dataStorage'][0][0]
+                            if len(protocol['query'][numQuery]['dataStorage'][0]) > 0:
+                                titles_result = protocol['query'][numQuery]['dataStorage'][0][0]
+                            #print(protocol['query'][numQuery]['dataStorage'][0])
                             data_first = data.copy()
                             connection_first = connection
                         else:
@@ -1668,7 +1677,10 @@ def merge_partial_results(result_path, code):
                                 #print("numRun {}".format(numRun), end='')
                                 result = data[numRun].copy()
                                 # remove titles
-                                titles_result = data[numRun][0]#list(range(len(result[0])))
+                                if len(data[numRun]) > 0:
+                                    titles_result = data[numRun][0]#list(range(len(result[0])))
+                                else:
+                                    continue
                                 #print(titles_result)
                                 result.pop(0)
                                 # convert datatypes
@@ -1731,33 +1743,35 @@ def merge_partial_results(result_path, code):
                     # result set of first run only
                     filename = '{folder}/{connection}/query_{numQuery}_resultset_{connection}.pickle'.format(folder=folder, connection=connection, numQuery=numQuery)
                     #print(connection+": ", end='')#, df)
-                    with open(filename, 'r') as f:
-                        df = pd.read_pickle(filename)
-                        #print(connection)#, df)
-                        if df_first is None:
-                            df_first = df.copy()
-                            #print("first\n", df_first)
-                            result_as_list = [[i[0] for i in list(df_first.columns)]]
-                            result_as_list.extend(df_first.values.tolist())
-                            protocol['query'][numQuery]['dataStorage'] = [result_as_list] # list, because this is (only) first run
-                            protocol['query'][numQuery]['warnings'][connection] = ""
-                        else:
-                            df_1 = inspector.getDifference12(df_first, df)
-                            df_2 = inspector.getDifference12(df, df_first)
-                            if not df_1.empty or not df_2.empty:
-                                #print("different\n", df)
-                                protocol['query'][numQuery]['warnings'][connection] = 'Different'
-                                result_as_list = [[i[0] for i in list(df.columns)]]
-                                result_as_list.extend(df.values.tolist())
-                                protocol['query'][numQuery]['resultSets'][connection] = [result_as_list] # list, because this is (only) first run
-                            else:
-                                #print("OK")
-                                protocol['query'][numQuery]['resultSets'][connection] = []
+                    if isfile(filename):
+                        with open(filename, 'r') as f:
+                            df = pd.read_pickle(filename)
+                            #print(connection)#, df)
+                            if df_first is None:
+                                df_first = df.copy()
+                                #print("first\n", df_first)
+                                result_as_list = [[i[0] for i in list(df_first.columns)]]
+                                result_as_list.extend(df_first.values.tolist())
+                                protocol['query'][numQuery]['dataStorage'] = [result_as_list] # list, because this is (only) first run
                                 protocol['query'][numQuery]['warnings'][connection] = ""
+                            else:
+                                df_1 = inspector.getDifference12(df_first, df)
+                                df_2 = inspector.getDifference12(df, df_first)
+                                if not df_1.empty or not df_2.empty:
+                                    #print("different\n", df)
+                                    protocol['query'][numQuery]['warnings'][connection] = 'Different'
+                                    result_as_list = [[i[0] for i in list(df.columns)]]
+                                    result_as_list.extend(df.values.tolist())
+                                    protocol['query'][numQuery]['resultSets'][connection] = [result_as_list] # list, because this is (only) first run
+                                else:
+                                    #print("OK")
+                                    protocol['query'][numQuery]['resultSets'][connection] = []
+                                    protocol['query'][numQuery]['warnings'][connection] = ""
             except Exception as e:
                 print(e)
                 #print("missing")
                 protocol['query'][numQuery]['warnings'][connection] = 'Missing'
+                traceback.print_exc()
             finally:
                 pass
     #print("warnings", protocol['query']['3']['warnings'])
