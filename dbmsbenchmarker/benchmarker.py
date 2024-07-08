@@ -2097,13 +2097,13 @@ def run_cli(parameter):
             #    print("STDERR:", stderr)
         tools.merge_partial_results(result_folder+"/", code)
         if args.generate_evaluation == 'yes':
-            print("HERE")
+            #print("HERE")
             #evaluator.evaluation = {}
             #command_args['mode'] = 'read'
             #command_args['result_folder'] = code
             #experiments = benchmarker.run_cli(command_args)
             experiments = benchmarker(
-                result_path=args.result_folder,
+                result_path=result_folder,#args.result_folder,
                 code=code,
                 #working=args.working,
                 batch=bBatch,
