@@ -2292,6 +2292,12 @@ def run_evaluation(experiments):
         #num_processes = min(float(args.numProcesses if not args.numProcesses is None else 1), float(args.num_run) if int(args.num_run) > 0 else 1)
         evaluate = dbmsbenchmarker.inspector.inspector(result_folder)
         evaluate.load_experiment("")#experiments.code)
+        print("Show Evaluation")
+        print("===============")
+        # get workload properties
+        workload_properties = evaluate.get_experiment_workload_properties()
+        print(workload_properties['name'], ":", workload_properties['intro'])
+        # get queries and dbms
         list_queries_all = evaluate.get_experiment_list_queries()
         #print(list_queries_all)
         dbms_filter = []
