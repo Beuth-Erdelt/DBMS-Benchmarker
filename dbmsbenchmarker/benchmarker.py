@@ -2122,7 +2122,7 @@ def run_cli(parameter):
             experiments.getConfig()
             experiments.readBenchmarks()
             evaluate = run_evaluation(experiments)
-            print("Experiment {} has been finished".format(experiments.code))
+            #print("Experiment {} has been finished".format(experiments.code))
             #print(evaluate)
             #list_connections = evaluate.get_experiment_list_connections()
             #print(list_connections)
@@ -2462,6 +2462,7 @@ def run_evaluation(experiments):
                 df = pd.DataFrame.from_dict(tpx_total, orient='index')#, columns=['queries per hour [Qph]'])
                 df.index.name = 'DBMS'
                 print(df)
+        print("Experiment {} has been finished".format(experiments.code))
         return evaluate
 
 
