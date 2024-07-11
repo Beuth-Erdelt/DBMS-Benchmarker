@@ -2097,7 +2097,6 @@ def run_cli(parameter):
             #    print("STDERR:", stderr)
         tools.merge_partial_results(result_folder+"/", code)
         if args.generate_evaluation == 'yes':
-            #print("HERE")
             #evaluator.evaluation = {}
             #command_args['mode'] = 'read'
             #command_args['result_folder'] = code
