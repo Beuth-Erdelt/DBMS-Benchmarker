@@ -2337,19 +2337,27 @@ def run_evaluation(experiments):
         #####################
         print("\n### Errors (failed queries)")
         df = evaluate.get_total_errors(dbms_filter=dbms_filter).T
-        df.index = df.index.map(map_index_to_queryname)
-        print(df)
+        num_errors = df.sum().sum()
+        if num_errors > 0:
+            df.index = df.index.map(map_index_to_queryname)
+            print(df)
+        else:
+            print("No errors")
         #####################
         print("\n### Warnings (result mismatch)")
         df = evaluate.get_total_warnings(dbms_filter=dbms_filter).T
-        df.index = df.index.map(map_index_to_queryname)
-        print(df)
+        num_warnings = df.sum().sum()
+        if num_warnings > 0:
+            df.index = df.index.map(map_index_to_queryname)
+            print(df)
+        else:
+            print("No warnings")
         #####################
         #df = evaluate.get_aggregated_query_statistics(type='timer', name='connection', query_aggregate='Median', dbms_filter=dbms_filter)
         df = evaluate.get_aggregated_experiment_statistics(type='timer', name='connection', query_aggregate='Median', total_aggregate='Geo', dbms_filter=dbms_filter)
         df = (df/1000.0).sort_index()
         if not df.empty:
-            print("### Geometric Mean of Medians of Connection Times (only successful) [s]")
+            print("\n### Geometric Mean of Medians of Connection Times (only successful) [s]")
             df.columns = ['average connection time [s]']
             print(df.round(2))
             #print("### Statistics of Timer Connection (only successful) [s]")
@@ -2360,7 +2368,7 @@ def run_evaluation(experiments):
         df = evaluate.get_aggregated_experiment_statistics(type='timer', name='connection', query_aggregate='Max', total_aggregate='Max', dbms_filter=dbms_filter)
         df = (df/1000.0).sort_index()
         if not df.empty:
-            print("### Max of Connection Times (only successful) [s]")
+            print("\n### Max of Connection Times (only successful) [s]")
             df.columns = ['max connection time [s]']
             print(df.round(2))
             #print("### Statistics of Timer Connection (only successful) [s]")
@@ -2370,7 +2378,7 @@ def run_evaluation(experiments):
         df = evaluate.get_aggregated_experiment_statistics(type='timer', name='run', query_aggregate='Median', total_aggregate='Geo', dbms_filter=dbms_filter)
         df = (df/1000.0).sort_index()
         if not df.empty:
-            print("### Geometric Mean of Medians of Run Times (only successful) [s]")
+            print("\n### Geometric Mean of Medians of Run Times (only successful) [s]")
             df.columns = ['average run time [s]']
             print(df.round(2))
         #####################
