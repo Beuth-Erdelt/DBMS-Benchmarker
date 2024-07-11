@@ -114,7 +114,7 @@ After benchmarking has been finished we will see a message like
 Experiment <code> has been finished
 ```
 
-The script has created a result folder in the current directory containing the results. `<code>` is the name of the folder.
+The script has created a result folder in the current directory containing the results. `code` is the name of the folder.
 
 
 ### Evaluate Results in Dashboard
@@ -122,7 +122,7 @@ The script has created a result folder in the current directory containing the r
 Run the command: `dbmsdashboard`
 
 This will start the evaluation dashboard at `localhost:8050`.
-Visit the address in a browser and select the experiment `<code>`.
+Visit the address in a browser and select the experiment `code`.
 
 Alternatively you may use a [Jupyter notebook](https://github.com/Beuth-Erdelt/DBMS-Benchmarker/blob/master/Evaluation-Demo.ipynb), see a [rendered example](https://beuth-erdelt.github.io/DBMS-Benchmarker/Evaluation-Demo.html).
 

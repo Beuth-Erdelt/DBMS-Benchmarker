@@ -204,11 +204,12 @@ JDBC driver: https://www.monetdb.org/downloads/Java/
         'name': 'MonetDB',
         'info': 'This is a demo of MonetDB',
         'active': True,
+        'dialect': 'MonetDB',
         'JDBC': {
-            'driver': 'nl.cwi.monetdb.jdbc.MonetDriver',
-            'url': 'jdbc:monetdb://localhost:50000/database?so_timeout=10000',
-            'auth': ['user', 'password'],
-            'jar': 'jars/monetdb-jdbc-2.29.jar',
+            'driver': 'org.monetdb.jdbc.MonetDriver',
+            'url': 'jdbc:monetdb://localhost:50000/monetdb?so_timeout=10000',
+            'auth': ['monetdb', 'monetdb'],
+            'jar': 'jars/monetdb-jdbc-3.3.jre8',
         }
     },
 ]

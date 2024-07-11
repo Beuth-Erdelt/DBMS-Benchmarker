@@ -2032,7 +2032,7 @@ def run_cli(parameter):
             result_folder = './'
         else:
             result_folder = args.result_folder
-        command_args = vars(args)
+        command_args = vars(args).copy()
         makedirs(result_folder+"/"+code)
         copyfile(args.config_folder+'/connections.config', result_folder+"/"+code+'/connections.config')#args.connection_file)
         copyfile(args.config_folder+'/queries.config', result_folder+"/"+code+'/queries.config')#args.query_file)
@@ -2058,10 +2058,14 @@ def run_cli(parameter):
             command_args['copy_subfolder'] = True
             command_args['subfolder'] = connection
             command_args['connection'] = connection
+            #if 'generate_evaluation' in command_args:
+            #    del command_args['generate_evaluation']
+            command_args['generate_evaluation'] = 'no'
             # Get the current UTC time
             current_time = datetime.datetime.utcnow()
             # Add 5 seconds to the current time
-            start_time = current_time + datetime.timedelta(seconds=5)
+            seconds = 5 if 5 > numProcesses else numProcesses
+            start_time = current_time + datetime.timedelta(seconds=seconds)
             command_args['start_time'] = start_time.strftime('%Y-%m-%d %H:%M:%S')
             #command_args['stream_id'] = 1
             pool_args = []#(dict(command_args),)]*numProcesses
@@ -2098,7 +2102,7 @@ def run_cli(parameter):
             #command_args['result_folder'] = code
             #experiments = benchmarker.run_cli(command_args)
             experiments = benchmarker(
-                result_path=args.result_folder,
+                result_path=result_folder,#args.result_folder,
                 code=code,
                 #working=args.working,
                 batch=bBatch,
@@ -2118,7 +2122,7 @@ def run_cli(parameter):
             experiments.getConfig()
             experiments.readBenchmarks()
             evaluate = run_evaluation(experiments)
-            print("Experiment {} has been finished".format(experiments.code))
+            #print("Experiment {} has been finished".format(experiments.code))
             #print(evaluate)
             #list_connections = evaluate.get_experiment_list_connections()
             #print(list_connections)
@@ -2134,7 +2138,8 @@ def run_cli(parameter):
             time_end = max(times_end)
             print(time_start, time_end, time_end-time_start)
             """
-        return experiments
+            return experiments
+        return None
     else:
         if args.mode != 'read':
             # sleep before going to work
@@ -2286,6 +2291,19 @@ def run_evaluation(experiments):
         #num_processes = min(float(args.numProcesses if not args.numProcesses is None else 1), float(args.num_run) if int(args.num_run) > 0 else 1)
         evaluate = dbmsbenchmarker.inspector.inspector(result_folder)
         evaluate.load_experiment("")#experiments.code)
+        print("Show Evaluation")
+        print("===============")
+        # get workload properties
+        workload_properties = evaluate.get_experiment_workload_properties()
+        query_properties = evaluate.get_experiment_query_properties()
+        def map_index_to_queryname(numQuery):
+            if numQuery[1:] in query_properties and 'config' in query_properties[numQuery[1:]] and 'title' in query_properties[numQuery[1:]]['config']:
+                return query_properties[numQuery[1:]]['config']['title']
+            else:
+                return numQuery
+        #query_properties['1']['config']
+        print(workload_properties['name'], ":", workload_properties['intro'])
+        # get queries and dbms
         list_queries_all = evaluate.get_experiment_list_queries()
         #print(list_queries_all)
         dbms_filter = []
@@ -2295,11 +2313,11 @@ def run_evaluation(experiments):
             df = evaluate.get_timer(q, "execution")
             if len(list(df.index)) > 0:
                 dbms_filter = list(df.index)
-                print("First successful query: {}".format(q))
+                print("First successful query: Q{}".format(q))
                 break
         #print(dbms_filter)
         #list_queries = evaluate.get_experiment_queries_successful() # evaluate.get_experiment_list_queries()
-        list_queries = evaluate.get_survey_successful(timername='execution', dbms_filter=dbms_filter)
+        list_queries = evaluate.get_survey_successful(timername='run', dbms_filter=dbms_filter)
         #print(list_queries, len(list_queries))
         if 'numRun' in experiments.connectionmanagement:
             num_run = experiments.connectionmanagement['numRun']
@@ -2317,16 +2335,28 @@ def run_evaluation(experiments):
         print("Number of max. parallel clients:", int(num_processes))
         #####################
         print("\n### Errors (failed queries)")
-        print(evaluate.get_total_errors(dbms_filter=dbms_filter).T)
+        df = evaluate.get_total_errors(dbms_filter=dbms_filter).T
+        num_errors = df.sum().sum()
+        if num_errors > 0:
+            df.index = df.index.map(map_index_to_queryname)
+            print(df)
+        else:
+            print("No errors")
         #####################
         print("\n### Warnings (result mismatch)")
-        print(evaluate.get_total_warnings(dbms_filter=dbms_filter).T)
+        df = evaluate.get_total_warnings(dbms_filter=dbms_filter).T
+        num_warnings = df.sum().sum()
+        if num_warnings > 0:
+            df.index = df.index.map(map_index_to_queryname)
+            print(df)
+        else:
+            print("No warnings")
         #####################
         #df = evaluate.get_aggregated_query_statistics(type='timer', name='connection', query_aggregate='Median', dbms_filter=dbms_filter)
         df = evaluate.get_aggregated_experiment_statistics(type='timer', name='connection', query_aggregate='Median', total_aggregate='Geo', dbms_filter=dbms_filter)
         df = (df/1000.0).sort_index()
         if not df.empty:
-            print("### Geometric Mean of Medians of Connection Times (only successful) [s]")
+            print("\n### Geometric Mean of Medians of Connection Times (only successful) [s]")
             df.columns = ['average connection time [s]']
             print(df.round(2))
             #print("### Statistics of Timer Connection (only successful) [s]")
@@ -2337,7 +2367,7 @@ def run_evaluation(experiments):
         df = evaluate.get_aggregated_experiment_statistics(type='timer', name='connection', query_aggregate='Max', total_aggregate='Max', dbms_filter=dbms_filter)
         df = (df/1000.0).sort_index()
         if not df.empty:
-            print("### Max of Connection Times (only successful) [s]")
+            print("\n### Max of Connection Times (only successful) [s]")
             df.columns = ['max connection time [s]']
             print(df.round(2))
             #print("### Statistics of Timer Connection (only successful) [s]")
@@ -2347,7 +2377,7 @@ def run_evaluation(experiments):
         df = evaluate.get_aggregated_experiment_statistics(type='timer', name='run', query_aggregate='Median', total_aggregate='Geo', dbms_filter=dbms_filter)
         df = (df/1000.0).sort_index()
         if not df.empty:
-            print("### Geometric Mean of Medians of Run Times (only successful) [s]")
+            print("\n### Geometric Mean of Medians of Run Times (only successful) [s]")
             df.columns = ['average run time [s]']
             print(df.round(2))
         #####################
@@ -2432,6 +2462,7 @@ def run_evaluation(experiments):
                 df = pd.DataFrame.from_dict(tpx_total, orient='index')#, columns=['queries per hour [Qph]'])
                 df.index.name = 'DBMS'
                 print(df)
+        print("Experiment {} has been finished".format(experiments.code))
         return evaluate
 
 
