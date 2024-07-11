@@ -2296,6 +2296,13 @@ def run_evaluation(experiments):
         print("===============")
         # get workload properties
         workload_properties = evaluate.get_experiment_workload_properties()
+        query_properties = evaluate.get_experiment_query_properties()
+        def map_index_to_queryname(numQuery):
+            if numQuery[1:] in query_properties and 'config' in query_properties[numQuery[1:]] and 'title' in query_properties[numQuery[1:]]['config']:
+                return query_properties[numQuery[1:]]['config']['title']
+            else:
+                return numQuery
+        #query_properties['1']['config']
         print(workload_properties['name'], ":", workload_properties['intro'])
         # get queries and dbms
         list_queries_all = evaluate.get_experiment_list_queries()
@@ -2329,10 +2336,14 @@ def run_evaluation(experiments):
         print("Number of max. parallel clients:", int(num_processes))
         #####################
         print("\n### Errors (failed queries)")
-        print(evaluate.get_total_errors(dbms_filter=dbms_filter).T)
+        df = evaluate.get_total_errors(dbms_filter=dbms_filter).T
+        df.index = df.index.map(map_index_to_queryname)
+        print(df)
         #####################
         print("\n### Warnings (result mismatch)")
-        print(evaluate.get_total_warnings(dbms_filter=dbms_filter).T)
+        df = evaluate.get_total_warnings(dbms_filter=dbms_filter).T
+        df.index = df.index.map(map_index_to_queryname)
+        print(df)
         #####################
         #df = evaluate.get_aggregated_query_statistics(type='timer', name='connection', query_aggregate='Median', dbms_filter=dbms_filter)
         df = evaluate.get_aggregated_experiment_statistics(type='timer', name='connection', query_aggregate='Median', total_aggregate='Geo', dbms_filter=dbms_filter)
