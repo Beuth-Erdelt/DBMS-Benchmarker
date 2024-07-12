@@ -65,81 +65,40 @@ The script has created a result folder in the current directory containing the r
 If the `-e yes` option is used, you will see something like
 
 ```bash
-First successful query: 1
+The TPC-H Queries : This includes the reading queries of TPC-H.
+First successful query: Q1
 Limited to: ['PostgreSQL']
 Number of runs per query: 1
 Number of successful queries: 22
 Number of max. parallel clients: 1
 
 ### Errors (failed queries)
-     PostgreSQL
-Q1        False
-Q2        False
-Q3        False
-Q4        False
-Q5        False
-Q6        False
-Q7        False
-Q8        False
-Q9        False
-Q10       False
-Q11       False
-Q12       False
-Q13       False
-Q14       False
-Q15       False
-Q16       False
-Q17       False
-Q18       False
-Q19       False
-Q20       False
-Q21       False
-Q22       False
+No errors
 
 ### Warnings (result mismatch)
-     PostgreSQL
-Q1        False
-Q2        False
-Q3        False
-Q4        False
-Q5        False
-Q6        False
-Q7        False
-Q8        False
-Q9        False
-Q10       False
-Q11       False
-Q12       False
-Q13       False
-Q14       False
-Q15       False
-Q16       False
-Q17       False
-Q18       False
-Q19       False
-Q20       False
-Q21       False
-Q22       False
+No warnings
+
 ### Geometric Mean of Medians of Run Times (only successful) [s]
             average run time [s]
 DBMS
-PostgreSQL                  0.19
+PostgreSQL                  0.24
 ### Sum of Maximum Run Times per Query (only successful) [s]
             sum of max run times [s]
 DBMS
-PostgreSQL                       6.3
+PostgreSQL                      8.17
 ### Queries per Hour (only successful) [QpH] - 1*22*3600/(sum of max run times)
             queries per hour [Qph]
 DBMS
-PostgreSQL                12566.32
+PostgreSQL                 9688.82
 ### Queries per Hour (only successful) [QpH] - Sum per DBMS
             queries per hour [Qph]
 DBMS
-PostgreSQL                12566.32
+PostgreSQL                 9688.82
 ### Queries per Hour (only successful) [QpH] - (max end - min start)
             queries per hour [Qph]        formula
 DBMS
-PostgreSQL                  9900.0  1*1*22*3600/8
+PostgreSQL                  8800.0  1*1*22*3600/9
+Experiment 1720728360 has been finished
 ```
 
 ### Evaluate Results in Dashboard
@@ -150,6 +109,7 @@ Run the command:
 
 This will start the evaluation dashboard at `localhost:8050`.
 Visit the address in a browser and select the experiment `code`.
+
 
 
 ## Where to go

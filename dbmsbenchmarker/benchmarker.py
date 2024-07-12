@@ -2097,7 +2097,6 @@ def run_cli(parameter):
             #    print("STDERR:", stderr)
         tools.merge_partial_results(result_folder+"/", code)
         if args.generate_evaluation == 'yes':
-            #print("HERE")
             #evaluator.evaluation = {}
             #command_args['mode'] = 'read'
             #command_args['result_folder'] = code
@@ -2123,7 +2122,7 @@ def run_cli(parameter):
             experiments.getConfig()
             experiments.readBenchmarks()
             evaluate = run_evaluation(experiments)
-            print("Experiment {} has been finished".format(experiments.code))
+            #print("Experiment {} has been finished".format(experiments.code))
             #print(evaluate)
             #list_connections = evaluate.get_experiment_list_connections()
             #print(list_connections)
@@ -2296,6 +2295,13 @@ def run_evaluation(experiments):
         print("===============")
         # get workload properties
         workload_properties = evaluate.get_experiment_workload_properties()
+        query_properties = evaluate.get_experiment_query_properties()
+        def map_index_to_queryname(numQuery):
+            if numQuery[1:] in query_properties and 'config' in query_properties[numQuery[1:]] and 'title' in query_properties[numQuery[1:]]['config']:
+                return query_properties[numQuery[1:]]['config']['title']
+            else:
+                return numQuery
+        #query_properties['1']['config']
         print(workload_properties['name'], ":", workload_properties['intro'])
         # get queries and dbms
         list_queries_all = evaluate.get_experiment_list_queries()
@@ -2329,16 +2335,28 @@ def run_evaluation(experiments):
         print("Number of max. parallel clients:", int(num_processes))
         #####################
         print("\n### Errors (failed queries)")
-        print(evaluate.get_total_errors(dbms_filter=dbms_filter).T)
+        df = evaluate.get_total_errors(dbms_filter=dbms_filter).T
+        num_errors = df.sum().sum()
+        if num_errors > 0:
+            df.index = df.index.map(map_index_to_queryname)
+            print(df)
+        else:
+            print("No errors")
         #####################
         print("\n### Warnings (result mismatch)")
-        print(evaluate.get_total_warnings(dbms_filter=dbms_filter).T)
+        df = evaluate.get_total_warnings(dbms_filter=dbms_filter).T
+        num_warnings = df.sum().sum()
+        if num_warnings > 0:
+            df.index = df.index.map(map_index_to_queryname)
+            print(df)
+        else:
+            print("No warnings")
         #####################
         #df = evaluate.get_aggregated_query_statistics(type='timer', name='connection', query_aggregate='Median', dbms_filter=dbms_filter)
         df = evaluate.get_aggregated_experiment_statistics(type='timer', name='connection', query_aggregate='Median', total_aggregate='Geo', dbms_filter=dbms_filter)
         df = (df/1000.0).sort_index()
         if not df.empty:
-            print("### Geometric Mean of Medians of Connection Times (only successful) [s]")
+            print("\n### Geometric Mean of Medians of Connection Times (only successful) [s]")
             df.columns = ['average connection time [s]']
             print(df.round(2))
             #print("### Statistics of Timer Connection (only successful) [s]")
@@ -2349,7 +2367,7 @@ def run_evaluation(experiments):
         df = evaluate.get_aggregated_experiment_statistics(type='timer', name='connection', query_aggregate='Max', total_aggregate='Max', dbms_filter=dbms_filter)
         df = (df/1000.0).sort_index()
         if not df.empty:
-            print("### Max of Connection Times (only successful) [s]")
+            print("\n### Max of Connection Times (only successful) [s]")
             df.columns = ['max connection time [s]']
             print(df.round(2))
             #print("### Statistics of Timer Connection (only successful) [s]")
@@ -2359,7 +2377,7 @@ def run_evaluation(experiments):
         df = evaluate.get_aggregated_experiment_statistics(type='timer', name='run', query_aggregate='Median', total_aggregate='Geo', dbms_filter=dbms_filter)
         df = (df/1000.0).sort_index()
         if not df.empty:
-            print("### Geometric Mean of Medians of Run Times (only successful) [s]")
+            print("\n### Geometric Mean of Medians of Run Times (only successful) [s]")
             df.columns = ['average run time [s]']
             print(df.round(2))
         #####################
@@ -2444,6 +2462,7 @@ def run_evaluation(experiments):
                 df = pd.DataFrame.from_dict(tpx_total, orient='index')#, columns=['queries per hour [Qph]'])
                 df.index.name = 'DBMS'
                 print(df)
+        print("Experiment {} has been finished".format(experiments.code))
         return evaluate
 
 
