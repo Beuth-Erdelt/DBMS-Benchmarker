@@ -1563,6 +1563,11 @@ def anonymize_dataframe(dataframe_dbms):
             dataframe_dbms.columns = dataframe_dbms.columns.map(dbms.anonymizer)
             #dataframe_dbms.columns = anonymize_list(dataframe_dbms.columns)
 
+def natural_sort(l): 
+    convert = lambda text: int(text) if text.isdigit() else text.lower()
+    alphanum_key = lambda key: [convert(c) for c in re.split('([0-9]+)', key)]
+    return sorted(l, key=alphanum_key)
+
 
 import json
 from os.path import isdir, isfile, join

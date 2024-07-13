@@ -2359,6 +2359,7 @@ def run_evaluation(experiments):
         if not df.empty:
             print("\n### Geometric Mean of Medians of Connection Times (only successful) [s]")
             df.columns = ['average connection time [s]']
+            df = df.reindex(index=tools.natural_sort(df.index))
             print(df.round(2))
             #print("### Statistics of Timer Connection (only successful) [s]")
             #df_stat = evaluator.addStatistics(df, drop_nan=False, drop_measures=True)
@@ -2370,6 +2371,7 @@ def run_evaluation(experiments):
         if not df.empty:
             print("\n### Max of Connection Times (only successful) [s]")
             df.columns = ['max connection time [s]']
+            df = df.reindex(index=tools.natural_sort(df.index))
             print(df.round(2))
             #print("### Statistics of Timer Connection (only successful) [s]")
             #df_stat = evaluator.addStatistics(df, drop_nan=False, drop_measures=True)
@@ -2380,18 +2382,21 @@ def run_evaluation(experiments):
         if not df.empty:
             print("\n### Geometric Mean of Medians of Run Times (only successful) [s]")
             df.columns = ['average run time [s]']
+            df = df.reindex(index=tools.natural_sort(df.index))
             print(df.round(2))
         #####################
         df = evaluate.get_aggregated_experiment_statistics(type='timer', name='run', query_aggregate='Max', total_aggregate='Sum', dbms_filter=dbms_filter).astype('float')/1000.
         if not df.empty:
             print("### Sum of Maximum Run Times per Query (only successful) [s]")
             df.columns = ['sum of max run times [s]']
+            df = df.reindex(index=tools.natural_sort(df.index))
             print(df.round(2))
         #####################
         df = num_processes*float(len(list_queries))*3600./df
         if not df.empty:
             print("### Queries per Hour (only successful) [QpH] - {}*{}*3600/(sum of max run times)".format(int(num_processes), int(len(list_queries))))
             df.columns = ['queries per hour [Qph]']
+            df = df.reindex(index=tools.natural_sort(df.index))
             print(df.round(2))
         df_tpx = df.copy()
         #####################
@@ -2443,6 +2448,7 @@ def run_evaluation(experiments):
             print("### Queries per Hour (only successful) [QpH] - Sum per DBMS")
             df = pd.DataFrame.from_dict(tpx_sum, orient='index', columns=['queries per hour [Qph]'])
             df.index.name = 'DBMS'
+            df = df.reindex(index=tools.natural_sort(df.index))
             print(df.round(2))
         tpx_total = dict()
         if len(times_start) > 0:
@@ -2462,6 +2468,7 @@ def run_evaluation(experiments):
                 print("### Queries per Hour (only successful) [QpH] - (max end - min start)")
                 df = pd.DataFrame.from_dict(tpx_total, orient='index')#, columns=['queries per hour [Qph]'])
                 df.index.name = 'DBMS'
+                df = df.reindex(index=tools.natural_sort(df.index))
                 print(df)
         print("Experiment {} has been finished".format(experiments.code))
         return evaluate
