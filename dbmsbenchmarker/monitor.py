@@ -522,7 +522,7 @@ def clean_dataframe(dataframe):
     # helps evaluating GPU util
     # removes leading zeros in each row
     # shifts values > 0 to the beginning
-    # appends NaN to keep numbers of columns the same
+    # appends nan to keep numbers of columns the same
     # replaces all 0 by nan
     #print(dataframe)
     for rows in range(len(dataframe.index)):
