@@ -2007,6 +2007,7 @@ def run_cli(parameter):
     #parser.add_argument('-pt', '--timeout', help='Parameter: Timeout in seconds', default=0)
     args = parser.parse_args()
     """
+    global BENCHMARKER_VERBOSE_QUERIES, BENCHMARKER_VERBOSE_STATISTICS, BENCHMARKER_VERBOSE_RESULTS, BENCHMARKER_VERBOSE_PROCESS
     #print(parameter)
     args = SimpleNamespace(**parameter)
     #print(args)
@@ -2195,13 +2196,13 @@ def run_cli(parameter):
                     print("Invalid format: {}".format(args.start_time))
         # set verbose level
         if args.verbose_queries:
-            benchmarker.BENCHMARKER_VERBOSE_QUERIES = True
+            BENCHMARKER_VERBOSE_QUERIES = True
         if args.verbose_statistics:
-            benchmarker.BENCHMARKER_VERBOSE_STATISTICS = True
+            BENCHMARKER_VERBOSE_STATISTICS = True
         if args.verbose_results:
-            benchmarker.BENCHMARKER_VERBOSE_RESULTS = True
+            BENCHMARKER_VERBOSE_RESULTS = True
         if args.verbose_process:
-            benchmarker.BENCHMARKER_VERBOSE_PROCESS = True
+            BENCHMARKER_VERBOSE_PROCESS = True
         # handle parallel streams
         stream_id = args.stream_id
         stream_shuffle = args.stream_shuffle
