@@ -2421,18 +2421,23 @@ def run_evaluation(experiments):
             benchmarker_times = evaluate.get_experiment_connection_properties(c['name'])['times']['total']
             #print(benchmarker_times)
             if len(orig_name) > 0: #'orig_name' in c:
+                #print(c['name'], orig_name)
                 if not orig_name in tpx_sum:
                     tpx_sum[orig_name] = 0
                 if c['name'] in df_tpx.index:
                     tpx_sum[orig_name] = tpx_sum[orig_name] + df_tpx.loc[c['name']]['queries per hour [Qph]']
-                else:
-                    del tpx_sum[orig_name]
+                #else:
+                #    print("Del", orig_name)
+                #    del tpx_sum[orig_name]
+                #print(tpx_sum)
                 #print(orig_name)
                 if not orig_name in times_start:
                     times_start[orig_name] = []
                     times_end[orig_name] = []
                     times_numbers[orig_name] = 0
                 times_numbers[orig_name] = times_numbers[orig_name] + 1
+                #print(times_start)
+                #print(times_end)
                 for q in experiments.protocol['query']:
                     #print(experiments.protocol['query'][q])
                     #print(q, experiments.protocol['query'][q]['starts'], experiments.protocol['query'][q]['ends'])
@@ -2444,6 +2449,8 @@ def run_evaluation(experiments):
                         times_end[orig_name].append(time_end)
                         #times_start[time_start] = i
                         #times_end[time_end] = i
+                #print(times_start)
+                #print(times_end)
                 #for t in benchmarker_times:
                 #    times_start[orig_name].append(benchmarker_times[t]['time_start'])
                 #    times_end[orig_name].append(benchmarker_times[t]['time_end'])
