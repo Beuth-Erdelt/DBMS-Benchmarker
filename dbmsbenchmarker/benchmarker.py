@@ -1033,6 +1033,9 @@ class benchmarker():
                 if (self.fixedQuery is not None and self.fixedQuery != numQuery) or (self.fixedConnection is not None and self.fixedConnection != connectionname):
                     # not this benchmark
                     self.logger.debug("Benchmarks of Q"+str(numQuery)+" at dbms "+connectionname+" not wanted right now")
+                    self.timerExecution.skipTimer(numQuery, numQuery, connectionname)
+                    self.timerTransfer.skipTimer(numQuery, numQuery, connectionname)
+                    self.timerConnect.skipTimer(numQuery, numQuery, connectionname)
                     return False
         # prepare basic setting
         self.logger.debug("Starting benchmarks of Q"+str(numQuery)+" at dbms "+connectionname)
