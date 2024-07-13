@@ -2458,6 +2458,9 @@ def run_evaluation(experiments):
                     time_start = min(times_start[c])
                     time_end = max(times_end[c])
                     time_span = time_end-time_start
+                    if time_span == 0:
+                        # if it is very fast (by error?), we still need a positive number
+                        time_span = 1
                     num_results = times_numbers[c]
                     tpx = round(num_run*num_results*float(len(list_queries))*3600./(time_span), 2)
                     #print(c, time_start, time_end, time_span, tpx)
