@@ -357,7 +357,7 @@ class benchmarker():
     """
     Class for running benchmarks
     """
-    def __init__(self, result_path=None, working='query', batch=False, fixedQuery=None, fixedConnection=None, rename_connection='', rename_alias='', fixedAlias='', anonymize=False, unanonymize=[], numProcesses=None, seed=None, code=None, subfolder=None, stream_id=None, stream_shuffle=False):
+    def __init__(self, result_path=None, working='query', batch=False, fixedQuery=None, fixedConnection=None, rename_connection='', rename_alias='', fixedAlias='', anonymize=False, unanonymize=[], numProcesses=None, seed=None, code=None, subfolder=None, stream_id=None, stream_shuffle=False, numStreams=1):
         """
         Construct a new 'benchmarker' object.
         Allocated the reporters store (always called) and printer (if reports are to be generated).
@@ -371,6 +371,7 @@ class benchmarker():
         :param anonymize: Anonymize all dbms
         :param unanonymize: List of names of connections, which should not be anonymized despite of parameter anonymize
         :param numProcesses: Number of parallel client processes. Global setting, can be overwritten by connection or query
+        :param numStreams: Number of parallel (independent) streams, i.e. instances of the benchmarker. Noted just for info here, has no effect
         :param seed: -
         :param code: Optional code for result folder
         :return: returns nothing
@@ -386,7 +387,7 @@ class benchmarker():
         else:
             # default is 1 connection per stream
             singleConnection = True
-        self.connectionmanagement = {'numProcesses': numProcesses, 'runsPerConnection': None, 'timeout': None, 'singleConnection': singleConnection}
+        self.connectionmanagement = {'numProcesses': numProcesses, 'runsPerConnection': None, 'timeout': None, 'singleConnection': singleConnection, 'numStreams': numStreams}
         # set number of parallel client processes
         #self.connectionmanagement['numProcesses'] = numProcesses
         if self.connectionmanagement['numProcesses'] is None:
@@ -2058,6 +2059,7 @@ def run_cli(parameter):
             #del command_args['parallel_processes']
             command_args['parallel_processes'] = False
             command_args['numProcesses'] = None
+            command_args['numStreams'] = numProcesses
             command_args['result_folder'] = result_folder+"/"+code
             command_args['copy_subfolder'] = True
             command_args['subfolder'] = connection
@@ -2227,6 +2229,10 @@ def run_cli(parameter):
             if not isinstance(tools.query.template, dict):
                 tools.query.template = {}
             tools.query.template['timer'] = {'datatransfer': {'store': args.store_data}}
+        if hasattr(args, 'numStreams'):
+            numStreams = args.numStreams
+        else:
+            numStreams = 1
         # dbmsbenchmarker with reporter
         experiments = benchmarker(
             result_path=args.result_folder,
@@ -2241,6 +2247,7 @@ def run_cli(parameter):
             #anonymize=args.anonymize,
             #unanonymize=args.unanonymize,
             numProcesses=args.numProcesses,
+            numStreams=numStreams,
             stream_id=stream_id,
             stream_shuffle=stream_shuffle,
             seed=args.seed)
@@ -2331,12 +2338,17 @@ def run_evaluation(experiments):
             num_processes = experiments.connectionmanagement['numProcesses']
         else:
             num_processes = 1
+        if 'numStreams' in experiments.connectionmanagement:
+            num_streams = experiments.connectionmanagement['numStreams']
+        else:
+            num_streams = 1
         #####################
         if len(dbms_filter) > 0:
             print("Limited to:", dbms_filter)
-        print("Number of runs per query:", num_run)
         print("Number of successful queries:", len(list_queries))
-        print("Number of max. parallel clients:", int(num_processes))
+        print("Number of runs per query:", num_run)
+        print("Number of max. parallel clients per stream:", int(num_processes))
+        print("Number of parallel independent streams:", int(num_streams))
         #####################
         print("\n### Errors (failed queries)")
         df = evaluate.get_total_errors(dbms_filter=dbms_filter).T
@@ -2424,18 +2436,19 @@ def run_evaluation(experiments):
                 #print(c['name'], orig_name)
                 if not orig_name in tpx_sum:
                     tpx_sum[orig_name] = 0
-                if c['name'] in df_tpx.index:
-                    tpx_sum[orig_name] = tpx_sum[orig_name] + df_tpx.loc[c['name']]['queries per hour [Qph]']
-                #else:
-                #    print("Del", orig_name)
-                #    del tpx_sum[orig_name]
                 #print(tpx_sum)
                 #print(orig_name)
                 if not orig_name in times_start:
                     times_start[orig_name] = []
                     times_end[orig_name] = []
                     times_numbers[orig_name] = 0
-                times_numbers[orig_name] = times_numbers[orig_name] + 1
+                if c['name'] in df_tpx.index:
+                    tpx_sum[orig_name] = tpx_sum[orig_name] + df_tpx.loc[c['name']]['queries per hour [Qph]']
+                    times_numbers[orig_name] = times_numbers[orig_name] + 1
+                #else:
+                #    print("Del", orig_name)
+                #    del tpx_sum[orig_name]
+                #times_numbers[orig_name] = times_numbers[orig_name] + 1
                 #print(times_start)
                 #print(times_end)
                 for q in experiments.protocol['query']:
