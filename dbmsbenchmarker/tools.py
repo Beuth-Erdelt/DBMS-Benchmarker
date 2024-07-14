@@ -29,7 +29,7 @@ import matplotlib.pyplot as plt
 import pickle
 import traceback
 
-from dbmsbenchmarker import inspector
+from dbmsbenchmarker import inspector, benchmarker
 
 # Set query timeout
 jaydebeapi.QUERY_TIMEOUT = 0
@@ -624,9 +624,10 @@ class dbms():
                 self.connectiondata['version'] = self.version
                 self.connectiondata['driver'] = self.driver
                 self.connectiondata['driverversion'] = self.driverversion
-                print("Connected to {} version {} using {} version {}".format(self.product, self.version, self.driver, self.driverversion))
+                if not benchmarker.BENCHMARKER_VERBOSE_NONE:
+                    print("Connected to {} version {} using {} version {}".format(self.product, self.version, self.driver, self.driverversion))
             except Exception as e:
-                print("Product and version not implemented in JDBC driver")
+                print("Product and version not implemented in JDBC driver {}".format(self.connectiondata['JDBC']['jar']))
             else:
                 pass
             if 'init_SQL' in self.connectiondata:
@@ -1620,14 +1621,16 @@ def merge_partial_results(result_path, code):
             if not c['name'] in connection_names:
                 connection_config.append(c)
                 connection_names.append(c['name'])
-    for connection in connection_config:
-        print("Merged connection: ", connection['name'])
+    if not benchmarker.BENCHMARKER_VERBOSE_NONE:
+        for connection in connection_config:
+            print("Merged connection: ", connection['name'])
     # store merged config
     filename = folder+'/connections.config'
     with open(filename,'w') as inf:
         inf.write(str(connection_config))
     # merging protocols
-    print("Merge protocols")
+    if not benchmarker.BENCHMARKER_VERBOSE_NONE:
+        print("Merge protocols")
     # load partial protocols
     protocols = []
     for connection in list_connections:
@@ -1650,7 +1653,8 @@ def merge_partial_results(result_path, code):
     with open(filename_protocol, 'w') as f:
         json.dump(protocol, f)
     # compare result sets
-    print("Merge result sets")
+    if not benchmarker.BENCHMARKER_VERBOSE_NONE:
+        print("Merge result sets")
     for numQuery, query in protocol['query'].items():
         #if int(numQuery) > 3:
         #    exit()
@@ -1786,7 +1790,8 @@ def merge_partial_results(result_path, code):
     with open(filename_protocol, 'w') as f:
         json.dump(protocol, f)
     # merge timers
-    print("Merge timers")
+    if not benchmarker.BENCHMARKER_VERBOSE_NONE:
+        print("Merge timers")
     # load partial timers, join and save
     timer = ['connection', 'execution', 'datatransfer']
     numQuery = 1
@@ -1820,6 +1825,7 @@ def merge_partial_results(result_path, code):
         folder_connection = folder+'/'+connection
         files_metrics = [f for f in listdir(folder_connection) if isfile(join(folder_connection, f)) and 'metric' in f]
         #print(folder_connection, files_metrics)
-        print("Copy Metrics", folder_connection)
+        if not benchmarker.BENCHMARKER_VERBOSE_NONE:
+            print("Copy Metrics", folder_connection)
         for file in files_metrics:
             copyfile(folder_connection+'/'+file, folder+'/'+file)
