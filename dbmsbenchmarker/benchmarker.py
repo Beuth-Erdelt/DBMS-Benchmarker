@@ -2467,6 +2467,8 @@ def run_evaluation(experiments):
                 #for t in benchmarker_times:
                 #    times_start[orig_name].append(benchmarker_times[t]['time_start'])
                 #    times_end[orig_name].append(benchmarker_times[t]['time_end'])
+            if tpx_sum[orig_name] == 0:
+                del tpx_sum[orig_name]
         if len(tpx_sum) > 0:
             print("### Queries per Hour (only successful) [QpH] - Sum per DBMS")
             df = pd.DataFrame.from_dict(tpx_sum, orient='index', columns=['queries per hour [Qph]'])
