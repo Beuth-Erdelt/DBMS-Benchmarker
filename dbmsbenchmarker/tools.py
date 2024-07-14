@@ -1609,7 +1609,7 @@ def merge_partial_results(result_path, code):
             filename = '{folder}/{connection}/queries.config'.format(folder=folder, connection=connection)
             copyfile(filename, folder+'/queries.config')
         except Exception as e:
-            print(e)
+            print("Exception when merging connections: {}".format(e))
     # join to single list
     # no connection name must be doubled
     connection_config = []
@@ -1777,7 +1777,7 @@ def merge_partial_results(result_path, code):
                                     protocol['query'][numQuery]['resultSets'][connection] = []
                                     protocol['query'][numQuery]['warnings'][connection] = ""
             except Exception as e:
-                print(e)
+                print("Exception when merging result sets: {}".format(e))
                 #print("missing")
                 protocol['query'][numQuery]['warnings'][connection] = 'Missing'
                 traceback.print_exc()
