@@ -293,7 +293,8 @@ def singleResult(connectiondata, inputConfig, numRuns, connectionname, numQuery,
             if query.result:
                 data = [[str(item).strip() for item in sublist] for sublist in data]
                 if query.restrict_precision is not None:
-                    data = [[round(float(item), int(query.restrict_precision)) if tools.convertToFloat(item) == float else item for item in sublist] for sublist in data]
+                    #data = [[round(float(item), int(query.restrict_precision)) if tools.convertToFloat(item) == float else item for item in sublist] for sublist in data]
+                    data = [[tools.convert_to_rounded_float(item, int(query.restrict_precision)) for item in sublist] for sublist in data]
                 if query.sorted and len(data) > 0:
                     logger.debug(workername+"Begin sorting")
                     data = sorted(data, key=itemgetter(*list(range(0,len(data[0])))))

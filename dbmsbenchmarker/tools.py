@@ -28,6 +28,7 @@ from os import path
 import matplotlib.pyplot as plt
 import pickle
 import traceback
+import warnings
 
 from dbmsbenchmarker import inspector, benchmarker
 
@@ -1485,6 +1486,47 @@ def convertToInt(var):
         return var
 
 
+def convert_to_rounded_float(var, decimals=2):
+    """
+    Converts a variable to a rounded float if possible, otherwise returns the original value.
+
+    :param var: The variable to be converted.
+    :param decimals: The number of decimal places to round to.
+    :return: The rounded float or the original value if conversion is not possible.
+    """
+    def safe_literal_eval(var):
+        with warnings.catch_warnings(record=True) as w:
+            warnings.simplefilter("always", SyntaxWarning)  # Catch all SyntaxWarnings
+            try:
+                result = ast.literal_eval(var)
+                # Check if a SyntaxWarning was issued
+                if len(w) > 0 and issubclass(w[-1].category, SyntaxWarning):
+                    raise ValueError("SyntaxWarning encountered")
+                return result
+            except (ValueError, SyntaxError):
+                raise
+
+    try:
+        # If var is already a float, just round and return it
+        if isinstance(var, float):
+            return round(var, decimals)
+        
+        # Try to sanitize and convert the variable to a float
+        if isinstance(var, str):
+            var = var.replace("_", "")  # Remove any underscores
+        
+        evaluated_var = safe_literal_eval(var)
+        
+        # Convert the evaluated variable to a float and round it
+        rounded_float = round(float(evaluated_var), decimals)
+        
+        return rounded_float
+    except (ValueError, SyntaxError):
+        # Return the original value if conversion is not possible
+        return var
+
+
+
 def sizeof_fmt(num, suffix='B'):
     """
     Formats data size into human readable format.
@@ -1666,7 +1708,7 @@ def merge_partial_results(result_path, code):
         for connection in list_connections:
             try:
                 filename = '{folder}/{connection}/query_{numQuery}_resultset_complete_{connection}.pickle'.format(folder=folder, connection=connection, numQuery=numQuery)
-                logger.debug("Looking for", filename)
+                logger.debug("Looking for {}".format(filename))
                 if isfile(filename):
                     # result set of all runs
                     #print(connection+": ", end='')#, df)
@@ -1818,7 +1860,7 @@ def merge_partial_results(result_path, code):
                 csv_file = open(filename, "w")
                 csv_file.write(csv)
                 csv_file.close()
-                logger.debug("Merged timer", filename)
+                logger.debug("Merged timer {}".format(filename))
     # merge metrics
     # copy partial metrics
     for connection in list_connections:
