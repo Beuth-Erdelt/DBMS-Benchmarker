@@ -1737,7 +1737,8 @@ def merge_partial_results(result_path, code):
                                 # convert datatypes
                                 #precision = query.restrict_precision
                                 precision = 2
-                                result = [[round(float(item), int(precision)) if convertToFloat(item) == float else convertToInt(item) if convertToInt(item) == item else item for item in sublist] for sublist in result]
+                                #result = [[round(float(item), int(precision)) if convertToFloat(item) == float else convertToInt(item) if convertToInt(item) == item else item for item in sublist] for sublist in result]
+                                result = [[convert_to_rounded_float(item, int(precision)) for item in sublist] for sublist in result]
                                 df = pd.DataFrame(sorted(result, key=itemgetter(*list(range(0,len(result[0]))))), columns=titles_result)
                                 #df = pd.DataFrame(result)
                                 #new_header = df.iloc[0] #grab the first row for the header
@@ -1754,7 +1755,8 @@ def merge_partial_results(result_path, code):
                                 # convert datatypes
                                 #precision = query.restrict_precision
                                 precision = 2
-                                storage = [[round(float(item), int(precision)) if convertToFloat(item) == float else convertToInt(item) if convertToInt(item) == item else item for item in sublist] for sublist in storage]
+                                #storage = [[round(float(item), int(precision)) if convertToFloat(item) == float else convertToInt(item) if convertToInt(item) == item else item for item in sublist] for sublist in storage]
+                                storage = [[convert_to_rounded_float(item, int(precision)) for item in sublist] for sublist in storage]
                                 df_first = pd.DataFrame(sorted(storage, key=itemgetter(*list(range(0,len(storage[0]))))), columns=titles_storage)
                                 #df_first = pd.DataFrame(data_first[numRun])
                                 #new_header = df_first.iloc[0] #grab the first row for the header
@@ -1766,14 +1768,14 @@ def merge_partial_results(result_path, code):
                                 #print("result", result)
                                 #print("storage", storage)
                                 if result == storage:
-                                    logger.debug("same\n")
+                                    logger.debug("same")
                                     pass
                                 #    #exit()
                                 #if numQuery=='3':
                                 #    print(df_first)
                                 #    print(df)
                                 if not df_1.empty or not df_2.empty:
-                                    logger.debug("different\n")#, df_1, df_2)
+                                    logger.debug("different")#, df_1, df_2)
                                     #print("result", result)
                                     #print("storage", storage)
                                     #exit()
