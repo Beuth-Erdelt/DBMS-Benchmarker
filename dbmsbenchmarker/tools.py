@@ -1517,8 +1517,11 @@ def convert_to_rounded_float(var, decimals=2):
         
         evaluated_var = safe_literal_eval(var)
         
-        # Convert the evaluated variable to a float and round it
-        rounded_float = round(float(evaluated_var), decimals)
+        if not evaluated_var is None:
+            # Convert the evaluated variable to a float and round it
+            rounded_float = round(float(evaluated_var), decimals)
+        else:
+            rounded_float = ""
         
         return rounded_float
     except (ValueError, SyntaxError):
