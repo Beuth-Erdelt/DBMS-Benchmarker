@@ -2487,7 +2487,9 @@ def run_evaluation(experiments):
                 orig_name = c['orig_name']
             else:
                 orig_name = c['name']
-            benchmarker_times = evaluate.get_experiment_connection_properties(c['name'])['times']['total']
+            benchmarker_times_dict = evaluate.get_experiment_connection_properties(c['name'])
+            if len(benchmarker_times_dict) > 0:
+                benchmarker_times = benchmarker_times_dict['times']['total']
             #print(benchmarker_times)
             if len(orig_name) > 0: #'orig_name' in c:
                 #print(c['name'], orig_name)

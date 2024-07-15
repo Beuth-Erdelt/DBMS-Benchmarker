@@ -264,7 +264,10 @@ class inspector():
     def get_experiment_connection_properties(self, connection=None):
         # dict of dict of dbms info
         if connection is not None:
-            return self.e.evaluation['dbms'][connection]
+            if connection in self.e.evaluation['dbms']:
+                return self.e.evaluation['dbms'][connection]
+            else:
+                return dict()
         else:
             return self.e.evaluation['dbms']
     def get_experiment_query_properties(self, numQuery=None):
