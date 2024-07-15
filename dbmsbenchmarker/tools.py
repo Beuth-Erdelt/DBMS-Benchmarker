@@ -28,8 +28,9 @@ from os import path
 import matplotlib.pyplot as plt
 import pickle
 import traceback
+import warnings
 
-from dbmsbenchmarker import inspector
+from dbmsbenchmarker import inspector, benchmarker
 
 # Set query timeout
 jaydebeapi.QUERY_TIMEOUT = 0
@@ -183,7 +184,7 @@ class timer():
         """
         self.nameConnection = nameConnection
         self.startTimerQuery(numQuery, query)#numWarmup, numRun)
-        if len(self.times) <= self.currentQuery:
+        while len(self.times) <= self.currentQuery:
             self.times.append({})
             self.stats.append({})
         self.finishTimerQuery()
@@ -624,9 +625,10 @@ class dbms():
                 self.connectiondata['version'] = self.version
                 self.connectiondata['driver'] = self.driver
                 self.connectiondata['driverversion'] = self.driverversion
-                print("Connected to {} version {} using {} version {}".format(self.product, self.version, self.driver, self.driverversion))
+                if not benchmarker.BENCHMARKER_VERBOSE_NONE:
+                    print("Connected to {} version {} using {} version {}".format(self.product, self.version, self.driver, self.driverversion))
             except Exception as e:
-                print("Product and version not implemented in JDBC driver")
+                print("Product and version not implemented in JDBC driver {}".format(self.connectiondata['JDBC']['jar']))
             else:
                 pass
             if 'init_SQL' in self.connectiondata:
@@ -1484,6 +1486,47 @@ def convertToInt(var):
         return var
 
 
+def convert_to_rounded_float(var, decimals=2):
+    """
+    Converts a variable to a rounded float if possible, otherwise returns the original value.
+
+    :param var: The variable to be converted.
+    :param decimals: The number of decimal places to round to.
+    :return: The rounded float or the original value if conversion is not possible.
+    """
+    def safe_literal_eval(var):
+        with warnings.catch_warnings(record=True) as w:
+            warnings.simplefilter("always", SyntaxWarning)  # Catch all SyntaxWarnings
+            try:
+                result = ast.literal_eval(var)
+                # Check if a SyntaxWarning was issued
+                if len(w) > 0 and issubclass(w[-1].category, SyntaxWarning):
+                    raise ValueError("SyntaxWarning encountered")
+                return result
+            except (ValueError, SyntaxError):
+                raise
+
+    try:
+        # If var is already a float, just round and return it
+        if isinstance(var, float):
+            return round(var, decimals)
+        
+        # Try to sanitize and convert the variable to a float
+        if isinstance(var, str):
+            var = var.replace("_", "")  # Remove any underscores
+        
+        evaluated_var = safe_literal_eval(var)
+        
+        # Convert the evaluated variable to a float and round it
+        rounded_float = round(float(evaluated_var), decimals)
+        
+        return rounded_float
+    except (ValueError, SyntaxError):
+        # Return the original value if conversion is not possible
+        return var
+
+
+
 def sizeof_fmt(num, suffix='B'):
     """
     Formats data size into human readable format.
@@ -1563,6 +1606,11 @@ def anonymize_dataframe(dataframe_dbms):
             dataframe_dbms.columns = dataframe_dbms.columns.map(dbms.anonymizer)
             #dataframe_dbms.columns = anonymize_list(dataframe_dbms.columns)
 
+def natural_sort(l): 
+    convert = lambda text: int(text) if text.isdigit() else text.lower()
+    alphanum_key = lambda key: [convert(c) for c in re.split('([0-9]+)', key)]
+    return sorted(l, key=alphanum_key)
+
 
 import json
 from os.path import isdir, isfile, join
@@ -1603,7 +1651,7 @@ def merge_partial_results(result_path, code):
             filename = '{folder}/{connection}/queries.config'.format(folder=folder, connection=connection)
             copyfile(filename, folder+'/queries.config')
         except Exception as e:
-            print(e)
+            print("Exception when merging connections: {}".format(e))
     # join to single list
     # no connection name must be doubled
     connection_config = []
@@ -1615,14 +1663,16 @@ def merge_partial_results(result_path, code):
             if not c['name'] in connection_names:
                 connection_config.append(c)
                 connection_names.append(c['name'])
-    for connection in connection_config:
-        print("Merged connection: ", connection['name'])
+    if not benchmarker.BENCHMARKER_VERBOSE_NONE:
+        for connection in connection_config:
+            print("Merged connection: ", connection['name'])
     # store merged config
     filename = folder+'/connections.config'
     with open(filename,'w') as inf:
         inf.write(str(connection_config))
     # merging protocols
-    print("Merge protocols")
+    if not benchmarker.BENCHMARKER_VERBOSE_NONE:
+        print("Merge protocols")
     # load partial protocols
     protocols = []
     for connection in list_connections:
@@ -1645,7 +1695,8 @@ def merge_partial_results(result_path, code):
     with open(filename_protocol, 'w') as f:
         json.dump(protocol, f)
     # compare result sets
-    print("Merge result sets")
+    if not benchmarker.BENCHMARKER_VERBOSE_NONE:
+        print("Merge result sets")
     for numQuery, query in protocol['query'].items():
         #if int(numQuery) > 3:
         #    exit()
@@ -1657,7 +1708,7 @@ def merge_partial_results(result_path, code):
         for connection in list_connections:
             try:
                 filename = '{folder}/{connection}/query_{numQuery}_resultset_complete_{connection}.pickle'.format(folder=folder, connection=connection, numQuery=numQuery)
-                logger.debug("Looking for", filename)
+                logger.debug("Looking for {}".format(filename))
                 if isfile(filename):
                     # result set of all runs
                     #print(connection+": ", end='')#, df)
@@ -1686,7 +1737,8 @@ def merge_partial_results(result_path, code):
                                 # convert datatypes
                                 #precision = query.restrict_precision
                                 precision = 2
-                                result = [[round(float(item), int(precision)) if convertToFloat(item) == float else convertToInt(item) if convertToInt(item) == item else item for item in sublist] for sublist in result]
+                                #result = [[round(float(item), int(precision)) if convertToFloat(item) == float else convertToInt(item) if convertToInt(item) == item else item for item in sublist] for sublist in result]
+                                result = [[convert_to_rounded_float(item, int(precision)) for item in sublist] for sublist in result]
                                 df = pd.DataFrame(sorted(result, key=itemgetter(*list(range(0,len(result[0]))))), columns=titles_result)
                                 #df = pd.DataFrame(result)
                                 #new_header = df.iloc[0] #grab the first row for the header
@@ -1703,7 +1755,8 @@ def merge_partial_results(result_path, code):
                                 # convert datatypes
                                 #precision = query.restrict_precision
                                 precision = 2
-                                storage = [[round(float(item), int(precision)) if convertToFloat(item) == float else convertToInt(item) if convertToInt(item) == item else item for item in sublist] for sublist in storage]
+                                #storage = [[round(float(item), int(precision)) if convertToFloat(item) == float else convertToInt(item) if convertToInt(item) == item else item for item in sublist] for sublist in storage]
+                                storage = [[convert_to_rounded_float(item, int(precision)) for item in sublist] for sublist in storage]
                                 df_first = pd.DataFrame(sorted(storage, key=itemgetter(*list(range(0,len(storage[0]))))), columns=titles_storage)
                                 #df_first = pd.DataFrame(data_first[numRun])
                                 #new_header = df_first.iloc[0] #grab the first row for the header
@@ -1715,14 +1768,14 @@ def merge_partial_results(result_path, code):
                                 #print("result", result)
                                 #print("storage", storage)
                                 if result == storage:
-                                    logger.debug("same\n")
+                                    logger.debug("same")
                                     pass
                                 #    #exit()
                                 #if numQuery=='3':
                                 #    print(df_first)
                                 #    print(df)
                                 if not df_1.empty or not df_2.empty:
-                                    logger.debug("different\n")#, df_1, df_2)
+                                    logger.debug("different")#, df_1, df_2)
                                     #print("result", result)
                                     #print("storage", storage)
                                     #exit()
@@ -1768,7 +1821,7 @@ def merge_partial_results(result_path, code):
                                     protocol['query'][numQuery]['resultSets'][connection] = []
                                     protocol['query'][numQuery]['warnings'][connection] = ""
             except Exception as e:
-                print(e)
+                print("Exception when merging result sets: {}".format(e))
                 #print("missing")
                 protocol['query'][numQuery]['warnings'][connection] = 'Missing'
                 traceback.print_exc()
@@ -1781,7 +1834,8 @@ def merge_partial_results(result_path, code):
     with open(filename_protocol, 'w') as f:
         json.dump(protocol, f)
     # merge timers
-    print("Merge timers")
+    if not benchmarker.BENCHMARKER_VERBOSE_NONE:
+        print("Merge timers")
     # load partial timers, join and save
     timer = ['connection', 'execution', 'datatransfer']
     numQuery = 1
@@ -1808,13 +1862,14 @@ def merge_partial_results(result_path, code):
                 csv_file = open(filename, "w")
                 csv_file.write(csv)
                 csv_file.close()
-                logger.debug("Merged timer", filename)
+                logger.debug("Merged timer {}".format(filename))
     # merge metrics
     # copy partial metrics
     for connection in list_connections:
         folder_connection = folder+'/'+connection
         files_metrics = [f for f in listdir(folder_connection) if isfile(join(folder_connection, f)) and 'metric' in f]
         #print(folder_connection, files_metrics)
-        print("Copy Metrics", folder_connection)
+        if not benchmarker.BENCHMARKER_VERBOSE_NONE:
+            print("Copy Metrics", folder_connection)
         for file in files_metrics:
             copyfile(folder_connection+'/'+file, folder+'/'+file)

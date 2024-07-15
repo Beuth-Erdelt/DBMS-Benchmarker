@@ -35,21 +35,16 @@ How to configure the benchmarker can be illustrated best by looking at the sourc
 `python benchmark.py -h`
 
 ```
-usage: dbmsbenchmarker [-h] [-d] [-b] [-qf QUERY_FILE] [-cf CONNECTION_FILE] [-q QUERY] [-c CONNECTION] [-ca CONNECTION_ALIAS]
-                       [-f CONFIG_FOLDER] [-r RESULT_FOLDER] [-e {no,yes}] [-w {query,connection}] [-p NUMPROCESSES] [-pp]
-                       [-s SEED] [-cs] [-ms MAX_SUBFOLDERS] [-sl SLEEP] [-st START_TIME] [-sf SUBFOLDER] [-sd {None,csv,pandas}]
-                       [-vq] [-vs] [-vr] [-vp] [-pn NUM_RUN] [-m] [-mps] [-sid STREAM_ID] [-ssh STREAM_SHUFFLE]
-                       [-wli WORKLOAD_INTRO] [-wln WORKLOAD_NAME]
+usage: dbmsbenchmarker [-h] [-d] [-b] [-qf QUERY_FILE] [-cf CONNECTION_FILE] [-q QUERY] [-c CONNECTION] [-ca CONNECTION_ALIAS] [-f CONFIG_FOLDER] [-r RESULT_FOLDER] [-e {no,yes}] [-w {query,connection}] [-p NUMPROCESSES] [-pp] [-s SEED] [-cs] [-ms MAX_SUBFOLDERS]
+                       [-sl SLEEP] [-st START_TIME] [-sf SUBFOLDER] [-sd {None,csv,pandas}] [-vq] [-vs] [-vr] [-vp] [-vn] [-pn NUM_RUN] [-m] [-mps] [-sid STREAM_ID] [-ssh STREAM_SHUFFLE] [-wli WORKLOAD_INTRO] [-wln WORKLOAD_NAME]
                        {run,read,continue}
 
-A benchmark tool for RDBMS. It connects to a given list of RDBMS via JDBC and runs a given list benchmark queries. Optionally some
-reports are generated.
+A benchmark tool for RDBMS. It connects to a given list of RDBMS via JDBC and runs a given list benchmark queries. Optionally some reports are generated.
 
 positional arguments:
-  {run,read,continue}   run benchmarks and save results, or just read benchmark results from folder, or continue with missing
-                        benchmarks only
+  {run,read,continue}   run benchmarks and save results, or just read benchmark results from folder, or continue with missing benchmarks only
 
-optional arguments:
+options:
   -h, --help            show this help message and exit
   -d, --debug           dump debug informations
   -b, --batch           batch mode (more protocol-like output), automatically on for debug mode
@@ -64,8 +59,7 @@ optional arguments:
   -ca CONNECTION_ALIAS, --connection-alias CONNECTION_ALIAS
                         alias of connection to benchmark
   -f CONFIG_FOLDER, --config-folder CONFIG_FOLDER
-                        folder containing query and connection config files. If set, the names connections.config and
-                        queries.config are assumed automatically.
+                        folder containing query and connection config files. If set, the names connections.config and queries.config are assumed automatically.
   -r RESULT_FOLDER, --result-folder RESULT_FOLDER
                         folder for storing benchmark result files, default is given by timestamp
   -e {no,yes}, --generate-evaluation {no,yes}
@@ -97,6 +91,7 @@ optional arguments:
                         print result sets of every query that has been sent
   -vp, --verbose-process
                         print result sets of every query that has been sent
+  -vn, --verbose-none   stay completely silent
   -pn NUM_RUN, --num-run NUM_RUN
                         Parameter: Number of executions per query
   -m, --metrics         collect hardware metrics per query
@@ -186,10 +181,11 @@ Batch mode is automatically turned on if debug mode is used.
 
 ### Verbosity Level
 
-Using the flags `-vq` means each query that is sent is dumped to stdout.
-Using the flags `-vr` means each result set that is received is dumped to stdout.
-Using the flags `-vp` means more information about the process and connections are dumped to stdout.
-Using the flags `-vs` means after each query that has been finished, some statistics are dumped to stdout.
+Using the flag `-vq` means each query that is sent is dumped to stdout.
+Using the flag `-vr` means each result set that is received is dumped to stdout.
+Using the flag `-vp` means more information about the process and connections are dumped to stdout.
+Using the flag `-vs` means after each query that has been finished, some statistics are dumped to stdout.
+Using the flag `-vn` means output is reduced to minimum (silent mode).
 
 
 ### Working Querywise or Connectionswise

@@ -24,7 +24,7 @@ import matplotlib.pyplot as plt
 import os
 import csv
 import json
-from dbmsbenchmarker import tools, monitor, evaluator
+from dbmsbenchmarker import tools, monitor, evaluator, benchmarker
 #import datetime
 from datetime import datetime
 from tqdm import tqdm
@@ -249,17 +249,18 @@ class printer(reporter):
                         l.extend(*times_output[c])
                     data.append(l)
         # print table
-        print('Q'+str(numQuery)+': '+query.title+" - timerExecution")
-        print(tabulate(data,headers=header, tablefmt="grid", floatfmt=".2f"))
-        # print errors
-        for key, value in self.benchmarker.protocol['query'][str(numQuery)]['errors'].items():
-            if key in self.benchmarker.dbms and self.benchmarker.dbms[key].connectiondata['active']:
-                if len(value) > 0:
-                    firstpos = value.find(': ')
-                    if firstpos > 0:
-                        print(key + ': ' + value[firstpos:])
-                    else:
-                        print(key + ': ' + value)
+        if not benchmarker.BENCHMARKER_VERBOSE_NONE:
+            print('Q'+str(numQuery)+': '+query.title+" - timerExecution")
+            print(tabulate(data,headers=header, tablefmt="grid", floatfmt=".2f"))
+            # print errors
+            for key, value in self.benchmarker.protocol['query'][str(numQuery)]['errors'].items():
+                if key in self.benchmarker.dbms and self.benchmarker.dbms[key].connectiondata['active']:
+                    if len(value) > 0:
+                        firstpos = value.find(': ')
+                        if firstpos > 0:
+                            print(key + ': ' + value[firstpos:])
+                        else:
+                            print(key + ': ' + value)
         return data
 
 
