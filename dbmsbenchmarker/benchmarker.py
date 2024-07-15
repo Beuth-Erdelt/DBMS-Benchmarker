@@ -1396,7 +1396,7 @@ class benchmarker():
         finally:
             self.timerExecution.finishTimer()
             self.timerTransfer.finishTimer()
-            if query.withConnect:
+            if query.withConnect and not (singleConnection and len(self.activeConnections)):
                 # we do benchmark connection time, so we connect every run
                 #self.disconnectDBMS(c)
                 self.timerConnect.finishTimer()
