@@ -387,6 +387,7 @@ class benchmarker():
         self.logger = logging.getLogger('benchmarker')
         if seed is not None:
             random.seed(seed)
+        self.seed = seed                                    # stores random seed, used before each query parameter generator
         ## connection management:
         if numProcesses is not None:
             # we cannot handle a single connection if there are multiple processes
@@ -1413,6 +1414,8 @@ class benchmarker():
             query = tools.query(q)
             self.logger.debug("generateAllParameters query={}, parameter={}, protocol={}".format(numQuery, query.parameter, self.protocol['query'][str(numQuery)]['parameter']))
             if len(query.parameter) > 0 and (overwrite or len(self.protocol['query'][str(numQuery)]['parameter']) == 0):
+                if self.seed is not None:
+                    random.seed(self.seed)
                 params = parameter.generateParameters(query.parameter, query.numRun)
                 self.protocol['query'][str(numQuery)]['parameter'] = params
     def startBenchmarkingQuery(self, numQuery):
@@ -1431,6 +1434,8 @@ class benchmarker():
         query = tools.query(q)
         if len(query.parameter) > 0 and len(self.protocol['query'][str(numQuery)]['parameter']) == 0:
             self.logger.debug("generateParameters query={}, parameter={}, protocol={}".format(numQuery, query.parameter, self.protocol['query'][str(numQuery)]))
+            if self.seed is not None:
+                random.seed(self.seed)
             params = parameter.generateParameters(query.parameter, query.numRun)
             self.protocol['query'][str(numQuery)]['parameter'] = params
         if len(query.queryList) > 0:
