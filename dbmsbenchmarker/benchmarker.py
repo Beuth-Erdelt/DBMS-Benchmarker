@@ -201,7 +201,8 @@ def singleRun(connectiondata, inputConfig, numRuns, connectionname, numQuery, pa
                             fmt = '\t'.join('{{:{}}}'.format(x) for x in lens)
                             table = [fmt.format(*row) for row in s]
                             if not BENCHMARKER_VERBOSE_NONE:
-                                print(workername+('\n'.join(table)))
+                                print(workername+'Result set:')
+                                print('\n'.join(table))
                         if not query.storeData:
                             if not BENCHMARKER_VERBOSE_NONE:
                                 print(workername+"Forget result set")
