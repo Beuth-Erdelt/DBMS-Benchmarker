@@ -1468,6 +1468,19 @@ def convertToFloat(var):
         #print(var)
         return str
 
+# Custom key function to handle conversion for sorting
+def convert_to_rounded_float(var, decimals=2):
+    try:
+        # Try to convert to float and return a tuple (0, float_value)
+        return (0, round(float(var), decimals))
+    except ValueError:
+        # If conversion fails, return a tuple (1, string_value)
+        return (1, str(var))
+
+# Create a key function for sorting based on all elements
+def sort_key_rounded(sublist, decimal=2):
+    return [convert_to_rounded_float(item, decimal) for item in sublist]
+
 def convertToInt(var):
     """
     Converts variable to float.
@@ -1486,7 +1499,7 @@ def convertToInt(var):
         return var
 
 
-def convert_to_rounded_float(var, decimals=2):
+def convert_to_rounded_float_2(var, decimals=2):
     """
     Converts a variable to a rounded float if possible, otherwise returns the original value.
 
@@ -1505,29 +1518,28 @@ def convert_to_rounded_float(var, decimals=2):
                 return result
             except (ValueError, SyntaxError):
                 raise
-
     try:
         # If var is already a float, just round and return it
         if isinstance(var, float):
             return round(var, decimals)
-        
+        # If var is "None"", just return it
+        if var == "None":
+            return var
         # Try to sanitize and convert the variable to a float
         if isinstance(var, str):
             var = var.replace("_", "")  # Remove any underscores
-        
         evaluated_var = safe_literal_eval(var)
-        
         if not evaluated_var is None:
             # Convert the evaluated variable to a float and round it
             rounded_float = round(float(evaluated_var), decimals)
         else:
-            rounded_float = ""
-        
+            rounded_float = var
+        #print("rounded", var, rounded_float)
         return rounded_float
     except (ValueError, SyntaxError):
         # Return the original value if conversion is not possible
+        #print("not rounded", var)
         return var
-
 
 
 def sizeof_fmt(num, suffix='B'):

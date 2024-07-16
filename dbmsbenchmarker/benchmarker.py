@@ -292,12 +292,18 @@ def singleResult(connectiondata, inputConfig, numRuns, connectionname, numQuery,
             #print(data)
             if query.result:
                 data = [[str(item).strip() for item in sublist] for sublist in data]
-                if query.restrict_precision is not None:
+                #if query.restrict_precision is not None:
                     #data = [[round(float(item), int(query.restrict_precision)) if tools.convertToFloat(item) == float else item for item in sublist] for sublist in data]
-                    data = [[tools.convert_to_rounded_float(item, int(query.restrict_precision)) for item in sublist] for sublist in data]
+                    #data = [[tools.convert_to_rounded_float(item, int(query.restrict_precision)) for item in sublist] for sublist in data]
+                    #data = [[tools.convert_to_rounded_float(item, int(query.restrict_precision)) for item in sublist] for sublist in data]
+                if query.restrict_precision is not None:
+                    precision = query.restrict_precision
+                else:
+                    precision = 10
                 if query.sorted and len(data) > 0:
                     logger.debug(workername+"Begin sorting")
-                    data = sorted(data, key=itemgetter(*list(range(0,len(data[0])))))
+                    #data = sorted(data, key=itemgetter(*list(range(0,len(data[0])))))
+                    data = sorted(data, key=lambda sublist: tools.sort_key_rounded(sublist, precision))
                     logger.debug(workername+"Finished sorting")
                 logger.debug(workername+"Size of processed result list retrieved: "+str(sys.getsizeof(data))+" bytes")
             # convert to dataframe
@@ -347,6 +353,7 @@ def singleResult(connectiondata, inputConfig, numRuns, connectionname, numQuery,
         except Exception as e:
             logger.exception(workername+'Caught an error: %s' % str(e))
             error = '{workername}: {exception}'.format(workername=workername, exception=e)
+            #print(error+"\n", data)
             data = []
             size = 0
         finally:
