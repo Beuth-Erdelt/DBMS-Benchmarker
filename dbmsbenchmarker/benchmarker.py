@@ -1653,10 +1653,16 @@ class benchmarker():
         self.logger.debug("### Time end: "+str(self.time_end))
         for connectionname in sorted(self.dbms.keys()):
             self.protocol['total'][connectionname]['time_end'] = self.time_end
-        if self.stream_id is None:
-            print("DBMSBenchmarker duration: {} [s]".format(self.time_end-self.time_start))
+        if self.fixedConnection is None:
+            if self.stream_id is None:
+                print("DBMSBenchmarker duration: {} [s]".format(self.time_end-self.time_start))
+            else:
+                print("DBMSBenchmarker duration stream {}: {} [s]".format(self.stream_id, self.time_end-self.time_start))
         else:
-            print("DBMSBenchmarker duration stream {}: {} [s]".format(self.stream_id, self.time_end-self.time_start))
+            if self.stream_id is None:
+                print("DBMSBenchmarker duration of {}: {} [s]".format(self.fixedConnection, self.time_end-self.time_start))
+            else:
+                print("DBMSBenchmarker duration stream {} of {}: {} [s]".format(self.stream_id, self.fixedConnection, self.time_end-self.time_start))
         # write protocol again
         self.reporterStore.writeProtocol()
         # store connection data again, it may have changed
@@ -2334,10 +2340,16 @@ def run_cli(parameter):
             else:
                 #experiments.generateAllParameters()
                 experiments.runBenchmarks()
-            if stream_id is None:
-                print('Experiment {} has been finished'.format(experiments.code))
+            if args.connection is None:
+                if stream_id is None:
+                    print('Experiment {} has been finished'.format(experiments.code))
+                else:
+                    print('Experiment {} stream {} has been finished'.format(experiments.code, stream_id))
             else:
-                print('Experiment {} stream {} has been finished'.format(experiments.code, stream_id))
+                if stream_id is None:
+                    print('Experiment {} for {} has been finished'.format(experiments.code, args.connection))
+                else:
+                    print('Experiment {} stream {} for {} has been finished'.format(experiments.code, stream_id, args.connection))
         elif args.mode == 'continue':
             if experiments.continuing:
                 experiments.continueBenchmarks(overwrite = False)
