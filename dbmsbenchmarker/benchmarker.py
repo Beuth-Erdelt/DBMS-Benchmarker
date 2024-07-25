@@ -2192,7 +2192,7 @@ def run_cli(parameter):
             )
             experiments.getConfig()
             experiments.readBenchmarks()
-            evaluate = run_evaluation(experiments)
+            evaluate = run_evaluation(experiments, show_query_statistics=True)
             #print("Experiment {} has been finished".format(experiments.code))
             #print(evaluate)
             #list_connections = evaluate.get_experiment_list_connections()
@@ -2358,7 +2358,7 @@ def run_cli(parameter):
             run_evaluation(experiments)
         return experiments
 
-def run_evaluation(experiments):
+def run_evaluation(experiments, show_query_statistics=False):
         # generate evaluation cube
         experiments.overwrite = True
         # show some evaluations
@@ -2369,9 +2369,31 @@ def run_evaluation(experiments):
         evaluate.load_experiment("")#experiments.code)
         print("Show Evaluation")
         print("===============")
-        # get workload properties
-        workload_properties = evaluate.get_experiment_workload_properties()
+        # show aggregated statistics per query
+        #evaluate = inspector.inspector(resultfolder)
+        #evaluate.load_experiment(code)
+        #evaluate = inspector.inspector(resultfolder)
+        #evaluate.load_experiment(code)
+        list_connections = evaluate.get_experiment_list_connections()
+        list_queries = evaluate.get_experiment_list_queries()
         query_properties = evaluate.get_experiment_query_properties()
+        def map_index_to_queryname_simple(numQuery):
+            if numQuery in query_properties and 'config' in query_properties[numQuery] and 'title' in query_properties[numQuery]['config']:
+                return query_properties[numQuery]['config']['title']
+            else:
+                return numQuery
+        if show_query_statistics:
+            for numQuery in list_queries:
+                print("Q{}: {}".format(numQuery, map_index_to_queryname_simple(str(numQuery))))
+                #df1, df2 = evaluate.get_measures_and_statistics(numQuery)
+                #print(df2.round(2))
+                df1, df2 = evaluate.get_measures_and_statistics_merged(numQuery)
+                header = df2.columns
+                print(tabulate(df2,headers=header, tablefmt="grid", floatfmt=".2f"))
+                #print(df2.round(2))
+                #break        # get workload properties
+        workload_properties = evaluate.get_experiment_workload_properties()
+        #query_properties = evaluate.get_experiment_query_properties()
         def map_index_to_queryname(numQuery):
             if numQuery[1:] in query_properties and 'config' in query_properties[numQuery[1:]] and 'title' in query_properties[numQuery[1:]]['config']:
                 return query_properties[numQuery[1:]]['config']['title']
