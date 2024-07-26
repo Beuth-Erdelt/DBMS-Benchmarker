@@ -525,7 +525,7 @@ class benchmarker():
 
         :return: returns nothing
         """
-        self.protocol = {'query':{}, 'connection':{}, 'total':{}}
+        self.protocol = {'query':{}, 'connection':{}, 'total':{}, 'ordering':{}}
         self.timerExecution = tools.timer("execution")
         self.timerTransfer = tools.timer("datatransfer")
         self.timerConnect = tools.timer("connection")
@@ -535,6 +535,12 @@ class benchmarker():
         self.timerRun = tools.timer("run")
         self.timerRun.stackable = False
         self.timers = [self.timerSession, self.timerRun, self.timerExecution, self.timerTransfer, self.timerConnect]
+    def store_ordering(self, ordering):
+        #print("store_ordering", ordering)
+        if self.stream_id is not None:
+            self.protocol['ordering'][self.stream_id] = ordering
+        else:
+            self.protocol['ordering'] = ordering
     def getConfig(self,configfolder=None, connectionfile=None, queryfile=None):
         """
         Reads all queries and connections from given config files.
@@ -1474,11 +1480,12 @@ class benchmarker():
         :return: returns nothing
         """
         global BENCHMARKER_VERBOSE_NONE
-        ordered_list_of_queries = range(1, len(self.queries)+1)
-        if self.stream_shuffle is not None and int(self.stream_shuffle) > 0 and self.stream_id is not None and int(self.stream_id) > 0:
+        # generate ordering
+        ordered_list_of_queries = list(range(1, len(self.queries)+1))
+        if self.stream_shuffle is not None and int(self.stream_shuffle) > 0:
             if not BENCHMARKER_VERBOSE_NONE:
                 print("User wants shuffling")
-            if 'stream_ordering' in self.queryconfig and len(self.queryconfig['stream_ordering']) > 0:
+            if 'stream_ordering' in self.queryconfig and len(self.queryconfig['stream_ordering']) > 0 and self.stream_id is not None and int(self.stream_id) > 0:
                 if not BENCHMARKER_VERBOSE_NONE:
                     print("Query file provides shuffling")
                     print("We are on stream {}".format(int(self.stream_id)))
@@ -1491,10 +1498,11 @@ class benchmarker():
             else:
                 if not BENCHMARKER_VERBOSE_NONE:
                     print("We shuffle randomly")
-                ordered_list_of_queries = list(ordered_list_of_queries)
+                #ordered_list_of_queries = list(ordered_list_of_queries)
                 random.shuffle(ordered_list_of_queries)
                 if not BENCHMARKER_VERBOSE_NONE:
                     print("Ordering:", ordered_list_of_queries)
+        self.store_ordering(ordered_list_of_queries)
         # a dict of connections, each carrying a list of connections to the dbms
         connectionpool = dict()
         for numQuery in ordered_list_of_queries:
@@ -1561,6 +1569,30 @@ class benchmarker():
         :return: returns nothing
         """
         global BENCHMARKER_VERBOSE_NONE
+        # generate ordering
+        ordered_list_of_queries = list(range(1, len(self.queries)+1))
+        if self.stream_shuffle is not None and int(self.stream_shuffle) > 0:
+            if not BENCHMARKER_VERBOSE_NONE:
+                print("User wants shuffling")
+            if 'stream_ordering' in self.queryconfig and len(self.queryconfig['stream_ordering']) > 0 and self.stream_id is not None and int(self.stream_id) > 0:
+                if not BENCHMARKER_VERBOSE_NONE:
+                    print("Query file provides shuffling")
+                    print("We are on stream {}".format(int(self.stream_id)))
+                num_total_streams = len(self.queryconfig['stream_ordering'])
+                # stream ids start at 1 and are limited by the number of streams in the ordering list
+                num_current_stream = (int(self.stream_id)-1)%num_total_streams+1
+                ordered_list_of_queries = self.queryconfig['stream_ordering'][num_current_stream]
+                if not BENCHMARKER_VERBOSE_NONE:
+                    print("Ordering:", ordered_list_of_queries)
+            else:
+                if not BENCHMARKER_VERBOSE_NONE:
+                    print("We shuffle randomly")
+                #ordered_list_of_queries = list(ordered_list_of_queries)
+                random.shuffle(ordered_list_of_queries)
+                if not BENCHMARKER_VERBOSE_NONE:
+                    print("Ordering:", ordered_list_of_queries)
+        self.store_ordering(ordered_list_of_queries)
+        # work per connection
         for connectionname in sorted(self.dbms.keys()):
             # check if we need a global connection
             singleConnection = self.connectionmanagement['singleConnection'] # Default is (probably) True
@@ -1584,27 +1616,6 @@ class benchmarker():
                     self.activeConnections[i].connect()
             #print(self.activeConnections)
             # work queries
-            ordered_list_of_queries = range(1, len(self.queries)+1)
-            if self.stream_shuffle is not None and int(self.stream_shuffle) > 0 and self.stream_id is not None and int(self.stream_id) > 0:
-                if not BENCHMARKER_VERBOSE_NONE:
-                    print("User wants shuffling")
-                if 'stream_ordering' in self.queryconfig and len(self.queryconfig['stream_ordering']) > 0:
-                    if not BENCHMARKER_VERBOSE_NONE:
-                        print("Query file provides shuffling")
-                        print("We are on stream {}".format(int(self.stream_id)))
-                    num_total_streams = len(self.queryconfig['stream_ordering'])
-                    # stream ids start at 1 and are limited by the number of streams in the ordering list
-                    num_current_stream = (int(self.stream_id)-1)%num_total_streams+1
-                    ordered_list_of_queries = self.queryconfig['stream_ordering'][num_current_stream]
-                    if not BENCHMARKER_VERBOSE_NONE:
-                        print("Ordering:", ordered_list_of_queries)
-                else:
-                    if not BENCHMARKER_VERBOSE_NONE:
-                        print("We shuffle randomly")
-                    ordered_list_of_queries = list(ordered_list_of_queries)
-                    random.shuffle(ordered_list_of_queries)
-                    if not BENCHMARKER_VERBOSE_NONE:
-                        print("Ordering:", ordered_list_of_queries)
             for numQuery in ordered_list_of_queries:
                 bBenchmarkDone = self.runBenchmark(numQuery, connectionname)
                 # if benchmark has been done: store and generate reports
@@ -2367,7 +2378,7 @@ def run_cli(parameter):
             # generate evaluation cube
             experiments.overwrite = True
             evaluator.evaluator(experiments, load=False, force=True)
-            run_evaluation(experiments)
+            run_evaluation(experiments, True)
         return experiments
 
 def run_evaluation(experiments, show_query_statistics=False):
@@ -2448,6 +2459,14 @@ def run_evaluation(experiments, show_query_statistics=False):
         print("Number of runs per query:", num_run)
         print("Number of max. parallel clients per stream:", int(num_processes))
         print("Number of parallel independent streams:", int(num_streams))
+        if 'ordering' in evaluate.benchmarks.protocol:
+            print("Ordering of queries:")
+            #print(evaluate.benchmarks.protocol['ordering'])
+            if isinstance(evaluate.benchmarks.protocol['ordering'], list):
+                print(evaluate.benchmarks.protocol['ordering'])
+            else:
+                for k,v in evaluate.benchmarks.protocol['ordering'].items():
+                    print("Stream {}: {}".format(k, v))
         #####################
         print("\n### Errors (failed queries)")
         df = evaluate.get_total_errors(dbms_filter=dbms_filter).T

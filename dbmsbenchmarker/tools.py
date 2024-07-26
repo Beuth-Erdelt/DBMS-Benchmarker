@@ -614,7 +614,7 @@ class dbms():
                 self.connectiondata['JDBC']['driver'],
                 self.connectiondata['JDBC']['url'],
                 self.connectiondata['JDBC']['auth'],
-                dbms.jars,)
+                dbms.jars,)#["-Xms1g", "-Xmx1g", "-XX:+PrintFlagsFinal"])
             try:
                 self.metadata = self.connection.jconn.getMetaData()
                 self.product = self.metadata.getDatabaseProductName()
@@ -1699,6 +1699,7 @@ def merge_partial_results(result_path, code):
     protocol['query'] = {}
     protocol['connection'] = {}
     protocol['total'] = {}
+    protocol['ordering'] = {}
     for k,v in protocols[0]['query'].items():
         if isinstance(v, dict):
             protocol['query'][k] = {}
@@ -1706,6 +1707,9 @@ def merge_partial_results(result_path, code):
                 protocol['query'][k] = joinDicts(protocol['query'][k], p['query'][k])
     for p in protocols:
         protocol['total'] = joinDicts(protocol['total'], p['total'])
+    for p in protocols:
+        if 'ordering' in p:
+            protocol['ordering'] = joinDicts(protocol['ordering'], p['ordering'])
     filename_protocol = '{folder}/protocol.json'.format(folder=folder)
     with open(filename_protocol, 'w') as f:
         json.dump(protocol, f)
