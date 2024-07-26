@@ -610,11 +610,27 @@ class dbms():
         :return: returns nothing
         """
         if 'JDBC' in self.connectiondata:
+            # Set JVM options
+            """
+            jvm_options = [
+                "-Xms128m",  # Initial heap size
+                "-Xmx256m",  # Maximum heap size
+                "-XX:+PrintGCDetails",  # Print GC details
+                "-XX:+PrintGCTimeStamps",  # Print GC timestamps
+                "-verbose:gc"  # Enable GC verbose output
+            ]
+            """
+            if 'options' in self.connectiondata['JDBC']:
+                jvm_options = self.connectiondata['JDBC']['options']
+                if not benchmarker.BENCHMARKER_VERBOSE_NONE:
+                    print("JVM options:", jvm_options)
+            else:
+                jvm_options = []
             self.connection = jaydebeapi.connect(
                 self.connectiondata['JDBC']['driver'],
                 self.connectiondata['JDBC']['url'],
                 self.connectiondata['JDBC']['auth'],
-                dbms.jars,)#["-Xms1g", "-Xmx1g", "-XX:+PrintFlagsFinal"])
+                dbms.jars, jvm_options)#["-Xms1g", "-Xmx1g", "-XX:+PrintFlagsFinal"])
             try:
                 self.metadata = self.connection.jconn.getMetaData()
                 self.product = self.metadata.getDatabaseProductName()
