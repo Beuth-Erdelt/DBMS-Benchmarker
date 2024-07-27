@@ -224,7 +224,7 @@ Note this implies a reconnection and the creation of a JVM.
 When all subprocesses are finished, results are joined and dbmsbenchmarker may proceed to the next query.
 This helps in evaluating concurrency on a query level.
 You can for example compare performance of 15 clients running TPC-H Q8 at the same time.
-If you want to evaluate concurrency on stream level with a single connection per client, you should start several dbmsbenchmarker. 
+If you want to evaluate concurrency on stream level with a single connection per client, you should start several dbmsbenchmarker or use the `-pp` option. 
 
 This should be changed in align with the number of runs per query (`-pn`), that is, the number of runs must be higher than the number of clients.
 Ideally, the number of runs should be a multiple of the number of parallel clients.
@@ -239,8 +239,10 @@ This runs two streams of the TPC-H workload in parallel agains the same DBMS and
 
 
 ### Random Seed
-The option `-s` can be used to specify a random seed.
+The option `-s` can be used to specify a random `seed`.
 This should guarantee reproducible results for randomized queries.
+Before parameter generation for query `n` the random seed is set to `seed + n`.
+Before shuffling of query execution in stream `n` the random seed is set to `seed + n`.
 
 
 ### Subfolders
@@ -537,7 +539,8 @@ Example for `CONNECTION_FILE`:
       'driver': "com.mysql.cj.jdbc.Driver",
       'url': "jdbc:mysql://localhost:3306/database",
       'auth': ["username", "password"],
-      'jar': "mysql-connector-java-8.0.13.jar"
+      'jar': "mysql-connector-java-8.0.13.jar",
+      'options': ["-Xms312m", "-Xmx312m"],
     },
     'init_SQL': "USE tpch",
     'connectionmanagement': {
@@ -577,7 +580,7 @@ Example for `CONNECTION_FILE`:
 * `docker_alias`: Anonymized name of the docker image. This helps aggregating connections using the same docker image in anonymized reports.
 * `alias`: Alias for anonymized reports (optional default is a random name)
 * `dialect`: Key for (optional) alternative SQL statements in the query file
-* `driver`, `url`, `auth`, `jar`: JDBC data
+* `driver`, `url`, `auth`, `jar`: JDBC data (`options` contains optional parameter for the JVM)
 * `init_SQL`: Optional command, that is sent once, when the connection has been established
 * Additional information useful for reporting and also used for computations
   * `timeload`: Time for ingest (in milliseconds), because not part of the benchmark
