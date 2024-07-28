@@ -650,7 +650,8 @@ class dbms():
             if 'init_SQL' in self.connectiondata:
                 try:
                     query_init = self.connectiondata['init_SQL']
-                    print('init_SQL:', query_init)
+                    if not benchmarker.BENCHMARKER_VERBOSE_NONE:
+                        print('init_SQL:', query_init)
                     self.openCursor()
                     self.executeQuery(query_init)
                     #init_result = self.fetchResult()
