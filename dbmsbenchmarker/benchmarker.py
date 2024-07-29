@@ -2413,12 +2413,13 @@ def run_evaluation(experiments, show_query_statistics=False):
                 return numQuery
         if show_query_statistics:
             for numQuery in list_queries:
-                print("Q{}: {}".format(numQuery, map_index_to_queryname_simple(str(numQuery))))
                 #df1, df2 = evaluate.get_measures_and_statistics(numQuery)
                 #print(df2.round(2))
                 df1, df2 = evaluate.get_measures_and_statistics_merged(numQuery)
                 header = df2.columns
-                print(tabulate(df2,headers=header, tablefmt="grid", floatfmt=".2f"))
+                if not df2.empty:
+                    print("Q{}: {}".format(numQuery, map_index_to_queryname_simple(str(numQuery))))
+                    print(tabulate(df2,headers=header, tablefmt="grid", floatfmt=".2f"))
                 #print(df2.round(2))
                 #break        # get workload properties
         workload_properties = evaluate.get_experiment_workload_properties()
