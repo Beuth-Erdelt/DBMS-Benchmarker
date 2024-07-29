@@ -201,7 +201,8 @@ def singleRun(connectiondata, inputConfig, numRuns, connectionname, numQuery, pa
                             fmt = '\t'.join('{{:{}}}'.format(x) for x in lens)
                             table = [fmt.format(*row) for row in s]
                             if not BENCHMARKER_VERBOSE_NONE:
-                                print(workername+('\n'.join(table)))
+                                print(workername+'Result set:')
+                                print('\n'.join(table))
                         if not query.storeData:
                             if not BENCHMARKER_VERBOSE_NONE:
                                 print(workername+"Forget result set")
@@ -292,12 +293,18 @@ def singleResult(connectiondata, inputConfig, numRuns, connectionname, numQuery,
             #print(data)
             if query.result:
                 data = [[str(item).strip() for item in sublist] for sublist in data]
-                if query.restrict_precision is not None:
+                #if query.restrict_precision is not None:
                     #data = [[round(float(item), int(query.restrict_precision)) if tools.convertToFloat(item) == float else item for item in sublist] for sublist in data]
-                    data = [[tools.convert_to_rounded_float(item, int(query.restrict_precision)) for item in sublist] for sublist in data]
+                    #data = [[tools.convert_to_rounded_float(item, int(query.restrict_precision)) for item in sublist] for sublist in data]
+                    #data = [[tools.convert_to_rounded_float(item, int(query.restrict_precision)) for item in sublist] for sublist in data]
+                if query.restrict_precision is not None:
+                    precision = query.restrict_precision
+                else:
+                    precision = 10
                 if query.sorted and len(data) > 0:
                     logger.debug(workername+"Begin sorting")
-                    data = sorted(data, key=itemgetter(*list(range(0,len(data[0])))))
+                    #data = sorted(data, key=itemgetter(*list(range(0,len(data[0])))))
+                    data = sorted(data, key=lambda sublist: tools.sort_key_rounded(sublist, precision))
                     logger.debug(workername+"Finished sorting")
                 logger.debug(workername+"Size of processed result list retrieved: "+str(sys.getsizeof(data))+" bytes")
             # convert to dataframe
@@ -347,6 +354,7 @@ def singleResult(connectiondata, inputConfig, numRuns, connectionname, numQuery,
         except Exception as e:
             logger.exception(workername+'Caught an error: %s' % str(e))
             error = '{workername}: {exception}'.format(workername=workername, exception=e)
+            #print(error+"\n", data)
             data = []
             size = 0
         finally:
@@ -386,7 +394,7 @@ class benchmarker():
         """
         self.logger = logging.getLogger('benchmarker')
         if seed is not None:
-            random.seed(seed)
+            random.seed(int(seed))
         self.seed = seed                                    # stores random seed, used before each query parameter generator
         ## connection management:
         if numProcesses is not None:
@@ -517,7 +525,7 @@ class benchmarker():
 
         :return: returns nothing
         """
-        self.protocol = {'query':{}, 'connection':{}, 'total':{}}
+        self.protocol = {'query':{}, 'connection':{}, 'total':{}, 'ordering':{}}
         self.timerExecution = tools.timer("execution")
         self.timerTransfer = tools.timer("datatransfer")
         self.timerConnect = tools.timer("connection")
@@ -527,6 +535,18 @@ class benchmarker():
         self.timerRun = tools.timer("run")
         self.timerRun.stackable = False
         self.timers = [self.timerSession, self.timerRun, self.timerExecution, self.timerTransfer, self.timerConnect]
+    def store_ordering(self, ordering):
+        #print("store_ordering", ordering)
+        if self.stream_id is not None:
+            self.protocol['ordering'][self.stream_id] = ordering
+        else:
+            self.protocol['ordering'] = ordering
+    def init_random_seed(self, offset=0):
+        if self.seed is not None:
+            if offset is not None:
+                random.seed(int(self.seed) + int(offset))
+            else:
+                random.seed(int(self.seed))
     def getConfig(self,configfolder=None, connectionfile=None, queryfile=None):
         """
         Reads all queries and connections from given config files.
@@ -1414,8 +1434,7 @@ class benchmarker():
             query = tools.query(q)
             self.logger.debug("generateAllParameters query={}, parameter={}, protocol={}".format(numQuery, query.parameter, self.protocol['query'][str(numQuery)]['parameter']))
             if len(query.parameter) > 0 and (overwrite or len(self.protocol['query'][str(numQuery)]['parameter']) == 0):
-                if self.seed is not None:
-                    random.seed(self.seed)
+                self.init_random_seed(numQuery)
                 params = parameter.generateParameters(query.parameter, query.numRun)
                 self.protocol['query'][str(numQuery)]['parameter'] = params
     def startBenchmarkingQuery(self, numQuery):
@@ -1434,8 +1453,7 @@ class benchmarker():
         query = tools.query(q)
         if len(query.parameter) > 0 and len(self.protocol['query'][str(numQuery)]['parameter']) == 0:
             self.logger.debug("generateParameters query={}, parameter={}, protocol={}".format(numQuery, query.parameter, self.protocol['query'][str(numQuery)]))
-            if self.seed is not None:
-                random.seed(self.seed)
+            self.init_random_seed(numQuery)
             params = parameter.generateParameters(query.parameter, query.numRun)
             self.protocol['query'][str(numQuery)]['parameter'] = params
         if len(query.queryList) > 0:
@@ -1466,11 +1484,12 @@ class benchmarker():
         :return: returns nothing
         """
         global BENCHMARKER_VERBOSE_NONE
-        ordered_list_of_queries = range(1, len(self.queries)+1)
-        if self.stream_shuffle is not None and int(self.stream_shuffle) > 0 and self.stream_id is not None and int(self.stream_id) > 0:
+        # generate ordering
+        ordered_list_of_queries = list(range(1, len(self.queries)+1))
+        if self.stream_shuffle is not None and int(self.stream_shuffle) > 0:
             if not BENCHMARKER_VERBOSE_NONE:
                 print("User wants shuffling")
-            if 'stream_ordering' in self.queryconfig and len(self.queryconfig['stream_ordering']) > 0:
+            if 'stream_ordering' in self.queryconfig and len(self.queryconfig['stream_ordering']) > 0 and self.stream_id is not None and int(self.stream_id) > 0:
                 if not BENCHMARKER_VERBOSE_NONE:
                     print("Query file provides shuffling")
                     print("We are on stream {}".format(int(self.stream_id)))
@@ -1483,10 +1502,12 @@ class benchmarker():
             else:
                 if not BENCHMARKER_VERBOSE_NONE:
                     print("We shuffle randomly")
-                ordered_list_of_queries = list(ordered_list_of_queries)
+                #ordered_list_of_queries = list(ordered_list_of_queries)
+                self.init_random_seed(self.stream_id)
                 random.shuffle(ordered_list_of_queries)
                 if not BENCHMARKER_VERBOSE_NONE:
                     print("Ordering:", ordered_list_of_queries)
+        self.store_ordering(ordered_list_of_queries)
         # a dict of connections, each carrying a list of connections to the dbms
         connectionpool = dict()
         for numQuery in ordered_list_of_queries:
@@ -1553,6 +1574,31 @@ class benchmarker():
         :return: returns nothing
         """
         global BENCHMARKER_VERBOSE_NONE
+        # generate ordering
+        ordered_list_of_queries = list(range(1, len(self.queries)+1))
+        if self.stream_shuffle is not None and int(self.stream_shuffle) > 0:
+            if not BENCHMARKER_VERBOSE_NONE:
+                print("User wants shuffling")
+            if 'stream_ordering' in self.queryconfig and len(self.queryconfig['stream_ordering']) > 0 and self.stream_id is not None and int(self.stream_id) > 0:
+                if not BENCHMARKER_VERBOSE_NONE:
+                    print("Query file provides shuffling")
+                    print("We are on stream {}".format(int(self.stream_id)))
+                num_total_streams = len(self.queryconfig['stream_ordering'])
+                # stream ids start at 1 and are limited by the number of streams in the ordering list
+                num_current_stream = (int(self.stream_id)-1)%num_total_streams+1
+                ordered_list_of_queries = self.queryconfig['stream_ordering'][num_current_stream]
+                if not BENCHMARKER_VERBOSE_NONE:
+                    print("Ordering:", ordered_list_of_queries)
+            else:
+                if not BENCHMARKER_VERBOSE_NONE:
+                    print("We shuffle randomly")
+                #ordered_list_of_queries = list(ordered_list_of_queries)
+                self.init_random_seed(self.stream_id)
+                random.shuffle(ordered_list_of_queries)
+                if not BENCHMARKER_VERBOSE_NONE:
+                    print("Ordering:", ordered_list_of_queries)
+        self.store_ordering(ordered_list_of_queries)
+        # work per connection
         for connectionname in sorted(self.dbms.keys()):
             # check if we need a global connection
             singleConnection = self.connectionmanagement['singleConnection'] # Default is (probably) True
@@ -1576,27 +1622,6 @@ class benchmarker():
                     self.activeConnections[i].connect()
             #print(self.activeConnections)
             # work queries
-            ordered_list_of_queries = range(1, len(self.queries)+1)
-            if self.stream_shuffle is not None and int(self.stream_shuffle) > 0 and self.stream_id is not None and int(self.stream_id) > 0:
-                if not BENCHMARKER_VERBOSE_NONE:
-                    print("User wants shuffling")
-                if 'stream_ordering' in self.queryconfig and len(self.queryconfig['stream_ordering']) > 0:
-                    if not BENCHMARKER_VERBOSE_NONE:
-                        print("Query file provides shuffling")
-                        print("We are on stream {}".format(int(self.stream_id)))
-                    num_total_streams = len(self.queryconfig['stream_ordering'])
-                    # stream ids start at 1 and are limited by the number of streams in the ordering list
-                    num_current_stream = (int(self.stream_id)-1)%num_total_streams+1
-                    ordered_list_of_queries = self.queryconfig['stream_ordering'][num_current_stream]
-                    if not BENCHMARKER_VERBOSE_NONE:
-                        print("Ordering:", ordered_list_of_queries)
-                else:
-                    if not BENCHMARKER_VERBOSE_NONE:
-                        print("We shuffle randomly")
-                    ordered_list_of_queries = list(ordered_list_of_queries)
-                    random.shuffle(ordered_list_of_queries)
-                    if not BENCHMARKER_VERBOSE_NONE:
-                        print("Ordering:", ordered_list_of_queries)
             for numQuery in ordered_list_of_queries:
                 bBenchmarkDone = self.runBenchmark(numQuery, connectionname)
                 # if benchmark has been done: store and generate reports
@@ -1645,10 +1670,16 @@ class benchmarker():
         self.logger.debug("### Time end: "+str(self.time_end))
         for connectionname in sorted(self.dbms.keys()):
             self.protocol['total'][connectionname]['time_end'] = self.time_end
-        if self.stream_id is None:
-            print("DBMSBenchmarker duration: {} [s]".format(self.time_end-self.time_start))
+        if self.fixedConnection is None:
+            if self.stream_id is None:
+                print("DBMSBenchmarker duration: {} [s]".format(self.time_end-self.time_start))
+            else:
+                print("DBMSBenchmarker duration stream {}: {} [s]".format(self.stream_id, self.time_end-self.time_start))
         else:
-            print("DBMSBenchmarker duration stream {}: {} [s]".format(self.stream_id, self.time_end-self.time_start))
+            if self.stream_id is None:
+                print("DBMSBenchmarker duration of {}: {} [s]".format(self.fixedConnection, self.time_end-self.time_start))
+            else:
+                print("DBMSBenchmarker duration stream {} of {}: {} [s]".format(self.stream_id, self.fixedConnection, self.time_end-self.time_start))
         # write protocol again
         self.reporterStore.writeProtocol()
         # store connection data again, it may have changed
@@ -2184,7 +2215,7 @@ def run_cli(parameter):
             )
             experiments.getConfig()
             experiments.readBenchmarks()
-            evaluate = run_evaluation(experiments)
+            evaluate = run_evaluation(experiments, show_query_statistics=True)
             #print("Experiment {} has been finished".format(experiments.code))
             #print(evaluate)
             #list_connections = evaluate.get_experiment_list_connections()
@@ -2326,10 +2357,16 @@ def run_cli(parameter):
             else:
                 #experiments.generateAllParameters()
                 experiments.runBenchmarks()
-            if stream_id is None:
-                print('Experiment {} has been finished'.format(experiments.code))
+            if args.connection is None:
+                if stream_id is None:
+                    print('Experiment {} has been finished'.format(experiments.code))
+                else:
+                    print('Experiment {} stream {} has been finished'.format(experiments.code, stream_id))
             else:
-                print('Experiment {} stream {} has been finished'.format(experiments.code, stream_id))
+                if stream_id is None:
+                    print('Experiment {} for {} has been finished'.format(experiments.code, args.connection))
+                else:
+                    print('Experiment {} stream {} for {} has been finished'.format(experiments.code, stream_id, args.connection))
         elif args.mode == 'continue':
             if experiments.continuing:
                 experiments.continueBenchmarks(overwrite = False)
@@ -2347,10 +2384,10 @@ def run_cli(parameter):
             # generate evaluation cube
             experiments.overwrite = True
             evaluator.evaluator(experiments, load=False, force=True)
-            run_evaluation(experiments)
+            run_evaluation(experiments, True)
         return experiments
 
-def run_evaluation(experiments):
+def run_evaluation(experiments, show_query_statistics=False):
         # generate evaluation cube
         experiments.overwrite = True
         # show some evaluations
@@ -2361,9 +2398,31 @@ def run_evaluation(experiments):
         evaluate.load_experiment("")#experiments.code)
         print("Show Evaluation")
         print("===============")
-        # get workload properties
-        workload_properties = evaluate.get_experiment_workload_properties()
+        # show aggregated statistics per query
+        #evaluate = inspector.inspector(resultfolder)
+        #evaluate.load_experiment(code)
+        #evaluate = inspector.inspector(resultfolder)
+        #evaluate.load_experiment(code)
+        list_connections = evaluate.get_experiment_list_connections()
+        list_queries = evaluate.get_experiment_list_queries()
         query_properties = evaluate.get_experiment_query_properties()
+        def map_index_to_queryname_simple(numQuery):
+            if numQuery in query_properties and 'config' in query_properties[numQuery] and 'title' in query_properties[numQuery]['config']:
+                return query_properties[numQuery]['config']['title']
+            else:
+                return numQuery
+        if show_query_statistics:
+            for numQuery in list_queries:
+                print("Q{}: {}".format(numQuery, map_index_to_queryname_simple(str(numQuery))))
+                #df1, df2 = evaluate.get_measures_and_statistics(numQuery)
+                #print(df2.round(2))
+                df1, df2 = evaluate.get_measures_and_statistics_merged(numQuery)
+                header = df2.columns
+                print(tabulate(df2,headers=header, tablefmt="grid", floatfmt=".2f"))
+                #print(df2.round(2))
+                #break        # get workload properties
+        workload_properties = evaluate.get_experiment_workload_properties()
+        #query_properties = evaluate.get_experiment_query_properties()
         def map_index_to_queryname(numQuery):
             if numQuery[1:] in query_properties and 'config' in query_properties[numQuery[1:]] and 'title' in query_properties[numQuery[1:]]['config']:
                 return query_properties[numQuery[1:]]['config']['title']
@@ -2406,6 +2465,14 @@ def run_evaluation(experiments):
         print("Number of runs per query:", num_run)
         print("Number of max. parallel clients per stream:", int(num_processes))
         print("Number of parallel independent streams:", int(num_streams))
+        if 'ordering' in evaluate.benchmarks.protocol:
+            print("Ordering of queries:")
+            #print(evaluate.benchmarks.protocol['ordering'])
+            if isinstance(evaluate.benchmarks.protocol['ordering'], list):
+                print(evaluate.benchmarks.protocol['ordering'])
+            else:
+                for k,v in evaluate.benchmarks.protocol['ordering'].items():
+                    print("Stream {}: {}".format(k, v))
         #####################
         print("\n### Errors (failed queries)")
         df = evaluate.get_total_errors(dbms_filter=dbms_filter).T
@@ -2487,7 +2554,9 @@ def run_evaluation(experiments):
                 orig_name = c['orig_name']
             else:
                 orig_name = c['name']
-            benchmarker_times = evaluate.get_experiment_connection_properties(c['name'])['times']['total']
+            benchmarker_times_dict = evaluate.get_experiment_connection_properties(c['name'])
+            if len(benchmarker_times_dict) > 0:
+                benchmarker_times = benchmarker_times_dict['times']['total']
             #print(benchmarker_times)
             if len(orig_name) > 0: #'orig_name' in c:
                 #print(c['name'], orig_name)

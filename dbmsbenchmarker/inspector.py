@@ -264,7 +264,10 @@ class inspector():
     def get_experiment_connection_properties(self, connection=None):
         # dict of dict of dbms info
         if connection is not None:
-            return self.e.evaluation['dbms'][connection]
+            if connection in self.e.evaluation['dbms']:
+                return self.e.evaluation['dbms'][connection]
+            else:
+                return dict()
         else:
             return self.e.evaluation['dbms']
     def get_experiment_query_properties(self, numQuery=None):
@@ -320,6 +323,49 @@ class inspector():
         if len(factor_base) > 0:
             df_stat = evaluator.addFactor(df_stat, factor_base)
         return df, df_stat
+    def get_measures_and_statistics_merged(self, numQuery, type='timer', name='run', dbms_filter=[], warmup=0, cooldown=0, factor_base='Mean'):
+        dbms_list = {}
+        for connection_nr, connection in self.benchmarks.dbms.items():
+            c = connection.connectiondata
+            if 'orig_name' in c:
+                orig_name = c['orig_name']
+            else:
+                orig_name = c['name']
+            if not orig_name in dbms_list:
+                dbms_list[orig_name] = [c['name']]
+            else:
+                dbms_list[orig_name].append(c['name'])
+        # get measures per stream
+        df1, df2 = self.get_measures_and_statistics(numQuery, type=type, name=name)
+        # mapping from derived name to orig_name
+        reverse_mapping = {sub_db: main_db for main_db, sub_dbs in dbms_list.items() for sub_db in sub_dbs}
+        df1['DBMS'] = df1.index.map(reverse_mapping)
+        # concat values into single column per DBMS
+        df_melted = pd.melt(df1, id_vars=['DBMS'], value_vars=df1.columns).sort_values('DBMS')
+        df_melted = pd.DataFrame(df_melted[['DBMS', 'value']])
+        #print(df_melted)
+        #df_results = df_melted.set_index('DBMS')
+        #df_results.columns = ['0']
+        # compute stats per DBMS, i.e. per orig_name
+        df_results = pd.DataFrame()
+        df_results_stats = pd.DataFrame()
+        df_groups = df_melted.groupby('DBMS')
+        group_list = list(df_groups.groups.keys())
+        for group in df_groups:
+            df_dbms = pd.DataFrame(group[1]['value']).T
+            df_dbms.index = [group[0]]
+            df_dbms = df_dbms.T.reset_index(drop=True).T
+            #print(df_dbms)
+            df_results = pd.concat([df_results, df_dbms], ignore_index=False)
+            df_dbms = evaluator.addStatistics(df_dbms, drop_measures=True)
+            df_results_stats = pd.concat([df_results_stats, df_dbms], ignore_index=False)
+        df_results.index.name = 'DBMS'
+        if df_results_stats.empty:
+            #print("No data")
+            return df_results, df_results_stats
+        if len(factor_base) > 0:
+            df_results_stats = evaluator.addFactor(df_results_stats, factor_base)
+        return df_results, df_results_stats
     def get_aggregated_query_statistics(self, type='timer', name='run', dbms_filter=[], warmup=0, cooldown=0, factor_base='Mean', query_aggregate='Mean'):
         # only successful queries (and all dbms)
         #print(dbms_filter)

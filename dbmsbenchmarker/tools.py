@@ -610,11 +610,27 @@ class dbms():
         :return: returns nothing
         """
         if 'JDBC' in self.connectiondata:
+            # Set JVM options
+            """
+            jvm_options = [
+                "-Xms128m",  # Initial heap size
+                "-Xmx256m",  # Maximum heap size
+                "-XX:+PrintGCDetails",  # Print GC details
+                "-XX:+PrintGCTimeStamps",  # Print GC timestamps
+                "-verbose:gc"  # Enable GC verbose output
+            ]
+            """
+            if 'options' in self.connectiondata['JDBC']:
+                jvm_options = self.connectiondata['JDBC']['options']
+                if not benchmarker.BENCHMARKER_VERBOSE_NONE:
+                    print("JVM options:", jvm_options)
+            else:
+                jvm_options = []
             self.connection = jaydebeapi.connect(
                 self.connectiondata['JDBC']['driver'],
                 self.connectiondata['JDBC']['url'],
                 self.connectiondata['JDBC']['auth'],
-                dbms.jars,)
+                dbms.jars, jvm_options)#["-Xms1g", "-Xmx1g", "-XX:+PrintFlagsFinal"])
             try:
                 self.metadata = self.connection.jconn.getMetaData()
                 self.product = self.metadata.getDatabaseProductName()
@@ -634,7 +650,8 @@ class dbms():
             if 'init_SQL' in self.connectiondata:
                 try:
                     query_init = self.connectiondata['init_SQL']
-                    print('init_SQL:', query_init)
+                    if not benchmarker.BENCHMARKER_VERBOSE_NONE:
+                        print('init_SQL:', query_init)
                     self.openCursor()
                     self.executeQuery(query_init)
                     #init_result = self.fetchResult()
@@ -1468,6 +1485,19 @@ def convertToFloat(var):
         #print(var)
         return str
 
+# Custom key function to handle conversion for sorting
+def convert_to_rounded_float(var, decimals=2):
+    try:
+        # Try to convert to float and return a tuple (0, float_value)
+        return (0, round(float(var), decimals))
+    except ValueError:
+        # If conversion fails, return a tuple (1, string_value)
+        return (1, str(var))
+
+# Create a key function for sorting based on all elements
+def sort_key_rounded(sublist, decimal=2):
+    return [convert_to_rounded_float(item, decimal) for item in sublist]
+
 def convertToInt(var):
     """
     Converts variable to float.
@@ -1486,7 +1516,7 @@ def convertToInt(var):
         return var
 
 
-def convert_to_rounded_float(var, decimals=2):
+def convert_to_rounded_float_2(var, decimals=2):
     """
     Converts a variable to a rounded float if possible, otherwise returns the original value.
 
@@ -1505,26 +1535,28 @@ def convert_to_rounded_float(var, decimals=2):
                 return result
             except (ValueError, SyntaxError):
                 raise
-
     try:
         # If var is already a float, just round and return it
         if isinstance(var, float):
             return round(var, decimals)
-        
+        # If var is "None"", just return it
+        if var == "None":
+            return var
         # Try to sanitize and convert the variable to a float
         if isinstance(var, str):
             var = var.replace("_", "")  # Remove any underscores
-        
         evaluated_var = safe_literal_eval(var)
-        
-        # Convert the evaluated variable to a float and round it
-        rounded_float = round(float(evaluated_var), decimals)
-        
+        if not evaluated_var is None:
+            # Convert the evaluated variable to a float and round it
+            rounded_float = round(float(evaluated_var), decimals)
+        else:
+            rounded_float = var
+        #print("rounded", var, rounded_float)
         return rounded_float
     except (ValueError, SyntaxError):
         # Return the original value if conversion is not possible
+        #print("not rounded", var)
         return var
-
 
 
 def sizeof_fmt(num, suffix='B'):
@@ -1684,6 +1716,7 @@ def merge_partial_results(result_path, code):
     protocol['query'] = {}
     protocol['connection'] = {}
     protocol['total'] = {}
+    protocol['ordering'] = {}
     for k,v in protocols[0]['query'].items():
         if isinstance(v, dict):
             protocol['query'][k] = {}
@@ -1691,6 +1724,9 @@ def merge_partial_results(result_path, code):
                 protocol['query'][k] = joinDicts(protocol['query'][k], p['query'][k])
     for p in protocols:
         protocol['total'] = joinDicts(protocol['total'], p['total'])
+    for p in protocols:
+        if 'ordering' in p:
+            protocol['ordering'] = joinDicts(protocol['ordering'], p['ordering'])
     filename_protocol = '{folder}/protocol.json'.format(folder=folder)
     with open(filename_protocol, 'w') as f:
         json.dump(protocol, f)
