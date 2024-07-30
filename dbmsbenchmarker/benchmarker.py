@@ -304,7 +304,9 @@ def singleResult(connectiondata, inputConfig, numRuns, connectionname, numQuery,
                 if query.sorted and len(data) > 0:
                     logger.debug(workername+"Begin sorting")
                     #data = sorted(data, key=itemgetter(*list(range(0,len(data[0])))))
+                    data = [[tools.convert_to_rounded_float_2(item, int(precision)) for item in sublist] for sublist in data]
                     data = sorted(data, key=lambda sublist: tools.sort_key_rounded(sublist, precision))
+                    #print(data, precision)
                     logger.debug(workername+"Finished sorting")
                 logger.debug(workername+"Size of processed result list retrieved: "+str(sys.getsizeof(data))+" bytes")
             # convert to dataframe
