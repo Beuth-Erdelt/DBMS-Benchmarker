@@ -52,6 +52,7 @@ def run_benchmarker():
     parser.add_argument('-st', '--start-time', help='sleep until START-TIME before beginning benchmarking', default=None)
     parser.add_argument('-sf', '--subfolder', help='stores results in a SUBFOLDER of the result folder', default=None)
     parser.add_argument('-sd', '--store-data', help='store result of first execution of each query', default=None, choices=[None, 'csv', 'pandas'])
+    parser.add_argument('-dd', '--discard-data', help='result sets of all queries is discarded (not fetched at all)', action='store_true', default=False)
     parser.add_argument('-vq', '--verbose-queries', help='print every query that is sent', action='store_true', default=False)
     parser.add_argument('-vs', '--verbose-statistics', help='print statistics about queries that have been sent', action='store_true', default=False)
     parser.add_argument('-vr', '--verbose-results', help='print result sets of every query that has been sent', action='store_true', default=False)

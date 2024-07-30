@@ -2314,6 +2314,10 @@ def run_cli(parameter):
             if not isinstance(tools.query.template, dict):
                 tools.query.template = {}
             tools.query.template['timer'] = {'datatransfer': {'store': args.store_data}}
+        if args.discard_data:
+            if not isinstance(tools.query.template, dict):
+                tools.query.template = {}
+            tools.query.template['timer'] = {'datatransfer': {'active': 'False'}}
         if hasattr(args, 'numStreams'):
             numStreams = args.numStreams
         else:

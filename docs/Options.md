@@ -36,7 +36,7 @@ How to configure the benchmarker can be illustrated best by looking at the sourc
 
 ```
 usage: dbmsbenchmarker [-h] [-d] [-b] [-qf QUERY_FILE] [-cf CONNECTION_FILE] [-q QUERY] [-c CONNECTION] [-ca CONNECTION_ALIAS] [-f CONFIG_FOLDER] [-r RESULT_FOLDER] [-e {no,yes}] [-w {query,connection}] [-p NUMPROCESSES] [-pp] [-s SEED] [-cs] [-ms MAX_SUBFOLDERS]
-                       [-sl SLEEP] [-st START_TIME] [-sf SUBFOLDER] [-sd {None,csv,pandas}] [-vq] [-vs] [-vr] [-vp] [-vn] [-pn NUM_RUN] [-m] [-mps] [-sid STREAM_ID] [-ssh STREAM_SHUFFLE] [-wli WORKLOAD_INTRO] [-wln WORKLOAD_NAME]
+                       [-sl SLEEP] [-st START_TIME] [-sf SUBFOLDER] [-sd {None,csv,pandas}] [-dd] [-vq] [-vs] [-vr] [-vp] [-vn] [-pn NUM_RUN] [-m] [-mps] [-sid STREAM_ID] [-ssh STREAM_SHUFFLE] [-wli WORKLOAD_INTRO] [-wln WORKLOAD_NAME]
                        {run,read,continue}
 
 A benchmark tool for RDBMS. It connects to a given list of RDBMS via JDBC and runs a given list benchmark queries. Optionally some reports are generated.
@@ -83,6 +83,7 @@ options:
                         stores results in a SUBFOLDER of the result folder
   -sd {None,csv,pandas}, --store-data {None,csv,pandas}
                         store result of first execution of each query
+  -dd, --discard-data   result sets of all queries is discarded (not fetched at all)
   -vq, --verbose-queries
                         print every query that is sent
   -vs, --verbose-statistics
@@ -90,7 +91,7 @@ options:
   -vr, --verbose-results
                         print result sets of every query that has been sent
   -vp, --verbose-process
-                        print result sets of every query that has been sent
+                        print infos about the workflow steps
   -vn, --verbose-none   stay completely silent
   -pn NUM_RUN, --num-run NUM_RUN
                         Parameter: Number of executions per query
@@ -292,6 +293,8 @@ Metadata of a workload is set inside the query config file.
 There is a section, that defines if result sets should be retrieved and what happens after retrieval.
 For convenience, you can overwrite via command line, if result sets should be stored on disk locally.
 The parameter `--store-data` allows the settings csv or pandas (for pickled pandas DataFrame) to activate local storage and to set the format.
+The parameter `--discard-data` deactivates all fetching of data.
+Queries are only sent. After receiving a success message, result is discarded and not fetched or stored.
 
 
 
