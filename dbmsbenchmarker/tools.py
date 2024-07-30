@@ -1804,6 +1804,9 @@ def merge_partial_results(result_path, code):
                                     df_first = pd.DataFrame(sorted(storage, key=itemgetter(*list(range(0,len(storage[0]))))), columns=titles_storage)
                                 else:
                                     df_first = pd.DataFrame([], columns=titles_storage)
+                                if df.empty and df_first.empty:
+                                    logger.debug("all empty")
+                                    continue
                                 #df_first = pd.DataFrame(data_first[numRun])
                                 #new_header = df_first.iloc[0] #grab the first row for the header
                                 #df_first = df_first[1:] #take the data less the header row
