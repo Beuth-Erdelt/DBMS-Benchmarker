@@ -1804,14 +1804,35 @@ def merge_partial_results(result_path, code):
                                     df_first = pd.DataFrame(sorted(storage, key=itemgetter(*list(range(0,len(storage[0]))))), columns=titles_storage)
                                 else:
                                     df_first = pd.DataFrame([], columns=titles_storage)
-                                if df.empty and df_first.empty:
-                                    logger.debug("all empty")
-                                    continue
+                                #if df.empty and df_first.empty:
+                                #    logger.debug("all empty")
+                                #    continue
                                 #df_first = pd.DataFrame(data_first[numRun])
                                 #new_header = df_first.iloc[0] #grab the first row for the header
                                 #df_first = df_first[1:] #take the data less the header row
                                 #df_first.columns = new_header #set the header row as the df header
                                 #df_first.reset_index(inplace=True, drop=True)
+                                #print(numQuery, connection, df_first, df)
+                                # Check for duplicate column names
+                                duplicates = df.columns[df.columns.duplicated()]
+                                if not duplicates.empty:
+                                    logger.debug("Duplicate column names found in Q{} (cannot compare results uniquely): {}".format(numQuery, duplicates.tolist()))
+                                    #print("Duplicate column names found in Q{} (cannot compare results uniquely): {}".format(numQuery, duplicates.tolist()))
+                                    protocol['query'][numQuery]['warnings'][connection] = 'Not sortable at run #'+str(numRun+1)
+                                    protocol['query'][numQuery]['resultSets'][connection] = data
+                                    protocol['query'][numQuery]['resultSets'][connection_first] = data_first
+                                    different = True
+                                    break
+                                else:
+                                    duplicates = df_first.columns[df_first.columns.duplicated()]
+                                    if not duplicates.empty:
+                                        logger.debug("Duplicate column names found in Q{} (cannot compare results uniquely): {}".format(numQuery, duplicates.tolist()))
+                                        #print("Duplicate column names found in Q{} (cannot compare results uniquely): {}".format(numQuery, duplicates.tolist()))
+                                        protocol['query'][numQuery]['warnings'][connection] = 'Not sortable at run #'+str(numRun+1)
+                                        protocol['query'][numQuery]['resultSets'][connection] = data
+                                        protocol['query'][numQuery]['resultSets'][connection_first] = data_first
+                                        different = True
+                                        break
                                 df_1 = inspector.getDifference12(df_first, df)
                                 df_2 = inspector.getDifference12(df, df_first)
                                 #print("result", result)
