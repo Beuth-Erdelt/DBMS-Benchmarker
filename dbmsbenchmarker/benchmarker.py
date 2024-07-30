@@ -2480,7 +2480,9 @@ def run_evaluation(experiments, show_query_statistics=False):
         num_errors = df.sum().sum()
         if num_errors > 0:
             df.index = df.index.map(map_index_to_queryname)
-            print(df)
+            all_false_rows = df.all(axis=1) == False
+            df_filtered = df[~all_false_rows]
+            print(df_filtered)
         else:
             print("No errors")
         #####################
@@ -2489,7 +2491,9 @@ def run_evaluation(experiments, show_query_statistics=False):
         num_warnings = df.sum().sum()
         if num_warnings > 0:
             df.index = df.index.map(map_index_to_queryname)
-            print(df)
+            all_false_rows = df.all(axis=1) == False
+            df_filtered = df[~all_false_rows]
+            print(df_filtered)
         else:
             print("No warnings")
         #####################
