@@ -1757,6 +1757,7 @@ def merge_partial_results(result_path, code):
                                 titles_result = protocol['query'][numQuery]['dataStorage'][0][0]
                             #print(protocol['query'][numQuery]['dataStorage'][0])
                             data_first = data.copy()
+                            #print(data_first)
                             connection_first = connection
                         else:
                             different = False
@@ -1769,13 +1770,19 @@ def merge_partial_results(result_path, code):
                                 else:
                                     continue
                                 #print(titles_result)
+                                #print("####", data[numRun])
                                 result.pop(0)
+                                #print("****1", result)
                                 # convert datatypes
                                 #precision = query.restrict_precision
                                 precision = 2
                                 #result = [[round(float(item), int(precision)) if convertToFloat(item) == float else convertToInt(item) if convertToInt(item) == item else item for item in sublist] for sublist in result]
                                 result = [[convert_to_rounded_float(item, int(precision)) for item in sublist] for sublist in result]
-                                df = pd.DataFrame(sorted(result, key=itemgetter(*list(range(0,len(result[0]))))), columns=titles_result)
+                                #print("****2", result)
+                                if len(result) > 0:
+                                    df = pd.DataFrame(sorted(result, key=itemgetter(*list(range(0,len(result[0]))))), columns=titles_result)
+                                else:
+                                    df = pd.DataFrame([], columns=titles_result)
                                 #df = pd.DataFrame(result)
                                 #new_header = df.iloc[0] #grab the first row for the header
                                 #df = df[1:] #take the data less the header row
@@ -1793,7 +1800,10 @@ def merge_partial_results(result_path, code):
                                 precision = 2
                                 #storage = [[round(float(item), int(precision)) if convertToFloat(item) == float else convertToInt(item) if convertToInt(item) == item else item for item in sublist] for sublist in storage]
                                 storage = [[convert_to_rounded_float(item, int(precision)) for item in sublist] for sublist in storage]
-                                df_first = pd.DataFrame(sorted(storage, key=itemgetter(*list(range(0,len(storage[0]))))), columns=titles_storage)
+                                if len(storage) > 0:
+                                    df_first = pd.DataFrame(sorted(storage, key=itemgetter(*list(range(0,len(storage[0]))))), columns=titles_storage)
+                                else:
+                                    df_first = pd.DataFrame([], columns=titles_storage)
                                 #df_first = pd.DataFrame(data_first[numRun])
                                 #new_header = df_first.iloc[0] #grab the first row for the header
                                 #df_first = df_first[1:] #take the data less the header row
