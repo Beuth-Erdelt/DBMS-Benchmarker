@@ -2479,23 +2479,23 @@ def run_evaluation(experiments, show_query_statistics=False):
                 for k,v in evaluate.benchmarks.protocol['ordering'].items():
                     print("Stream {}: {}".format(k, v))
         #####################
-        print("\n### Errors (failed queries)")
         df = evaluate.get_total_errors(dbms_filter=dbms_filter).T
         num_errors = df.sum().sum()
+        print("\n### Errors (failed queries): {}".format(num_errors))
         if num_errors > 0:
             df.index = df.index.map(map_index_to_queryname)
-            all_false_rows = df.all(axis=1) == False
+            all_false_rows = df.apply(lambda row: all(row == False), axis=1)
             df_filtered = df[~all_false_rows]
             print(df_filtered)
         else:
             print("No errors")
         #####################
-        print("\n### Warnings (result mismatch)")
         df = evaluate.get_total_warnings(dbms_filter=dbms_filter).T
         num_warnings = df.sum().sum()
+        print("\n### Warnings (result mismatch): {}".format(num_warnings))
         if num_warnings > 0:
             df.index = df.index.map(map_index_to_queryname)
-            all_false_rows = df.all(axis=1) == False
+            all_false_rows = df.apply(lambda row: all(row == False), axis=1)
             df_filtered = df[~all_false_rows]
             print(df_filtered)
         else:
