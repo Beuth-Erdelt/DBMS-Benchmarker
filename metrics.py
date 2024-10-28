@@ -87,13 +87,13 @@ if __name__ == '__main__':
             for m, metric in connection_data.connectiondata['monitoring']['metrics_special'].items():
                 print("Metric", m)
                 path = '{result_path}/{code}/'.format(result_path=result_path, code=code)
-                monitor.metrics.fetchMetric(query, m, connection_name, connection_data.connectiondata, time_start, time_end, path, container=container_name)
+                monitor.metrics.fetchMetric(query, m, connection_name, connection_data.connectiondata, time_start, time_end, path, container=container_name, metrics_query_path='metrics_special')
         else:
             print("Use default metrics for components managed by bexhoma: component type = {}".format(query))
             for m, metric in connection_data.connectiondata['monitoring']['metrics'].items():
                 print("Metric", m)
                 path = '{result_path}/{code}/'.format(result_path=result_path, code=code)
-                monitor.metrics.fetchMetric(query, m, connection_name, connection_data.connectiondata, time_start, time_end, path, container=container_name)
+                monitor.metrics.fetchMetric(query, m, connection_name, connection_data.connectiondata, time_start, time_end, path, container=container_name, metrics_query_path='metrics')
                 #metrics = monitor.metrics(experiments)
                 #df = metrics.dfHardwareMetricsLoading(m)
                 #print(df)

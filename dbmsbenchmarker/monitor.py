@@ -197,7 +197,8 @@ class metrics():
         else:
             return ""
     @staticmethod
-    def fetchMetric(query, metric_code, connection, connectiondata, time_start, time_end, path, container=None):
+    def fetchMetric(query, metric_code, connection, connectiondata, time_start, time_end, path, container=None, metrics_query_path='metrics'):
+        # metrics_query_path = where to find the promql paths in connectiondata (metrics for components managed by bexhoma, metrics_special otherwise)
         #for m, metric in metrics.metrics.items():
         logging.debug("Metric "+metric_code)
         df_all = None
@@ -210,8 +211,8 @@ class metrics():
             if connectiondata['active'] and url: #
                 logging.debug("Connection "+connection)
                 # is there a custom query for this metric and dbms?
-                if 'metrics' in connectiondata['monitoring'] and metric_code in connectiondata['monitoring']['metrics']:
-                    metric = connectiondata['monitoring']['metrics'][metric_code].copy()
+                if metrics_query_path in connectiondata['monitoring'] and metric_code in connectiondata['monitoring'][metrics_query_path]:
+                    metric = connectiondata['monitoring'][metrics_query_path][metric_code].copy()
                 else:
                     metric = metrics.metrics[metric_code].copy()
                 #print(metric)
