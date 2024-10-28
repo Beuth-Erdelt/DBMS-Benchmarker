@@ -80,11 +80,19 @@ if __name__ == '__main__':
         print("URL", connection_data.connectiondata['monitoring']['prometheus_url'])
         #query='loading'
         #query='stream'
-        for m, metric in connection_data.connectiondata['monitoring']['metrics'].items():
-            print("Metric", m)
-            path = '{result_path}/{code}/'.format(result_path=result_path, code=code)
-            monitor.metrics.fetchMetric(query, m, connection_name, connection_data.connectiondata, time_start, time_end, path, container=container_name)
-            #metrics = monitor.metrics(experiments)
-            #df = metrics.dfHardwareMetricsLoading(m)
-            #print(df)
+        # metrics_special means there arwe special promql queries for special dbms, e.g., systems not managed by bexhoma
+        #if 'metrics_special' in connection_data.connectiondata['monitoring'] and (container_name is None or container_name == 'dbms') and (query == 'loading' or query == 'stream'):
+        if 'metrics_special' in connection_data.connectiondata['monitoring'] and (query == 'loading' or query == 'stream'):
+            for m, metric in connection_data.connectiondata['monitoring']['metrics_special'].items():
+                print("Metric", m)
+                path = '{result_path}/{code}/'.format(result_path=result_path, code=code)
+                monitor.metrics.fetchMetric(query, m, connection_name, connection_data.connectiondata, time_start, time_end, path, container=container_name)
+        else:
+            for m, metric in connection_data.connectiondata['monitoring']['metrics'].items():
+                print("Metric", m)
+                path = '{result_path}/{code}/'.format(result_path=result_path, code=code)
+                monitor.metrics.fetchMetric(query, m, connection_name, connection_data.connectiondata, time_start, time_end, path, container=container_name)
+                #metrics = monitor.metrics(experiments)
+                #df = metrics.dfHardwareMetricsLoading(m)
+                #print(df)
 
