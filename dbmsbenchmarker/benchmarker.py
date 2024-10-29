@@ -304,7 +304,9 @@ def singleResult(connectiondata, inputConfig, numRuns, connectionname, numQuery,
                 if query.sorted and len(data) > 0:
                     logger.debug(workername+"Begin sorting")
                     #data = sorted(data, key=itemgetter(*list(range(0,len(data[0])))))
+                    data = [[tools.convert_to_rounded_float_2(item, int(precision)) for item in sublist] for sublist in data]
                     data = sorted(data, key=lambda sublist: tools.sort_key_rounded(sublist, precision))
+                    #print(data, precision)
                     logger.debug(workername+"Finished sorting")
                 logger.debug(workername+"Size of processed result list retrieved: "+str(sys.getsizeof(data))+" bytes")
             # convert to dataframe
@@ -2314,6 +2316,10 @@ def run_cli(parameter):
             if not isinstance(tools.query.template, dict):
                 tools.query.template = {}
             tools.query.template['timer'] = {'datatransfer': {'store': args.store_data}}
+        if args.discard_data:
+            if not isinstance(tools.query.template, dict):
+                tools.query.template = {}
+            tools.query.template['timer'] = {'datatransfer': {'active': 'False'}}
         if hasattr(args, 'numStreams'):
             numStreams = args.numStreams
         else:
@@ -2413,12 +2419,13 @@ def run_evaluation(experiments, show_query_statistics=False):
                 return numQuery
         if show_query_statistics:
             for numQuery in list_queries:
-                print("Q{}: {}".format(numQuery, map_index_to_queryname_simple(str(numQuery))))
                 #df1, df2 = evaluate.get_measures_and_statistics(numQuery)
                 #print(df2.round(2))
                 df1, df2 = evaluate.get_measures_and_statistics_merged(numQuery)
                 header = df2.columns
-                print(tabulate(df2,headers=header, tablefmt="grid", floatfmt=".2f"))
+                if not df2.empty:
+                    print("Q{}: {}".format(numQuery, map_index_to_queryname_simple(str(numQuery))))
+                    print(tabulate(df2,headers=header, tablefmt="grid", floatfmt=".2f"))
                 #print(df2.round(2))
                 #break        # get workload properties
         workload_properties = evaluate.get_experiment_workload_properties()
@@ -2474,21 +2481,25 @@ def run_evaluation(experiments, show_query_statistics=False):
                 for k,v in evaluate.benchmarks.protocol['ordering'].items():
                     print("Stream {}: {}".format(k, v))
         #####################
-        print("\n### Errors (failed queries)")
         df = evaluate.get_total_errors(dbms_filter=dbms_filter).T
         num_errors = df.sum().sum()
+        print("\n### Errors (failed queries): {}".format(num_errors))
         if num_errors > 0:
             df.index = df.index.map(map_index_to_queryname)
-            print(df)
+            all_false_rows = df.apply(lambda row: all(row == False), axis=1)
+            df_filtered = df[~all_false_rows]
+            print(df_filtered)
         else:
             print("No errors")
         #####################
-        print("\n### Warnings (result mismatch)")
         df = evaluate.get_total_warnings(dbms_filter=dbms_filter).T
         num_warnings = df.sum().sum()
+        print("\n### Warnings (result mismatch): {}".format(num_warnings))
         if num_warnings > 0:
             df.index = df.index.map(map_index_to_queryname)
-            print(df)
+            all_false_rows = df.apply(lambda row: all(row == False), axis=1)
+            df_filtered = df[~all_false_rows]
+            print(df_filtered)
         else:
             print("No warnings")
         #####################
