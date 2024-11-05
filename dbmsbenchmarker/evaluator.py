@@ -375,7 +375,10 @@ class evaluator():
                             if not m in tps[c]:
                                 tps[c][m] = 1.0
                                 num[c][m] = 0
-                            tps[c][m] *= metric
+                            if '_ms' in metric:
+                                tps[c][m] *= metric/1000. # ms too big numbers
+                            else:
+                                tps[c][m] *= metric
                             num[c][m] += 1
         #print(tps)
         #print(num)
@@ -388,6 +391,8 @@ class evaluator():
                 evaluation['dbms'][c]['metrics'][m] = tps[c][m]
                 if '_ps' in m:
                     evaluation['dbms'][c]['metrics'][m.replace('_ps', '_ph')] = tps[c][m]*3600.0
+                elif '_ms' in m:
+                    evaluation['dbms'][c]['metrics'][m.replace('_ms', '_s')] = tps[c][m]
         evaluation['general']['results'] = {}
         # total diagrams
         """
