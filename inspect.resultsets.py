@@ -62,6 +62,8 @@ list_connections = evaluate.get_experiment_list_connections()
 list_queries = evaluate.get_experiment_list_queries()
 #list_queries = [1]
 
+precision=2
+
 for numQuery in list_queries:
     if args.query is not None and int(args.query) != numQuery:
         continue
@@ -92,9 +94,13 @@ for numQuery in list_queries:
                     data_stored = s[numRun]
                     print("numRun: "+str(numRun))
                     #print(data)
-                    s2 = [[round(float(item), int(query.restrict_precision)) if tools.convertToFloat(item) == float else item for item in sublist] for sublist in data_stored]
+                    #s2 = [[round(float(item), int(query.restrict_precision)) if tools.convertToFloat(item) == float else item for item in sublist] for sublist in data_stored]
+                    data = [[tools.convert_to_rounded_float_2(item, int(precision)) for item in sublist] for sublist in data_stored]
+                    s2 = sorted(data, key=lambda sublist: tools.sort_key_rounded(sublist, precision))
                     #print(s2)
-                    r2 = [[round(float(item), int(query.restrict_precision)) if tools.convertToFloat(item) == float else item for item in sublist] for sublist in r[c][numRun]]
+                    #r2 = [[round(float(item), int(query.restrict_precision)) if tools.convertToFloat(item) == float else item for item in sublist] for sublist in r[c][numRun]]
+                    data = [[tools.convert_to_rounded_float_2(item, int(precision)) for item in sublist] for sublist in r[c][numRun]]
+                    r2 = sorted(data, key=lambda sublist: tools.sort_key_rounded(sublist, precision))
                     #print(r2)
                     #for c, result_diff in r.items():
                     if len(r2) > 0 and r2 != s2:# r[c][numRun] != data_stored:
