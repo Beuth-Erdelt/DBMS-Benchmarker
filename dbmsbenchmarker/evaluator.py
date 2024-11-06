@@ -375,7 +375,7 @@ class evaluator():
                             if not m in tps[c]:
                                 tps[c][m] = 1.0
                                 num[c][m] = 0
-                            if '_ms' in metric:
+                            if '_ms' in m:
                                 tps[c][m] *= metric/1000. # ms too big numbers
                             else:
                                 tps[c][m] *= metric
