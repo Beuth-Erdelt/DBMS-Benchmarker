@@ -82,7 +82,9 @@ for numQuery in list_queries:
     if len(data) > 0 and sum([len(v) for k,v in list_warnings.items()]) > 0:
         print("===Q{}===".format(numQuery))
         print(list_warnings)
-        df = pd.DataFrame(sorted(data, key=itemgetter(*list(range(0,len(data[0]))))), columns=df.columns)
+        data_sorted = [[tools.convert_to_rounded_float_2(item, int(precision)) for item in sublist] for sublist in data]
+        df = pd.DataFrame(data_sorted, columns=df.columns)
+        #df = pd.DataFrame(sorted(data, key=itemgetter(*list(range(0,len(data[0]))))), columns=df.columns)
         for c in list_connections:
             if c in list_warnings and len(list_warnings[c])>0:
                 s = evaluate.benchmarks.protocol['query'][str(numQuery)]['dataStorage']
@@ -117,7 +119,9 @@ for numQuery in list_queries:
                         data = r2
                         #print(data)
                         if len(data) > 0:
-                            df2[c] = pd.DataFrame(sorted(data, key=itemgetter(*list(range(0,len(data[0]))))), columns=df_tmp.columns)
+                            data_sorted = [[tools.convert_to_rounded_float_2(item, int(precision)) for item in sublist] for sublist in data]
+                            df2[c] = pd.DataFrame(data_sorted, columns=df_tmp.columns)
+                            #df2[c] = pd.DataFrame(sorted(data, key=itemgetter(*list(range(0,len(data[0]))))), columns=df_tmp.columns)
                         else:
                             df2[c] = pd.DataFrame()
                     for c,d in df2.items():
