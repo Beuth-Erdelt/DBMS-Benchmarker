@@ -34,5 +34,6 @@ setuptools.setup(
         [console_scripts]
         dbmsbenchmarker=dbmsbenchmarker.scripts.cli:run_benchmarker
         dbmsdashboard=dbmsbenchmarker.scripts.dashboardcli:startup
+        dbmsinspect=dbmsbenchmarker.scripts.inspect:result
     ''',
 )

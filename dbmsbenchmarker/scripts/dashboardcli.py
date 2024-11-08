@@ -46,62 +46,11 @@ import base64
 import dash_auth
 
 
-#logging.basicConfig(level=logging.DEBUG)
-logging.basicConfig(level=logging.ERROR)
-
-
-
-parser = argparse.ArgumentParser(description='Dashboard for interactive inspection of dbmsbenchmarker results.')
-parser.add_argument('-r', '--result-folder',
-                    help='Folder storing benchmark result files.',
-                    default='./')  # set your own default path here
-parser.add_argument('-a', '--anonymize',
-                    help='Anonymize all dbms.',
-                    action='store_true',
-                    default=False)
-parser.add_argument('-u', '--user',
-                    help='User name for auth protected access.',
-                    default=None)
-parser.add_argument('-p', '--password',
-                    help='Password for auth protected access.',
-                    default=None)
-parser.add_argument('-d', '--debug',
-                    help='Show debug information.',
-                    action='store_true',
-                    default=False)
-
-args = parser.parse_args()
-result_path = args.result_folder
-# verify that result path was given
-if result_path is None:
-    raise ValueError('No result path was given.')
-
-# create inspector instance using the result path
-evaluate = inspector.inspector(result_path, anonymize=args.anonymize)
-# preview of all available experiments in result path
-preview = evaluate.get_experiments_preview()
-
-if args.debug:
-    logging.basicConfig(level=logging.DEBUG)
-
 # Dash's basic stylesheet
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
 # Create Dash App instance
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets, suppress_callback_exceptions=True)
-
-# Create Dash App Auth instance
-if args.user is not None and args.password is not None:
-    VALID_USERNAME_PASSWORD_PAIRS = { # Keep this out of source code repository - save in a file or a database
-        args.user: args.password
-    }
-    auth = dash_auth.BasicAuth(
-        app,
-        VALID_USERNAME_PASSWORD_PAIRS
-    )
-
-# Assign layout to app
-app.layout = layout.serve_layout(preview)
 
 
 
@@ -3373,4 +3322,56 @@ def change_favorites(add_n_clicks, remove_n_clicks, upload_contents, code, selec
 ########################################################################################
 
 def startup():
+    global app, preview, evaluate
+    #logging.basicConfig(level=logging.DEBUG)
+    logging.basicConfig(level=logging.ERROR)
+
+
+
+    parser = argparse.ArgumentParser(description='Dashboard for interactive inspection of dbmsbenchmarker results.')
+    parser.add_argument('-r', '--result-folder',
+                        help='Folder storing benchmark result files.',
+                        default='./')  # set your own default path here
+    parser.add_argument('-a', '--anonymize',
+                        help='Anonymize all dbms.',
+                        action='store_true',
+                        default=False)
+    parser.add_argument('-u', '--user',
+                        help='User name for auth protected access.',
+                        default=None)
+    parser.add_argument('-p', '--password',
+                        help='Password for auth protected access.',
+                        default=None)
+    parser.add_argument('-d', '--debug',
+                        help='Show debug information.',
+                        action='store_true',
+                        default=False)
+
+    args = parser.parse_args()
+    result_path = args.result_folder
+    # verify that result path was given
+    if result_path is None:
+        raise ValueError('No result path was given.')
+
+    # create inspector instance using the result path
+    evaluate = inspector.inspector(result_path, anonymize=args.anonymize)
+    # preview of all available experiments in result path
+    preview = evaluate.get_experiments_preview()
+
+    if args.debug:
+        logging.basicConfig(level=logging.DEBUG)
+
+
+    # Create Dash App Auth instance
+    if args.user is not None and args.password is not None:
+        VALID_USERNAME_PASSWORD_PAIRS = { # Keep this out of source code repository - save in a file or a database
+            args.user: args.password
+        }
+        auth = dash_auth.BasicAuth(
+            app,
+            VALID_USERNAME_PASSWORD_PAIRS
+        )
+
+    # Assign layout to app
+    app.layout = layout.serve_layout(preview)
     app.run_server(debug=args.debug, host='0.0.0.0', threaded=True, processes=1)

@@ -372,10 +372,21 @@ class evaluator():
                         num[c] = {}
                     if 'metrics' in d:
                         for m, metric in d['metrics'].items():
+                            #print(m, metric)
                             if not m in tps[c]:
                                 tps[c][m] = 1.0
                                 num[c][m] = 0
-                            tps[c][m] *= metric
+                            if '_ms' in m:
+                                tps[c][m] += math.log(metric/1000.) # ms too big numbers
+                                #print(metric/1000.)
+                            elif '_ph' in m:
+                                tps[c][m] += math.log(metric*3600.) # ph too big numbers
+                                #print(metric*3600.)
+                            elif '_ps' in m:
+                                tps[c][m] += math.log(metric/3600.) # ps too big numbers
+                                #print(metric/3600.)
+                            else:
+                                tps[c][m] *= metric
                             num[c][m] += 1
         #print(tps)
         #print(num)
@@ -384,11 +395,62 @@ class evaluator():
                 continue
             evaluation['dbms'][c]['metrics'] = {}
             for m, v in t.items():
-                tps[c][m] = math.pow(tps[c][m], 1.0 / num[c][m])
-                evaluation['dbms'][c]['metrics'][m] = tps[c][m]
                 if '_ps' in m:
-                    evaluation['dbms'][c]['metrics'][m.replace('_ps', '_ph')] = tps[c][m]*3600.0
+                    #tps[c][m] = math.pow(tps[c][m], 1.0 / num[c][m])
+                    #evaluation['dbms'][c]['metrics'][m] = tps[c][m]
+                    #evaluation['dbms'][c]['metrics'][m.replace('_ps', '_ph')] = tps[c][m]*3600.0
+                    evaluation['dbms'][c]['metrics'][m.replace('_ps', '_ph')] = math.exp(tps[c][m]/num[c][m])
+                    evaluation['dbms'][c]['metrics'][m] = math.exp(tps[c][m]/num[c][m])/3600.
+                elif '_ph' in m:
+                    #tps[c][m] = math.pow(tps[c][m], 1.0 / num[c][m])
+                    evaluation['dbms'][c]['metrics'][m.replace('_ph', '_ps')] = math.exp(tps[c][m]/num[c][m])
+                    evaluation['dbms'][c]['metrics'][m] = math.exp(tps[c][m]/num[c][m])*3600.
+                elif '_ms' in m:
+                    #print(tps[c][m])
+                    evaluation['dbms'][c]['metrics'][m.replace('_ms', '_s')] = math.exp(tps[c][m]/num[c][m])
+                    evaluation['dbms'][c]['metrics'][m] = math.exp(tps[c][m]/num[c][m])*1000.
+                else:
+                    tps[c][m] = math.pow(tps[c][m], 1.0 / num[c][m])
+                    evaluation['dbms'][c]['metrics'][m] = tps[c][m]
+            #print(evaluation['dbms'][c]['metrics'])
         evaluation['general']['results'] = {}
+        #del evaluation['dbms'][c]['metrics']
+        #print(evaluation)
+        def find_non_serializable(obj, path=""):
+            import json
+            non_serializable_items = []
+
+            # Try to serialize the object; if it fails, dive deeper
+            try:
+                json.dumps(obj)
+                return []  # If it’s serializable, no issue
+            except TypeError:
+                # If it’s a dictionary, check each item
+                if isinstance(obj, dict):
+                    for k, v in obj.items():
+                        new_path = f"{path}.{k}" if path else str(k)
+                        non_serializable_items.extend(find_non_serializable(v, path=new_path))
+                # If it’s a list or tuple, check each element
+                elif isinstance(obj, (list, tuple)):
+                    for i, item in enumerate(obj):
+                        new_path = f"{path}[{i}]"
+                        non_serializable_items.extend(find_non_serializable(item, path=new_path))
+                # If it’s a non-serializable type, record the path and type
+                else:
+                    non_serializable_items.append((path, type(obj).__name__))
+            return non_serializable_items
+        list_nonserializable = find_non_serializable(evaluation)
+        if len(list_nonserializable) > 0:
+            print("ERROR: Non serializable evaluation")
+            print(list_nonserializable)
+        #print(evaluation['query'][50]['config']['dbms'])
+        #if 'dbms' in evaluation['query'][51]['config']:
+        #    print(evaluation['query'][51]['config']['dbms'])
+        #    del evaluation['query'][51]['config']['dbms']
+        # Convert Python to JSON  
+        #json_object = json.dumps(evaluation, indent = 4) 
+        # Print JSON object
+        #print(json_object) 
         # total diagrams
         """
         reporterBar = reporter.barer(self.benchmarker)

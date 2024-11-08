@@ -1,6 +1,11 @@
 # Inspector
 
+There is a Python interface to access all details about the experiment.
 See the [rendered example](https://beuth-erdelt.github.io/DBMS-Benchmarker/Evaluation-Demo.html) for more details.
+
+There are also debug tools and helper tools.
+
+Run `dbmsinspect -r ~/benchmarks -c 1730998769 -q 4` to inspect the differences between all benchmarked DBMS of an experiment (here: for query 4).
 
 # Debug Tool
 
