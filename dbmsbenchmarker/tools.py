@@ -653,11 +653,15 @@ class dbms():
                     if not benchmarker.BENCHMARKER_VERBOSE_NONE:
                         print('init_SQL:', query_init)
                     self.openCursor()
-                    self.executeQuery(query_init)
+                    if isinstance(query_init, list):
+                        for command in query_init:
+                            self.executeQuery(command)
+                    else:
+                        self.executeQuery(query_init)
                     #init_result = self.fetchResult()
                     self.closeCursor()
                 except Exception as e:
-                    print("Error when running init_SQL:", query_init)
+                    print("Error when running init_SQL:", query_init, e)
                     #print(init_result)
             #self.connection.jconn.setAutoCommit(True)
         else:
