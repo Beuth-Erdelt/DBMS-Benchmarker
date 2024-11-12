@@ -178,7 +178,8 @@ def singleRun(connectiondata, inputConfig, numRuns, connectionname, numQuery, pa
             if query.withData:
                 if len(queryString) != 0:
                     start = default_timer()
-                    if isinstance(queryString, list):
+                    # CHANGE: List of queries also receives 1 result (last query)
+                    if False and isinstance(queryString, list):
                         data = []
                         columnnames = []
                         size = 0
