@@ -195,7 +195,19 @@ def singleRun(connectiondata, inputConfig, numRuns, connectionname, numQuery, pa
                         if not BENCHMARKER_VERBOSE_NONE:
                             print(workername+"Size of result list retrieved: "+str(size)+" bytes")
                         #self.logger.debug(data)
-                        columnnames = [[i[0].upper() for i in connection.cursor.description]]
+                        #pprint.pprint(connection.cursor.__dict__)
+                        #pprint.pprint(connection.cursor.description)
+                        try:
+                            # read the column names from meta data labels
+                            # for example: MySQL TPC-DS Q3 needs this
+                            result_set = connection.cursor._rs
+                            meta_data = result_set.getMetaData()
+                            column_count = meta_data.getColumnCount()
+                            columnnames = [meta_data.getColumnLabel(i) for i in range(1, column_count + 1)]
+                            #print("Column aliases or names:", columnnames)
+                        except Exception as e:
+                            # take the column names as provided directly
+                            columnnames = [[i[0].upper() for i in connection.cursor.description]]
                         if BENCHMARKER_VERBOSE_RESULTS:
                             s = columnnames + [[str(e) for e in row] for row in data]
                             lens = [max(map(len, col)) for col in zip(*s)]
