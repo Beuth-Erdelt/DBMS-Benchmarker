@@ -203,7 +203,7 @@ def singleRun(connectiondata, inputConfig, numRuns, connectionname, numQuery, pa
                             result_set = connection.cursor._rs
                             meta_data = result_set.getMetaData()
                             column_count = meta_data.getColumnCount()
-                            columnnames = [meta_data.getColumnLabel(i) for i in range(1, column_count + 1)]
+                            columnnames = [[meta_data.getColumnLabel(i).upper() for i in range(1, column_count + 1)]]
                             #print("Column aliases or names:", columnnames)
                         except Exception as e:
                             # take the column names as provided directly
@@ -2495,6 +2495,12 @@ def run_evaluation(experiments, show_query_statistics=False):
                     print("Stream {}: {}".format(k, v))
         #####################
         df = evaluate.get_total_errors(dbms_filter=dbms_filter).T
+        pd.set_option("display.max_rows", None)
+        pd.set_option('display.max_colwidth', None)
+        pd.set_option('display.max_rows', 500)
+        pd.set_option('display.max_columns', 500)
+        pd.set_option('display.width', 1000)
+        #print(df)
         num_errors = df.sum().sum()
         print("\n### Errors (failed queries): {}".format(num_errors))
         if num_errors > 0:
