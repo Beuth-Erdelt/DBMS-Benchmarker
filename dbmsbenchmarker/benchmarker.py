@@ -178,7 +178,8 @@ def singleRun(connectiondata, inputConfig, numRuns, connectionname, numQuery, pa
             if query.withData:
                 if len(queryString) != 0:
                     start = default_timer()
-                    if isinstance(queryString, list):
+                    # CHANGE: List of queries also receives 1 result (last query)
+                    if False and isinstance(queryString, list):
                         data = []
                         columnnames = []
                         size = 0
@@ -194,7 +195,19 @@ def singleRun(connectiondata, inputConfig, numRuns, connectionname, numQuery, pa
                         if not BENCHMARKER_VERBOSE_NONE:
                             print(workername+"Size of result list retrieved: "+str(size)+" bytes")
                         #self.logger.debug(data)
-                        columnnames = [[i[0].upper() for i in connection.cursor.description]]
+                        #pprint.pprint(connection.cursor.__dict__)
+                        #pprint.pprint(connection.cursor.description)
+                        try:
+                            # read the column names from meta data labels
+                            # for example: MySQL TPC-DS Q3 needs this
+                            result_set = connection.cursor._rs
+                            meta_data = result_set.getMetaData()
+                            column_count = meta_data.getColumnCount()
+                            columnnames = [[meta_data.getColumnLabel(i).upper() for i in range(1, column_count + 1)]]
+                            #print("Column aliases or names:", columnnames)
+                        except Exception as e:
+                            # take the column names as provided directly
+                            columnnames = [[i[0].upper() for i in connection.cursor.description]]
                         if BENCHMARKER_VERBOSE_RESULTS:
                             s = columnnames + [[str(e) for e in row] for row in data]
                             lens = [max(map(len, col)) for col in zip(*s)]
@@ -2482,6 +2495,12 @@ def run_evaluation(experiments, show_query_statistics=False):
                     print("Stream {}: {}".format(k, v))
         #####################
         df = evaluate.get_total_errors(dbms_filter=dbms_filter).T
+        pd.set_option("display.max_rows", None)
+        pd.set_option('display.max_colwidth', None)
+        pd.set_option('display.max_rows', 500)
+        pd.set_option('display.max_columns', 500)
+        pd.set_option('display.width', 1000)
+        #print(df)
         num_errors = df.sum().sum()
         print("\n### Errors (failed queries): {}".format(num_errors))
         if num_errors > 0:
