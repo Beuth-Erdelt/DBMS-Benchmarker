@@ -3,11 +3,17 @@
 # -- Project information
 
 project = 'DBMSBenchmarker'
-copyright = '2021, Patrick Erdelt'
-author = 'Patrick Erdelt'
+copyright = '2021, Patrick K. Erdelt'
+author = 'Patrick K. Erdelt'
 
-release = '0.13.2'
-version = '0.13.2'
+import importlib.metadata
+
+# Replace 'your-package-name' with the actual name of your package
+release = importlib.metadata.version('dbmsbenchmarker')
+version = release
+
+#release = '0.13.2'
+#version = '0.13.2'
 
 # -- General configuration
 
