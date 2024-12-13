@@ -2,6 +2,7 @@ tmp/*
 /temp-plot.html
 *.jar
 __pycache__/*
+*/__pycache__/*
 dbmsbenchmarker/scripts/__pycache__/*
 1*/
 *.zip
