@@ -3,11 +3,17 @@
 # -- Project information
 
 project = 'DBMSBenchmarker'
-copyright = '2021, Patrick Erdelt'
-author = 'Patrick Erdelt'
+copyright = '2021, Patrick K. Erdelt'
+author = 'Patrick K. Erdelt'
 
-release = '0.13.2'
-version = '0.13.2'
+import importlib.metadata
+
+release = importlib.metadata.version('dbmsbenchmarker')
+version = release
+
+#release = '0.13.2'
+#version = '0.13.2'
+language = 'en'
 
 # -- General configuration
 
@@ -22,7 +28,6 @@ extensions = [
     #'m2r2',
 ]
 
-
 intersphinx_mapping = {
     'python': ('https://docs.python.org/3/', None),
     'sphinx': ('https://www.sphinx-doc.org/en/master/', None),
@@ -33,6 +38,7 @@ templates_path = ['_templates']
 
 # -- Options for HTML output
 
+#html_theme = 'bizstyle'
 html_theme = 'sphinx_rtd_theme'
 html_static_path = ['_static']
 
