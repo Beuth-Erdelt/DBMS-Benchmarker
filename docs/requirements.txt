@@ -3,3 +3,7 @@ sphinx-rtd-theme
 sphinx-mdinclude
 requests>=2.32.0 # not directly required, pinned by Snyk to avoid a vulnerability
 dbmsbenchmarker
+fonttools>=4.43.0 # not directly required, pinned by Snyk to avoid a vulnerability
+numpy>=1.22.2 # not directly required, pinned by Snyk to avoid a vulnerability
+setuptools>=70.0.0 # not directly required, pinned by Snyk to avoid a vulnerability
+werkzeug>=3.0.6 # not directly required, pinned by Snyk to avoid a vulnerability
