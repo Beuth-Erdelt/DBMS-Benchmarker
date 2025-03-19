@@ -687,7 +687,8 @@ class benchmarker():
             filename = self.path+'/connections.config'
         # If not read from result folder: Copy to result folder
         #print(filename, self.path+'/connections.config')
-        if not filename == self.path+'/connections.config':
+        #if not filename == self.path+'/connections.config':
+        if not os.path.abspath(filename) == os.path.abspath(self.path+'/connections.config'):
             if path.isfile(filename):
                 copyfile(filename, self.path+'/connections.config')
                 self.logger.debug("copied connection file {} to {}".format(filename, self.path+'/connections.config'))
