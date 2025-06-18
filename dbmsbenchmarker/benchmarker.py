@@ -702,10 +702,12 @@ class benchmarker():
                     connections_content = connections_content.replace("'name': '{}'".format(self.fixedConnection), "'name': '{}', 'orig_name': '{}'".format(self.rename_connection, self.fixedConnection))
                     connections_content = connections_content.replace("'alias': '{}'".format(self.fixedAlias), "'alias': '{}', 'orig_alias': '{}'".format(self.rename_alias, self.fixedAlias))
                     if self.fixed_database:
-                        connections_content = connections_content.replace("{database}", self.fixed_database)
+                        connections_content = connections_content.replace("DBMSBENCHMARKER_DATABASE", self.fixed_database)
+                        #connections_content = connections_content.replace("{database}", self.fixed_database)
                         self.logger.debug("Fixed database to {}".format(self.fixed_database))
                     if self.fixed_schema:
-                        connections_content = connections_content.replace("{schema}", self.fixed_schema)
+                        connections_content = connections_content.replace("DBMSBENCHMARKER_SCHEMA", self.fixed_schema)
+                        #connections_content = connections_content.replace("{schema}", self.fixed_schema)
                         self.logger.debug("Fixed database to {}".format(self.fixed_schema))
                     #print(connections_content)
                     with open(self.path+'/connections.config', "w") as connections_file:
