@@ -2372,10 +2372,10 @@ def run_cli(parameter):
         # replace templates in url with fixed names?
         if args.fix_database:
             experiments.fixed_database = args.fix_database
-            print("Replace database by {}".format(experiments.fix_database))
+            print("Replace database by {}".format(experiments.fixed_database))
         if args.fix_schema:
             experiments.fixed_schema = args.fix_schema
-            print("Replace schema by {}".format(experiments.fix_schema))
+            print("Replace schema by {}".format(experiments.fixed_schema))
         # why?
         #if args.result_folder is not None:
         #    config_folder = args.result_folder
