@@ -433,6 +433,8 @@ class benchmarker():
         self.rename_connection = rename_connection
         self.rename_alias = rename_alias    # what alias is supposed to be renamed to
         self.fixedAlias = fixedAlias        # what alias is in connection file
+        self.fixed_database = ""
+        self.fixed_schema = ""
         # for connections staying active for all benchmarks
         self.activeConnections = []
         #self.runsPerConnection = 4
@@ -699,6 +701,14 @@ class benchmarker():
                     #print(connections_content)
                     connections_content = connections_content.replace("'name': '{}'".format(self.fixedConnection), "'name': '{}', 'orig_name': '{}'".format(self.rename_connection, self.fixedConnection))
                     connections_content = connections_content.replace("'alias': '{}'".format(self.fixedAlias), "'alias': '{}', 'orig_alias': '{}'".format(self.rename_alias, self.fixedAlias))
+                    if self.fixed_database:
+                        connections_content = connections_content.replace("DBMSBENCHMARKER_DATABASE", self.fixed_database)
+                        #connections_content = connections_content.replace("{database}", self.fixed_database)
+                        self.logger.debug("Fixed database to {}".format(self.fixed_database))
+                    if self.fixed_schema:
+                        connections_content = connections_content.replace("DBMSBENCHMARKER_SCHEMA", self.fixed_schema)
+                        #connections_content = connections_content.replace("{schema}", self.fixed_schema)
+                        self.logger.debug("Fixed database to {}".format(self.fixed_schema))
                     #print(connections_content)
                     with open(self.path+'/connections.config', "w") as connections_file:
                         connections_file.write(connections_content)
@@ -2361,6 +2371,13 @@ def run_cli(parameter):
             experiments.workload['intro'] = args.workload_intro
         if len(args.workload_name):
             experiments.workload['name'] = args.workload_name
+        # replace templates in url with fixed names?
+        if args.fix_database:
+            experiments.fixed_database = args.fix_database
+            print("Replace database by {}".format(experiments.fixed_database))
+        if args.fix_schema:
+            experiments.fixed_schema = args.fix_schema
+            print("Replace schema by {}".format(experiments.fixed_schema))
         # why?
         #if args.result_folder is not None:
         #    config_folder = args.result_folder
