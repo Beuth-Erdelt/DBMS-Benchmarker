@@ -217,6 +217,9 @@ class metrics():
                 else:
                     metric = metrics.metrics[metric_code].copy()
                 type = metric['type'] if 'type' in metric else ''
+                active = metric['active'] if 'active' in metric else True
+                if not active:
+                    continue
                 #print(metric)
                 if container is not None:
                     metric['query'] = metric['query'].replace('container_label_io_kubernetes_container_name="dbms"', 'container_label_io_kubernetes_container_name="{}"'.format(container))
