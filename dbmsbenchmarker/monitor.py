@@ -208,6 +208,7 @@ class metrics():
             #self.url = self.benchmarker.dbms[c].connectiondata['monitoring']['grafanaurl']
             #self.url = connectiondata['monitoring']['prometheus_url']
             url = connectiondata['monitoring']['prometheus_url']
+            url_app = connectiondata['monitoring']['prometheus_url_application'] if 'prometheus_url_application' in connectiondata['monitoring'] else ''
             if connectiondata['active'] and url: #
                 logging.debug("Connection "+connection)
                 # is there a custom query for this metric and dbms?
@@ -215,6 +216,10 @@ class metrics():
                     metric = connectiondata['monitoring'][metrics_query_path][metric_code].copy()
                 else:
                     metric = metrics.metrics[metric_code].copy()
+                type = metric['type'] if 'type' in metric else ''
+                active = metric['active'] if 'active' in metric else True
+                if not active:
+                    continue
                 #print(metric)
                 if container is not None:
                     metric['query'] = metric['query'].replace('container_label_io_kubernetes_container_name="dbms"', 'container_label_io_kubernetes_container_name="{}"'.format(container))
@@ -250,7 +255,11 @@ class metrics():
                     df = metrics.loadMetricsDataframe(csvfile)
                     df.columns=[connection]
                 else:
-                    values = metrics.getMetrics(url, metric, time_start, time_end)
+                    if type == 'application' and len(url_app) > 0:
+                        url_to_query = url_app
+                    else:
+                        url_to_query = url
+                    values = metrics.getMetrics(url_to_query, metric, time_start, time_end)
                     df = metrics.metricsToDataframe(metric, values)
                     df.columns=[connection]
                     metrics.saveMetricsDataframe(csvfile, df)
