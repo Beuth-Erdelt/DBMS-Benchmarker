@@ -257,7 +257,12 @@ class metrics():
                     df.columns=[connection]
                 else:
                     if type == 'application' and len(url_app) > 0:
-                        url_to_query = url_app
+                        if query == 'loading' or query == 'stream':
+                            url_to_query = url_app
+                        else:
+                            # application metrics only active for SUT
+                            df = pd.DataFrame()
+                            return df
                     else:
                         url_to_query = url
                     values = metrics.getMetrics(url_to_query, metric, time_start, time_end)
