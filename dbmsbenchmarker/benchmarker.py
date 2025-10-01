@@ -708,7 +708,7 @@ class benchmarker():
                     if self.fixed_schema:
                         connections_content = connections_content.replace("DBMSBENCHMARKER_SCHEMA", self.fixed_schema)
                         #connections_content = connections_content.replace("{schema}", self.fixed_schema)
-                        self.logger.debug("Fixed database to {}".format(self.fixed_schema))
+                        self.logger.debug("Fixed schema to {}".format(self.fixed_schema))
                     #print(connections_content)
                     with open(self.path+'/connections.config', "w") as connections_file:
                         connections_file.write(connections_content)
