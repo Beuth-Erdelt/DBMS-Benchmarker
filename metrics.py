@@ -35,6 +35,8 @@ if __name__ == '__main__':
     parser.add_argument('-e', '--experiment-code', help='folder for storing benchmark result files, default is given by timestamp', default=None)
     parser.add_argument('-f', '--config-folder', help='folder containing query and connection config files. If set, the names connections.config and queries.config are assumed automatically.', default=None)
     parser.add_argument('-c', '--connection', help='Name of the connection (dbms) to use', default=None)
+    parser.add_argument('-mt', '--metrics-type', help='Type of metrics definitions (metrics, metrics_special, metrics_custom)', default='')
+    #parser.add_argument('-co', '--component', help='Component name', default='sut')
     parser.add_argument('-ct', '--component-type', help='Type of the component (loading or stream)', default='loading')
     parser.add_argument('-cn', '--container-name', help='Name of the container (if not dbms for sut/workers: datagenerator, sensor, dbmsbenchmarker)', default=None)
     parser.add_argument('-cf', '--connection-file', help='name of connection config file', default='connections.config')
@@ -51,6 +53,8 @@ if __name__ == '__main__':
     code = args.experiment_code#'1616083097'
     connection = args.connection
     query = args.component_type
+    metrics_type = args.metrics_type
+    #component = args.component
     container_name = args.container_name
     time_start = int(args.time_start)#1616083225
     time_end = int(args.time_end)#1616083310
@@ -82,7 +86,14 @@ if __name__ == '__main__':
         #query='stream'
         # metrics_special means there arwe special promql queries for special dbms, e.g., systems not managed by bexhoma
         #if 'metrics_special' in connection_data.connectiondata['monitoring'] and (container_name is None or container_name == 'dbms') and (query == 'loading' or query == 'stream'):
-        if 'metrics_special' in connection_data.connectiondata['monitoring'] and (query == 'loading' or query == 'stream'):
+        #if metrics_type == 'metrics_custom' and 'metrics_custom' in connection_data.connectiondata['monitoring'] and component in connection_data.connectiondata['monitoring']['metrics_custom']:
+        if len(metrics_type) > 0 and metrics_type in connection_data.connectiondata['monitoring']:
+            print("Use custom metrics: metrics type = {}".format(metrics_type))
+            for m, metric in connection_data.connectiondata['monitoring'][metrics_type].items():
+                print("Metric", m)
+                path = '{result_path}/{code}/'.format(result_path=result_path, code=code)
+                monitor.metrics.fetchMetric(query, m, connection_name, connection_data.connectiondata, time_start, time_end, path, container=container_name, metrics_query_path=metrics_type)
+        elif 'metrics_special' in connection_data.connectiondata['monitoring'] and (query == 'loading' or query == 'stream'):
             print("Use special metrics for SUT not managed by bexhoma: component type = {}".format(query))
             for m, metric in connection_data.connectiondata['monitoring']['metrics_special'].items():
                 print("Metric", m)
