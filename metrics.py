@@ -93,12 +93,13 @@ if __name__ == '__main__':
                 print("Metric", m)
                 path = '{result_path}/{code}/'.format(result_path=result_path, code=code)
                 monitor.metrics.fetchMetric(query, m, connection_name, connection_data.connectiondata, time_start, time_end, path, container=container_name, metrics_query_path=metrics_type)
-        elif 'metrics_special' in connection_data.connectiondata['monitoring'] and (query == 'loading' or query == 'stream'):
-            print("Use special metrics for SUT not managed by bexhoma: component type = {}".format(query))
-            for m, metric in connection_data.connectiondata['monitoring']['metrics_special'].items():
-                print("Metric", m)
-                path = '{result_path}/{code}/'.format(result_path=result_path, code=code)
-                monitor.metrics.fetchMetric(query, m, connection_name, connection_data.connectiondata, time_start, time_end, path, container=container_name, metrics_query_path='metrics_special')
+        # do not use replacement anymore (SUT deployment replaced by SUT worker)
+        #elif 'metrics_special' in connection_data.connectiondata['monitoring'] and (query == 'loading' or query == 'stream'):
+        #    print("Use special metrics for SUT not managed by bexhoma: component type = {}".format(query))
+        #    for m, metric in connection_data.connectiondata['monitoring']['metrics_special'].items():
+        #        print("Metric", m)
+        #        path = '{result_path}/{code}/'.format(result_path=result_path, code=code)
+        #        monitor.metrics.fetchMetric(query, m, connection_name, connection_data.connectiondata, time_start, time_end, path, container=container_name, metrics_query_path='metrics_special')
         else:
             print("Use default metrics for components managed by bexhoma: component type = {}".format(query))
             for m, metric in connection_data.connectiondata['monitoring']['metrics'].items():
