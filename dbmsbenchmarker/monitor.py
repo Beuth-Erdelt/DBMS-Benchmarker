@@ -257,7 +257,8 @@ class metrics():
                     df.columns=[connection]
                 else:
                     if type == 'application' and len(url_app) > 0:
-                        if query == 'loading' or query == 'stream':
+                        if 'loading' in query or 'stream' in query:
+                            # this is the loading or streaming phase of a component of SUT
                             url_to_query = url_app
                         else:
                             # application metrics only active for SUT
