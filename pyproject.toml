@@ -1,0 +1,48 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "dbmsbenchmarker"
+version = "0.14.14"
+description = "DBMS-Benchmarker is a Python-based application-level blackbox benchmark tool for Database Management Systems (DBMS). It connects to a given list of DBMS (via JDBC) and runs a given list of parametrized and randomized (SQL) benchmark queries. Evaluations are available via Python interface, in reports and at an interactive multi-dimensional dashboard."
+readme = { file = "README.md", content-type = "text/markdown" }
+authors = [
+  { name = "Patrick Erdelt", email = "perdelt@beuth-hochschule.de" }
+]
+license = { text = "GNU Affero General Public License v3" }
+requires-python = ">=3.6"
+
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "License :: OSI Approved :: GNU Affero General Public License v3",
+  "Operating System :: OS Independent",
+]
+
+dependencies = [
+  # loaded from requirements.txt (see tool.setuptools.dynamic below)
+]
+
+[project.urls]
+Homepage = "https://github.com/Beuth-Erdelt/DBMS-Benchmarker"
+Repository = "https://github.com/Beuth-Erdelt/DBMS-Benchmarker"
+
+[project.scripts]
+dbmsbenchmarker = "dbmsbenchmarker.scripts.cli:run_benchmarker"
+dbmsdashboard   = "dbmsbenchmarker.scripts.dashboardcli:startup"
+dbmsinspect     = "dbmsbenchmarker.scripts.inspect:result"
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["dbmsbenchmarker*"]
+
+[tool.setuptools.package-data]
+dbmsbenchmarker = [
+  "dbmsbenchmarker/scripts/assets/*"
+]
+
+[tool.setuptools.dynamic]
+dependencies = { file = ["requirements.txt"] }
