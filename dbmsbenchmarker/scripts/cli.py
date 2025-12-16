@@ -65,6 +65,8 @@ def run_benchmarker():
     parser.add_argument('-ssh', '--stream-shuffle', help='shuffle query execution based on id of stream', default=None)
     parser.add_argument('-wli', '--workload-intro', help='meta data: intro text for workload description', default='')
     parser.add_argument('-wln', '--workload-name', help='meta data: name of workload', default='')
+    parser.add_argument('-fixdb', '--fix-database', help='replace database template with fixed name', default='')
+    parser.add_argument('-fixs', '--fix-schema', help='replace schema template with fixed name', default='')
     #parser.add_argument('-pt', '--timeout', help='Parameter: Timeout in seconds', default=0)
     #logger = logging.getLogger('dbmsbenchmarker')
     args = parser.parse_args()
