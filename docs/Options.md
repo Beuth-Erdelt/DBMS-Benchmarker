@@ -35,8 +35,9 @@ How to configure the benchmarker can be illustrated best by looking at the sourc
 `python benchmark.py -h`
 
 ```
-usage: dbmsbenchmarker [-h] [-d] [-b] [-qf QUERY_FILE] [-cf CONNECTION_FILE] [-q QUERY] [-c CONNECTION] [-ca CONNECTION_ALIAS] [-f CONFIG_FOLDER] [-r RESULT_FOLDER] [-e {no,yes}] [-w {query,connection}] [-p NUMPROCESSES] [-pp] [-s SEED] [-cs] [-ms MAX_SUBFOLDERS]
-                       [-sl SLEEP] [-st START_TIME] [-sf SUBFOLDER] [-sd {None,csv,pandas}] [-dd] [-vq] [-vs] [-vr] [-vp] [-vn] [-pn NUM_RUN] [-m] [-mps] [-sid STREAM_ID] [-ssh STREAM_SHUFFLE] [-wli WORKLOAD_INTRO] [-wln WORKLOAD_NAME]
+usage: dbmsbenchmarker [-h] [-d] [-b] [-qf QUERY_FILE] [-cf CONNECTION_FILE] [-q QUERY] [-c CONNECTION] [-ca CONNECTION_ALIAS] [-f CONFIG_FOLDER] [-r RESULT_FOLDER] [-e {no,yes}] [-w {query,connection}]
+                       [-p NUMPROCESSES] [-pp] [-s SEED] [-cs] [-ms MAX_SUBFOLDERS] [-sl SLEEP] [-st START_TIME] [-sf SUBFOLDER] [-sd {None,csv,pandas}] [-dd] [-vq] [-vs] [-vr] [-vp] [-vn] [-pn NUM_RUN]
+                       [-m] [-mps] [-sid STREAM_ID] [-ssh STREAM_SHUFFLE] [-wli WORKLOAD_INTRO] [-wln WORKLOAD_NAME] [-fixdb FIX_DATABASE] [-fixs FIX_SCHEMA]
                        {run,read,continue}
 
 A benchmark tool for RDBMS. It connects to a given list of RDBMS via JDBC and runs a given list benchmark queries. Optionally some reports are generated.
@@ -83,7 +84,7 @@ options:
                         stores results in a SUBFOLDER of the result folder
   -sd {None,csv,pandas}, --store-data {None,csv,pandas}
                         store result of first execution of each query
-  -dd, --discard-data   result sets of all queries is discarded (not fetched at all)
+  -dd, --discard-data   result sets of all queries are discarded (not fetched at all)
   -vq, --verbose-queries
                         print every query that is sent
   -vs, --verbose-statistics
@@ -106,6 +107,10 @@ options:
                         meta data: intro text for workload description
   -wln WORKLOAD_NAME, --workload-name WORKLOAD_NAME
                         meta data: name of workload
+  -fixdb FIX_DATABASE, --fix-database FIX_DATABASE
+                        replace database template with fixed name
+  -fixs FIX_SCHEMA, --fix-schema FIX_SCHEMA
+                        replace schema template with fixed name
 ```
 
 ### Result Folder
@@ -296,7 +301,9 @@ The parameter `--store-data` allows the settings csv or pandas (for pickled pand
 The parameter `--discard-data` deactivates all fetching of data.
 Queries are only sent. After receiving a success message, result is discarded and not fetched or stored.
 
+### Fixed Database or Schema
 
+The strings `DBMSBENCHMARKER_SCHEMA` and `DBMSBENCHMARKER_DATABASE` as parts of the connection url can be replace by fixed parameters (`-fixdb` and `-fixs`).
 
 
 
