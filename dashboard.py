@@ -154,7 +154,7 @@ def get_connections_by_filter(filter_by: str, e: inspector.inspector) -> dict:
 
     :param filter_by: filter keyword to filter connections by
     :param e: evaluate object
-    :return: dict like: {'cl-worker4': ['connection1', ‘connection2', ...], ...} containing ALL connections.
+    :return: dict like: {'cl-worker4': ['connection1', 'connection2', ...], ...} containing ALL connections.
     """
 
     if filter_by == 'DBMS':
