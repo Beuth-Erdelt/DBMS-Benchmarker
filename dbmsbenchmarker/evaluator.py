@@ -423,19 +423,19 @@ class evaluator():
             # Try to serialize the object; if it fails, dive deeper
             try:
                 json.dumps(obj)
-                return []  # If it’s serializable, no issue
+                return []  # If it's serializable, no issue
             except TypeError:
-                # If it’s a dictionary, check each item
+                # If it's a dictionary, check each item
                 if isinstance(obj, dict):
                     for k, v in obj.items():
                         new_path = f"{path}.{k}" if path else str(k)
                         non_serializable_items.extend(find_non_serializable(v, path=new_path))
-                # If it’s a list or tuple, check each element
+                # If it's a list or tuple, check each element
                 elif isinstance(obj, (list, tuple)):
                     for i, item in enumerate(obj):
                         new_path = f"{path}[{i}]"
                         non_serializable_items.extend(find_non_serializable(item, path=new_path))
-                # If it’s a non-serializable type, record the path and type
+                # If it's a non-serializable type, record the path and type
                 else:
                     non_serializable_items.append((path, type(obj).__name__))
             return non_serializable_items

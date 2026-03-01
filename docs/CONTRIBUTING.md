@@ -11,7 +11,7 @@ Some things that you can help on include:
 
 ## Non-code contributions
 
-Even if you don’t feel ready or able to contribute code, you can still help out. There always things that can be improved on the documentation (even just proof reading, or telling us if a section isn’t clear enough).
+Even if you don't feel ready or able to contribute code, you can still help out. There always things that can be improved on the documentation (even just proof reading, or telling us if a section isn't clear enough).
 
 
 ## Code contributions
