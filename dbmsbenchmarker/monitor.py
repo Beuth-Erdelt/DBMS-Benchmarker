@@ -151,6 +151,45 @@ class metrics():
         return list_values
     @staticmethod
     def metricsToDataframe(metric, values):
+        """
+        Convert raw metric records into a normalized, time-indexed DataFrame.
+
+        The function performs the following steps:
+
+        1. Create a DataFrame from the raw records.
+        2. Rename columns to ["time [s]", <metric title>].
+        3. Convert the time column to integer.
+        4. Normalize time so that it starts at 0 seconds.
+        5. Set the time column as index.
+        6. Convert metric values to float.
+
+        :param metric: Dictionary containing metric metadata.
+                       Must contain the key ``'title'`` which will be
+                       used as the column name for the metric values.
+        :type metric: dict
+
+        :param values: Iterable of records representing metric measurements.
+                       Each record must contain two elements:
+                       (timestamp, metric_value).
+        :type values: iterable
+
+        :return: A pandas DataFrame indexed by normalized time (seconds)
+                 containing one float column with metric values.
+        :rtype: pandas.DataFrame
+        """
+        df = pd.DataFrame.from_records(values)
+        df.columns = ['time [s]', metric['title']]
+        # Convert time column to integer
+        df.iloc[:, 0] = pd.to_numeric(df.iloc[:, 0], errors="coerce").astype("Int64")
+        # Normalize time to start at 0
+        minimum = df.iloc[:, 0].min()
+        df.iloc[:, 0] = df.iloc[:, 0] - minimum
+        # Set time as index
+        df = df.set_index(df.columns[0])
+        # Convert metric values to float
+        df.iloc[:, 0] = pd.to_numeric(df.iloc[:, 0], errors="coerce")
+        return df
+    def __OLD_metricsToDataframe(metric, values):
         df = pd.DataFrame.from_records(values)
         df.columns = ['time [s]', metric['title']]
         df.iloc[0:,0] = df.iloc[0:,0].map(int)
@@ -158,6 +197,7 @@ class metrics():
         df.iloc[0:,0] = df.iloc[0:,0].map(lambda x: x-minimum)
         df = df.set_index(df.columns[0])
         df.iloc[0:,0] = df.iloc[0:,0].map(float)
+        #df.iloc[:, 0] = pd.to_numeric(df.iloc[:, 0], errors="coerce")
         return df
     @staticmethod
     def saveMetricsDataframe(filename, df):
