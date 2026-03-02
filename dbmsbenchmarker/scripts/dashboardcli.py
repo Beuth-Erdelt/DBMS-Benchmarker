@@ -3374,4 +3374,5 @@ def startup():
 
     # Assign layout to app
     app.layout = layout.serve_layout(preview)
-    app.run_server(debug=args.debug, host='0.0.0.0', threaded=True, processes=1)
+    app.run(debug=args.debug, host='0.0.0.0', threaded=True, processes=1)
+    #app.run_server(debug=args.debug, host='0.0.0.0', threaded=True, processes=1)
