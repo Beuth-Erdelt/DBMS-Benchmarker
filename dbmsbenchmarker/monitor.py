@@ -186,8 +186,9 @@ class metrics():
         df.iloc[:, 0] = df.iloc[:, 0] - minimum
         # Set time as index
         df = df.set_index(df.columns[0])
-        # Convert metric values to float
-        df.iloc[:, 0] = pd.to_numeric(df.iloc[:, 0], errors="coerce")
+        # Convert metric values to float (ensure dtype is flexible)
+        col = metric['title']
+        df[col] = pd.to_numeric(df[col].astype(object), errors='coerce')
         return df
     def __OLD_metricsToDataframe(metric, values):
         df = pd.DataFrame.from_records(values)
