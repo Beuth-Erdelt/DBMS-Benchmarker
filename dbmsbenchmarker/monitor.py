@@ -238,7 +238,7 @@ class metrics():
         else:
             return ""
     @staticmethod
-    def fetchMetric(query, metric_code, connection, connectiondata, time_start, time_end, path, container=None, metrics_query_path='metrics'):
+    def fetchMetric(query, metric_code, connection, connectiondata, time_start, time_end, path, container=None, metrics_query_path='metrics', component=''):
         # metrics_query_path = where to find the promql paths in connectiondata (metrics for components managed by bexhoma, metrics_special otherwise)
         #for m, metric in metrics.metrics.items():
         logging.debug("Metric "+metric_code)
@@ -260,6 +260,9 @@ class metrics():
                 type = metric['type'] if 'type' in metric else ''
                 active = metric['active'] if 'active' in metric else True
                 if not active:
+                    df = pd.DataFrame()
+                    return df
+                if len(component) > 0 and 'component' in metric and metric['component'] != component:
                     df = pd.DataFrame()
                     return df
                 #print(metric)
