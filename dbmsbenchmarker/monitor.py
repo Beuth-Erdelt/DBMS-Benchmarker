@@ -103,8 +103,11 @@ class metrics():
         self.step = 1
         self.benchmarker = benchmarks
     @staticmethod
-    def getMetrics(url, metric, time_start, time_end, step=1):
+    def getMetrics(url, metric, time_start, time_end, step=1, connection=None):
         logging.debug("getMetrics from "+url)
+        metric_label = "{title} ({code})".format(title=metric.get('title', ''), code=metric.get('query', ''))
+        if connection:
+            metric_label = "{label} for connection {connection}".format(label=metric_label, connection=connection)
         def fetch_interval(time_start, time_end, step):
             query = 'query_range'#?query='+metric['query']+'&start='+str(time_start)+'&end='+str(time_end)+'&step='+str(self.step)
             params = {
@@ -132,10 +135,10 @@ class metrics():
                 else:
                     #print(metric, url+query, r.json())
                     l = [(t,0) for t in range(time_start, time_end+1)]#[(time_start,0)]
-                    logging.error('Metrics missing: '+url+query, params)
+                    logging.error('Metrics missing for {label}: {url}{query}'.format(label=metric_label, url=url, query=query))
                     logging.error(r.text)
             except Exception as e:
-                logging.exception('Caught an error: %s' % str(e))
+                logging.exception('Caught an error fetching {label}: {error}'.format(label=metric_label, error=str(e)))
             return l
         # split the time span into max 9000s intervals
         list_values = []
@@ -310,7 +313,7 @@ class metrics():
                             return df
                     else:
                         url_to_query = url
-                    values = metrics.getMetrics(url_to_query, metric, time_start, time_end)
+                    values = metrics.getMetrics(url_to_query, metric, time_start, time_end, connection=connection)
                     df = metrics.metricsToDataframe(metric, values)
                     df.columns=[connection]
                     metrics.saveMetricsDataframe(csvfile, df)
