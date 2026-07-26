@@ -2421,7 +2421,9 @@ def run_cli(parameter):
             # generate evaluation cube
             experiments.overwrite = True
             skip_component_metrics = getattr(args, 'skip_component_metrics', False)
-            evaluator.evaluator(experiments, load=False, force=True, skip_component_metrics=skip_component_metrics)
+            # run_evaluation() builds the cube itself (evaluator.evaluator(..., force=True));
+            # building it here too would just repeat the same generate()/load() cycle with
+            # nothing in between consuming the first result.
             run_evaluation(experiments, True, skip_component_metrics=skip_component_metrics)
         return experiments
 

@@ -215,7 +215,6 @@ def run_benchmarker():
         # generate evaluation cube
         experiments.overwrite = True
         skip_component_metrics = getattr(args, 'skip_component_metrics', False)
-        evaluator.evaluator(experiments, load=False, force=True, skip_component_metrics=skip_component_metrics)
         # show some evaluations
         evaluator.evaluator(experiments, load=False, force=True, skip_component_metrics=skip_component_metrics)
         result_folder = experiments.path #args.result_folder if not args.result_folder is None else "./"
