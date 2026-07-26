@@ -2420,15 +2420,16 @@ def run_cli(parameter):
         if args.generate_evaluation == 'yes':
             # generate evaluation cube
             experiments.overwrite = True
-            evaluator.evaluator(experiments, load=False, force=True)
-            run_evaluation(experiments, True)
+            skip_component_metrics = getattr(args, 'skip_component_metrics', False)
+            evaluator.evaluator(experiments, load=False, force=True, skip_component_metrics=skip_component_metrics)
+            run_evaluation(experiments, True, skip_component_metrics=skip_component_metrics)
         return experiments
 
-def run_evaluation(experiments, show_query_statistics=False):
+def run_evaluation(experiments, show_query_statistics=False, skip_component_metrics=False):
         # generate evaluation cube
         experiments.overwrite = True
         # show some evaluations
-        evaluator.evaluator(experiments, load=False, force=True)
+        evaluator.evaluator(experiments, load=False, force=True, skip_component_metrics=skip_component_metrics)
         result_folder = experiments.path #args.result_folder if not args.result_folder is None else "./"
         #num_processes = min(float(args.numProcesses if not args.numProcesses is None else 1), float(args.num_run) if int(args.num_run) > 0 else 1)
         evaluate = dbmsbenchmarker.inspector.inspector(result_folder)

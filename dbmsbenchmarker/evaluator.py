@@ -39,15 +39,21 @@ class evaluator():
     """
     Class for generating evaluation cube.
     """
-    def __init__(self, benchmarker, load=False, force=False, silent=False):
+    def __init__(self, benchmarker, load=False, force=False, silent=False, skip_component_metrics=False):
         """
         Construct a new 'evaluator' object.
 
         :param benchmarker: Object of benchmarker containing information about queries, connections and benchmark times
         :param silent: No output of status
+        :param skip_component_metrics: Skip collecting the loading/streaming/loader/benchmarker/datagenerator
+            hardware metric aggregates in evaluation['general']. These are only consumed by the interactive
+            evaluation notebooks (get_loading_metrics()/get_streaming_metrics()/...), not by the core cube;
+            skipping them avoids the per-connection recomputation (and its "We already have the metrics..."
+            output) for callers that don't need them.
         :return: returns nothing
         """
         self.benchmarker = benchmarker
+        self.skip_component_metrics = skip_component_metrics
         if force:
             evaluator.evaluation = {}
         if len(evaluator.evaluation) == 0:
@@ -230,27 +236,28 @@ class evaluator():
                         if 'total_gpu_power' in hardwareAverages[c]:
                             # basis: per second average power, total time in ms
                             evaluation['dbms'][c]['hardwaremetrics']['total_gpu_energy'] = hardwareAverages[c]['total_gpu_power']*times[c]/3600000
-                        for m, avg in hardwareAverages[c].items():
-                            # load test metrics
-                            df = metricsReporter.dfHardwareMetricsLoading(m)
-                            df.drop_duplicates(inplace=True) # TODO: Why are there duplicates sometimes?
-                            evaluation['general']['loadingmetrics'][m] = df.to_dict(orient='index')
-                            # streaming metrics
-                            df = metricsReporter.dfHardwareMetricsStreaming(m)
-                            df.drop_duplicates(inplace=True) # TODO: Why are there duplicates sometimes?
-                            evaluation['general']['streamingmetrics'][m] = df.to_dict(orient='index')
-                            # loader metrics
-                            df = metricsReporter.dfHardwareMetricsLoader(m)
-                            df.drop_duplicates(inplace=True) # TODO: Why are there duplicates sometimes?
-                            evaluation['general']['loadermetrics'][m] = df.to_dict(orient='index')
-                            # benchmarker metrics
-                            df = metricsReporter.dfHardwareMetricsBenchmarker(m)
-                            df.drop_duplicates(inplace=True) # TODO: Why are there duplicates sometimes?
-                            evaluation['general']['benchmarkermetrics'][m] = df.to_dict(orient='index')
-                            #  datagenerator metrics
-                            df = metricsReporter.dfHardwareMetricsDatagenerator(m)
-                            df.drop_duplicates(inplace=True) # TODO: Why are there duplicates sometimes?
-                            evaluation['general']['datageneratormetrics'][m] = df.to_dict(orient='index')
+                        if not self.skip_component_metrics:
+                            for m, avg in hardwareAverages[c].items():
+                                # load test metrics
+                                df = metricsReporter.dfHardwareMetricsLoading(m)
+                                df.drop_duplicates(inplace=True) # TODO: Why are there duplicates sometimes?
+                                evaluation['general']['loadingmetrics'][m] = df.to_dict(orient='index')
+                                # streaming metrics
+                                df = metricsReporter.dfHardwareMetricsStreaming(m)
+                                df.drop_duplicates(inplace=True) # TODO: Why are there duplicates sometimes?
+                                evaluation['general']['streamingmetrics'][m] = df.to_dict(orient='index')
+                                # loader metrics
+                                df = metricsReporter.dfHardwareMetricsLoader(m)
+                                df.drop_duplicates(inplace=True) # TODO: Why are there duplicates sometimes?
+                                evaluation['general']['loadermetrics'][m] = df.to_dict(orient='index')
+                                # benchmarker metrics
+                                df = metricsReporter.dfHardwareMetricsBenchmarker(m)
+                                df.drop_duplicates(inplace=True) # TODO: Why are there duplicates sometimes?
+                                evaluation['general']['benchmarkermetrics'][m] = df.to_dict(orient='index')
+                                #  datagenerator metrics
+                                df = metricsReporter.dfHardwareMetricsDatagenerator(m)
+                                df.drop_duplicates(inplace=True) # TODO: Why are there duplicates sometimes?
+                                evaluation['general']['datageneratormetrics'][m] = df.to_dict(orient='index')
         # appendix start: query survey
         evaluation['query'] = {}
         for i in range(1, len(self.benchmarker.queries)+1):
