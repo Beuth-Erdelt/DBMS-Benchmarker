@@ -94,6 +94,8 @@ options:
   -vp, --verbose-process
                         print infos about the workflow steps
   -vn, --verbose-none   stay completely silent
+  -ve, --verbose-explain
+                        run and print configured EXPLAIN statements after each benchmark query
   -pn NUM_RUN, --num-run NUM_RUN
                         Parameter: Number of executions per query
   -m, --metrics         collect hardware metrics per query
@@ -551,6 +553,7 @@ Example for `CONNECTION_FILE`:
       'auth': ["username", "password"],
       'jar': "mysql-connector-java-8.0.13.jar",
       'options': ["-Xms312m", "-Xmx312m"],
+      'explain': ['EXPLAIN (VERBOSE, FORMAT JSON) {query}'],
     },
     'init_SQL': "USE tpch",
     'connectionmanagement': {
@@ -591,6 +594,7 @@ Example for `CONNECTION_FILE`:
 * `alias`: Alias for anonymized reports (optional default is a random name)
 * `dialect`: Key for (optional) alternative SQL statements in the query file
 * `driver`, `url`, `auth`, `jar`: JDBC data (`options` contains optional parameter for the JVM)
+* `explain`: Optional list of query templates (or a single template string), each containing the placeholder `{query}`. Has no effect unless CLI flag `-ve`/`--verbose-explain` is set. When set, right after each benchmark query has run, `{query}` is substituted with the literal query text just executed and the resulting statement is sent to the same connection; the result is printed to stdout.
 * `init_SQL`: Optional command, that is sent once, when the connection has been established
 * Additional information useful for reporting and also used for computations
   * `timeload`: Time for ingest (in milliseconds), because not part of the benchmark

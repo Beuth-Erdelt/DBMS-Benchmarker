@@ -52,6 +52,7 @@ BENCHMARKER_VERBOSE_STATISTICS = False
 BENCHMARKER_VERBOSE_RESULTS = False
 BENCHMARKER_VERBOSE_PROCESS = False
 BENCHMARKER_VERBOSE_NONE = False
+BENCHMARKER_VERBOSE_EXPLAIN = False
 
 logger = mp.log_to_stderr(logging.WARNING)
 
@@ -82,7 +83,7 @@ class singleRunOutput:
 
 
 
-def singleRun(connectiondata, inputConfig, numRuns, connectionname, numQuery, path=None, activeConnections = [], BENCHMARKER_VERBOSE_QUERIES=False, BENCHMARKER_VERBOSE_RESULTS=False, BENCHMARKER_VERBOSE_PROCESS=True, BENCHMARKER_VERBOSE_NONE=False):
+def singleRun(connectiondata, inputConfig, numRuns, connectionname, numQuery, path=None, activeConnections = [], BENCHMARKER_VERBOSE_QUERIES=False, BENCHMARKER_VERBOSE_RESULTS=False, BENCHMARKER_VERBOSE_PROCESS=True, BENCHMARKER_VERBOSE_NONE=False, BENCHMARKER_VERBOSE_EXPLAIN=False):
     """
     Function for running an actual benchmark run
 
@@ -135,6 +136,12 @@ def singleRun(connectiondata, inputConfig, numRuns, connectionname, numQuery, pa
     if durationConnect > 0:
         if not BENCHMARKER_VERBOSE_NONE:
             print(("numRun %s: " % ("/".join([str(i+1) for i in numRuns])))+"connection [ms]: "+str(durationConnect))
+    # normalize EXPLAIN templates configured for this connection (once per batch)
+    explainTemplates = []
+    if BENCHMARKER_VERBOSE_EXPLAIN and 'JDBC' in connectiondata and 'explain' in connectiondata['JDBC']:
+        explainTemplates = connectiondata['JDBC']['explain']
+        if isinstance(explainTemplates, str):
+            explainTemplates = [explainTemplates]
     # perform runs for this connection
     for numRun in numRuns:
         workername = "numRun %i: " % (numRun+1)
@@ -237,6 +244,25 @@ def singleRun(connectiondata, inputConfig, numRuns, connectionname, numQuery, pa
             connection.closeCursor()
             #end = default_timer()
             #durationExecute += 1000.0*(end - start)
+        # EXPLAIN: run configured EXPLAIN templates against the literal query just executed.
+        # Kept strictly outside the timed section above and skipped if the real query failed
+        # (a failed statement typically aborts the transaction, so more SQL would just cascade errors).
+        if explainTemplates and error == "":
+            queryParts = queryString if isinstance(queryString, list) else [queryString]
+            for queryPart in queryParts:
+                for explainTemplate in explainTemplates:
+                    try:
+                        explainQuery = explainTemplate.format(query=queryPart)
+                        connection.openCursor()
+                        connection.executeQuery(explainQuery)
+                        explainData = connection.fetchResult()
+                        print(workername+"EXPLAIN: "+explainQuery)
+                        for row in explainData:
+                            print(workername+"EXPLAIN result: "+str(row))
+                    except Exception as explainException:
+                        print(workername+"EXPLAIN failed: "+str(explainException))
+                    finally:
+                        connection.closeCursor()
         result = singleRunOutput()
         # connection time is valid only for first run (making the connection)
         if numRun==numRuns[0] and query.withConnect:
@@ -1008,7 +1034,7 @@ class benchmarker():
         """
         queryString = self.getQueryString(numQuery, connectionname=connectionname, numRun=numRun)
         inputConfig = [singleRunInput(0, queryString, self.queries[numQuery-1])]
-        output = singleRun(self.dbms[connectionname].connectiondata, inputConfig, [0], connectionname, numQuery, None, BENCHMARKER_VERBOSE_QUERIES=BENCHMARKER_VERBOSE_QUERIES, BENCHMARKER_VERBOSE_RESULTS=BENCHMARKER_VERBOSE_RESULTS)
+        output = singleRun(self.dbms[connectionname].connectiondata, inputConfig, [0], connectionname, numQuery, None, BENCHMARKER_VERBOSE_QUERIES=BENCHMARKER_VERBOSE_QUERIES, BENCHMARKER_VERBOSE_RESULTS=BENCHMARKER_VERBOSE_RESULTS, BENCHMARKER_VERBOSE_EXPLAIN=BENCHMARKER_VERBOSE_EXPLAIN)
         return output[0]
     def runSingleBenchmarkRunMultiple(self, numQuery, connectionname, numRun=0, times=1):
         """
@@ -1247,7 +1273,7 @@ class benchmarker():
                 if self.pool is not None:
                     self.logger.info("POOL of query senders (global pool)")
                     #multiple_results = [self.pool.apply_async(singleRun, (self.dbms[c].connectiondata, inputConfig, runs[i*batchsize:(i+1)*batchsize], connectionname, numQuery, self.path, JPickler.dumps(self.activeConnections))) for i in range(numBatches)]
-                    multiple_results = [self.pool.apply_async(singleRun, (self.dbms[c].connectiondata, inputConfig, runs[i*batchsize:(i+1)*batchsize], connectionname, numQuery, self.path, [], BENCHMARKER_VERBOSE_QUERIES, BENCHMARKER_VERBOSE_RESULTS, BENCHMARKER_VERBOSE_PROCESS, BENCHMARKER_VERBOSE_NONE)) for i in range(numBatches)]
+                    multiple_results = [self.pool.apply_async(singleRun, (self.dbms[c].connectiondata, inputConfig, runs[i*batchsize:(i+1)*batchsize], connectionname, numQuery, self.path, [], BENCHMARKER_VERBOSE_QUERIES, BENCHMARKER_VERBOSE_RESULTS, BENCHMARKER_VERBOSE_PROCESS, BENCHMARKER_VERBOSE_NONE, BENCHMARKER_VERBOSE_EXPLAIN)) for i in range(numBatches)]
                     lists = [res.get(timeout=timeout) for res in multiple_results]
                     lists = [i for j in lists for i in j]
                 else:
@@ -1263,7 +1289,7 @@ class benchmarker():
                     with mp.Pool(processes=numProcesses) as pool:
                         self.logger.info("POOL of query senders (local pool starmap {} workers)".format(numProcesses))
                         #multiple_results = [pool.apply_async(singleRun, (self.dbms[c].connectiondata, inputConfig, runs[i*batchsize:(i+1)*batchsize], connectionname, numQuery, self.path, JPickler.dumps(self.activeConnections))) for i in range(numBatches)]
-                        args = [(self.dbms[c].connectiondata, inputConfig, runs[i*batchsize:(i+1)*batchsize], connectionname, numQuery, self.path, [], BENCHMARKER_VERBOSE_QUERIES, BENCHMARKER_VERBOSE_RESULTS, BENCHMARKER_VERBOSE_PROCESS, BENCHMARKER_VERBOSE_NONE) for i in range(numBatches)]
+                        args = [(self.dbms[c].connectiondata, inputConfig, runs[i*batchsize:(i+1)*batchsize], connectionname, numQuery, self.path, [], BENCHMARKER_VERBOSE_QUERIES, BENCHMARKER_VERBOSE_RESULTS, BENCHMARKER_VERBOSE_PROCESS, BENCHMARKER_VERBOSE_NONE, BENCHMARKER_VERBOSE_EXPLAIN) for i in range(numBatches)]
                         multiple_results = pool.starmap_async(singleRun, args)
                         lists = multiple_results.get(timeout=timeout)
                         #lists = [res.get(timeout=timeout) for res in multiple_results]
@@ -1278,7 +1304,7 @@ class benchmarker():
                 start_time_queries = default_timer()
                 lists = []
                 for i in range(numBatches):
-                    lists_batch = singleRun(self.dbms[c].connectiondata, inputConfig, runs[i*batchsize:(i+1)*batchsize], connectionname, numQuery, self.path, self.activeConnections, BENCHMARKER_VERBOSE_QUERIES, BENCHMARKER_VERBOSE_RESULTS, BENCHMARKER_VERBOSE_PROCESS, BENCHMARKER_VERBOSE_NONE)
+                    lists_batch = singleRun(self.dbms[c].connectiondata, inputConfig, runs[i*batchsize:(i+1)*batchsize], connectionname, numQuery, self.path, self.activeConnections, BENCHMARKER_VERBOSE_QUERIES, BENCHMARKER_VERBOSE_RESULTS, BENCHMARKER_VERBOSE_PROCESS, BENCHMARKER_VERBOSE_NONE, BENCHMARKER_VERBOSE_EXPLAIN)
                     lists.extend(lists_batch)
                     end_time_queries = default_timer()
                     duration_queries = (end_time_queries - start_time_queries)
@@ -2016,7 +2042,8 @@ class benchmarker():
             BENCHMARKER_VERBOSE_QUERIES=BENCHMARKER_VERBOSE_QUERIES,
             BENCHMARKER_VERBOSE_RESULTS=BENCHMARKER_VERBOSE_RESULTS,
             BENCHMARKER_VERBOSE_PROCESS=BENCHMARKER_VERBOSE_PROCESS,
-            BENCHMARKER_VERBOSE_NONE=BENCHMARKER_VERBOSE_NONE)
+            BENCHMARKER_VERBOSE_NONE=BENCHMARKER_VERBOSE_NONE,
+            BENCHMARKER_VERBOSE_EXPLAIN=BENCHMARKER_VERBOSE_EXPLAIN)
         output = output[0]
         return output
     def runAndStoreIsolatedQuery(self, connectionname, queryString, queryName=None):
@@ -2109,7 +2136,7 @@ def run_cli(parameter):
     #parser.add_argument('-pt', '--timeout', help='Parameter: Timeout in seconds', default=0)
     args = parser.parse_args()
     """
-    global BENCHMARKER_VERBOSE_QUERIES, BENCHMARKER_VERBOSE_STATISTICS, BENCHMARKER_VERBOSE_RESULTS, BENCHMARKER_VERBOSE_PROCESS, BENCHMARKER_VERBOSE_NONE
+    global BENCHMARKER_VERBOSE_QUERIES, BENCHMARKER_VERBOSE_STATISTICS, BENCHMARKER_VERBOSE_RESULTS, BENCHMARKER_VERBOSE_PROCESS, BENCHMARKER_VERBOSE_NONE, BENCHMARKER_VERBOSE_EXPLAIN
     #print(parameter)
     args = SimpleNamespace(**parameter)
     #print(args)
@@ -2136,6 +2163,8 @@ def run_cli(parameter):
         logger = logging.getLogger('dbmsbenchmarker')
         logger.setLevel(logging.ERROR)
         logging.basicConfig(level=logging.ERROR)
+    if args.verbose_explain:
+        BENCHMARKER_VERBOSE_EXPLAIN = True
     subfolder = None
     rename_connection = ''
     rename_alias = ''
@@ -2421,7 +2450,9 @@ def run_cli(parameter):
             # generate evaluation cube
             experiments.overwrite = True
             skip_component_metrics = getattr(args, 'skip_component_metrics', False)
-            evaluator.evaluator(experiments, load=False, force=True, skip_component_metrics=skip_component_metrics)
+            # run_evaluation() builds the cube itself (evaluator.evaluator(..., force=True));
+            # building it here too would just repeat the same generate()/load() cycle with
+            # nothing in between consuming the first result.
             run_evaluation(experiments, True, skip_component_metrics=skip_component_metrics)
         return experiments
 

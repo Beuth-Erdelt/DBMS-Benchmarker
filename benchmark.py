@@ -63,6 +63,7 @@ if __name__ == '__main__':
     parser.add_argument('-vr', '--verbose-results', help='print result sets of every query that has been sent', action='store_true', default=False)
     parser.add_argument('-vp', '--verbose-process', help='print infos about the workflow steps', action='store_true', default=False)
     parser.add_argument('-vn', '--verbose-none', help='stay completely silent', action='store_true', default=False)
+    parser.add_argument('-ve', '--verbose-explain', help='run and print configured EXPLAIN statements after each benchmark query', action='store_true', default=False)
     parser.add_argument('-pn', '--num-run', help='Parameter: Number of executions per query', default=0)
     parser.add_argument('-m', '--metrics', help='collect hardware metrics per query', action='store_true', default=False)
     parser.add_argument('-mps', '--metrics-per-stream', help='collect hardware metrics per stream', action='store_true', default=False)
