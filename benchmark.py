@@ -43,6 +43,7 @@ if __name__ == '__main__':
     parser.add_argument('-f', '--config-folder', help='folder containing query and connection config files. If set, the names connections.config and queries.config are assumed automatically.', default=None)
     parser.add_argument('-r', '--result-folder', help='folder for storing benchmark result files, default is given by timestamp', default=None)
     parser.add_argument('-e', '--generate-evaluation', help='generate new evaluation file', default='no', choices=['no','yes'])
+    parser.add_argument('-scm', '--skip-component-metrics', help='skip collecting per-component (loading/streaming/loader/benchmarker/datagenerator) hardware metric aggregates when generating the evaluation cube; only affects the interactive evaluation notebooks, not the core cube', action='store_true', default=False)
     parser.add_argument('-w', '--working', help='working per query or connection', default='connection', choices=['query','connection'])
     #parser.add_argument('-a', '--anonymize', help='anonymize all dbms', action='store_true', default=False)
     #parser.add_argument('-u', '--unanonymize', help='unanonymize some dbms, only sensible in combination with anonymize', nargs='*', default=[])
