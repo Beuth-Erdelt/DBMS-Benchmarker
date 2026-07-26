@@ -142,6 +142,20 @@ def singleRun(connectiondata, inputConfig, numRuns, connectionname, numQuery, pa
         explainTemplates = connectiondata['JDBC']['explain']
         if isinstance(explainTemplates, str):
             explainTemplates = [explainTemplates]
+    def explainValueToText(value):
+        # JDBC drivers often wrap non-primitive column types (e.g. Postgres json/jsonb,
+        # returned by EXPLAIN (FORMAT JSON)) as a generic Java object (e.g. PGobject)
+        # that jaydebeapi has no default converter for, so plain str() on it just yields
+        # JPype's "<java object 'org.postgresql.util.PGobject'>" instead of the JSON text.
+        # PGobject.getValue()/toString() return the actual text.
+        for method_name in ("getValue", "toString"):
+            method = getattr(value, method_name, None)
+            if callable(method):
+                try:
+                    return str(method())
+                except Exception:
+                    pass
+        return str(value)
     # perform runs for this connection
     for numRun in numRuns:
         workername = "numRun %i: " % (numRun+1)
@@ -258,7 +272,7 @@ def singleRun(connectiondata, inputConfig, numRuns, connectionname, numQuery, pa
                         explainData = connection.fetchResult()
                         print(workername+"EXPLAIN: "+explainQuery)
                         for row in explainData:
-                            print(workername+"EXPLAIN result: "+str(row))
+                            print(workername+"EXPLAIN result: "+" | ".join(explainValueToText(v) for v in row))
                     except Exception as explainException:
                         print(workername+"EXPLAIN failed: "+str(explainException))
                     finally:
