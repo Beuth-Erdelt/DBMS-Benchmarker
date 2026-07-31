@@ -429,7 +429,7 @@ class metricer(reporter):
                     #        logging.debug("Last active query is {}".format(i))
                     #        break
                     #logging.debug(connection.connectiondata['monitoring']['prometheus_url'])
-                    query='stream'
+                    query='benchmarking'
                     if 'metrics' in connection.connectiondata['monitoring']:
                         metrics_dict = connection.connectiondata['monitoring']['metrics']
                     else:
