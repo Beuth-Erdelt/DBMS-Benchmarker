@@ -243,7 +243,7 @@ class evaluator():
                                 df.drop_duplicates(inplace=True) # TODO: Why are there duplicates sometimes?
                                 evaluation['general']['loadingmetrics'][m] = df.to_dict(orient='index')
                                 # streaming metrics
-                                df = metricsReporter.dfHardwareMetricsStreaming(m)
+                                df = metricsReporter.dfHardwareMetricsBenchmarking(m)
                                 df.drop_duplicates(inplace=True) # TODO: Why are there duplicates sometimes?
                                 evaluation['general']['streamingmetrics'][m] = df.to_dict(orient='index')
                                 # loader metrics

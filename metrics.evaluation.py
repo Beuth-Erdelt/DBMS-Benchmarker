@@ -136,11 +136,11 @@ class evaluator:
 
 if __name__ == '__main__':
     # argparse
-    parser = argparse.ArgumentParser(description='A benchmark tool for RDBMS. Transforms loading or stream metrics.')
+    parser = argparse.ArgumentParser(description='A benchmark tool for RDBMS. Transforms loading or benchmarking metrics.')
     parser.add_argument('-r', '--result-folder', help='folder for storing benchmark result folders', default=None)
     parser.add_argument('-e', '--experiment-code', help='folder for storing benchmark result files, default is given by timestamp', default=None)
     #parser.add_argument('-c', '--connection', help='Name of the connection (dbms) to use', default=None)
-    parser.add_argument('-ct', '--component-type', help='Type of the component (loading or stream)', default='loading')
+    parser.add_argument('-ct', '--component-type', help='Type of the component (loading or benchmarking)', default='loading')
     parser.add_argument('-cf', '--connection-file', help='name of connection config file', default='connections.config')
     parser.add_argument('-db', '--debug', help='dump debug informations', action='store_true')
     args = parser.parse_args()
