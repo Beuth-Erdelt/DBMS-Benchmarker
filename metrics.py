@@ -30,14 +30,14 @@ urllib3.disable_warnings()
 
 if __name__ == '__main__':
     # argparse
-    parser = argparse.ArgumentParser(description='A benchmark tool for RDBMS. Fetches loading or stream metrics.')
+    parser = argparse.ArgumentParser(description='A benchmark tool for RDBMS. Fetches loading or benchmarking metrics.')
     parser.add_argument('-r', '--result-folder', help='folder for storing benchmark result folders', default=None)
     parser.add_argument('-e', '--experiment-code', help='folder for storing benchmark result files, default is given by timestamp', default=None)
     parser.add_argument('-f', '--config-folder', help='folder containing query and connection config files. If set, the names connections.config and queries.config are assumed automatically.', default=None)
     parser.add_argument('-c', '--connection', help='Name of the connection (dbms) to use', default=None)
     parser.add_argument('-mt', '--metrics-type', help='Type of metrics definitions (metrics, metrics_special, metrics_custom)', default='')
     parser.add_argument('-com', '--component', help='Component name', default='')
-    parser.add_argument('-ct', '--component-type', help='Type of the component (loading or stream)', default='loading')
+    parser.add_argument('-ct', '--component-type', help='Type of the component (loading or benchmarking)', default='loading')
     parser.add_argument('-cn', '--container-name', help='Name of the container (if not dbms for sut/workers: datagenerator, sensor, dbmsbenchmarker)', default=None)
     parser.add_argument('-cf', '--connection-file', help='name of connection config file', default='connections.config')
     parser.add_argument('-ts', '--time-start', help='Time loading has started', default=None)
