@@ -304,10 +304,8 @@ class metrics():
                     df.columns=[connection]
                 else:
                     if type == 'application' and len(url_app) > 0:
-                        if 'loading' in query or 'benchmarking' in query or 'stream' in query:
+                        if 'loading' in query or 'benchmarking' in query:
                             # this is the loading or benchmarking phase of a component of SUT
-                            # ("stream" kept for backward compatibility with configs predating
-                            # the "stream" -> "benchmarking" rename)
                             url_to_query = url_app
                         else:
                             # application metrics only active for SUT
@@ -506,16 +504,8 @@ class metrics():
         #filename = self.benchmarker.path+'/query_loading_metric_'+str(metric)+'.csv'
         filename = "{path}/query_{component}_metric_{metric}.csv".format(path=self.benchmarker.path, component=component, metric=metric)
         #print(filename)
-        # Read-only fallback to the pre-rename filename, for result folders written
-        # before "stream" became "benchmarking" (no writer ever uses this name again).
-        legacy_filename = (
-            "{path}/query_stream_metric_{metric}.csv".format(path=self.benchmarker.path, metric=metric)
-            if component == "benchmarking" else None
-        )
         if os.path.isfile(filename) and not self.benchmarker.overwrite:
             df_all = metrics.loadMetricsDataframe(filename)
-        elif legacy_filename and os.path.isfile(legacy_filename) and not self.benchmarker.overwrite:
-            df_all = metrics.loadMetricsDataframe(legacy_filename)
         else:
             df_all = None
         if df_all is None:
@@ -533,9 +523,6 @@ class metrics():
                 filename_component = "{path}/query_{component}_metric_{metric}_{connectionname}.csv".format(path=self.benchmarker.path, component=component, metric=metric, connectionname=connectionname)
                 #filename = self.benchmarker.path+'/query_loading_metric_'+str(metric)+'_'+connectionname+'.csv'
                 df = metrics.loadMetricsDataframe(filename_component)
-                if df is None and component == "benchmarking":
-                    legacy_filename_component = "{path}/query_stream_metric_{metric}_{connectionname}.csv".format(path=self.benchmarker.path, metric=metric, connectionname=connectionname)
-                    df = metrics.loadMetricsDataframe(legacy_filename_component)
                 if df is None:
                     continue
                 df.columns=[connectionname]
@@ -564,25 +551,12 @@ class metrics():
         #print(df_all)
         #print(df_all)
         return df_all.T
-    def dfHardwareMetricsStreaming(self, metric):
-        # Deprecated alias kept for external callers written against the pre-rename
-        # name; "stream" was renamed to "benchmarking" to pair with "benchmarker"
-        # (the driver-side component), mirroring the existing "loader"/"loading" pair.
-        return self.dfHardwareMetricsBenchmarking(metric)
     def dfHardwareMetricsBenchmarking(self, metric):
         return self.dfHardwareMetricsComponentOriginal(metric, component="benchmarking")
     def dfHardwareMetricsComponent(self, metric, component="benchmarking"):
         filename = "{path}/query_{component}_metric_{metric}.csv".format(path=self.benchmarker.path, component=component, metric=metric)
-        # Read-only fallback to the pre-rename filename, for result folders written
-        # before "stream" became "benchmarking" (no writer ever uses this name again).
-        legacy_filename = (
-            "{path}/query_stream_metric_{metric}.csv".format(path=self.benchmarker.path, metric=metric)
-            if component == "benchmarking" else None
-        )
         if os.path.isfile(filename) and not self.benchmarker.overwrite:
             df_all = metrics.loadMetricsDataframe(filename)
-        elif legacy_filename and os.path.isfile(legacy_filename) and not self.benchmarker.overwrite:
-            df_all = metrics.loadMetricsDataframe(legacy_filename)
         else:
             df_all = None
         if df_all is None:
@@ -592,9 +566,6 @@ class metrics():
                 #print(connectionname, df_all)
                 filename_component = "{path}/query_{component}_metric_{metric}_{connectionname}.csv".format(path=self.benchmarker.path, component=component, metric=metric, connectionname=connectionname)
                 df = metrics.loadMetricsDataframe(filename_component)
-                if df is None and component == "benchmarking":
-                    legacy_filename_component = "{path}/query_stream_metric_{metric}_{connectionname}.csv".format(path=self.benchmarker.path, metric=metric, connectionname=connectionname)
-                    df = metrics.loadMetricsDataframe(legacy_filename_component)
                 if df is None:
                     continue
                 df.columns=[connectionname]
