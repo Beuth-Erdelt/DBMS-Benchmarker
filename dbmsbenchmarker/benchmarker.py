@@ -1995,6 +1995,11 @@ class benchmarker():
             return self.protocol['query'][str(query)]['warnings']
         else:
             return self.protocol['query'][str(query)]['warnings'][connection]
+    def getExplain(self, query, connection=None):
+        if connection is None:
+            return self.protocol['query'][str(query)]['explain']
+        else:
+            return self.protocol['query'][str(query)]['explain'][connection]
     def printErrors(self):
         for numQuery in range(1, len(self.queries)+1):
             queryObject = tools.query(self.queries[numQuery-1])

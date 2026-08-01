@@ -451,6 +451,9 @@ class inspector():
     def get_warning(self, numQuery, connection=None):
         # warning message of connection at query
         return self.benchmarks.getWarning(numQuery, connection)
+    def get_explain(self, numQuery, connection=None):
+        # EXPLAIN string of connection at query, empty unless collected via -se/--store-explain
+        return self.benchmarks.getExplain(numQuery, connection)
     def get_datastorage_list(self, numQuery):
         # list of data storage for query
         return self.benchmarks.protocol['query'][str(numQuery)]['dataStorage']
