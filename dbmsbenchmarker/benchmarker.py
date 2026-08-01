@@ -53,6 +53,7 @@ BENCHMARKER_VERBOSE_RESULTS = False
 BENCHMARKER_VERBOSE_PROCESS = False
 BENCHMARKER_VERBOSE_NONE = False
 BENCHMARKER_VERBOSE_EXPLAIN = False
+BENCHMARKER_STORE_EXPLAIN = False
 
 logger = mp.log_to_stderr(logging.WARNING)
 
@@ -79,11 +80,12 @@ class singleRunOutput:
         self.data = []
         self.columnnames = []
         self.size = 0
+        self.explain = ''
         pass
 
 
 
-def singleRun(connectiondata, inputConfig, numRuns, connectionname, numQuery, path=None, activeConnections = [], BENCHMARKER_VERBOSE_QUERIES=False, BENCHMARKER_VERBOSE_RESULTS=False, BENCHMARKER_VERBOSE_PROCESS=True, BENCHMARKER_VERBOSE_NONE=False, BENCHMARKER_VERBOSE_EXPLAIN=False):
+def singleRun(connectiondata, inputConfig, numRuns, connectionname, numQuery, path=None, activeConnections = [], BENCHMARKER_VERBOSE_QUERIES=False, BENCHMARKER_VERBOSE_RESULTS=False, BENCHMARKER_VERBOSE_PROCESS=True, BENCHMARKER_VERBOSE_NONE=False, BENCHMARKER_VERBOSE_EXPLAIN=False, BENCHMARKER_STORE_EXPLAIN=False):
     """
     Function for running an actual benchmark run
 
@@ -138,7 +140,7 @@ def singleRun(connectiondata, inputConfig, numRuns, connectionname, numQuery, pa
             print(("numRun %s: " % ("/".join([str(i+1) for i in numRuns])))+"connection [ms]: "+str(durationConnect))
     # normalize EXPLAIN templates configured for this connection (once per batch)
     explainTemplates = []
-    if BENCHMARKER_VERBOSE_EXPLAIN and 'JDBC' in connectiondata and 'explain' in connectiondata['JDBC']:
+    if (BENCHMARKER_VERBOSE_EXPLAIN or BENCHMARKER_STORE_EXPLAIN) and 'JDBC' in connectiondata and 'explain' in connectiondata['JDBC']:
         explainTemplates = connectiondata['JDBC']['explain']
         if isinstance(explainTemplates, str):
             explainTemplates = [explainTemplates]
@@ -261,7 +263,11 @@ def singleRun(connectiondata, inputConfig, numRuns, connectionname, numQuery, pa
         # EXPLAIN: run configured EXPLAIN templates against the literal query just executed.
         # Kept strictly outside the timed section above and skipped if the real query failed
         # (a failed statement typically aborts the transaction, so more SQL would just cascade errors).
-        if explainTemplates and error == "":
+        explainText = ""
+        # EXPLAIN plans are constant across immediate repetitions of the same query, so
+        # storing (as opposed to printing) only ever runs it once, on the very first run.
+        runExplainNow = explainTemplates and error == "" and (BENCHMARKER_VERBOSE_EXPLAIN or (BENCHMARKER_STORE_EXPLAIN and numRun == 0))
+        if runExplainNow:
             queryParts = queryString if isinstance(queryString, list) else [queryString]
             for queryPart in queryParts:
                 for explainTemplate in explainTemplates:
@@ -270,11 +276,18 @@ def singleRun(connectiondata, inputConfig, numRuns, connectionname, numQuery, pa
                         connection.openCursor()
                         connection.executeQuery(explainQuery)
                         explainData = connection.fetchResult()
-                        print(workername+"EXPLAIN: "+explainQuery)
-                        for row in explainData:
-                            print(workername+"EXPLAIN result: "+" | ".join(explainValueToText(v) for v in row))
+                        if BENCHMARKER_VERBOSE_EXPLAIN:
+                            print(workername+"EXPLAIN: "+explainQuery)
+                            for row in explainData:
+                                print(workername+"EXPLAIN result: "+" | ".join(explainValueToText(v) for v in row))
+                        if BENCHMARKER_STORE_EXPLAIN and numRun == 0:
+                            rows = "\n".join(" | ".join(explainValueToText(v) for v in row) for row in explainData)
+                            explainText += "EXPLAIN: {}\n{}\n".format(explainQuery, rows)
                     except Exception as explainException:
-                        print(workername+"EXPLAIN failed: "+str(explainException))
+                        if BENCHMARKER_VERBOSE_EXPLAIN:
+                            print(workername+"EXPLAIN failed: "+str(explainException))
+                        if BENCHMARKER_STORE_EXPLAIN and numRun == 0:
+                            explainText += "EXPLAIN failed: {}\n".format(explainException)
                     finally:
                         connection.closeCursor()
         result = singleRunOutput()
@@ -289,6 +302,7 @@ def singleRun(connectiondata, inputConfig, numRuns, connectionname, numQuery, pa
         result.data = data
         result.size = size
         result.columnnames = columnnames
+        result.explain = explainText
         #result.size = size
         results.append(result)
     if not len(activeConnections) > numActiveConnection:
@@ -696,7 +710,7 @@ class benchmarker():
         # store query config again, since it might have been changed
         self.store_querydata()
         for numQuery in range(1, len(self.queries)+1):
-            self.protocol['query'][str(numQuery)] = {'errors':{}, 'warnings':{}, 'durations':{}, 'duration':0.0, 'start':'', 'end':'', 'dataStorage': [], 'resultSets': {}, 'parameter': [], 'sizes': {}, 'starts': {}, 'ends': {}, 'runs': []}
+            self.protocol['query'][str(numQuery)] = {'errors':{}, 'warnings':{}, 'durations':{}, 'duration':0.0, 'start':'', 'end':'', 'dataStorage': [], 'resultSets': {}, 'parameter': [], 'sizes': {}, 'starts': {}, 'ends': {}, 'runs': [], 'explain': {}}
     def cleanProtocol(self, numQuery):
         """
         Cleans the protocol for an existing query.
@@ -1079,6 +1093,7 @@ class benchmarker():
         l_data = [l.data for l in lists]
         l_columnnames = [l.columnnames for l in lists]
         l_size = [l.size for l in lists]
+        l_explain = [l.explain for l in lists]
         def output(l):
             #print(l)
             print('Num: '+str(len(l)))
@@ -1101,7 +1116,7 @@ class benchmarker():
             #print(l_data)
             #print("Column names:")
             #print(l_columnnames)
-        return l_connect, l_execute, l_transfer, l_error, l_data, l_columnnames, l_size
+        return l_connect, l_execute, l_transfer, l_error, l_data, l_columnnames, l_size, l_explain
     def runBenchmark(self, numQuery, connectionname):
         """
         Performs a benchmark run (fixed query and connection) and stores results.
@@ -1192,6 +1207,9 @@ class benchmarker():
         # prepare protocol for sizes
         if c not in self.protocol['query'][str(numQuery)]['sizes']:
             self.protocol['query'][str(numQuery)]['sizes'][c] = 0.0
+        # prepare protocol for explain
+        if c not in self.protocol['query'][str(numQuery)]['explain']:
+            self.protocol['query'][str(numQuery)]['explain'][c] = ""
         # skip query if not active
         if not query.active:
             self.logger.info("Benchmarks of Q"+str(numQuery)+" at dbms "+connectionname+" is not active")
@@ -1287,7 +1305,7 @@ class benchmarker():
                 if self.pool is not None:
                     self.logger.info("POOL of query senders (global pool)")
                     #multiple_results = [self.pool.apply_async(singleRun, (self.dbms[c].connectiondata, inputConfig, runs[i*batchsize:(i+1)*batchsize], connectionname, numQuery, self.path, JPickler.dumps(self.activeConnections))) for i in range(numBatches)]
-                    multiple_results = [self.pool.apply_async(singleRun, (self.dbms[c].connectiondata, inputConfig, runs[i*batchsize:(i+1)*batchsize], connectionname, numQuery, self.path, [], BENCHMARKER_VERBOSE_QUERIES, BENCHMARKER_VERBOSE_RESULTS, BENCHMARKER_VERBOSE_PROCESS, BENCHMARKER_VERBOSE_NONE, BENCHMARKER_VERBOSE_EXPLAIN)) for i in range(numBatches)]
+                    multiple_results = [self.pool.apply_async(singleRun, (self.dbms[c].connectiondata, inputConfig, runs[i*batchsize:(i+1)*batchsize], connectionname, numQuery, self.path, [], BENCHMARKER_VERBOSE_QUERIES, BENCHMARKER_VERBOSE_RESULTS, BENCHMARKER_VERBOSE_PROCESS, BENCHMARKER_VERBOSE_NONE, BENCHMARKER_VERBOSE_EXPLAIN, BENCHMARKER_STORE_EXPLAIN)) for i in range(numBatches)]
                     lists = [res.get(timeout=timeout) for res in multiple_results]
                     lists = [i for j in lists for i in j]
                 else:
@@ -1303,7 +1321,7 @@ class benchmarker():
                     with mp.Pool(processes=numProcesses) as pool:
                         self.logger.info("POOL of query senders (local pool starmap {} workers)".format(numProcesses))
                         #multiple_results = [pool.apply_async(singleRun, (self.dbms[c].connectiondata, inputConfig, runs[i*batchsize:(i+1)*batchsize], connectionname, numQuery, self.path, JPickler.dumps(self.activeConnections))) for i in range(numBatches)]
-                        args = [(self.dbms[c].connectiondata, inputConfig, runs[i*batchsize:(i+1)*batchsize], connectionname, numQuery, self.path, [], BENCHMARKER_VERBOSE_QUERIES, BENCHMARKER_VERBOSE_RESULTS, BENCHMARKER_VERBOSE_PROCESS, BENCHMARKER_VERBOSE_NONE, BENCHMARKER_VERBOSE_EXPLAIN) for i in range(numBatches)]
+                        args = [(self.dbms[c].connectiondata, inputConfig, runs[i*batchsize:(i+1)*batchsize], connectionname, numQuery, self.path, [], BENCHMARKER_VERBOSE_QUERIES, BENCHMARKER_VERBOSE_RESULTS, BENCHMARKER_VERBOSE_PROCESS, BENCHMARKER_VERBOSE_NONE, BENCHMARKER_VERBOSE_EXPLAIN, BENCHMARKER_STORE_EXPLAIN) for i in range(numBatches)]
                         multiple_results = pool.starmap_async(singleRun, args)
                         lists = multiple_results.get(timeout=timeout)
                         #lists = [res.get(timeout=timeout) for res in multiple_results]
@@ -1318,7 +1336,7 @@ class benchmarker():
                 start_time_queries = default_timer()
                 lists = []
                 for i in range(numBatches):
-                    lists_batch = singleRun(self.dbms[c].connectiondata, inputConfig, runs[i*batchsize:(i+1)*batchsize], connectionname, numQuery, self.path, self.activeConnections, BENCHMARKER_VERBOSE_QUERIES, BENCHMARKER_VERBOSE_RESULTS, BENCHMARKER_VERBOSE_PROCESS, BENCHMARKER_VERBOSE_NONE, BENCHMARKER_VERBOSE_EXPLAIN)
+                    lists_batch = singleRun(self.dbms[c].connectiondata, inputConfig, runs[i*batchsize:(i+1)*batchsize], connectionname, numQuery, self.path, self.activeConnections, BENCHMARKER_VERBOSE_QUERIES, BENCHMARKER_VERBOSE_RESULTS, BENCHMARKER_VERBOSE_PROCESS, BENCHMARKER_VERBOSE_NONE, BENCHMARKER_VERBOSE_EXPLAIN, BENCHMARKER_STORE_EXPLAIN)
                     lists.extend(lists_batch)
                     end_time_queries = default_timer()
                     duration_queries = (end_time_queries - start_time_queries)
@@ -1341,7 +1359,7 @@ class benchmarker():
             #pool.close()
             #pool.join()
             #lists = [res.get() for res in multiple_results]
-            l_connect, l_execute, l_transfer, l_error, l_data, l_columnnames, l_size = self.flattenResult(lists)
+            l_connect, l_execute, l_transfer, l_error, l_data, l_columnnames, l_size, l_explain = self.flattenResult(lists)
             error = ""
             for i in range(len(l_error)):
                 if len(l_error[i]) > 0:
@@ -1349,6 +1367,12 @@ class benchmarker():
                     break
             if len(error):
                 self.logger.info(error)
+            explainText = ""
+            for i in range(len(l_explain)):
+                if len(l_explain[i]) > 0:
+                    explainText = l_explain[i]
+                    break
+            self.protocol['query'][str(numQuery)]['explain'][c] = explainText
             self.timerConnect.time_c = l_connect
             self.timerExecution.time_c = l_execute
             self.timerTransfer.time_c = l_transfer
@@ -1971,6 +1995,11 @@ class benchmarker():
             return self.protocol['query'][str(query)]['warnings']
         else:
             return self.protocol['query'][str(query)]['warnings'][connection]
+    def getExplain(self, query, connection=None):
+        if connection is None:
+            return self.protocol['query'][str(query)]['explain']
+        else:
+            return self.protocol['query'][str(query)]['explain'][connection]
     def printErrors(self):
         for numQuery in range(1, len(self.queries)+1):
             queryObject = tools.query(self.queries[numQuery-1])
@@ -2150,7 +2179,7 @@ def run_cli(parameter):
     #parser.add_argument('-pt', '--timeout', help='Parameter: Timeout in seconds', default=0)
     args = parser.parse_args()
     """
-    global BENCHMARKER_VERBOSE_QUERIES, BENCHMARKER_VERBOSE_STATISTICS, BENCHMARKER_VERBOSE_RESULTS, BENCHMARKER_VERBOSE_PROCESS, BENCHMARKER_VERBOSE_NONE, BENCHMARKER_VERBOSE_EXPLAIN
+    global BENCHMARKER_VERBOSE_QUERIES, BENCHMARKER_VERBOSE_STATISTICS, BENCHMARKER_VERBOSE_RESULTS, BENCHMARKER_VERBOSE_PROCESS, BENCHMARKER_VERBOSE_NONE, BENCHMARKER_VERBOSE_EXPLAIN, BENCHMARKER_STORE_EXPLAIN
     #print(parameter)
     args = SimpleNamespace(**parameter)
     #print(args)
@@ -2179,6 +2208,8 @@ def run_cli(parameter):
         logging.basicConfig(level=logging.ERROR)
     if args.verbose_explain:
         BENCHMARKER_VERBOSE_EXPLAIN = True
+    if args.store_explain:
+        BENCHMARKER_STORE_EXPLAIN = True
     subfolder = None
     rename_connection = ''
     rename_alias = ''

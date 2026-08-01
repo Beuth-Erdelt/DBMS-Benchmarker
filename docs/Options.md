@@ -96,6 +96,8 @@ options:
   -vn, --verbose-none   stay completely silent
   -ve, --verbose-explain
                         run and print configured EXPLAIN statements after each benchmark query
+  -se, --store-explain
+                        run configured EXPLAIN statements after the first run of each benchmark query and store the result in the protocol
   -pn NUM_RUN, --num-run NUM_RUN
                         Parameter: Number of executions per query
   -m, --metrics         collect hardware metrics per query
@@ -594,7 +596,7 @@ Example for `CONNECTION_FILE`:
 * `alias`: Alias for anonymized reports (optional default is a random name)
 * `dialect`: Key for (optional) alternative SQL statements in the query file
 * `driver`, `url`, `auth`, `jar`: JDBC data (`options` contains optional parameter for the JVM)
-* `explain`: Optional list of query templates (or a single template string), each containing the placeholder `{query}`. Has no effect unless CLI flag `-ve`/`--verbose-explain` is set. When set, right after each benchmark query has run, `{query}` is substituted with the literal query text just executed and the resulting statement is sent to the same connection; the result is printed to stdout.
+* `explain`: Optional list of query templates (or a single template string), each containing the placeholder `{query}`. Has no effect unless CLI flag `-ve`/`--verbose-explain` or `-se`/`--store-explain` is set. When set, right after a benchmark query has run, `{query}` is substituted with the literal query text just executed and the resulting statement is sent to the same connection. `-ve` prints the result to stdout for every run; `-se` additionally (and independently) stores the result of the first run in the protocol, under `query[n]['explain'][connection]` - it is not re-run for subsequent repetitions of the same query, since the plan is assumed constant.
 * `init_SQL`: Optional command, that is sent once, when the connection has been established
 * Additional information useful for reporting and also used for computations
   * `timeload`: Time for ingest (in milliseconds), because not part of the benchmark
