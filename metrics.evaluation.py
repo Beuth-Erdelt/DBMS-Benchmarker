@@ -60,7 +60,26 @@ class evaluator:
         self.code = code
     def transform_monitoring_results(self, component="loading"):
         """
-        Transforms csv files (per connection and per metric) to single csv file (per metric).
+        Transforms csv files (per connection and per metric) to a single csv
+        file (per metric), one column per SUT.
+
+        A connection's identity is its `orig_name` when it has one, its own
+        `name` otherwise - unchanged from before. What's new: once an
+        identity has been merged in, any other connection resolving to the
+        same identity is skipped, instead of being merged in again. Without
+        that guard, several connections sharing one `orig_name` (how
+        DBMSBenchmarker represents parallel loaders/clients against a single
+        physical SUT) each load and merge the *same* file under the *same*
+        column name, and pandas' merge silently renames the second one to
+        `_x`/`_y` instead of erroring, corrupting the combined metric. If the
+        job-level file named after the identity doesn't exist (some
+        components, e.g. `loading`, only ever write that one; others only
+        write per-pod files), a connection's own per-pod file is tried as a
+        fallback and stands in for the whole identity.
+
+        Loading any pre-existing combined file first keeps repeated
+        invocations of this script for the same component idempotent instead
+        of compounding.
 
         :param component: Metrics of component loading or benchmark
         """
@@ -68,28 +87,38 @@ class evaluator:
         list_metrics = self.get_monitoring_metrics()
         #print(c['name'], list_metrics)
         for m in list_metrics:
-            df_all = None
+            out_filename = '/query_{component}_metric_{metric}.csv'.format(component=component, metric=m)
+            df_all = monitor.metrics.loadMetricsDataframe(self.path+out_filename)
+            processed_names = set()
             for connection in connections_sorted:
                 if 'orig_name' in connection:
                     connectionname = connection['orig_name']
                 else:
                     connectionname = connection['name']
+                if connectionname in processed_names:
+                    continue
                 filename = "query_{component}_metric_{metric}_{connection}.csv".format(component=component, metric=m, connection=connectionname)
                 #print(self.path++"/"+filename)
                 df = monitor.metrics.loadMetricsDataframe(self.path+"/"+filename)
+                if df is None and connection['name'] != connectionname:
+                    # job-level file doesn't exist; fall back to this connection's own per-pod file
+                    filename = "query_{component}_metric_{metric}_{connection}.csv".format(component=component, metric=m, connection=connection['name'])
+                    df = monitor.metrics.loadMetricsDataframe(self.path+"/"+filename)
                 if df is None:
                     continue
                 #print(df)
+                processed_names.add(connectionname)
                 df.columns=[connectionname]
                 if df_all is None:
                     df_all = df
                 else:
+                    if connectionname in df_all.columns:
+                        df_all = df_all.drop(columns=[connectionname])
                     df_all = df_all.merge(df, how='outer', left_index=True,right_index=True)
             #print(df_all)
-            filename = '/query_{component}_metric_{metric}.csv'.format(component=component, metric=m)
             #print(self.path+filename)
-            print("Generated", self.path+"/"+filename)
-            monitor.metrics.saveMetricsDataframe(self.path+"/"+filename, df_all)
+            print("Generated", self.path+out_filename)
+            monitor.metrics.saveMetricsDataframe(self.path+out_filename, df_all)
     def get_monitoring_metric(self, metric, component="loading"):
         """
         Returns list of names of metrics using during monitoring.

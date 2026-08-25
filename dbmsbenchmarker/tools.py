@@ -1685,8 +1685,15 @@ def merge_partial_results(result_path, code):
                     content=ast.literal_eval(inf.read())
                     #print(content)
                     connections.append(content)
-            filename = '{folder}/{connection}/queries.config'.format(folder=folder, connection=connection)
-            copyfile(filename, folder+'/queries.config')
+            # queries.config is the same experiment-level config shared by every
+            # connection subfolder; only fall back to a subfolder's copy when the
+            # top-level one is missing. Unconditionally re-copying it on every merge
+            # clobbers the canonical, continuously-updated top-level file (e.g. bexhoma's
+            # monitoring_components, appended to as each phase's metrics are registered)
+            # with a per-connection snapshot frozen at whatever point that pod started.
+            if not isfile(folder+'/queries.config'):
+                filename = '{folder}/{connection}/queries.config'.format(folder=folder, connection=connection)
+                copyfile(filename, folder+'/queries.config')
         except Exception as e:
             print("Exception when merging connections: {}".format(e))
     # join to single list

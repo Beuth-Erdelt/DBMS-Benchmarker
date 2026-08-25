@@ -169,6 +169,8 @@ def singleRun(connectiondata, inputConfig, numRuns, connectionname, numQuery, pa
                 print(workername+"Delay Run by "+str(query.delay_run)+" seconds")
             time.sleep(query.delay_run)
         error = ""
+        errorIsTimeout = False
+        startAttempt = default_timer()
         try:
             #start = default_timer()
             if BENCHMARKER_VERBOSE_QUERIES:
@@ -248,6 +250,13 @@ def singleRun(connectiondata, inputConfig, numRuns, connectionname, numQuery, pa
         except Exception as e:
             print(workername+'Caught an error: %s' % str(e))
             error = '{workername}: {exception}'.format(workername=workername, exception=e)
+            # heuristic: classify as a (statement) timeout if a timeout is configured and the
+            # failed attempt ran for about as long as that timeout. This is driver-agnostic
+            # (JDBC drivers phrase timeout/cancellation errors very differently per DBMS), and
+            # avoids relying on setQueryTimeout()'s exact wording.
+            elapsedAttempt = default_timer() - startAttempt
+            if jaydebeapi.QUERY_TIMEOUT:
+                errorIsTimeout = elapsedAttempt >= 0.9 * jaydebeapi.QUERY_TIMEOUT
             durationConnect = 0
             durationExecute = 0
             durationTransfer = 0
@@ -261,13 +270,18 @@ def singleRun(connectiondata, inputConfig, numRuns, connectionname, numQuery, pa
             #end = default_timer()
             #durationExecute += 1000.0*(end - start)
         # EXPLAIN: run configured EXPLAIN templates against the literal query just executed.
-        # Kept strictly outside the timed section above and skipped if the real query failed
-        # (a failed statement typically aborts the transaction, so more SQL would just cascade errors).
+        # Kept strictly outside the timed section above. Skipped if the real query failed for
+        # any other reason than a timeout (a failed statement typically aborts the transaction,
+        # so more SQL would just cascade errors) - but a timeout is exactly the case where the
+        # plan is most useful, and connections here run autocommit (no open transaction to
+        # cascade into), so it's safe to still run EXPLAIN in that case.
         explainText = ""
         # EXPLAIN plans are constant across immediate repetitions of the same query, so
         # storing (as opposed to printing) only ever runs it once, on the very first run.
-        runExplainNow = explainTemplates and error == "" and (BENCHMARKER_VERBOSE_EXPLAIN or (BENCHMARKER_STORE_EXPLAIN and numRun == 0))
+        runExplainNow = explainTemplates and (error == "" or errorIsTimeout) and (BENCHMARKER_VERBOSE_EXPLAIN or (BENCHMARKER_STORE_EXPLAIN and numRun == 0))
         if runExplainNow:
+            if errorIsTimeout and BENCHMARKER_STORE_EXPLAIN and numRun == 0:
+                explainText += "(EXPLAIN captured after a query timeout)\n"
             queryParts = queryString if isinstance(queryString, list) else [queryString]
             for queryPart in queryParts:
                 for explainTemplate in explainTemplates:
