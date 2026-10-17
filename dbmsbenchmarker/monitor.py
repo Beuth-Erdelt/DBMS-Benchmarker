@@ -23,6 +23,7 @@ import matplotlib.pyplot as plt
 import csv
 import os.path
 import logging
+import threading
 from dbmsbenchmarker import benchmarker, tools
 from numpy import nan
 # https://www.robustperception.io/productive-prometheus-python-parsing
@@ -99,11 +100,32 @@ class metrics():
         },
     }
     m_avg = None
+    # url -> semaphore: at most this many queries at the same time against that endpoint
+    url_limits = {}
     def __init__(self, benchmarks):
         self.step = 1
         self.benchmarker = benchmarks
     @staticmethod
+    def limit_url(url, max_parallel):
+        """
+        Limit the number of queries running at the same time against one endpoint.
+        Used when metrics are fetched in parallel threads, e.g. to protect a small
+        application exporter while the cluster Prometheus gets more parallel queries.
+
+        :param url: Endpoint URL as passed to getMetrics()
+        :param max_parallel: Maximum number of queries at the same time
+        """
+        if url and url not in metrics.url_limits:
+            metrics.url_limits[url] = threading.BoundedSemaphore(max(1, int(max_parallel)))
+    @staticmethod
     def getMetrics(url, metric, time_start, time_end, step=1, connection=None):
+        limit = metrics.url_limits.get(url)
+        if limit is None:
+            return metrics._getMetrics(url, metric, time_start, time_end, step, connection)
+        with limit:
+            return metrics._getMetrics(url, metric, time_start, time_end, step, connection)
+    @staticmethod
+    def _getMetrics(url, metric, time_start, time_end, step=1, connection=None):
         logging.debug("getMetrics from "+url)
         metric_label = "{title} ({code})".format(title=metric.get('title', ''), code=metric.get('query', ''))
         if connection:
