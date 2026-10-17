@@ -41,6 +41,7 @@ from operator import add
 from dbmsbenchmarker import tools, reporter, parameter, monitor, evaluator, inspector
 import dbmsbenchmarker
 import pprint
+import threading
 # for query timeout
 import jaydebeapi
 from types import SimpleNamespace
@@ -56,6 +57,68 @@ BENCHMARKER_VERBOSE_EXPLAIN = False
 BENCHMARKER_STORE_EXPLAIN = False
 
 logger = mp.log_to_stderr(logging.WARNING)
+
+
+def write_file_atomic(filename, content):
+    """
+    Replaces a file in one step: written to a temporary file next to it, then renamed.
+    Config files in a result folder are read and written by several processes at
+    the same time (e.g. parallel metrics.py runs, benchmarker pods starting); a plain
+    open(filename, 'w') would let a reader see an empty or half-written file.
+
+    :param filename: File to replace
+    :param content: New content (str)
+    """
+    tmp = '{}.{}.{}.tmp'.format(filename, os.getpid(), threading.get_ident())
+    with open(tmp, 'w') as f:
+        f.write(content)
+    _replace(tmp, filename)
+
+
+def copy_file_atomic(source, target):
+    """
+    Copies a file so that readers of the target never see it half-written (see write_file_atomic()).
+
+    :param source: File to copy
+    :param target: File to replace
+    """
+    tmp = '{}.{}.{}.tmp'.format(target, os.getpid(), threading.get_ident())
+    copyfile(source, tmp)
+    _replace(tmp, target)
+
+
+def read_file(filename, attempts=50, pause=0.02):
+    """
+    Reads a config file another process may be replacing (see write_file_atomic()).
+    Windows refuses to open a file for a moment while it is being replaced, so that is retried.
+
+    :param filename: File to read
+    :return: Content (str)
+    """
+    for attempt in range(attempts):
+        try:
+            with open(filename, 'r') as f:
+                return f.read()
+        except PermissionError:
+            if attempt == attempts - 1:
+                raise
+            time.sleep(pause)
+
+
+def _replace(tmp, target, attempts=50, pause=0.02):
+    """
+    Renames tmp to target. POSIX renames over an open file; Windows refuses while
+    another process has the target open, so it is retried for about a second and,
+    if the file stays locked, written in place as before.
+    """
+    for _ in range(attempts):
+        try:
+            os.replace(tmp, target)
+            return
+        except PermissionError:
+            time.sleep(pause)
+    copyfile(tmp, target)
+    os.remove(tmp)
 
 class singleRunInput:
     """
@@ -673,54 +736,52 @@ class benchmarker():
         # If not read from result folder: Copy to result folder
         if not filename == self.path+'/queries.config':
             if path.isfile(filename):
-                copyfile(filename, self.path+'/queries.config')
+                copy_file_atomic(filename, self.path+'/queries.config')
             else:
                 self.logger.exception('Caught an error: Query file not found')
                 exit(1)
-        with open(filename,'r') as inp:
-            self.queryconfig = ast.literal_eval(inp.read())
-            # global setting in a class variable
-            # overwrites parts of query file - header
-            if len(self.workload) > 0:
-                for k,v in self.workload.items():
-                    self.queryconfig[k] = v
-            # overwrites parts of query file - queries
-            if tools.query.template is not None:
-                for i,q in enumerate(self.queryconfig['queries']):
-                    self.queryconfig['queries'][i] = tools.joinDicts(q, tools.query.template)
-                    #self.queryconfig['queries'][i] = {**q, **tools.query.template}
-                    with open(self.path+'/queries.config','w') as outp:
-                        pprint.pprint(self.queryconfig, outp)
-            self.queries = self.queryconfig["queries"].copy()
-            # default for all queries is being 'active'
-            for numQuery in range(len(self.queries)):
-                if not 'active' in self.queries[numQuery]:
-                    self.queries[numQuery]['active'] = True
-            if not "name" in self.queryconfig:
-                self.queryconfig["name"] = "No name"
-            if not "intro" in self.queryconfig:
-                self.queryconfig["intro"] = ""
-            if not "factor" in self.queryconfig:
-                self.queryconfig["factor"] = "mean"
-            if "connectionmanagement" in self.queryconfig:
-                #self.connectionmanagement = self.queryconfig["connectionmanagement"].copy()
-                self.connectionmanagement = tools.joinDicts(self.connectionmanagement, self.queryconfig["connectionmanagement"])
-            #   if "timeout" in self.queryconfig["connectionmanagement"]:
-            #       self.timeout = self.queryconfig["connectionmanagement"]["timeout"]
-            #   if "numProcesses" in self.queryconfig["connectionmanagement"]:
-            #       self.numProcesses = self.queryconfig["connectionmanagement"]["numProcesses"]
-            #   if "runsPerConnection" in self.queryconfig["connectionmanagement"]:
-            #       self.runsPerConnection = self.queryconfig["connectionmanagement"]["runsPerConnection"]
-            if not "reporting" in self.queryconfig:
-                self.queryconfig["reporting"] = {'resultsetPerQuery': False, 'resultsetPerQueryConnection': False, 'queryparameter': False, 'rowsPerResultset': False}
-            if len(parameter.defaultParameters) > 0:
-                if 'defaultParameters' in self.queryconfig:
-                    self.queryconfig['defaultParameters'] = {**self.queryconfig['defaultParameters'], **parameter.defaultParameters}
-                else:
-                    self.queryconfig['defaultParameters'] = parameter.defaultParameters.copy()
+        self.queryconfig = ast.literal_eval(read_file(filename))
+        # global setting in a class variable
+        # overwrites parts of query file - header
+        if len(self.workload) > 0:
+            for k,v in self.workload.items():
+                self.queryconfig[k] = v
+        # overwrites parts of query file - queries
+        if tools.query.template is not None:
+            for i,q in enumerate(self.queryconfig['queries']):
+                self.queryconfig['queries'][i] = tools.joinDicts(q, tools.query.template)
+                #self.queryconfig['queries'][i] = {**q, **tools.query.template}
+                write_file_atomic(self.path+'/queries.config', pprint.pformat(self.queryconfig))
+        self.queries = self.queryconfig["queries"].copy()
+        # default for all queries is being 'active'
+        for numQuery in range(len(self.queries)):
+            if not 'active' in self.queries[numQuery]:
+                self.queries[numQuery]['active'] = True
+        if not "name" in self.queryconfig:
+            self.queryconfig["name"] = "No name"
+        if not "intro" in self.queryconfig:
+            self.queryconfig["intro"] = ""
+        if not "factor" in self.queryconfig:
+            self.queryconfig["factor"] = "mean"
+        if "connectionmanagement" in self.queryconfig:
+            #self.connectionmanagement = self.queryconfig["connectionmanagement"].copy()
+            self.connectionmanagement = tools.joinDicts(self.connectionmanagement, self.queryconfig["connectionmanagement"])
+        #   if "timeout" in self.queryconfig["connectionmanagement"]:
+        #       self.timeout = self.queryconfig["connectionmanagement"]["timeout"]
+        #   if "numProcesses" in self.queryconfig["connectionmanagement"]:
+        #       self.numProcesses = self.queryconfig["connectionmanagement"]["numProcesses"]
+        #   if "runsPerConnection" in self.queryconfig["connectionmanagement"]:
+        #       self.runsPerConnection = self.queryconfig["connectionmanagement"]["runsPerConnection"]
+        if not "reporting" in self.queryconfig:
+            self.queryconfig["reporting"] = {'resultsetPerQuery': False, 'resultsetPerQueryConnection': False, 'queryparameter': False, 'rowsPerResultset': False}
+        if len(parameter.defaultParameters) > 0:
             if 'defaultParameters' in self.queryconfig:
-                parameter.defaultParameters = self.queryconfig['defaultParameters']
-            self.queryconfig["connectionmanagement"] = self.connectionmanagement
+                self.queryconfig['defaultParameters'] = {**self.queryconfig['defaultParameters'], **parameter.defaultParameters}
+            else:
+                self.queryconfig['defaultParameters'] = parameter.defaultParameters.copy()
+        if 'defaultParameters' in self.queryconfig:
+            parameter.defaultParameters = self.queryconfig['defaultParameters']
+        self.queryconfig["connectionmanagement"] = self.connectionmanagement
         # store query config again, since it might have been changed
         self.store_querydata()
         for numQuery in range(1, len(self.queries)+1):
@@ -760,7 +821,7 @@ class benchmarker():
         #if not filename == self.path+'/connections.config':
         if not os.path.abspath(filename) == os.path.abspath(self.path+'/connections.config'):
             if path.isfile(filename):
-                copyfile(filename, self.path+'/connections.config')
+                copy_file_atomic(filename, self.path+'/connections.config')
                 self.logger.debug("copied connection file {} to {}".format(filename, self.path+'/connections.config'))
                 # 'name': 'MemSQL-5' replace by 'MemSQL-5-1' in connections.config? self.rename_connection
                 if self.fixedConnection is not None and len(self.fixedConnection) > 0 and len(self.rename_connection) > 0:
@@ -778,8 +839,7 @@ class benchmarker():
                         #connections_content = connections_content.replace("{schema}", self.fixed_schema)
                         self.logger.debug("Fixed schema to {}".format(self.fixed_schema))
                     #print(connections_content)
-                    with open(self.path+'/connections.config', "w") as connections_file:
-                        connections_file.write(connections_content)
+                    write_file_atomic(self.path+'/connections.config', connections_content)
                     self.logger.debug("Renamed connection {} to {}".format(self.fixedConnection, self.rename_connection))
                     self.logger.debug("Renamed alias {} to {}".format(self.fixedAlias, self.rename_alias))
                     self.fixedConnection = self.rename_connection
@@ -788,8 +848,7 @@ class benchmarker():
                 self.logger.exception('Caught an error: Connection file not found')
                 exit(1)
         # read from file
-        with open(filename,'r') as inf:
-            self.connections = ast.literal_eval(inf.read())
+        self.connections = ast.literal_eval(read_file(filename))
         # add all dbms
         for c in self.connections:
             if self.anonymize and not c['name'] in self.unanonymize:
@@ -804,12 +863,10 @@ class benchmarker():
         for key, dbms in self.dbms.items():
             connections_content.append(dbms.connectiondata)
         #with open(self.path+'/connections_copy.config', "w") as connections_file:
-        with open(self.path+'/connections.config', "w") as connections_file:
-            connections_file.write(str(connections_content))
+        write_file_atomic(self.path+'/connections.config', str(connections_content))
     def store_querydata(self):
         #print("store_querydata")
-        with open(self.path+'/queries.config', "w") as queries_file:
-            queries_file.write(str(self.queryconfig))
+        write_file_atomic(self.path+'/queries.config', str(self.queryconfig))
     def connectDBMSAll(self):
         """
         Connects to all dbms we have collected connection data of.

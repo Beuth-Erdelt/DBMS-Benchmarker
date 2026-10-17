@@ -24,6 +24,7 @@ import urllib3
 import logging
 import argparse
 import time
+from concurrent.futures import ThreadPoolExecutor
 
 
 urllib3.disable_warnings()
@@ -43,6 +44,7 @@ if __name__ == '__main__':
     parser.add_argument('-ts', '--time-start', help='Time loading has started', default=None)
     parser.add_argument('-te', '--time-end', help='Time loading has ended', default=None)
     parser.add_argument('-db', '--debug', help='dump debug informations', action='store_true')
+    parser.add_argument('-mw', '--max-workers', help='number of metrics queried at the same time (default 4, 1 = one by one); an application endpoint gets at most 2', type=int, default=4)
     args = parser.parse_args()
     # evaluate args
     if args.debug:
@@ -76,12 +78,16 @@ if __name__ == '__main__':
             #seed=args.seed)
     #experiments.getConfig()
     experiments.getConfig(args.config_folder, connectionfile=args.connection_file)
+    # every metric is one independent range query and one CSV file, so they are fetched in parallel
+    jobs = []
     for connection_name, connection_data in experiments.dbms.items():
         if connection is not None:
             if connection_name != connection:
                 print("Found {}, but we only query for {}".format(connection_name, connection))
                 continue
         print("URL", connection_data.connectiondata['monitoring']['prometheus_url'])
+        # a small application exporter must not get all parallel queries at once
+        monitor.metrics.limit_url(connection_data.connectiondata['monitoring'].get('prometheus_url_application', ''), 2)
         #query='loading'
         #query='stream'
         # metrics_special means there arwe special promql queries for special dbms, e.g., systems not managed by bexhoma
@@ -92,7 +98,7 @@ if __name__ == '__main__':
             for m, metric in connection_data.connectiondata['monitoring'][metrics_type].items():
                 print("Metric", m)
                 path = '{result_path}/{code}/'.format(result_path=result_path, code=code)
-                monitor.metrics.fetchMetric(query, m, connection_name, connection_data.connectiondata, time_start, time_end, path, container=container_name, metrics_query_path=metrics_type, component=component)
+                jobs.append(dict(query=query, metric_code=m, connection=connection_name, connectiondata=connection_data.connectiondata, time_start=time_start, time_end=time_end, path=path, container=container_name, metrics_query_path=metrics_type, component=component))
         # do not use replacement anymore (SUT deployment replaced by SUT worker)
         #elif 'metrics_special' in connection_data.connectiondata['monitoring'] and (query == 'loading' or query == 'stream'):
         #    print("Use special metrics for SUT not managed by bexhoma: component type = {}".format(query))
@@ -105,8 +111,13 @@ if __name__ == '__main__':
             for m, metric in connection_data.connectiondata['monitoring']['metrics'].items():
                 print("Metric", m)
                 path = '{result_path}/{code}/'.format(result_path=result_path, code=code)
-                monitor.metrics.fetchMetric(query, m, connection_name, connection_data.connectiondata, time_start, time_end, path, container=container_name, metrics_query_path='metrics', component=component)
+                jobs.append(dict(query=query, metric_code=m, connection=connection_name, connectiondata=connection_data.connectiondata, time_start=time_start, time_end=time_end, path=path, container=container_name, metrics_query_path='metrics', component=component))
                 #metrics = monitor.metrics(experiments)
                 #df = metrics.dfHardwareMetricsLoading(m)
                 #print(df)
+    time_fetch_start = time.monotonic()
+    with ThreadPoolExecutor(max_workers=max(1, args.max_workers)) as pool:
+        # list() re-raises an exception of any fetch here, as the loop did before
+        list(pool.map(lambda job: monitor.metrics.fetchMetric(**job), jobs))
+    print("Fetched {} metrics in {:.1f}s ({} at once)".format(len(jobs), time.monotonic() - time_fetch_start, max(1, args.max_workers)))
 
