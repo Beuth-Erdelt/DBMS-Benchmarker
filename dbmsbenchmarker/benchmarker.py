@@ -1019,10 +1019,10 @@ class benchmarker():
             for c, q in query.DBMS.items():
                 if self.dbms[connectionname].connectiondata['dialect'] == c:
                     queryString = q
-        # overwrite default query string with variant matching the beginning of the name of connection
+        # overwrite default query string with variant matching the beginning of the name of connection (case-insensitive, bexhoma names are lowercase)
         if connectionname is not None and len(query.DBMS) > 0:
             for c, q in query.DBMS.items():
-                if connectionname.startswith(c):
+                if connectionname.lower().startswith(c.lower()):
                     queryString = q
         def parametrize(queryTemplate, numQuery, numRun):
             params = self.protocol['query'][str(numQuery)]['parameter'][numRun]
