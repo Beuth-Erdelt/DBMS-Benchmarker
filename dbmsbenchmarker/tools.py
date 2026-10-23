@@ -43,6 +43,25 @@ def _set_stmt_parms(self, prep_stmt, parameters):
 
 jaydebeapi.Cursor._set_stmt_parms = _set_stmt_parms
 
+def _to_decimal_or_integer(rs, col):
+        # jaydebeapi's converter for DECIMAL/NUMERIC expects java.math.BigDecimal; some drivers
+        # return java.math.BigInteger there (ClickHouse UInt64, e.g. count()), which float() rejects
+        java_val = rs.getObject(col)
+        if java_val is None:
+            return
+        if hasattr(java_val, 'scale'):
+            if java_val.scale() == 0:
+                return java_val.longValue()
+            return java_val.doubleValue()
+        if hasattr(java_val, 'bitLength'):
+            # BigInteger: the text keeps values beyond the range of a Java long
+            return int(str(java_val))
+        return float(java_val)
+
+# read when jaydebeapi connects the first time
+jaydebeapi._DEFAULT_CONVERTERS['DECIMAL'] = _to_decimal_or_integer
+jaydebeapi._DEFAULT_CONVERTERS['NUMERIC'] = _to_decimal_or_integer
+
 
 class timer():
     """
