@@ -499,7 +499,8 @@ def singleResult(connectiondata, inputConfig, numRuns, connectionname, numQuery,
             logger.debug(workername+"Size of sorted result list stored: "+str(sys.getsizeof(data))+" bytes")
         except Exception as e:
             logger.exception(workername+'Caught an error: %s' % str(e))
-            error = '{workername}: {exception}'.format(workername=workername, exception=e)
+            error = '{workername}: processing the result set failed ({type}): {exception}'.format(
+                workername=workername, type=type(e).__name__, exception=e)
             #print(error+"\n", data)
             data = []
             size = 0
@@ -1486,6 +1487,14 @@ class benchmarker():
                     """
                 l_data = [l.data for l in lists]
                 l_size = [l.size for l in lists]
+                # a run whose result set could not be processed has no data to compare:
+                # report it like an error of the query, unless the query itself failed
+                if len(self.protocol['query'][str(numQuery)]['errors'][c]) == 0:
+                    for l in lists:
+                        if len(l.error) > 0:
+                            self.protocol['query'][str(numQuery)]['errors'][c] = l.error
+                            self.logger.info(l.error)
+                            break
             #print("Size:")
             #print(l_size)
             #print("Data:")
