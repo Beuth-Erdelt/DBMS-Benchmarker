@@ -1570,7 +1570,9 @@ def convert_to_rounded_float_2(var, decimals=2):
         if isinstance(var, str):
             var = var.replace("_", "")  # Remove any underscores
         evaluated_var = safe_literal_eval(var)
-        if not evaluated_var is None:
+        # only a single number is converted (bool too: True and 1 compare equal);
+        # other literals stay text, e.g. a description "False," is the tuple (False,)
+        if isinstance(evaluated_var, (int, float)):
             # Convert the evaluated variable to a float and round it
             rounded_float = round(float(evaluated_var), decimals)
         else:
