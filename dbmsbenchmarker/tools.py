@@ -1054,7 +1054,8 @@ class dataframehelper():
                     times[c].append(benchmarker.protocol['query'][str(qs[i]+1)]['durations'][c])
                 else:
                     times[c].append(0.0)
-        dataframe = pd.DataFrame.from_records(times)
+        # times maps each connection to a list; from_records() no longer accepts a dict in pandas 4
+        dataframe = pd.DataFrame(times)
         dataframe.index = qs
         dataframe.index = dataframe.index.map(lambda r: "Q"+str(r+1))
         dataframe.columns = dataframe.columns.map(dbms.anonymizer)
