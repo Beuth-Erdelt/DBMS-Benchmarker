@@ -1,0 +1,39 @@
+{
+  "@context": "https://w3id.org/codemeta/3.0",
+  "@type": "SoftwareSourceCode",
+  "name": "DBMS-Benchmarker",
+  "description": "DBMS-Benchmarker is a Python-based application-level blackbox benchmark tool for Database Management Systems (DBMS). It connects to a given list of DBMS via JDBC and runs a given list of parametrized and randomized (SQL) benchmark queries. Evaluations are available via a Python interface, in reports and in an interactive multi-dimensional dashboard.",
+  "version": "0.15.9",
+  "license": "https://spdx.org/licenses/AGPL-3.0-or-later",
+  "codeRepository": "https://github.com/Beuth-Erdelt/DBMS-Benchmarker",
+  "issueTracker": "https://github.com/Beuth-Erdelt/DBMS-Benchmarker/issues",
+  "softwareHelp": "https://dbmsbenchmarker.readthedocs.io",
+  "downloadUrl": "https://pypi.org/project/dbmsbenchmarker/",
+  "programmingLanguage": "Python 3",
+  "runtimePlatform": "Python >=3.10, Java (JDBC)",
+  "operatingSystem": "OS Independent",
+  "developmentStatus": "active",
+  "dateCreated": "2019-10-06",
+  "keywords": ["DBMS", "benchmarking", "performance evaluation", "JDBC", "SQL", "reproducibility"],
+  "author": [
+    {
+      "@type": "Person",
+      "@id": "https://orcid.org/0000-0002-3359-2386",
+      "givenName": "Patrick K.",
+      "familyName": "Erdelt",
+      "affiliation": {"@type": "Organization", "name": "Berliner Hochschule für Technik (BHT)"}
+    },
+    {
+      "@type": "Person",
+      "givenName": "Jascha",
+      "familyName": "Jestel",
+      "affiliation": {"@type": "Organization", "name": "Berliner Hochschule für Technik (BHT)"}
+    }
+  ],
+  "maintainer": {"@id": "https://orcid.org/0000-0002-3359-2386"},
+  "referencePublication": [
+    {"@type": "ScholarlyArticle", "@id": "https://doi.org/10.21105/joss.04628", "name": "DBMS-Benchmarker: Benchmark and Evaluate DBMS in Python"},
+    {"@type": "ScholarlyArticle", "@id": "https://doi.org/10.1007/978-3-030-84924-5_6", "name": "A Framework for Supporting Repetition and Evaluation in the Process of Cloud-Based DBMS Performance Benchmarking"},
+    {"@type": "ScholarlyArticle", "@id": "https://doi.org/10.1007/978-3-030-94437-7_6", "name": "Orchestrating DBMS Benchmarking in the Cloud with Kubernetes"}
+  ]
+}

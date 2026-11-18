@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=61.0", "wheel"]
+requires = ["setuptools>=77.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -11,22 +11,36 @@ description = "DBMS-Benchmarker is a Python-based application-level blackbox ben
 readme = { file = "README.md", content-type = "text/markdown" }
 
 authors = [
-  { name = "Patrick K. Erdelt", email = "patrick.erdelt@bht-berlin.de" }
+  { name = "Patrick K. Erdelt", email = "patrick.erdelt@bht-berlin.de" },
+  { name = "Jascha Jestel" },
 ]
 
-license = { text = "GNU Affero General Public License v3" }
+license = "AGPL-3.0-or-later"
+license-files = ["LICENSE"]
 
-requires-python = ">=3.6"
+# The pinned urllib3 needs Python 3.10; CI tests 3.10 to 3.13.
+requires-python = ">=3.10"
+
+keywords = ["DBMS", "benchmarking", "performance evaluation", "JDBC", "SQL", "reproducibility"]
 
 classifiers = [
   "Programming Language :: Python :: 3",
-  "License :: OSI Approved :: GNU Affero General Public License v3",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
   "Operating System :: OS Independent",
+  "Intended Audience :: Science/Research",
+  "Topic :: Database",
+  "Topic :: System :: Benchmark",
 ]
 
 [project.urls]
 Homepage = "https://github.com/Beuth-Erdelt/DBMS-Benchmarker"
 Repository = "https://github.com/Beuth-Erdelt/DBMS-Benchmarker"
+Documentation = "https://dbmsbenchmarker.readthedocs.io"
+Changelog = "https://github.com/Beuth-Erdelt/DBMS-Benchmarker/blob/master/CHANGELOG.md"
+Issues = "https://github.com/Beuth-Erdelt/DBMS-Benchmarker/issues"
 
 [project.scripts]
 dbmsbenchmarker = "dbmsbenchmarker.scripts.cli:run_benchmarker"

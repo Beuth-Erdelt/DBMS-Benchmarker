@@ -1,0 +1,57 @@
+{
+  "title": "DBMS-Benchmarker",
+  "upload_type": "software",
+  "description": "<p>DBMS-Benchmarker is a Python-based application-level blackbox benchmark tool for Database Management Systems (DBMS). It connects to a given list of DBMS via JDBC and runs a given list of parametrized and randomized (SQL) benchmark queries. Evaluations are available via a Python interface, in reports and in an interactive multi-dimensional dashboard.</p><p>Documentation: <a href=\"https://dbmsbenchmarker.readthedocs.io\">dbmsbenchmarker.readthedocs.io</a></p>",
+  "creators": [
+    {
+      "name": "Erdelt, Patrick K.",
+      "orcid": "0000-0002-3359-2386",
+      "affiliation": "Berliner Hochschule für Technik (BHT)"
+    },
+    {
+      "name": "Jestel, Jascha",
+      "affiliation": "Berliner Hochschule für Technik (BHT)"
+    }
+  ],
+  "license": "AGPL-3.0-or-later",
+  "keywords": [
+    "DBMS",
+    "benchmarking",
+    "performance evaluation",
+    "JDBC",
+    "SQL",
+    "reproducibility"
+  ],
+  "related_identifiers": [
+    {
+      "identifier": "10.21105/joss.04628",
+      "relation": "isDescribedBy",
+      "scheme": "doi",
+      "resource_type": "publication-article"
+    },
+    {
+      "identifier": "10.1007/978-3-030-84924-5_6",
+      "relation": "isDescribedBy",
+      "scheme": "doi",
+      "resource_type": "publication-conferencepaper"
+    },
+    {
+      "identifier": "10.1007/978-3-030-94437-7_6",
+      "relation": "isDescribedBy",
+      "scheme": "doi",
+      "resource_type": "publication-conferencepaper"
+    },
+    {
+      "identifier": "https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager",
+      "relation": "isRequiredBy",
+      "scheme": "url",
+      "resource_type": "software"
+    },
+    {
+      "identifier": "https://dbmsbenchmarker.readthedocs.io",
+      "relation": "isDocumentedBy",
+      "scheme": "url",
+      "resource_type": "publication-softwaredocumentation"
+    }
+  ]
+}
