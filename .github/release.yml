@@ -1,0 +1,8 @@
+# Sections of the notes made by "Generate release notes" on a GitHub release.
+# They list the pull requests merged since the previous release, into dev or master.
+changelog:
+  categories:
+    - title: Changes to measured or evaluated numbers
+      labels: [changes-numbers]
+    - title: Other changes
+      labels: ["*"]

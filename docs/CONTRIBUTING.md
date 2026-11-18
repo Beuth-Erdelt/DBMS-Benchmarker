@@ -27,11 +27,14 @@ If your contribution includes material from others (code, icons, queries, data),
 
 ### Git Usage
 
-If you are planning to make a pull request, start by creating a new branch with a short but descriptive name (rather than using your master branch).
+Development happens on `dev`; `master` holds the releases.
+Start each change on a new branch from `dev` with a short but descriptive name, and open a pull request into `dev`.
+For a release, `dev` is merged into `master` by a pull request.
+Every pull request must pass the automated tests.
 
-Every change to `master` goes through a pull request, which is reviewed and must pass the automated tests.
-Changes are recorded in the notes of the [GitHub releases](https://github.com/Beuth-Erdelt/DBMS-Benchmarker/releases).
-If a change alters measured or evaluated numbers, say so in the pull request and name the affected metrics, so the release notes can name them too.
+Changes are recorded in the notes of the [GitHub releases](https://github.com/Beuth-Erdelt/DBMS-Benchmarker/releases), which are generated from the pull requests.
+So give each pull request a title that says what changes for users.
+If a change alters measured or evaluated numbers, add the label `changes-numbers` and name the affected metrics in the description; the release notes list such pull requests in their own section.
 This includes any change after which the same experiment or the same raw results give different reported values: units (e.g. ms to s), aggregation (e.g. mean to median, warm-up runs excluded), fixed formulas, rounding, what a timer measures.
 Renamed metrics or columns are named as well, since they break comparisons with older results.
 
@@ -79,7 +82,7 @@ While the major version is 0, a minor release may contain incompatible changes; 
 1. Set the version in `dbmsbenchmarker/__version__.py`, `CITATION.cff` and `codemeta.json`.
 2. For a minor release only: the reference experiments of [Bexhoma](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager) have been run with the release candidate and passed all validity checks.
 3. Merge into `master` and create a GitHub release with the tag `vX.Y.Z`.
-   The release notes list the changes and either state that measured and evaluated numbers are unchanged or name the affected metrics.
+   Use *Generate release notes*, then add one sentence on top: measured and evaluated numbers are unchanged, or which metrics changed.
    Publishing runs the tests again, then uploads the package to PyPI; Zenodo archives the release with its notes and assigns a DOI.
 
 
