@@ -79,7 +79,7 @@ While the major version is 0, a minor release may contain incompatible changes; 
 
 ### Release checklist
 
-1. Set the version in `dbmsbenchmarker/__version__.py`, `CITATION.cff` and `codemeta.json`.
+1. Set the version with `python bump_version.py X.Y.Z`; it writes `dbmsbenchmarker/__version__.py`, `CITATION.cff` and `codemeta.json`, and the tests check that they agree.
 2. For a minor release only: the reference experiments of [Bexhoma](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager) have been run with the release candidate and passed all validity checks.
 3. Merge into `master` and create a GitHub release with the tag `vX.Y.Z`.
    Use *Generate release notes*, then add one sentence on top: measured and evaluated numbers are unchanged, or which metrics changed.
