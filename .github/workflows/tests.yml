@@ -23,10 +23,26 @@ jobs:
         with:
           distribution: temurin
           java-version: "17"
+      # Downloaded once and cached; the checksum is verified on every run.
+      - uses: actions/cache@v4
+        id: jdbc-cache
+        with:
+          path: tests/jars
+          key: sqlite-jdbc-3.47.1.0
       - name: Download the SQLite JDBC driver
+        if: steps.jdbc-cache.outputs.cache-hit != 'true'
         run: |
           mkdir -p tests/jars
-          curl -sSfL -o tests/jars/sqlite-jdbc-3.47.1.0.jar https://repo1.maven.org/maven2/org/xerial/sqlite-jdbc/3.47.1.0/sqlite-jdbc-3.47.1.0.jar
-          echo "4164d95347aeab42b754cabb7945b93e54f29ddb2eded967dbe979b4045cb685  tests/jars/sqlite-jdbc-3.47.1.0.jar" | sha256sum -c -
+          # Maven Central sometimes answers 404 to CI runners; retry, then try the
+          # other sources of the same file (the checksum below must match).
+          for url in \
+            https://repo1.maven.org/maven2/org/xerial/sqlite-jdbc/3.47.1.0/sqlite-jdbc-3.47.1.0.jar \
+            https://repo.maven.apache.org/maven2/org/xerial/sqlite-jdbc/3.47.1.0/sqlite-jdbc-3.47.1.0.jar \
+            https://github.com/xerial/sqlite-jdbc/releases/download/3.47.1.0/sqlite-jdbc-3.47.1.0.jar
+          do
+            curl -sSfL --retry 3 --retry-all-errors --retry-delay 5 -o tests/jars/sqlite-jdbc-3.47.1.0.jar "$url" && break
+          done
+      - name: Verify the SQLite JDBC driver
+        run: echo "4164d95347aeab42b754cabb7945b93e54f29ddb2eded967dbe979b4045cb685  tests/jars/sqlite-jdbc-3.47.1.0.jar" | sha256sum -c -
       - run: pip install -r requirements.txt -e .
       - run: python -m unittest discover tests -v
