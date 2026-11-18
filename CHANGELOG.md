@@ -18,7 +18,7 @@ Versions before 0.15.8 are described on the [GitHub releases page](https://githu
 - `OLD_setup.py`, `demo-interactive-inspection-legacy.py`, the 2019 example report `docs/Report-example-tpch.pdf` and the generated API pages in `docs/dbmsbenchmarker/`. `dev/` is no longer part of release archives.
 
 ### Changed
-- Publishing to PyPI requires the tests to pass.
+- Publishing to PyPI requires the tests to pass. Pull requests require an entry in `CHANGELOG.md` or the label `no-changelog`.
 - Tested with pandas 2 and pandas 3. The table of total times no longer passes a dict to `DataFrame.from_records()`, which pandas 4 will not accept; the numbers are unchanged.
 - Package metadata: licence as SPDX expression `AGPL-3.0-or-later`, `requires-python >=3.10` (the pinned urllib3 needs it), documentation and issue URLs.
 

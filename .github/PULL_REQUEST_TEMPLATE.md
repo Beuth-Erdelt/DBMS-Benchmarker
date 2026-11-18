@@ -5,7 +5,7 @@
 ## Checklist
 
 - [ ] Tests added or updated; `python -m unittest discover tests` passes
-- [ ] Entry in `CHANGELOG.md` under *Unreleased* (if users can notice the change)
+- [ ] Entry in `CHANGELOG.md` under *Unreleased* (if users can notice the change; otherwise the label `no-changelog`)
 - [ ] If evaluated numbers change: the changelog entry names the affected metrics
 - [ ] Type of change for the next release (see [Versions and releases](https://github.com/Beuth-Erdelt/DBMS-Benchmarker/blob/master/docs/CONTRIBUTING.md#versions-and-releases)):
   - [ ] patch (evaluation, dashboard, reports, docs, fixes)

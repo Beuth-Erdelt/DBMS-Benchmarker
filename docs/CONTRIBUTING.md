@@ -31,6 +31,7 @@ If you are planning to make a pull request, start by creating a new branch with 
 
 Every change to `master` goes through a pull request, which is reviewed and must pass the automated tests.
 Add an entry to [CHANGELOG.md](https://github.com/Beuth-Erdelt/DBMS-Benchmarker/blob/master/CHANGELOG.md) under *Unreleased* for every change users can notice.
+A check on the pull request fails without such an entry; for changes users cannot notice (CI, typos, refactoring), add the label `no-changelog` instead.
 
 
 ### Coding Conventions
