@@ -59,8 +59,11 @@ class SingleResultTest(unittest.TestCase):
         self.assertIn(['AAAAAAAAKOBBAAAA', 'False,'], result.data)
 
     def test_error_is_reported(self):
-        with mock.patch.object(tools, 'convert_to_rounded_float_2', side_effect=TypeError('boom')):
+        # the error is logged with its traceback; capture it instead of printing it
+        with mock.patch.object(tools, 'convert_to_rounded_float_2', side_effect=TypeError('boom')), \
+                self.assertLogs('singleResult', level='ERROR') as logs:
             result = _single_result([['a', 'b']])
+        self.assertIn('Caught an error: boom', logs.output[0])
         self.assertIn('processing the result set failed (TypeError): boom', result.error)
         self.assertEqual(result.data, [])
 

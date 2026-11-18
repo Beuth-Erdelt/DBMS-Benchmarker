@@ -1,0 +1,3 @@
+# Left out of release archives (GitHub source downloads and the Zenodo record).
+# The files stay in the repository.
+dev/ export-ignore

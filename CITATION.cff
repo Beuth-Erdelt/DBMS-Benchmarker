@@ -1,0 +1,68 @@
+cff-version: 1.2.0
+message: "If you use DBMS-Benchmarker, please cite the software version you used and the article below."
+type: software
+title: "DBMS-Benchmarker"
+abstract: >-
+  DBMS-Benchmarker is a Python-based application-level blackbox benchmark tool
+  for Database Management Systems (DBMS). It connects to a given list of DBMS
+  via JDBC and runs a given list of parametrized and randomized (SQL) benchmark
+  queries. Evaluations are available via a Python interface, in reports and in
+  an interactive multi-dimensional dashboard.
+authors:
+  - family-names: Erdelt
+    given-names: Patrick K.
+    orcid: "https://orcid.org/0000-0002-3359-2386"
+    affiliation: "Berliner Hochschule für Technik (BHT)"
+  - family-names: Jestel
+    given-names: Jascha
+    affiliation: "Berliner Hochschule für Technik (BHT)"
+version: "0.15.9"
+# Concept DOI on Zenodo: always resolves to the latest release.
+# Each release has its own version DOI, listed on that page.
+doi: "10.5281/zenodo.6382235"
+license: AGPL-3.0-or-later
+repository-code: "https://github.com/Beuth-Erdelt/DBMS-Benchmarker"
+url: "https://dbmsbenchmarker.readthedocs.io"
+keywords:
+  - DBMS
+  - benchmarking
+  - performance evaluation
+  - JDBC
+  - SQL
+  - reproducibility
+preferred-citation:
+  type: article
+  title: "DBMS-Benchmarker: Benchmark and Evaluate DBMS in Python"
+  authors:
+    - family-names: Erdelt
+      given-names: Patrick K.
+      orcid: "https://orcid.org/0000-0002-3359-2386"
+    - family-names: Jestel
+      given-names: Jascha
+  journal: "Journal of Open Source Software"
+  year: 2022
+  volume: 7
+  issue: 79
+  start: 4628
+  doi: "10.21105/joss.04628"
+references:
+  - type: conference-paper
+    title: "A Framework for Supporting Repetition and Evaluation in the Process of Cloud-Based DBMS Performance Benchmarking"
+    authors:
+      - family-names: Erdelt
+        given-names: Patrick K.
+    collection-title: "Performance Evaluation and Benchmarking. TPCTC 2020. Lecture Notes in Computer Science, vol 12752"
+    publisher:
+      name: Springer
+    year: 2021
+    doi: "10.1007/978-3-030-84924-5_6"
+  - type: conference-paper
+    title: "Orchestrating DBMS Benchmarking in the Cloud with Kubernetes"
+    authors:
+      - family-names: Erdelt
+        given-names: Patrick K.
+    collection-title: "Performance Evaluation and Benchmarking. TPCTC 2021. Lecture Notes in Computer Science, vol 13169"
+    publisher:
+      name: Springer
+    year: 2022
+    doi: "10.1007/978-3-030-94437-7_6"
