@@ -6,7 +6,7 @@ Changes that alter measured or evaluated numbers name the affected metrics, so t
 
 Versions before 0.15.8 are described on the [GitHub releases page](https://github.com/Beuth-Erdelt/DBMS-Benchmarker/releases).
 
-## [Unreleased] - 0.15.9
+## [0.15.9] - 2026-11-18
 
 ### Added
 - Citation metadata: `CITATION.cff`, `.zenodo.json` and `codemeta.json`. Releases are archived on Zenodo and receive a DOI.
@@ -19,6 +19,7 @@ Versions before 0.15.8 are described on the [GitHub releases page](https://githu
 
 ### Changed
 - Publishing to PyPI requires the tests to pass.
+- Tested with pandas 2 and pandas 3. The table of total times no longer passes a dict to `DataFrame.from_records()`, which pandas 4 will not accept; the numbers are unchanged.
 - Package metadata: licence as SPDX expression `AGPL-3.0-or-later`, `requires-python >=3.10` (the pinned urllib3 needs it), documentation and issue URLs.
 
 ## [0.15.8] - 2026-11-10
@@ -26,5 +27,5 @@ Versions before 0.15.8 are described on the [GitHub releases page](https://githu
 ### Changed
 - `requests>=2.34.2` (CVE-2024-47081), as a lower bound so that Bexhoma can pin its own version.
 
-[Unreleased]: https://github.com/Beuth-Erdelt/DBMS-Benchmarker/compare/0.15.8...dev
+[0.15.9]: https://github.com/Beuth-Erdelt/DBMS-Benchmarker/releases/tag/v0.15.9
 [0.15.8]: https://github.com/Beuth-Erdelt/DBMS-Benchmarker/releases/tag/0.15.8
