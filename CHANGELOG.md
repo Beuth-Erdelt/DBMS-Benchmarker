@@ -13,6 +13,9 @@ Versions before 0.15.8 are described on the [GitHub releases page](https://githu
 - `AUTHORS.md`, `THIRD_PARTY.md`, a pull request template and `CODEOWNERS`.
 - Tests run on every pull request (Python 3.10 to 3.13).
 
+### Removed
+- `OLD_setup.py`, `demo-interactive-inspection-legacy.py`, the 2019 example report `docs/Report-example-tpch.pdf` and the generated API pages in `docs/dbmsbenchmarker/`. `dev/` is no longer part of release archives.
+
 ### Changed
 - Publishing to PyPI requires the tests to pass.
 - Package metadata: licence as SPDX expression `AGPL-3.0-or-later`, `requires-python >=3.10` (the pinned urllib3 needs it), documentation and issue URLs.
