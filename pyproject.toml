@@ -39,7 +39,7 @@ classifiers = [
 Homepage = "https://github.com/Beuth-Erdelt/DBMS-Benchmarker"
 Repository = "https://github.com/Beuth-Erdelt/DBMS-Benchmarker"
 Documentation = "https://dbmsbenchmarker.readthedocs.io"
-Changelog = "https://github.com/Beuth-Erdelt/DBMS-Benchmarker/blob/master/CHANGELOG.md"
+Changelog = "https://github.com/Beuth-Erdelt/DBMS-Benchmarker/releases"
 Issues = "https://github.com/Beuth-Erdelt/DBMS-Benchmarker/issues"
 
 [project.scripts]

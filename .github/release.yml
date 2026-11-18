@@ -1,0 +1,9 @@
+# Sections of the notes made by "Generate release notes" on a GitHub release.
+changelog:
+  categories:
+    - title: Changes to measured or evaluated numbers
+      labels: [changes-numbers]
+    - title: Dependencies
+      labels: [dependencies]
+    - title: Other changes
+      labels: ["*"]

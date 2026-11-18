@@ -30,8 +30,9 @@ If your contribution includes material from others (code, icons, queries, data),
 If you are planning to make a pull request, start by creating a new branch with a short but descriptive name (rather than using your master branch).
 
 Every change to `master` goes through a pull request, which is reviewed and must pass the automated tests.
-Add an entry to [CHANGELOG.md](https://github.com/Beuth-Erdelt/DBMS-Benchmarker/blob/master/CHANGELOG.md) under *Unreleased* for every change users can notice.
-A check on the pull request fails without such an entry; for changes users cannot notice (CI, typos, refactoring), add the label `no-changelog` instead.
+Changes are recorded in the notes of the [GitHub releases](https://github.com/Beuth-Erdelt/DBMS-Benchmarker/releases), which are generated from the pull requests.
+So give each pull request a title that says what changes for users.
+If it changes measured or evaluated numbers, add the label `changes-numbers` and name the affected metrics in the description.
 
 
 ### Coding Conventions
@@ -67,18 +68,18 @@ Please include a zipped result folder, so we can trace the enhancement of evalua
 ## Versions and releases
 
 Versions have the form `MAJOR.MINOR.PATCH` and git tags the form `vMAJOR.MINOR.PATCH`.
-While the major version is 0, a minor release may contain incompatible changes; they are named in the changelog.
+While the major version is 0, a minor release may contain incompatible changes; they are named in the release notes.
 
 * **Minor release** (`0.16.0`): changes what an experiment executes or records. This includes how queries are run and timed, connection handling, the format of `queries.config` and `connections.config`, and the format of the result folder.
-* **Patch release** (`0.15.10`): everything else, including bug fixes in evaluations, the dashboard and reports. If a fix changes evaluated numbers, the changelog entry names the affected metrics.
+* **Patch release** (`0.15.10`): everything else, including bug fixes in evaluations, the dashboard and reports. If a fix changes evaluated numbers, the release notes name the affected metrics.
 
 ### Release checklist
 
 1. Set the version in `dbmsbenchmarker/__version__.py`, `CITATION.cff` and `codemeta.json`.
-2. Move the *Unreleased* entries of `CHANGELOG.md` to the new version with the release date.
-3. For a minor release only: the reference experiments of [Bexhoma](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager) have been run with the release candidate and passed all validity checks.
-4. Merge into `master` and create a GitHub release with the tag `vX.Y.Z`.
-   Publishing runs the tests again, then uploads the package to PyPI; Zenodo archives the release and assigns a DOI.
+2. For a minor release only: the reference experiments of [Bexhoma](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager) have been run with the release candidate and passed all validity checks.
+3. Merge into `master` and create a GitHub release with the tag `vX.Y.Z`.
+   Use *Generate release notes*, then add a short summary on top; it names the affected metrics if numbers changed.
+   Publishing runs the tests again, then uploads the package to PyPI; Zenodo archives the release with its notes and assigns a DOI.
 
 
 ## Authorship
