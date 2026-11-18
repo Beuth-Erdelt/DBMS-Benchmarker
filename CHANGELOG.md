@@ -9,7 +9,7 @@ Versions before 0.15.8 are described on the [GitHub releases page](https://githu
 ## [0.15.9] - 2026-11-18
 
 ### Added
-- Citation metadata: `CITATION.cff`, `.zenodo.json` and `codemeta.json`. Releases are archived on Zenodo and receive a DOI.
+- Citation metadata: `CITATION.cff`, `.zenodo.json` and `codemeta.json`, with the Zenodo concept DOI [10.5281/zenodo.6382235](https://doi.org/10.5281/zenodo.6382235) (all releases since 0.11.18 are archived there). From this release on, Zenodo takes authors and licence from `.zenodo.json` instead of the list of GitHub contributors.
 - `AUTHORS.md`, `THIRD_PARTY.md`, a pull request template and `CODEOWNERS`.
 - Tests run on every pull request (Python 3.10 to 3.13).
 - End-to-end test: runs a benchmark through JDBC against a small SQLite database and checks the results with the inspector (`tests/test_benchmark_sqlite.py`).

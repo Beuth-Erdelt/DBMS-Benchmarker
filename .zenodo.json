@@ -13,6 +13,12 @@
       "affiliation": "Berliner Hochschule für Technik (BHT)"
     }
   ],
+  "contributors": [
+    {
+      "name": "Katz, Daniel S.",
+      "type": "Other"
+    }
+  ],
   "license": "AGPL-3.0-or-later",
   "keywords": [
     "DBMS",

@@ -17,6 +17,9 @@ authors:
     given-names: Jascha
     affiliation: "Berliner Hochschule für Technik (BHT)"
 version: "0.15.9"
+# Concept DOI on Zenodo: always resolves to the latest release.
+# Each release has its own version DOI, listed on that page.
+doi: "10.5281/zenodo.6382235"
 license: AGPL-3.0-or-later
 repository-code: "https://github.com/Beuth-Erdelt/DBMS-Benchmarker"
 url: "https://dbmsbenchmarker.readthedocs.io"

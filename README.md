@@ -3,6 +3,7 @@
 [![PyPI version](https://badge.fury.io/py/dbmsbenchmarker.svg)](https://badge.fury.io/py/dbmsbenchmarker)
 [![JOSS](https://joss.theoj.org/papers/82d2fa62b5c3ec30014f6307cc731cdd/status.svg)](https://joss.theoj.org/papers/82d2fa62b5c3ec30014f6307cc731cdd)
 [![Documentation Status](https://readthedocs.org/projects/dbmsbenchmarker/badge/?version=latest)](https://dbmsbenchmarker.readthedocs.io/en/latest/?badge=latest)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.6382235.svg)](https://doi.org/10.5281/zenodo.6382235)
 
 # DBMS-Benchmarker
 
