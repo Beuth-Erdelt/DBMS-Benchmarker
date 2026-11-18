@@ -18,5 +18,15 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
           cache: pip
+      # The end-to-end test runs a benchmark through JDBC against SQLite.
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - name: Download the SQLite JDBC driver
+        run: |
+          mkdir -p tests/jars
+          curl -sSfL -o tests/jars/sqlite-jdbc-3.47.1.0.jar https://repo1.maven.org/maven2/org/xerial/sqlite-jdbc/3.47.1.0/sqlite-jdbc-3.47.1.0.jar
+          echo "4164d95347aeab42b754cabb7945b93e54f29ddb2eded967dbe979b4045cb685  tests/jars/sqlite-jdbc-3.47.1.0.jar" | sha256sum -c -
       - run: pip install -r requirements.txt -e .
       - run: python -m unittest discover tests -v

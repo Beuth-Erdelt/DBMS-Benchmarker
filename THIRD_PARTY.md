@@ -22,6 +22,7 @@ Results obtained with DBMS-Benchmarker are not TPC benchmark results: they have 
 DBMS-Benchmarker connects to database systems through JDBC drivers.
 The drivers are not part of the repository or the Python package; users supply them for the systems they benchmark (see the `JDBC` entries in `connections.config`).
 Each driver is subject to the licence of its vendor.
+The tests download the [SQLite JDBC driver](https://github.com/xerial/sqlite-jdbc) (Apache-2.0) from Maven Central; it is not stored in the repository.
 
 ## Python dependencies
 

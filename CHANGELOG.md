@@ -12,6 +12,7 @@ Versions before 0.15.8 are described on the [GitHub releases page](https://githu
 - Citation metadata: `CITATION.cff`, `.zenodo.json` and `codemeta.json`. Releases are archived on Zenodo and receive a DOI.
 - `AUTHORS.md`, `THIRD_PARTY.md`, a pull request template and `CODEOWNERS`.
 - Tests run on every pull request (Python 3.10 to 3.13).
+- End-to-end test: runs a benchmark through JDBC against a small SQLite database and checks the results with the inspector (`tests/test_benchmark_sqlite.py`).
 
 ### Removed
 - `OLD_setup.py`, `demo-interactive-inspection-legacy.py`, the 2019 example report `docs/Report-example-tpch.pdf` and the generated API pages in `docs/dbmsbenchmarker/`. `dev/` is no longer part of release archives.
