@@ -136,6 +136,9 @@ Example: `-r /tmp/dbmsresults/`, and a subfolder, say `1234`, will be generated 
 Name of folder containing query and connection config files.
 If set, the names `connections.config` and `queries.config` are assumed automatically.
 
+Both config files may be written as JSON or as a Python literal (a `dict` or `list`, as in the examples below).
+In the result folder they are always stored as a Python literal.
+
 
 ### Monitoring
 
@@ -314,6 +317,7 @@ The strings `DBMSBENCHMARKER_SCHEMA` and `DBMSBENCHMARKER_DATABASE` as parts of 
 ## Query File
 
 Contains the queries to benchmark.
+The file may be JSON or a Python literal, see [Config Folder](#config-folder).
 
 Example for `QUERY_FILE`:
 ```
@@ -534,6 +538,7 @@ This also respects randomization, i.e. every DBMS receives exactly the same vers
 ## Connection File
 
 Contains infos about JDBC connections.
+The file may be JSON or a Python literal, see [Config Folder](#config-folder).
 
 Example for `CONNECTION_FILE`:
 ```

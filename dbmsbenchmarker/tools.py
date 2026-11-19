@@ -1392,7 +1392,7 @@ class dataframehelper():
         if path.isfile(filename):
             print("config found")
             with open(filename, 'r') as f:
-                d = ast.literal_eval(f.read())
+                d = parse_config(f.read())
             workflow = {}
             instance = ''
             volume = ''
@@ -1629,6 +1629,19 @@ def tex_escape(text):
     return regex.sub(lambda match: conv[match.group()], text)
 
 
+def parse_config(text):
+    """
+    Parses the content of a config file, such as queries.config or connections.config.
+    The content is either JSON or a Python literal (dict or list), the original format.
+
+    :param text: Content of the config file
+    :return: The parsed content
+    """
+    try:
+        return json.loads(text)
+    except ValueError:
+        return ast.literal_eval(text)
+
 def joinDicts(d1, d2):
     result = d1.copy()
     for k, v in d2.items():
@@ -1704,7 +1717,7 @@ def merge_partial_results(result_path, code):
         try:
             if isfile(filename):
                 with open(filename,'r') as inf:
-                    content=ast.literal_eval(inf.read())
+                    content=parse_config(inf.read())
                     #print(content)
                     connections.append(content)
             # queries.config is the same experiment-level config shared by every
