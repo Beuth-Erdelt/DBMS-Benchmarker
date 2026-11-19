@@ -19,6 +19,7 @@
     ./Dashboard.md
     ./Inspection.md
     ./CONTRIBUTING.md
+    ./FAIR4RS.md
     ...
 
 
