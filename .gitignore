@@ -15,3 +15,8 @@ tpc*/
 Review/*
 .spyproject/*
 jars/*
+
+# test coverage data
+.coverage
+.coverage.*
+coverage.txt

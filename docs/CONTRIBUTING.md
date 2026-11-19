@@ -27,11 +27,16 @@ If your contribution includes material from others (code, icons, queries, data),
 
 ### Git Usage
 
-If you are planning to make a pull request, start by creating a new branch with a short but descriptive name (rather than using your master branch).
+Development happens on `dev`; `master` holds the releases.
+Start each change on a new branch from `dev` with a short but descriptive name, and open a pull request into `dev`.
+For a release, `dev` is merged into `master` by a pull request.
+Every pull request must pass the automated tests.
 
-Every change to `master` goes through a pull request, which is reviewed and must pass the automated tests.
-Add an entry to [CHANGELOG.md](https://github.com/Beuth-Erdelt/DBMS-Benchmarker/blob/master/CHANGELOG.md) under *Unreleased* for every change users can notice.
-A check on the pull request fails without such an entry; for changes users cannot notice (CI, typos, refactoring), add the label `no-changelog` instead.
+Changes are recorded in the notes of the [GitHub releases](https://github.com/Beuth-Erdelt/DBMS-Benchmarker/releases), which are generated from the pull requests.
+So give each pull request a title that says what changes for users.
+If a change alters measured or evaluated numbers, the pull request names the affected metrics.
+This includes any change after which the same experiment or the same raw results give different reported values: units (e.g. ms to s), aggregation (e.g. mean to median, warm-up runs excluded), fixed formulas, rounding, what a timer measures.
+Renamed metrics or columns are named as well, since they break comparisons with older results.
 
 
 ### Coding Conventions
@@ -46,7 +51,11 @@ DBMSBenchmarker tries to follow the coding conventions laid out in PEP8 and PEP2
 
 The tests in `tests/` run on every pull request with Python 3.10 to 3.13.
 Run them locally from the repository root with `python -m unittest discover tests`.
-The end-to-end test `tests/test_benchmark_sqlite.py` needs a Java runtime and the [SQLite JDBC driver](https://repo1.maven.org/maven2/org/xerial/sqlite-jdbc/3.47.1.0/sqlite-jdbc-3.47.1.0.jar) in `tests/jars/` (or its path in `DBMSBENCHMARKER_SQLITE_JAR`); without them it is skipped locally, and it always runs in CI.
+The end-to-end tests `tests/test_benchmark_sqlite.py` (a benchmark and the inspector) and `tests/test_pipeline_sqlite.py` (the scripts Bexhoma runs: one benchmark per connection in subfolders, `metrics.evaluation.py`, `merge.py`, `benchmark.py read`, `evaluate.py`, the dashboard) need a Java runtime and the [SQLite JDBC driver](https://repo1.maven.org/maven2/org/xerial/sqlite-jdbc/3.47.1.0/sqlite-jdbc-3.47.1.0.jar) in `tests/jars/` (or its path in `DBMSBENCHMARKER_SQLITE_JAR`); without them it is skipped locally, and it always runs in CI.
+
+CI also measures test coverage of the package and the scripts, including the subprocesses the end-to-end tests start.
+A pull request fails if coverage drops below the floor `fail_under` in `pyproject.toml`; raise the floor when tests are added.
+Locally: `python -m coverage run -m unittest discover tests`, then `python -m coverage combine` and `python -m coverage report`.
 
 New features or functions will not be accepted without testing.
 Likewise for any enhancement or bug fix, we require including an additional test.
@@ -67,18 +76,18 @@ Please include a zipped result folder, so we can trace the enhancement of evalua
 ## Versions and releases
 
 Versions have the form `MAJOR.MINOR.PATCH` and git tags the form `vMAJOR.MINOR.PATCH`.
-While the major version is 0, a minor release may contain incompatible changes; they are named in the changelog.
+While the major version is 0, a minor release may contain incompatible changes; they are named in their pull requests.
 
 * **Minor release** (`0.16.0`): changes what an experiment executes or records. This includes how queries are run and timed, connection handling, the format of `queries.config` and `connections.config`, and the format of the result folder.
-* **Patch release** (`0.15.10`): everything else, including bug fixes in evaluations, the dashboard and reports. If a fix changes evaluated numbers, the changelog entry names the affected metrics.
+* **Patch release** (`0.15.10`): everything else, including bug fixes in evaluations, the dashboard and reports. If a fix changes evaluated numbers, its pull request names the affected metrics.
 
 ### Release checklist
 
-1. Set the version in `dbmsbenchmarker/__version__.py`, `CITATION.cff` and `codemeta.json`.
-2. Move the *Unreleased* entries of `CHANGELOG.md` to the new version with the release date.
-3. For a minor release only: the reference experiments of [Bexhoma](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager) have been run with the release candidate and passed all validity checks.
-4. Merge into `master` and create a GitHub release with the tag `vX.Y.Z`.
-   Publishing runs the tests again, then uploads the package to PyPI; Zenodo archives the release and assigns a DOI.
+1. Set the version with `python bump_version.py X.Y.Z`; it writes `dbmsbenchmarker/__version__.py`, `CITATION.cff` and `codemeta.json`, and the tests check that they agree.
+2. For a minor release only: the reference experiments of [Bexhoma](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager) have been run with the release candidate and passed all validity checks.
+3. Merge into `master` and create a GitHub release with the tag `vX.Y.Z`.
+   Use *Generate release notes*.
+   Publishing runs the tests again, then uploads the package to PyPI; Zenodo archives the release with its notes and assigns a DOI.
 
 
 ## Authorship
