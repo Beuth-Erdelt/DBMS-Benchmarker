@@ -30,7 +30,7 @@ Open points are listed at the end.
 
 | Principle | Status | Evidence |
 |---|---|---|
-| I1. Software reads, writes and exchanges data in a way that meets domain-relevant community standards. | partly met | Systems under test are reached through JDBC and SQL, the common interfaces of relational DBMS. Hardware metrics are read from Prometheus. Results are written as CSV (timers, monitoring metrics) and JSON (`protocol.json`). However, the configuration files (`queries.config`, `connections.config`) are Python literals without a published schema, and result sets and evaluation data are stored as pickled pandas DataFrames, which only Python can read and which depend on the pandas version. |
+| I1. Software reads, writes and exchanges data in a way that meets domain-relevant community standards. | partly met | Systems under test are reached through JDBC and SQL, the common interfaces of relational DBMS. Hardware metrics are read from Prometheus. Measurements are written as CSV (timers, monitoring metrics), the protocol and the evaluation as JSON (`protocol.json`, `evaluation.json`). Result sets are stored as CSV or as pickled pandas DataFrames, as the user chooses (`--store-data csv`, or `'store': ['csv']` per query). However, two kinds of files are always pickled pandas DataFrames, which only Python can read and which depend on the pandas version: the per-query statistics (derived from the timer CSV files) and, when results are written into subfolders, the complete result sets used to compare results across connections. The configuration files (`queries.config`, `connections.config`) are Python literals without a published schema. |
 | I2. Software includes qualified references to other objects. | met | `.zenodo.json` and `codemeta.json` refer to the describing publications (JOSS paper and two conference papers, by DOI), to the documentation, and to [Bexhoma](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager), which requires DBMS-Benchmarker. |
 
 ## Reusable
@@ -46,7 +46,7 @@ Open points are listed at the end.
 ## Open points
 
 * **R1.2:** record the version of DBMS-Benchmarker in the result folder, e.g. in `protocol.json`.
-* **I1:** store result sets and evaluation data in a portable format (CSV, Parquet) in addition to or instead of pickle; document the format of the result folder.
+* **I1:** store the per-query statistics and the complete result sets for comparison in a portable format (CSV, Parquet) instead of pickle; document the format of the result folder.
 * **I1:** publish a schema of `queries.config` and `connections.config`, or accept them as JSON or YAML.
 * **R3:** raise test coverage, in particular of the inspector, the evaluator and the dashboard, and raise the floor with it.
 * **F1.1:** if the result format is used by other tools, release and identify it separately.
