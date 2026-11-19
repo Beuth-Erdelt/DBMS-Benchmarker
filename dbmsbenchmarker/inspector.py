@@ -122,9 +122,9 @@ class inspector():
             if isfile(filename_query) and isfile(filename_connections) and isfile(filename_protocol):
                 try:
                     with open(filename_query,'r') as inp:
-                        workload_properties = ast.literal_eval(inp.read())
+                        workload_properties = tools.parse_config(inp.read())
                     with open(filename_connections,'r') as inp:
-                        connection_properties = ast.literal_eval(inp.read())
+                        connection_properties = tools.parse_config(inp.read())
                     workload_preview[code] = {}
                     workload_preview[code]['name'] = workload_properties['name']
                     workload_preview[code]['info'] = workload_properties.get('info', '')

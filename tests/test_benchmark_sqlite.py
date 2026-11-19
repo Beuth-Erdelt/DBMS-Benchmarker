@@ -18,7 +18,9 @@ Without them the test is skipped locally and fails in CI (``CI`` is set).
 
 Run from the repository root: python -m unittest tests.test_benchmark_sqlite -v
 """
+import ast
 import glob
+import json
 import math
 import os
 import shutil
@@ -141,8 +143,9 @@ class BenchmarkSQLiteTest(unittest.TestCase):
         } for name in CONNECTIONS]
         with open(os.path.join(config_folder, 'connections.config'), 'w') as file:
             file.write(pformat(connections))
+        # the query file as JSON, the connection file as a Python literal: both formats are accepted
         with open(os.path.join(config_folder, 'queries.config'), 'w') as file:
-            file.write(pformat(QUERIES))
+            file.write(json.dumps(QUERIES, indent=2))
         cls.process = subprocess.run(
             [sys.executable, 'benchmark.py', 'run', '-f', config_folder, '-r', cls.result_folder, '-e', 'yes', '-b'],
             cwd=REPO, capture_output=True, text=True, timeout=600)
@@ -174,6 +177,20 @@ class BenchmarkSQLiteTest(unittest.TestCase):
             self.assertIn(name, files)
         for query in NUM_RUN:
             self.assertIn('query_{}_execution.csv'.format(query), files)
+
+    def test_json_query_file_stored_as_python_literal(self):
+        # the result folder keeps its format, whatever format the config files were given in
+        with open(os.path.join(self.result_folder, self.code, 'queries.config')) as file:
+            queries = ast.literal_eval(file.read())
+        self.assertEqual([q['title'] for q in queries['queries']], [q['title'] for q in QUERIES['queries']])
+        self.assertIs(queries['queries'][0]['timer']['datatransfer']['sorted'], True)
+
+    def test_version_recorded(self):
+        import dbmsbenchmarker
+        with open(os.path.join(self.result_folder, self.code, 'protocol.json')) as file:
+            total = json.load(file)['total']
+        self.assertEqual({c: total[c]['dbmsbenchmarker_version'] for c in CONNECTIONS},
+                         {c: dbmsbenchmarker.__version__ for c in CONNECTIONS})
 
     def test_queries_and_connections(self):
         self.assertEqual(self.evaluate.get_experiment_list_queries(), list(NUM_RUN))
