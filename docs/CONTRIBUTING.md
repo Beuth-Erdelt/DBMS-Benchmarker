@@ -27,12 +27,16 @@ If your contribution includes material from others (code, icons, queries, data),
 
 ### Git Usage
 
-If you are planning to make a pull request, start by creating a new branch with a short but descriptive name (rather than using your master branch).
+Development happens on `dev`; `master` holds the releases.
+Start each change on a new branch from `dev` with a short but descriptive name, and open a pull request into `dev`.
+For a release, `dev` is merged into `master` by a pull request.
+Every pull request must pass the automated tests.
 
-Every change to `master` goes through a pull request, which is reviewed and must pass the automated tests.
 Changes are recorded in the notes of the [GitHub releases](https://github.com/Beuth-Erdelt/DBMS-Benchmarker/releases), which are generated from the pull requests.
 So give each pull request a title that says what changes for users.
-If it changes measured or evaluated numbers, add the label `changes-numbers` and name the affected metrics in the description.
+If a change alters measured or evaluated numbers, the pull request names the affected metrics.
+This includes any change after which the same experiment or the same raw results give different reported values: units (e.g. ms to s), aggregation (e.g. mean to median, warm-up runs excluded), fixed formulas, rounding, what a timer measures.
+Renamed metrics or columns are named as well, since they break comparisons with older results.
 
 
 ### Coding Conventions
@@ -68,17 +72,17 @@ Please include a zipped result folder, so we can trace the enhancement of evalua
 ## Versions and releases
 
 Versions have the form `MAJOR.MINOR.PATCH` and git tags the form `vMAJOR.MINOR.PATCH`.
-While the major version is 0, a minor release may contain incompatible changes; they are named in the release notes.
+While the major version is 0, a minor release may contain incompatible changes; they are named in their pull requests.
 
 * **Minor release** (`0.16.0`): changes what an experiment executes or records. This includes how queries are run and timed, connection handling, the format of `queries.config` and `connections.config`, and the format of the result folder.
-* **Patch release** (`0.15.10`): everything else, including bug fixes in evaluations, the dashboard and reports. If a fix changes evaluated numbers, the release notes name the affected metrics.
+* **Patch release** (`0.15.10`): everything else, including bug fixes in evaluations, the dashboard and reports. If a fix changes evaluated numbers, its pull request names the affected metrics.
 
 ### Release checklist
 
-1. Set the version in `dbmsbenchmarker/__version__.py`, `CITATION.cff` and `codemeta.json`.
+1. Set the version with `python bump_version.py X.Y.Z`; it writes `dbmsbenchmarker/__version__.py`, `CITATION.cff` and `codemeta.json`, and the tests check that they agree.
 2. For a minor release only: the reference experiments of [Bexhoma](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager) have been run with the release candidate and passed all validity checks.
 3. Merge into `master` and create a GitHub release with the tag `vX.Y.Z`.
-   Use *Generate release notes*, then add a short summary on top; it names the affected metrics if numbers changed.
+   Use *Generate release notes*.
    Publishing runs the tests again, then uploads the package to PyPI; Zenodo archives the release with its notes and assigns a DOI.
 
 
