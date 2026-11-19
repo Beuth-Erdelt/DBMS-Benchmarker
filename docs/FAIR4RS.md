@@ -2,7 +2,7 @@
 
 This page assesses DBMS-Benchmarker against the [FAIR Principles for Research Software (FAIR4RS)](https://doi.org/10.15497/RDA00068) (Barker et al., *Scientific Data* 9, 622, 2022, [doi:10.1038/s41597-022-01710-x](https://doi.org/10.1038/s41597-022-01710-x)).
 
-Assessed on 2026-11-19 for version 0.15.11.
+Assessed on 2026-11-19 for version 0.16.0.
 Each principle is rated **met**, **partly met** or **not met**, with the evidence in the repository or in public services.
 Open points are listed at the end.
 

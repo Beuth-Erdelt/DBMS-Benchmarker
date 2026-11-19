@@ -16,7 +16,7 @@ authors:
   - family-names: Jestel
     given-names: Jascha
     affiliation: "Berliner Hochschule für Technik (BHT)"
-version: "0.15.11"
+version: "0.16.0"
 # Concept DOI on Zenodo: always resolves to the latest release.
 # Each release has its own version DOI, listed on that page.
 doi: "10.5281/zenodo.6382235"
