@@ -62,3 +62,20 @@ dbmsbenchmarker = [
 [tool.setuptools.dynamic]
 version = { attr = "dbmsbenchmarker.__version__" }
 dependencies = { file = ["requirements.txt"] }
+
+# Test coverage: python -m coverage run -m unittest discover tests, then
+# python -m coverage combine and python -m coverage report.
+[tool.coverage.run]
+source = ["."]
+omit = ["tests/*", "docs/*", "dev/*", "bump_version.py"]
+# The end-to-end tests start benchmark.py, merge.py, evaluate.py and the
+# dashboard as subprocesses; they are measured too.
+patch = ["subprocess"]
+# the dashboard is stopped by SIGTERM
+sigterm = true
+
+[tool.coverage.report]
+# Floor at the coverage reached in CI (33.7% on 2026-11-19); raise it when tests are added.
+fail_under = 33
+show_missing = false
+skip_empty = true
