@@ -84,10 +84,12 @@ While the major version is 0, a minor release may contain incompatible changes; 
 ### Release checklist
 
 1. Set the version with `python bump_version.py X.Y.Z`; it writes `dbmsbenchmarker/__version__.py`, `CITATION.cff` and `codemeta.json`, and the tests check that they agree.
-2. For a minor release only: the reference experiments of [Bexhoma](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager) have been run with the release candidate and passed all validity checks.
-3. Merge into `master` and create a GitHub release with the tag `vX.Y.Z`.
+2. Merge into `master` and create a GitHub release with the tag `vX.Y.Z`.
    Use *Generate release notes*.
    Publishing runs the tests again, then uploads the package to PyPI; Zenodo archives the release with its notes and assigns a DOI.
+
+The tests, including the end-to-end runs against SQLite, are the release gate for both kinds of release.
+[Bexhoma](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager) uses DBMS-Benchmarker in its own experiments on Kubernetes and so tests it against many DBMS; a problem found there is reported as an issue here.
 
 
 ## Authorship

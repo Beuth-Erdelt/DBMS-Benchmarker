@@ -28,7 +28,7 @@ import json
 import traceback
 import ast
 
-from dbmsbenchmarker import monitor
+from dbmsbenchmarker import monitor, tools
 
 import logging
 import urllib3
@@ -144,7 +144,7 @@ class evaluator:
         :return: Python dict of all connection informations
         """
         with open(self.path+"/connections.config",'r') as inf:
-            connections = ast.literal_eval(inf.read())
+            connections = tools.parse_config(inf.read())
         connections_sorted = sorted(connections, key=lambda c: c['name']) 
         return connections_sorted
     def print_monitoring_results(self, component="loading"):

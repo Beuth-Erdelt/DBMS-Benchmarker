@@ -98,8 +98,9 @@ class PipelineSQLiteTest(unittest.TestCase):
         } for name in CONNECTIONS]
         cls.write(cls.folder + '/connections.config', pformat(connections))
         cls.write(cls.folder + '/queries.config', pformat(QUERIES))
+        # the per-connection files as JSON: the pods rename their connection in the copy
         for connection in connections:
-            cls.write(cls.folder + '/' + connection['name'] + '.config', pformat([connection]))
+            cls.write(cls.folder + '/' + connection['name'] + '.config', json.dumps([connection], indent=2))
         cls.steps = {}
         cls.steps['parameters'] = run('-c', PREPARE_PARAMETERS, cls.results, CODE, cls.folder)
         for name in CONNECTIONS:
@@ -160,6 +161,12 @@ class PipelineSQLiteTest(unittest.TestCase):
         with open(self.folder + '/connections.config') as file:
             merged = ast.literal_eval(file.read())
         self.assertEqual(sorted((c['name'], c['orig_name']) for c in merged), list(zip(PODS, CONNECTIONS)))
+
+    def test_version_recorded_per_pod(self):
+        import dbmsbenchmarker
+        total = self.protocol()['total']
+        self.assertEqual({pod: total[pod]['dbmsbenchmarker_version'] for pod in PODS},
+                         {pod: dbmsbenchmarker.__version__ for pod in PODS})
 
     def test_no_errors_and_result_sets_agree(self):
         errors = self.evaluate.get_total_errors()

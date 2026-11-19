@@ -87,6 +87,26 @@ def copy_file_atomic(source, target):
     _replace(tmp, target)
 
 
+def copy_config_atomic(source, target):
+    """
+    Copies a config file (queries.config, connections.config) into the result folder.
+    Config files may be given as JSON or as a Python literal; in the result folder
+    they are always stored as a Python literal, so tools that read result folders
+    and the text replacements on connections.config keep working. A Python literal
+    file is copied unchanged.
+
+    :param source: Config file to copy
+    :param target: File in the result folder
+    """
+    content = read_file(source)
+    try:
+        config = json.loads(content)
+    except ValueError:
+        copy_file_atomic(source, target)
+        return
+    write_file_atomic(target, pprint.pformat(config, sort_dicts=False))
+
+
 def read_file(filename, attempts=50, pause=0.02):
     """
     Reads a config file another process may be replacing (see write_file_atomic()).
@@ -737,11 +757,11 @@ class benchmarker():
         # If not read from result folder: Copy to result folder
         if not filename == self.path+'/queries.config':
             if path.isfile(filename):
-                copy_file_atomic(filename, self.path+'/queries.config')
+                copy_config_atomic(filename, self.path+'/queries.config')
             else:
                 self.logger.exception('Caught an error: Query file not found')
                 exit(1)
-        self.queryconfig = ast.literal_eval(read_file(filename))
+        self.queryconfig = tools.parse_config(read_file(filename))
         # global setting in a class variable
         # overwrites parts of query file - header
         if len(self.workload) > 0:
@@ -822,7 +842,7 @@ class benchmarker():
         #if not filename == self.path+'/connections.config':
         if not os.path.abspath(filename) == os.path.abspath(self.path+'/connections.config'):
             if path.isfile(filename):
-                copy_file_atomic(filename, self.path+'/connections.config')
+                copy_config_atomic(filename, self.path+'/connections.config')
                 self.logger.debug("copied connection file {} to {}".format(filename, self.path+'/connections.config'))
                 # 'name': 'MemSQL-5' replace by 'MemSQL-5-1' in connections.config? self.rename_connection
                 if self.fixedConnection is not None and len(self.fixedConnection) > 0 and len(self.rename_connection) > 0:
@@ -849,7 +869,7 @@ class benchmarker():
                 self.logger.exception('Caught an error: Connection file not found')
                 exit(1)
         # read from file
-        self.connections = ast.literal_eval(read_file(filename))
+        self.connections = tools.parse_config(read_file(filename))
         # add all dbms
         for c in self.connections:
             if self.anonymize and not c['name'] in self.unanonymize:
@@ -1827,6 +1847,8 @@ class benchmarker():
             if not connectionname in self.protocol['total']:
                 self.protocol['total'][connectionname] = {}
             self.protocol['total'][connectionname]['time_start'] = self.time_start
+            # version that measured this connection; kept per connection when partial results are merged
+            self.protocol['total'][connectionname]['dbmsbenchmarker_version'] = dbmsbenchmarker.__version__
         # clean evaluation dict
         evaluator.evaluator.evaluation = {}
         if self.working == 'query':
@@ -2306,15 +2328,15 @@ def run_cli(parameter):
             result_folder = args.result_folder
         command_args = vars(args).copy()
         makedirs(result_folder+"/"+code)
-        copyfile(args.config_folder+'/connections.config', result_folder+"/"+code+'/connections.config')#args.connection_file)
-        copyfile(args.config_folder+'/queries.config', result_folder+"/"+code+'/queries.config')#args.query_file)
+        copy_config_atomic(args.config_folder+'/connections.config', result_folder+"/"+code+'/connections.config')#args.connection_file)
+        copy_config_atomic(args.config_folder+'/queries.config', result_folder+"/"+code+'/queries.config')#args.query_file)
         if not args.connection is None:
             connections = [args.connection]
         else:
             #connection = args.connection
             #print("Parallel execution must be limited to single DBMS")
             with open(result_folder+"/"+code+'/connections.config', "r") as connections_file:
-                connections_content = ast.literal_eval(connections_file.read())
+                connections_content = tools.parse_config(connections_file.read())
             #print(connections_content)
             connections = [c['name'] for c in connections_content]
             if not args.verbose_none:
