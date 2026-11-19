@@ -1,0 +1,48 @@
+name: Tests
+on:
+  pull_request:
+  push:
+    branches: [master, dev]
+  # The publish workflow runs the tests before it uploads a release.
+  workflow_call:
+jobs:
+  unittest:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.10", "3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+      # The end-to-end test runs a benchmark through JDBC against SQLite.
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: "17"
+      # Downloaded once and cached; the checksum is verified on every run.
+      - uses: actions/cache@v6
+        id: jdbc-cache
+        with:
+          path: tests/jars
+          key: sqlite-jdbc-3.47.1.0
+      - name: Download the SQLite JDBC driver
+        if: steps.jdbc-cache.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p tests/jars
+          # Maven Central sometimes answers 404 to CI runners; retry, then try the
+          # other sources of the same file (the checksum below must match).
+          for url in \
+            https://repo1.maven.org/maven2/org/xerial/sqlite-jdbc/3.47.1.0/sqlite-jdbc-3.47.1.0.jar \
+            https://repo.maven.apache.org/maven2/org/xerial/sqlite-jdbc/3.47.1.0/sqlite-jdbc-3.47.1.0.jar \
+            https://github.com/xerial/sqlite-jdbc/releases/download/3.47.1.0/sqlite-jdbc-3.47.1.0.jar
+          do
+            curl -sSfL --retry 3 --retry-all-errors --retry-delay 5 -o tests/jars/sqlite-jdbc-3.47.1.0.jar "$url" && break
+          done
+      - name: Verify the SQLite JDBC driver
+        run: echo "4164d95347aeab42b754cabb7945b93e54f29ddb2eded967dbe979b4045cb685  tests/jars/sqlite-jdbc-3.47.1.0.jar" | sha256sum -c -
+      - run: pip install -r requirements.txt .
+      - run: python -m unittest discover tests -v
