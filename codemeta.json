@@ -3,7 +3,7 @@
   "@type": "SoftwareSourceCode",
   "name": "DBMS-Benchmarker",
   "description": "DBMS-Benchmarker is a Python-based application-level blackbox benchmark tool for Database Management Systems (DBMS). It connects to a given list of DBMS via JDBC and runs a given list of parametrized and randomized (SQL) benchmark queries. Evaluations are available via a Python interface, in reports and in an interactive multi-dimensional dashboard.",
-  "version": "0.16.0",
+  "version": "0.16.1",
   "identifier": "https://doi.org/10.5281/zenodo.6382235",
   "license": "https://spdx.org/licenses/AGPL-3.0-or-later",
   "codeRepository": "https://github.com/Beuth-Erdelt/DBMS-Benchmarker",
