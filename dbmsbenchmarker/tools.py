@@ -1758,9 +1758,13 @@ def merge_partial_results(result_path, code):
                 protocol['query'][k] = joinDicts(protocol['query'][k], p['query'][k])
     for p in protocols:
         protocol['total'] = joinDicts(protocol['total'], p['total'])
-    for p in protocols:
+    for connection, p in zip(list_connections, protocols):
         if 'ordering' in p:
-            protocol['ordering'] = joinDicts(protocol['ordering'], p['ordering'])
+            ordering = p['ordering']
+            if isinstance(ordering, list):
+                # a run without stream id (-sid) stores its ordering as a plain list
+                ordering = {connection: ordering}
+            protocol['ordering'] = joinDicts(protocol['ordering'], ordering)
     filename_protocol = '{folder}/protocol.json'.format(folder=folder)
     with open(filename_protocol, 'w') as f:
         json.dump(protocol, f)
