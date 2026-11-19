@@ -75,5 +75,7 @@ patch = ["subprocess"]
 sigterm = true
 
 [tool.coverage.report]
+# Floor at the coverage reached in CI (33.7% on 2026-11-19); raise it when tests are added.
+fail_under = 33
 show_missing = false
 skip_empty = true
