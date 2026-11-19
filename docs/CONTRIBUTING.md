@@ -51,7 +51,7 @@ DBMSBenchmarker tries to follow the coding conventions laid out in PEP8 and PEP2
 
 The tests in `tests/` run on every pull request with Python 3.10 to 3.13.
 Run them locally from the repository root with `python -m unittest discover tests`.
-The end-to-end test `tests/test_benchmark_sqlite.py` needs a Java runtime and the [SQLite JDBC driver](https://repo1.maven.org/maven2/org/xerial/sqlite-jdbc/3.47.1.0/sqlite-jdbc-3.47.1.0.jar) in `tests/jars/` (or its path in `DBMSBENCHMARKER_SQLITE_JAR`); without them it is skipped locally, and it always runs in CI.
+The end-to-end tests `tests/test_benchmark_sqlite.py` (a benchmark and the inspector) and `tests/test_pipeline_sqlite.py` (the scripts Bexhoma runs: one benchmark per connection in subfolders, `metrics.evaluation.py`, `merge.py`, `benchmark.py read`, `evaluate.py`, the dashboard) need a Java runtime and the [SQLite JDBC driver](https://repo1.maven.org/maven2/org/xerial/sqlite-jdbc/3.47.1.0/sqlite-jdbc-3.47.1.0.jar) in `tests/jars/` (or its path in `DBMSBENCHMARKER_SQLITE_JAR`); without them it is skipped locally, and it always runs in CI.
 
 New features or functions will not be accepted without testing.
 Likewise for any enhancement or bug fix, we require including an additional test.
